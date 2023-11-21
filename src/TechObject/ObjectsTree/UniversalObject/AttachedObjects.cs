@@ -426,7 +426,7 @@ namespace TechObject
         {
             var res = new List<int>();
 
-            var oldValue = Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
+            var oldValue = GetValueIndexes();
             var oldGenericValue = genericValue.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
 
             var newGenericValue = genericAttachedObjects.Value
@@ -448,6 +448,37 @@ namespace TechObject
             }
 
             SetNewValues(value);
+        }
+
+        public List<int> GetValueIndexes() 
+            => Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
+
+        public void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
+        {
+            var attachedObjectsList = itemList.Cast<AttachedObjects>().ToList();
+
+            var refTechNumber = attachedObjectsList[0].owner.TechNumber;
+
+            SetNewValues(attachedObjectsList.Skip(1)
+                .Aggregate(new HashSet<int>(attachedObjectsList[0].GetValueIndexes()
+                .Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber))),
+                    (h, e) => 
+                    { 
+                        h.IntersectWith(
+                            e.GetValueIndexes()
+                            .Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber)));
+                        return h; 
+                    }).ToList());
+        }
+
+        /// <summary>
+        /// Обновление после удаления типового объекта
+        /// </summary>
+        public void UpdateOnDeleteGeneric()
+        {
+            SetNewValues(GetValueIndexes()
+                .Concat(genericValue.Split(' ').Where(num => num != string.Empty).Select(int.Parse)).ToList());
+            genericValue = "";
         }
 
         public override string[] DisplayText

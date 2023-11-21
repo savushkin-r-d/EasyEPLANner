@@ -15,15 +15,22 @@ namespace EasyEplanner.Tests
         {
             public BaseParameterImplementation(string luaName, string name,
                 string defaultValue = "",
-                List<DisplayObject> displayObjects = null,
-                EplanDevice.IDeviceManager deviceManager = null) : base(luaName,
-                    name, defaultValue, displayObjects, deviceManager) { }
+                List<DisplayObject> displayObjects = null) 
+                : base(luaName, name, defaultValue, displayObjects) { }
 
             public override BaseParameter Clone()
             {
                 return new BaseParameterImplementation(LuaName, Name,
-                    DefaultValue, DisplayObjects, deviceManager);
+                    DefaultValue, DisplayObjects);
             }
+        }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            typeof(BaseParameter).GetField("deviceManager",
+                BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, GetMoqForSetValuesAndDisplayTextTest());
         }
 
         [Test]
@@ -252,10 +259,8 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            EplanDevice.IDeviceManager deviceManager =
-                GetMoqForSetValuesAndDisplayTextTest();
-            var parameter = new BaseParameterImplementation(luaName, name,
-                stub, null, deviceManager);
+
+            var parameter = new BaseParameterImplementation(luaName, name, stub, null);
 
             parameter.SetNewValue(setValue);
 
@@ -268,10 +273,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            EplanDevice.IDeviceManager deviceManager =
-                GetMoqForSetValuesAndDisplayTextTest();
-            var parameter = new BaseParameterImplementation(luaName, name,
-                stub, null, deviceManager);
+            var parameter = new BaseParameterImplementation(luaName, name, stub, null);
 
             parameter.SetValue(setValue);
 
@@ -312,10 +314,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            EplanDevice.IDeviceManager deviceManager =
-                GetMoqForSetValuesAndDisplayTextTest();
-            var parameter = new BaseParameterImplementation(luaName, name,
-                stub, null, deviceManager);
+            var parameter = new BaseParameterImplementation(luaName, name, stub, null);
             parameter.SetNewValue(setValue);
 
             var expectedDisplayText = new string[]
@@ -350,10 +349,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            EplanDevice.IDeviceManager deviceManager =
-                GetMoqForSetValuesAndDisplayTextTest();
-            var parameter = new BaseParameterImplementation(luaName, name,
-                string.Empty, null, deviceManager);
+            var parameter = new BaseParameterImplementation(luaName, name, string.Empty, null);
 
             parameter.SetNewValue(setValue);
 
@@ -367,8 +363,7 @@ namespace EasyEplanner.Tests
         [TestCase("other", "", "LuaName = other")]
         public void SaveToPrgLua_CheckBaseTechObjectOwner(string value, string prefix, string expected)
         {
-            var parameter = new BaseParameterImplementation("LuaName", "Name",
-                stub, null, GetMoqForSetValuesAndDisplayTextTest());
+            var parameter = new BaseParameterImplementation("LuaName", "Name", stub, null);
             SetUpParameterBaseTechObjectOwner(parameter);
 
             parameter.SetNewValue(value);

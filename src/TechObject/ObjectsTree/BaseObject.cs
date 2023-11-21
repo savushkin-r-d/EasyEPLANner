@@ -1,5 +1,6 @@
 ﻿    using System.Collections.Generic;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using Editor;
@@ -137,6 +138,28 @@ namespace TechObject
             return newObject;
         }
 
+        /// <summary>
+        /// Создание нового типового объекта на основе базоваого тех. объекта
+        /// </summary>
+        /// <returns>Созданная группа с типовым объектом</returns>
+        public ITreeViewItem CreateNewGenericGroup()
+        {
+            const int techTypeNum = 2;
+            const int cooperParamNum = -1;
+            ObjectsAdder.Reset();
+
+            var newGenericObject = new GenericTechObject(baseTechObject.Name,
+                techTypeNum, "TANK", cooperParamNum, string.Empty,
+                string.Empty, baseTechObject);
+            var newGenericGroup = new GenericGroup(newGenericObject, this, techObjectManager);
+
+            globalGenericTechObjects.Add(newGenericGroup.GenericTechObject);
+            genericGroups.Add(newGenericGroup);
+            newGenericGroup.AddParent(this);
+
+            return newGenericGroup;
+        }
+
         public ITreeViewItem CreateGenericGroup(TechObject techObject)
         {
             var genericGroup = new GenericGroup(techObject, this, techObjectManager);
@@ -151,6 +174,47 @@ namespace TechObject
             genericGroup.GenericTechObject.Update();
 
             return genericGroup;
+        }
+
+        public ITreeViewItem CreateGenericGroup(List<TechObject> techObjects)
+        {
+            if (techObjects.Count == 1)
+            {
+                return CreateGenericGroup(techObjects.SingleOrDefault());
+            }
+
+            var first = techObjects[0];
+
+            var name = techObjects.TrueForAll(item => item.Name == first.Name)? first.Name : baseTechObject.Name;
+            var techType = techObjects.TrueForAll(item => item.TechType == first.TechType) ? first.TechType : -1;
+            var nameEplan = techObjects.TrueForAll(item => item.NameEplan == first.NameEplan) ? first.NameEplan : ""; 
+            var cooperParamNumber = techObjects.TrueForAll(item => item.CooperParamNumber == first.CooperParamNumber) ? first.CooperParamNumber : -1;
+
+            var refNameBC = first.NameBC.Replace($"{first.TechNumber}", "");
+            var nameBC = techObjects.TrueForAll(item => item.NameBC.Replace($"{item.TechNumber}", "") == refNameBC && item.NameBC != "TankObj") ? refNameBC : "";
+
+            var newGenericTechObject = new GenericTechObject(name, techType, nameEplan, cooperParamNumber, nameBC, "", baseTechObject);
+            var newGenericGroup = new GenericGroup(newGenericTechObject, this, techObjectManager);
+
+
+            newGenericTechObject.AttachedObjects.CreateGenericByTechObjects(techObjects.Select(to => to.AttachedObjects));
+            newGenericTechObject.ModesManager.CreateGenericByTechObjects(techObjects.Select(to => to.ModesManager));
+            newGenericTechObject.GetParamsManager().CreateGenericByTechObjects(techObjects.Select(to => to.GetParamsManager()));
+            newGenericTechObject.Equipment.CreateGenericByTechObjects(techObjects.Select(to => to.Equipment));
+
+            globalGenericTechObjects.Add(newGenericGroup.GenericTechObject);
+            genericGroups.Add(newGenericGroup);
+            newGenericGroup.AddParent(this);
+
+            techObjects.ForEach(item =>
+            {
+                this.TechObjects.Remove(item);
+                newGenericGroup.AddTechObjectWhenLoadFromLua(item);
+            });
+
+            newGenericTechObject.Update();
+
+            return newGenericGroup;
         }
 
         public void RemoveLocalObject(TechObject techObject)
@@ -195,20 +259,24 @@ namespace TechObject
                 genericGroups.Remove(genericGroup);
                 globalGenericTechObjects.Remove(genericGroup.GenericTechObject);
 
+                var deleteInherited = editor.DialogDeletingGenericGroup();
+
                 foreach (var TObject in genericGroup.InheritedTechObjects)
                 {
                     TObject.AddParent(this);
                     TObject.RemoveGenericTechObject();
-                    
+
                     techObjects.Add(TObject);
                     techObjects.Sort((obj1, obj2) => obj1.GlobalNum - obj2.GlobalNum);
-                }
-           
-                if (editor.DialogDeletingGenericGroup() == DialogResult.Yes)
-                {
-                    foreach (var TObject in genericGroup.InheritedTechObjects)
+
+                    if (deleteInherited == DialogResult.Yes)
                     {
                         Delete(TObject);
+                    }
+                    else
+                    {
+                        TObject.AttachedObjects.UpdateOnDeleteGeneric();
+                        TObject.ModesManager.UpdateOnDeleteGeneric();
                     }
                 }
                 return true;

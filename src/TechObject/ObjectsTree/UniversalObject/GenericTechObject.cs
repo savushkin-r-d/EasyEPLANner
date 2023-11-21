@@ -179,6 +179,12 @@ namespace TechObject
         public override bool IsInsertable => false;
 
         public override bool IsReplaceable => false;
+
+        public override bool IsDeletable => false;
+
+        public override bool IsCopyable => false;
+
+        public override bool IsInsertableCopy => false;
         #endregion
 
         /// <summary>

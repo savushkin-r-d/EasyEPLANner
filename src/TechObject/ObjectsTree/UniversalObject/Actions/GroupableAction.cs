@@ -175,6 +175,35 @@ namespace TechObject
             }
         }
 
+        public override void CreateGenericByTechObjects(IEnumerable<IAction> actions)
+        {
+            var refAction = actions.OrderBy(a => a.SubActions.Count).First();
+
+            foreach (var subActionIndex in Enumerable.Range(0, refAction.SubActions.Count))
+            {
+                var subaction = SubActions.ElementAtOrDefault(subActionIndex) ?? Insert() as IAction;
+                subaction.CreateGenericByTechObjects(actions.Select(sa => sa.SubActions.ElementAtOrDefault(subActionIndex)));
+            }
+
+            if (parameters is null) return;
+
+            foreach (var parIndex in Enumerable.Range(0, parameters.Count))
+            {
+                var par = parameters.ElementAtOrDefault(parIndex);
+                var refPar = (refAction as GroupableAction)?.parameters.ElementAtOrDefault(parIndex);
+
+                if (par != null && refPar != null 
+                    && actions.All(a => (a as GroupableAction)?.parameters
+                                        .ElementAtOrDefault(parIndex)?.Value == refPar.Value))
+                    par.SetNewValue(refPar.Value);
+            }
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            SubActions.ForEach(sa => sa.UpdateOnDeleteGeneric());
+        }
+
         public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty) && (parameters?.TrueForAll(parameter => !parameter.IsFilled) ?? true);
 
         public List<BaseParameter> Parameters => parameters;

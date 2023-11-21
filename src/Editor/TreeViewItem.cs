@@ -99,7 +99,7 @@ namespace Editor
 
         virtual public object Copy()
         {
-            if(IsCopyable)
+            if (IsCopyable)
             {
                 return this;
             }
@@ -117,10 +117,10 @@ namespace Editor
             }
         }
 
-        virtual public bool CanMoveUp(object child) 
+        virtual public bool CanMoveUp(object child)
             => (child as ITreeViewItem).IsMoveable;
 
-        virtual public bool CanMoveDown(object child) 
+        virtual public bool CanMoveDown(object child)
             => (child as ITreeViewItem).IsMoveable;
 
         virtual public bool IsReplaceable
@@ -361,7 +361,7 @@ namespace Editor
         /// содержат искомую строку
         /// </summary>
         public bool ThisOrParentsContains { get; set; } = false;
-           
+
 
         public virtual ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
@@ -423,10 +423,26 @@ namespace Editor
         }
         #endregion
 
-        public virtual void UpdateOnGenericTechObject(ITreeViewItem genericObject)
-        {
+        /// <summary>
+        /// Обновление объекта на основе типового объекта
+        /// </summary>
+        /// <param name="genericObject"></param>
+        public virtual void UpdateOnGenericTechObject(ITreeViewItem genericObject) { }
 
-        }
+        /// <summary>
+        /// Создание типового объекта на основе множества объектов
+        /// </summary>
+        /// <param name="itemList"></param>
+        public virtual void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList) { }
+
+        /// <summary>
+        /// Обновление после удаление типовго объекта
+        /// </summary>
+        /// <remarks>
+        /// Используется для обновления AttachedObjects и Action,
+        /// так как типовые значения в них устанавливаются в отдельные поля
+        /// </remarks>
+        public virtual void UpdateOnDeleteGeneric() { }
 
         #region реализация IHelperItem
         /// <summary>

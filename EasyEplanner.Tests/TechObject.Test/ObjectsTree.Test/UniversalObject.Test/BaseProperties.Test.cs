@@ -1,4 +1,5 @@
 ﻿using Editor;
+using EplanDevice;
 using NUnit.Framework;
 using System;
 using TechObject;
@@ -7,6 +8,15 @@ namespace Tests.TechObject
 {
     class BasePropertiesTest
     {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static |
+                System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, DeviceManager.GetInstance());
+        }
+
         [Test]
         public void Constructor_NewObject_EmptyProperties()
         {

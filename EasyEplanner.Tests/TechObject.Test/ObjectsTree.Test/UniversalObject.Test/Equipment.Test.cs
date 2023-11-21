@@ -53,15 +53,15 @@ namespace TechObjectTests
                 "OBJ", -1, string.Empty, string.Empty, new BaseTechObject()));
 
             var equipmentParameter = new EquipmentParameter("devs", "устройства", "");
-            var baseParameterDeviceManager = typeof(BaseParameter).GetField("deviceManager",
-                System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.NonPublic);
-            baseParameterDeviceManager.SetValue(equipmentParameter, deviceManagerMock.Object);
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static |
+                System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
 
-            var equipmentDeviceManager = typeof(Equipment).GetProperty("deviceManager",
+            typeof(Equipment).GetProperty("deviceManager",
                 System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Instance);
-            equipmentDeviceManager.SetValue(equipment, deviceManagerMock.Object);
+                System.Reflection.BindingFlags.Static)
+                .SetValue(null, deviceManagerMock.Object);
             
             equipment.AddItems(new List<BaseParameter>() { equipmentParameter });
 

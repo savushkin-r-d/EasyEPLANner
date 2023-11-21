@@ -433,6 +433,30 @@ namespace TechObject
             }
         }
 
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
+        {
+            var paramsList = itemList.Cast<Params>().ToList();
+
+            var refParams = paramsList.OrderBy(pars => pars.parameters.Count).FirstOrDefault();
+            if (refParams is null)
+                return;
+
+            foreach (var parId in Enumerable.Range(0, refParams.parameters.Count))
+            {
+                var refParameter = refParams.parameters[parId];
+                foreach (var paramsId in Enumerable.Range(0, paramsList.Count))
+                {
+                    var parameter = paramsList[paramsId].parameters[parId];
+                    if (refParameter.GetName() != parameter.GetName()
+                        || refParameter.GetNameLua() != parameter.GetNameLua())
+                        return;
+                }
+
+                var newGenericParam = AddParam(new Param(GetIdx, refParameter.GetName(), false, 0, "", refParameter.GetNameLua(), true));   
+                newGenericParam.CreateGenericByTechObjects(paramsList.Select(pars => pars.parameters[parId]));
+            }
+        }
+
         public override bool ShowWarningBeforeDelete
         {
             get

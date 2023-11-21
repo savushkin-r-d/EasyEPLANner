@@ -604,6 +604,33 @@ namespace TechObject
             }
         }
 
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
+        {
+            var modesManagers = itemList.Cast<ModesManager>().ToList();
+
+            var refModesManagerModes = modesManagers.OrderBy(manager => manager.Modes.Count)
+                .FirstOrDefault()?.modes ?? new List<Mode>();
+
+            foreach (var modeIndex in Enumerable.Range(0, refModesManagerModes.Count))
+            {
+                var refMode = refModesManagerModes[modeIndex];
+                foreach (var managerIndex in Enumerable.Range(0, modesManagers.Count)) 
+                {
+                    var mode = modesManagers.ElementAtOrDefault(managerIndex)?.modes.ElementAtOrDefault(modeIndex);
+                    if (mode is null || mode.BaseOperation.LuaName != refMode.BaseOperation.LuaName)
+                        return;
+                }
+
+                var newGenericMode = AddMode(refMode.Name, refMode.BaseOperation.Name);
+                newGenericMode.CreateGenericByTechObjects(modesManagers.Select(manager => manager.modes[modeIndex]));
+            }
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            modes.ForEach(mode => mode.UpdateOnDeleteGeneric());
+        }
+
         /// <summary> Список операций. </summary>
         private List<Mode> modes;
         /// <summary> Технологический объект. </summary>

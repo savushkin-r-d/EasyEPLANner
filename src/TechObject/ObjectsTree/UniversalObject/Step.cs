@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using Editor;
+using EplanDevice;
 using TechObject.ActionProcessingStrategy;
 using TechObject.AttachedObjectStrategy;
 
@@ -565,8 +566,7 @@ namespace TechObject
         public bool AddDev(string actionLuaName, string devName,
             int groupNumber, string subActionLuaName)
         {
-            int devId = EplanDevice.DeviceManager.GetInstance()
-                .GetDeviceIndex(devName);
+            int devId = deviceManager.GetDeviceIndex(devName);
             if (devId == -1)
             {
                 return false;
@@ -1058,6 +1058,29 @@ namespace TechObject
                 nextStepN?.UpdateOnGenericTechObject(genericStep.nextStepN);
         }
 
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
+        {
+            var steps = itemList.Cast<Step>().ToList();
+
+            foreach (var actionIndex in Enumerable.Range(0, GetActions.Count))
+            {
+                GetActions[actionIndex]
+                    .CreateGenericByTechObjects(steps.Select(step => step.GetActions[actionIndex]));
+            }
+
+            var refStep = steps.FirstOrDefault();
+            if (steps.TrueForAll(step => step.timeParam != null && step.timeParam.Value == refStep.timeParam.Value))
+                timeParam?.SetNewValue(refStep.timeParam.Value);
+
+            if (steps.TrueForAll(step => step.nextStepN != null && step.nextStepN.Value == refStep.nextStepN.Value))
+                nextStepN?.SetNewValue(refStep.nextStepN.Value);
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            actions.ForEach(action => action.UpdateOnDeleteGeneric());
+        }
+
         public bool Empty
         {
             get
@@ -1123,6 +1146,8 @@ namespace TechObject
             EplanDevice.DeviceType.SB,
             EplanDevice.DeviceType.LS,
         };
+
+        private static IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
 
         private GetN getN;
 
