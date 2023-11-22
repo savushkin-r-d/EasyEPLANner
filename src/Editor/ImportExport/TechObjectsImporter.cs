@@ -210,7 +210,7 @@ namespace Editor
                 objectTree.Add(userObject);
             }
 
-            userObject.AddObjectWhenLoadFromLua(obj);
+            userObject.AddObjectWhenLoadFromLua(obj, -1);
         }
 
         /// <summary>

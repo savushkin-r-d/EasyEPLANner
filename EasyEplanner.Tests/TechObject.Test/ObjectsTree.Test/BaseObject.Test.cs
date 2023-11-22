@@ -539,5 +539,25 @@ namespace TechObjectTests
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(null, deviceManagerMock.Object);
         }
+
+        [Test]
+        public void InsertCuttedCopy()
+        {
+            var techObjectManagerMock = new Mock<ITechObjectManager>();
+            var techObjectParentMock = new Mock<ITreeViewItem>();
+
+            techObjectParentMock.Setup(o => o.Cut(It.IsAny<TechObject.TechObject>())).Returns<TechObject.TechObject>(to => to);
+
+            var userObject = new BaseObject("", techObjectManagerMock.Object);
+            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
+            techObject.Parent = techObjectParentMock.Object;
+
+            var method = typeof(BaseObject).GetMethod("InsertCuttedCopy",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            method.Invoke(userObject, new object[] { techObject });
+
+            Assert.AreSame(techObject, userObject.Items.SingleOrDefault());
+        }
     }
 }
