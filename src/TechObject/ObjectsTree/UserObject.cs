@@ -3,7 +3,7 @@ using Editor;
 
 namespace TechObject
 {
-    public class UserObject : BaseObject, IBaseObjChangeable
+    public class UserObject : BaseObject
     {
         public UserObject(ITechObjectManager techObjectManager)
             : base(Name, techObjectManager) { }
