@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Editor;
 using Moq;
 using NUnit.Framework;
 using TechObject;
@@ -13,23 +12,33 @@ namespace TechObjectTests
     public class UserObjectTest
     {
         [Test]
-        public void InsertCuttedCopy()
+        public void CreateUserObjectAndInsertTest()
         {
+            var techobjects = new List<TechObject.TechObject>();
+
             var techObjectManagerMock = new Mock<ITechObjectManager>();
-            var techObjectParentMock = new Mock<ITreeViewItem>();
+            techObjectManagerMock.Setup(o => o.TechObjects).Returns(techobjects);
 
-            techObjectParentMock.Setup(o => o.Cut(It.IsAny<TechObject.TechObject>())).Returns<TechObject.TechObject>(to => to);
-
+            var baseTechObject = new BaseTechObject(null)
+            {
+                Name = "Пользовательский объект",
+                EplanName = "user_object",
+            };
+            
             var userObject = new UserObject(techObjectManagerMock.Object);
-            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
-            techObject.Parent = techObjectParentMock.Object;
 
-            var method = typeof(UserObject).GetMethod("InsertCuttedCopy",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            method.Invoke(userObject, new object[] { techObject });
+            typeof(BaseObject).GetField("baseTechObject",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(userObject, baseTechObject);
+            
+            var resultTO = userObject.Insert() as TechObject.TechObject;
 
-            Assert.AreSame(techObject, userObject.Items.SingleOrDefault());
+            Assert.Multiple(() =>
+            {
+                Assert.AreSame(techobjects[0], resultTO);
+                Assert.AreSame("USER", resultTO.NameEplan);
+            });
         }
     }
 }

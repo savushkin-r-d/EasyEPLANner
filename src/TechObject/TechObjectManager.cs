@@ -411,7 +411,7 @@ namespace TechObject
                     break;
 
                 case BaseTechObjectManager.ObjectType.UserObject:
-                    AddUserObject(obj);
+                    AddUserObject(obj, isGeneric, genericObjectNumber);
                     break;
             }
         }
@@ -461,7 +461,7 @@ namespace TechObject
         /// Добавить пользовательский объект из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
-        private void AddUserObject(TechObject obj)
+        private void AddUserObject(TechObject obj, bool isGeneric, int genericObjectNumber)
         {
             var userObject = treeObjects.Where(x => x is UserObject)
                 .FirstOrDefault() as UserObject;
@@ -472,7 +472,10 @@ namespace TechObject
                 SortTreeObjectsByCustomComparer();
             }
 
-            userObject.AddObjectWhenLoadFromLua(obj);
+            if (isGeneric)
+                userObject.AddGenericObjectWhenLoadFromLua(obj as GenericTechObject);
+            else
+                userObject.AddObjectWhenLoadFromLua(obj, genericObjectNumber);
         }
 
         /// <summary>

@@ -221,6 +221,8 @@ namespace TechObjectTests
             var baseObject = new BaseObject("TANK", techObjectManager);
 
             BaseTechObjectManager.GetInstance().AddBaseObject("TANK", "TANK", 2, "TANK", "TANK", false, "TANK", "TANK", false);
+            BaseTechObjectManager.GetInstance().AddBaseObject("USER", "USER", 3, "USER", "USER", false, "USER", "USER", false);
+
             var genericGroup = new GenericGroup(genericTank, baseObject, techObjectManager);
 
             Assert.Multiple(() =>
@@ -233,6 +235,12 @@ namespace TechObjectTests
 
                 techObject = techObjectManager.AddObject(5, 3, "Танк", 3, "tank_", -1, "tank_3", "tank_", "", 0, false);
                 Assert.AreSame(techObjectManager.GetTObject(5), techObject);
+
+                techObject = techObjectManager.AddObject(6, 3, "Пользовательский объект", 2, "USER", -1, "", "USER", "", -1, false);
+                Assert.AreSame(techObjectManager.GetTObject(6), techObject);
+
+                genericTechObject = techObjectManager.AddObject(7, 3, "Пользовательский объект", 2, "USER", -1, "", "USER", "", 2, true);
+                Assert.AreSame(techObjectManager.GetGenericTObject(5), genericTechObject);
             });
         }
 

@@ -115,14 +115,11 @@ namespace TechObject
 
         public override ITreeViewItem Insert()
         {
-            const int techTypeNum = 2;
-            const int cooperParamNum = -1;
             ObjectsAdder.Reset();
 
             var newObject = new TechObject(baseTechObject.Name, 
             GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
-            "TANK", cooperParamNum, string.Empty, string.Empty,
-            baseTechObject);
+            DefaultEplanName, cooperParamNum, "", "", baseTechObject);
 
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
@@ -144,13 +141,10 @@ namespace TechObject
         /// <returns>Созданная группа с типовым объектом</returns>
         public ITreeViewItem CreateNewGenericGroup()
         {
-            const int techTypeNum = 2;
-            const int cooperParamNum = -1;
             ObjectsAdder.Reset();
 
             var newGenericObject = new GenericTechObject(baseTechObject.Name,
-                techTypeNum, "TANK", cooperParamNum, string.Empty,
-                string.Empty, baseTechObject);
+                techTypeNum, DefaultEplanName, cooperParamNum, "", "", baseTechObject);
             var newGenericGroup = new GenericGroup(newGenericObject, this, techObjectManager);
 
             globalGenericTechObjects.Add(newGenericGroup.GenericTechObject);
@@ -160,6 +154,10 @@ namespace TechObject
             return newGenericGroup;
         }
 
+        /// <summary>
+        /// Создать группу с типовым объектом на основе тех. объекта
+        /// </summary>
+        /// <param name="techObject">Тех. Объект</param>
         public ITreeViewItem CreateGenericGroup(TechObject techObject)
         {
             var genericGroup = new GenericGroup(techObject, this, techObjectManager);
@@ -176,6 +174,10 @@ namespace TechObject
             return genericGroup;
         }
 
+        /// <summary>
+        /// Создать группу с типовым объектом на основе выбранного набора тех. объектов
+        /// </summary>
+        /// <param name="techObjects">Список тех. объектов</param>
         public ITreeViewItem CreateGenericGroup(List<TechObject> techObjects)
         {
             if (techObjects.Count == 1)
@@ -667,15 +669,20 @@ namespace TechObject
         /// </summary>
         public List<TechObject> LocalObjects => localObjects;
 
-        readonly List<GenericGroup> genericGroups = new List<GenericGroup>();
-        readonly List<TechObject> techObjects = new List<TechObject>();
+        protected readonly List<GenericGroup> genericGroups = new List<GenericGroup>();
+        protected readonly List<TechObject> techObjects = new List<TechObject>();
 
-        List<TechObject> localObjects;
-        BaseTechObject baseTechObject;
-        readonly List<GenericTechObject> globalGenericTechObjects;
-        List<TechObject> globalObjectsList;
-        ITechObjectManager techObjectManager;
+        protected List<TechObject> localObjects;
+        protected BaseTechObject baseTechObject;
+        protected readonly List<GenericTechObject> globalGenericTechObjects;
+        protected List<TechObject> globalObjectsList;
+        protected ITechObjectManager techObjectManager;
 
         private Editor.IEditor editor { get; set; } = Editor.Editor.GetInstance();
+
+        public virtual string DefaultEplanName => "TANK";
+
+        protected const int techTypeNum = 2;
+        protected const int cooperParamNum = -1;
     }
 }
