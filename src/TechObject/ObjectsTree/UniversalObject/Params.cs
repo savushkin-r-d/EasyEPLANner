@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
 using Editor;
 
 namespace TechObject
@@ -91,7 +93,7 @@ namespace TechObject
         /// <returns></returns>
         public Param GetParam(int paramIndex)
         {
-            if(paramIndex < parameters.Count)
+            if (paramIndex < parameters.Count)
             {
                 return parameters[paramIndex];
             }
@@ -132,24 +134,41 @@ namespace TechObject
         public string Check(string objName)
         {
             var errors = new List<string>();
-            var emptyParamName = "";
-            var newParamName = "P";
-            foreach(var param in parameters)
+            const string dfltLuaName = "P";
+
+            // Проверка на совпадающие Lua-name для старых проектов, если совпадают - сброс:
+            foreach (var param in parameters)
             {
                 int[] equalParameters = parameters
-                    .Where(x => x.GetNameLua() == param.GetNameLua() &&
-                    x.GetNameLua() != newParamName &&
-                    x.GetNameLua() != emptyParamName)
+                    .Where(p => p.GetNameLua() == param.GetNameLua() 
+                        && p.GetNameLua() != dfltLuaName)
                     .Select(y => y.GetParameterNumber)
                     .ToArray();
 
-                if (equalParameters.Length > 1)
+                if (equalParameters.Count() <= 1)
+                    continue;
+
+                var errorStrBldr = new StringBuilder("")
+                    .Append($"У объекта \"{objName}\" совпадают имена параметров с номерами")
+                    .Append($"{string.Join(",", equalParameters)}.\n")
+                    .Append($"Lua-имена этих параметров будут сброшены.\n");
+
+                foreach (var parId in equalParameters)
                 {
-                    string errorMessage = $"У объекта \"{objName}\" совпадают" +
-                        $" имена параметров с номерами " +
-                        $"{string.Join(",", equalParameters)}\n";
-                    errors.Add(errorMessage);
+                    parameters[parId - 1].LuaNameProperty.SetNewValue("");
                 }
+
+                errors.Add(errorStrBldr.ToString());
+            }
+
+            // Проверка на дефолтные Lua-name
+            int[] parametersWithDefaultLuaName = parameters
+                .Where(p => p.GetNameLua() == dfltLuaName)
+                .Select(p => p.GetParameterNumber).ToArray();
+            if( parametersWithDefaultLuaName.Count() > 0)
+            {
+                errors.Add($"\"{objName}\": в параметрах [{string.Join(",", parametersWithDefaultLuaName)}]" +
+                    $" Lua-имя не заполнено или имеет значение по-умолчанию.\n");
             }
 
             errors = errors.Distinct().ToList();
@@ -245,34 +264,8 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            Param newParam;
-
-            if (parameters.Count > 0)
-            {
-                string newName = parameters[parameters.Count - 1].GetName();
-                string newValueStr = parameters[parameters.Count - 1]
-                    .GetValue();
-                double newValue = Convert.ToDouble(newValueStr);
-                string newMeter = parameters[parameters.Count - 1].GetMeter();
-                string newNameLua = parameters[parameters.Count - 1]
-                    .GetNameLua();
-                bool useOperation = isUseOperation;
-
-                newParam = new Param(GetIdx, newName, IsRuntimeParameters,
-                    newValue, newMeter, newNameLua, useOperation);
-                newParam.Parent = this;
-
-                if (useOperation)
-                {
-                    newParam.SetOperationN(parameters[parameters.Count - 1]
-                        .GetOperationN());
-                }
-            }
-            else
-            {
-                newParam = new Param(GetIdx, "Название параметра", false, 0,
-                    "шт", "", true);
-            }
+            var newParam = new Param(GetIdx, "Название параметра",
+                isRunTimeParams, 0, "шт", "", isUseOperation);
 
             parameters.Add(newParam);
             newParam.AddParent(this);
@@ -317,7 +310,8 @@ namespace TechObject
                 string newValueStr = newParam.GetValue();
                 double newValue = Convert.ToDouble(newValueStr);
                 string newMeter = newParam.GetMeter();
-                string newNameLua = newParam.GetNameLua();
+                string luaName = newParam.GetNameLua();
+                string newNameLua = HaveSameLuaName(luaName)? "P" : luaName;
                 bool useOperation = newParam.IsUseOperation();
 
                 var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
@@ -400,7 +394,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 newPar.Parent = this;
 
-                if(useOperation)
+                if (useOperation)
                 {
                     newPar.SetOperationN((copyObject as Param).GetOperationN());
                 }
@@ -426,7 +420,7 @@ namespace TechObject
 
                 if (par is null)
                 {
-                    par = Insert() as Param; 
+                    par = Insert() as Param;
                 }
 
                 par.UpdateOnGenericTechObject(genericPar);
@@ -452,7 +446,7 @@ namespace TechObject
                         return;
                 }
 
-                var newGenericParam = AddParam(new Param(GetIdx, refParameter.GetName(), false, 0, "", refParameter.GetNameLua(), true));   
+                var newGenericParam = AddParam(new Param(GetIdx, refParameter.GetName(), false, 0, "", refParameter.GetNameLua(), true));
                 newGenericParam.CreateGenericByTechObjects(paramsList.Select(pars => pars.parameters[parId]));
             }
         }
@@ -479,6 +473,14 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=process_parameter";
+        }
+
+        public bool HaveSameLuaName(string luaName)
+        {
+            return parameters
+                .Where(p => p.GetNameLua() == luaName && p.GetNameLua() != "P")
+                .Select(y => y.GetParameterNumber)
+                .Any();
         }
 
         public ParamsManager ParamsManager => Parent as ParamsManager;

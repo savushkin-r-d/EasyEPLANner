@@ -38,6 +38,11 @@ namespace TechObject
 
                 return true;
             }
+            else if (Name == Param.NameLuaPropertyName 
+                && (Param?.Params?.HaveSameLuaName(newValue) ?? false))
+            { // Если уже есть параметр с таким именем, то оставляем прошлое значение
+                return false;
+            }
             else
             {
                 return base.SetNewValue(newValue);

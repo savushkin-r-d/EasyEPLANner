@@ -27,6 +27,11 @@ namespace TechObject
             errors += ObjectsFieldEquality(new MonitorFieldEqualStrategy());
             errors += ObjectsFieldEquality(new EplanNameFieldEqualStrategy());
 
+            foreach (var obj in techObjectManager.GenericTechObjects)
+            {
+                errors += obj.Check();
+            }
+
             foreach (var obj in techObjectManager.TechObjects)
             {
                 errors += obj.Check();
