@@ -165,7 +165,7 @@ namespace TechObject
             int[] parametersWithDefaultLuaName = parameters
                 .Where(p => p.GetNameLua() == dfltLuaName)
                 .Select(p => p.GetParameterNumber).ToArray();
-            if( parametersWithDefaultLuaName.Count() > 0)
+            if( parametersWithDefaultLuaName.Any())
             {
                 errors.Add($"\"{objName}\": в параметрах [{string.Join(",", parametersWithDefaultLuaName)}]" +
                     $" Lua-имя не заполнено или имеет значение по-умолчанию.\n");
