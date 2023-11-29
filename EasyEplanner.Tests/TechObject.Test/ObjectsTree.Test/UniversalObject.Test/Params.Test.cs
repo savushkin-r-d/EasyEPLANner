@@ -42,5 +42,21 @@ namespace TechObjectTests
                 Assert.IsTrue(paramUpdateMethodCalled);
             });
         }
+
+        [Test]
+        public void Check()
+        {
+            var parameters = new Params("параметры", "params", false, "", true);
+            var par1 = parameters.AddParam(new Param(GetN => 1, "par 1", false, 0, "c", "same_name", true));
+            var par2 = parameters.AddParam(new Param(GetN => 2, "par 2", false, 0, "c", "same_name", true));
+
+            parameters.Check("obj");
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("P", par1.GetNameLua());
+                Assert.AreEqual("P", par2.GetNameLua());
+            });
+        }
     }
 }

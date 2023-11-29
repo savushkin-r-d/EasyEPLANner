@@ -245,13 +245,7 @@ namespace TechObject
         /// <summary>
         /// Возвращает объект-свойство LuaName
         /// </summary>
-        public ObjectProperty LuaNameProperty
-        {
-            get
-            {
-                return nameLua;
-            }
-        }
+        public ObjectProperty LuaNameProperty => nameLua;
 
         /// <summary>
         /// Возвращает имя параметра для Lua
