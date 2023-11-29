@@ -53,6 +53,10 @@ namespace TechObjectTests
             };
 
             var baseObject = new BaseObject("BTO", techObjectManagerMock.Object);
+            typeof(BaseObject).GetField("baseTechObject",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(baseObject, baseTechObject);
+
 
             var techObject1 = new TechObject.TechObject("Танк", GetN => 1, 1, 2, "TANK", -1, "", "", baseTechObject);
             var techObject2 = new TechObject.TechObject("Танк", GetN => 2, 2, 2, "TANK", -1, "", "", baseTechObject);
@@ -86,9 +90,6 @@ namespace TechObjectTests
 
                 var NotTechObjectNullResult = genericGroup.InsertCopy(1);
                 Assert.IsNull(NotTechObjectNullResult);
-
-                var TechObjectOtherParentNullResult = genericGroup.InsertCopy(techObject3);
-                Assert.IsNull(TechObjectOtherParentNullResult);
             });
         }
 

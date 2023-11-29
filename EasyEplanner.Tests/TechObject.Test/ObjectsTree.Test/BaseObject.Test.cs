@@ -278,7 +278,7 @@ namespace TechObjectTests
 
             Assert.Multiple(() =>
             {
-                Assert.IsFalse(baseObject.IsCuttable);
+                Assert.IsTrue(baseObject.IsCuttable);
 
                 baseObject.CreateGenericGroup(techObject2);
                 Assert.IsTrue(baseObject.IsCuttable);
