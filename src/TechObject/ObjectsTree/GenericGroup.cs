@@ -76,10 +76,6 @@ namespace TechObject
             if (techObject is null)
                 return null;
 
-            if (techObject.BaseTechObject.Name != genericTechObject.BaseTechObject.Name 
-                && techObject.BaseTechObject != null)
-                return null;
-
             if (techObject.MarkToCut)
                 return InsertCuttedCopy(techObject);
 
@@ -100,17 +96,43 @@ namespace TechObject
 
         public TechObject InsertCuttedCopy(TechObject techObject)
         {
-            if (techObject.Parent != baseObject)
-                return null;
-
             techObject.Parent.Cut(techObject);
 
-            techObject.AddParent(this);
-            genericTechObject.SetUpTechObject(techObject, baseObject);
+            if (techObject.BaseTechObject == null || techObject.BaseTechObject.Name != baseObject.BaseTechObject.Name)
+            {
+                // Удаляем из базового объекта локальный объект, если переносим в другой базовый объект
+                (techObject?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
+                (techObject?.Parent?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
+                
+                baseObject.LocalObjects.Add(techObject);
+                
+                if (techObject.BaseTechObject != null)
+                    techObject.ResetBaseTechObject();
+                techObject.InitBaseTechObject(baseObject.BaseTechObject);
+            }
 
+            techObject.AddParent(this);
+
+            techObject.SetGetLocalN(baseObject.GetTechObjectLocalNum);
+
+            genericTechObject.SetUpTechObject(techObject, baseObject);
             genericTechObject.Update();
 
             return techObject;
+        }
+
+        public override bool IsCuttable => true;
+
+        public override ITreeViewItem Cut(ITreeViewItem item)
+        {
+            if (item is TechObject techObject && (item is GenericTechObject) is false)
+            {
+                techObject.GenericTechObject = null;
+                InheritedTechObjects.Remove(techObject);
+                return techObject;
+            }
+
+            return null;
         }
 
         public override bool IsDeletable => true;

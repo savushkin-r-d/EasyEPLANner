@@ -451,7 +451,7 @@ namespace TechObject
             else
             {
                 ObjectsAdder.Reset();
-                if (techObj.MarkToCut && techObj.BaseTechObject == null)
+                if (techObj.MarkToCut)
                 {
                     return InsertCuttedCopy(techObj);
                 }
@@ -463,35 +463,38 @@ namespace TechObject
         /// <summary>
         /// Вставить вырезанный объект
         /// </summary>
-        /// <param name="techObj">Объект</param>
+        /// <param name="techObject">Объект</param>
         /// <returns></returns>
-        private TechObject InsertCuttedCopy(TechObject techObj)
+        private TechObject InsertCuttedCopy(TechObject techObject)
         {
-            var techObjParent = techObj.Parent;
-            techObjParent.Cut(techObj);
+            var techObjParent = techObject.Parent;
+            techObjParent.Cut(techObject);
 
-            techObjects.Add(techObj);
-            localObjects.Add(techObj);
+            if (techObject.BaseTechObject == null || techObject.BaseTechObject.Name != BaseTechObject.Name)
+            {
+                // Удаляем локальный объект из базового объекта, если переносим в другой базовый объект
+                (techObject?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
+                (techObject?.Parent?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
 
-            techObj.SetGetLocalN(GetTechObjectLocalNum);
-            techObj.InitBaseTechObject(baseTechObject);
-            techObj.AddParent(this);
-            return techObj;
+                if (techObject.BaseTechObject != null)
+                    techObject.ResetBaseTechObject();
+                techObject.InitBaseTechObject(BaseTechObject);
+            }
+
+            techObjects.Add(techObject);
+            localObjects.Add(techObject);
+
+            techObject.SetGetLocalN(GetTechObjectLocalNum);
+
+            techObject.AddParent(this);
+            return techObject;
         }
 
-        /// <summary>
-        /// Можно вырезать тех. объект только при наличии
-        /// типовой группы в базовом объекте
-        /// </summary>
-        public override bool IsCuttable => genericGroups.Count > 0;
+        public override bool IsCuttable => true;
 
         /// <summary>
         /// Вырезать тех. объект из базового объкта.
-        /// Можно вставить только в группу с типовым объектом 
-        /// этого же базового объекта
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         public override ITreeViewItem Cut(ITreeViewItem item)
         {
             if (item is TechObject techObject)
@@ -645,6 +648,7 @@ namespace TechObject
             if (success)
             {
                 localObjects.Remove(techObject);
+                techObjects.Remove(techObject);
                 if (localObjects.Count == 0)
                 {
                     Parent.Delete(this);
@@ -668,6 +672,8 @@ namespace TechObject
         /// Все технологические объекты в базовом объекте
         /// </summary>
         public List<TechObject> LocalObjects => localObjects;
+
+        public BaseTechObject BaseTechObject => baseTechObject; 
 
         protected readonly List<GenericGroup> genericGroups = new List<GenericGroup>();
         protected readonly List<TechObject> techObjects = new List<TechObject>();
