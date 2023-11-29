@@ -101,8 +101,8 @@ namespace TechObject
             if (techObject.BaseTechObject == null || techObject.BaseTechObject.Name != baseObject.BaseTechObject.Name)
             {
                 // Удаляем из базового объекта локальный объект, если переносим в другой базовый объект
-                (techObject?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
-                (techObject?.Parent?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
+                (techObject.Parent as BaseObject)?.LocalObjects.Remove(techObject);
+                (techObject.Parent?.Parent as BaseObject)?.LocalObjects.Remove(techObject);
                 
                 baseObject.LocalObjects.Add(techObject);
                 
