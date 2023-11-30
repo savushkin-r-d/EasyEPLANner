@@ -627,18 +627,19 @@ namespace TechObject
 
         public override ITreeViewItem Insert()
         {
-            ChooseObjectTypes(out string selectedType,
-                out string selectedSubType);
-            if (selectedType != null && selectedSubType != null)
-            {
-                ITreeViewItem insertedItem = InsertType(selectedType);
+            ChooseObjectTypes(out string selectedType, out string selectedSubType);
 
-                insertedItem.AddParent(this);
-                SortTreeObjectsByCustomComparer();
-                return insertedItem;
-            }
+            if (string.IsNullOrEmpty(selectedType) || string.IsNullOrEmpty(selectedSubType))
+                return null;
 
-            return null;
+            ITreeViewItem insertedItem = InsertType(selectedType);
+
+            if (insertedItem is null)
+                return null;
+
+            insertedItem.AddParent(this);
+            SortTreeObjectsByCustomComparer();
+            return insertedItem;
         }
 
         /// <summary>
