@@ -1,6 +1,7 @@
 ﻿using Editor;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace TechObject
 {
@@ -352,28 +353,18 @@ namespace TechObject
         override public ITreeViewItem MoveUp(object child)
         {
             var mode = child as Mode;
-            if (mode != null)
-            {
-                int index = modes.IndexOf(mode);
-                if (index > 0)
-                {
-                    TechObjectManager.GetInstance()
-                        .ChangeModeNum(owner, index + 1, index);
+            if (mode is null)
+                return null;
 
-                    modes.Remove(mode);
-                    modes.Insert(index - 1, mode);
+            int index = modes.IndexOf(mode);
 
-                    foreach (Mode newMode in modes)
-                    {
-                        ChangeRestrictionModeOwner(newMode);
-                    }
+            if (index <= 0)
+                return null;
 
-                    modes[index].AddParent(this);
-                    return modes[index];
-                }
-            }
+            SwapModes(index, index - 1);
 
-            return null;
+            OnValueChanged(this);
+            return child as ITreeViewItem;
         }
 
         public override bool CanMoveDown(object child)
@@ -389,28 +380,29 @@ namespace TechObject
         override public ITreeViewItem MoveDown(object child)
         {
             var mode = child as Mode;
-            if (mode != null)
-            {
-                int index = modes.IndexOf(mode);
-                if (index <= modes.Count - 2)
-                {
-                    TechObjectManager.GetInstance()
-                        .ChangeModeNum(owner, index + 1, index + 2);
+            if (mode is null)
+                return null;
 
-                    modes.Remove(mode);
-                    modes.Insert(index + 1, mode);
+            
+            int index = modes.IndexOf(mode);
 
-                    foreach (Mode newMode in modes)
-                    {
-                        ChangeRestrictionModeOwner(newMode);
-                    }
+            if (index > Modes.Count - 2)
+                return null;
+              
+            SwapModes(index, index + 1);
 
-                    modes[index].AddParent(this);
-                    return modes[index];
-                }
-            }
+            OnValueChanged(this);
+            return modes[index];
+        }
 
-            return null;
+        private void SwapModes(int index1, int index2)
+        {
+            TechObjectManager.GetInstance().ChangeModeNum(owner, index1 + 1, index2 + 1);
+
+            (modes[index1], modes[index2]) = (modes[index2], modes[index1]);
+            modes.ForEach(ChangeRestrictionModeOwner);
+
+            Editor.Editor.GetInstance().EditorForm.editorTView.RefreshObject(this);
         }
 
         override public ITreeViewItem Replace(object child,
@@ -586,6 +578,28 @@ namespace TechObject
             {
                 var genericMode = genericModesManager.modes.ElementAtOrDefault(index);
                 var mode = modes.ElementAtOrDefault(index);
+                var modeByBaseOperation = modes.Find(m => m.BaseOperation.LuaName == genericMode.BaseOperation.LuaName && genericMode.BaseOperation.Name != "");
+                var modesByName = modes.FindAll(m => m.Name == genericMode.Name);
+                
+                // Перемещение операций
+                if (modesByName.Count == 1 &&
+                    mode != null &&
+                    modesByName[0] != null &&
+                    modesByName[0] != mode)
+                {
+                    SwapModes(index, modes.IndexOf(modesByName[0]));
+                    mode = modes.ElementAtOrDefault(index);
+                }
+
+                // Если базовая операция наследуемой операции не совпадет с типовой, то сбрасываем
+                if (modeByBaseOperation != null &&
+                    mode != null &&
+                    mode != modeByBaseOperation)
+                {
+                    mode.SetNewValue("", true);
+                    modeByBaseOperation.SetNewValue("", true);
+                }
+
 
                 if (genericMode is null)
                     continue;
