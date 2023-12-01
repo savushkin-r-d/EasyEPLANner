@@ -43,6 +43,10 @@ namespace EasyEPlanner
             string rangesIP_str;
             (long, long)[] RangesIP;
 
+            string exampleRanges = "Пример: Свойства->Пользователь, доп. поле 1: \"127.0.0.1 - 127.0.0.10, 127.0.0.21 - 127.0.0.30\"\n";
+            string errorRangeIsNotSet = "Не задан диапазон IP-адресов проекта.\n";
+            string wrongRanges = "Некорректно задан диапазон IP-адресов проекта.\n";
+
             try
             {
                 rangesIP_str = projectHelper.GetProjectProperty(rangesIP_FieldName);
@@ -55,8 +59,7 @@ namespace EasyEPlanner
 
                 if ( RangesIP.Length == 0 )
                 {
-                    string errMsg = $"Некорректно задан диапазон " +
-                        $"IP-адресов проекта.\n";
+                    string errMsg = wrongRanges + exampleRanges;
                     throw new Exception(errMsg);
                 }
             }
@@ -65,7 +68,7 @@ namespace EasyEPlanner
                 ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
                 if (e.Message.Contains(rangesIP_FieldName))
                 {
-                    errors += "Не задан диапазон IP-адресов проекта.\n";
+                    errors += errorRangeIsNotSet + exampleRanges;
                 }
                 else
                 {
@@ -77,7 +80,7 @@ namespace EasyEPlanner
             if (RangesIP.All(range => range.Item2 - range.Item1 <= 0))
             {
                 ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
-                errors += "Некорректно задан диапазон IP-адресов проекта.\n";
+                errors += wrongRanges + exampleRanges;
                 return errors;
             }
 
