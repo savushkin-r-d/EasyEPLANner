@@ -63,7 +63,7 @@ namespace Editor
         private void acceptButton_Click(object sender, EventArgs e)
         {
             bool incorrectInput =
-                (objectSubTypes.Enabled && objectSubTypes.SelectedIndex == -1) ||
+                (objectSubTypes.Enabled && objectSubTypes.SelectedIndex == -1 && objectSubTypes.Items.Count != 1) ||
                 (objectTypes.Enabled && objectTypes.SelectedIndex == -1);
             if (incorrectInput)
             {
@@ -73,7 +73,8 @@ namespace Editor
             }
             else
             {
-                LastSelectedSubType = objectSubTypes.SelectedItem.ToString();
+                LastSelectedSubType = objectSubTypes.SelectedItem?.ToString() 
+                    ?? objectSubTypes.Items.Cast<object>().First().ToString();
                 LastSelectedType = objectTypes.SelectedItem.ToString();
                 Close();
             }
