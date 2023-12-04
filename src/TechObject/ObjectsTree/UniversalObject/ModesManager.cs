@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Операции технологического объекта.
     /// </summary>
-    public class ModesManager : TreeViewItem, IOnValueChanged
+    public class ModesManager : TreeViewItem
     {
         public ModesManager(TechObject owner)
         {
@@ -392,7 +392,7 @@ namespace TechObject
             SwapModes(index, index + 1);
 
             OnValueChanged(this);
-            return modes[index];
+            return child as ITreeViewItem;
         }
 
         private void SwapModes(int index1, int index2)
@@ -402,7 +402,8 @@ namespace TechObject
             (modes[index1], modes[index2]) = (modes[index2], modes[index1]);
             modes.ForEach(ChangeRestrictionModeOwner);
 
-            Editor.Editor.GetInstance().EditorForm.editorTView.RefreshObject(this);
+
+            Editor.Editor.GetInstance().RefreshObject(this);
         }
 
         override public ITreeViewItem Replace(object child,

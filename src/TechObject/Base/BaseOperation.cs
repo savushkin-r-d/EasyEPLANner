@@ -74,7 +74,7 @@ namespace TechObject
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : TreeViewItem, IBaseOperation, IOnValueChanged
+    public class BaseOperation : TreeViewItem, IBaseOperation
     {
         public BaseOperation(Mode owner)
         {

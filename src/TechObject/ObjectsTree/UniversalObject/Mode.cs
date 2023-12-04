@@ -12,7 +12,7 @@ namespace TechObject
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : TreeViewItem, IOnValueChanged
+    public class Mode : TreeViewItem
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).

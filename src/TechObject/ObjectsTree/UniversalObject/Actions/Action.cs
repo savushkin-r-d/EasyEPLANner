@@ -132,7 +132,7 @@ namespace TechObject
     /// <summary>
     /// Действие над устройствами (включение, выключение и т.д.).
     /// </summary>
-    public class Action : TreeViewItem, IAction, IOnValueChanged
+    public class Action : TreeViewItem, IAction
     {
         /// <summary>
         /// Создание нового действия.

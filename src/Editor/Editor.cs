@@ -54,6 +54,9 @@ namespace Editor
             editorForm.RefreshTree();
         }
 
+        public void RefreshObject(object item)
+            => EditorForm.editorTView.RefreshObject(item);
+
         [ExcludeFromCodeCoverage]
         public DialogResult DialogResetExtraProperties()
         {

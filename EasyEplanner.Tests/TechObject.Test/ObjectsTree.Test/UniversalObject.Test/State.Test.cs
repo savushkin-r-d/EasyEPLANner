@@ -106,5 +106,24 @@ namespace EasyEplanner.Tests
 
             Assert.IsTrue(stepUpdateNullCalled);
         }
+
+        [Test]
+        public void Move()
+        {
+            var state = new State(State.StateType.IDLE, null, true);
+            var step1 = state.Insert();
+            var step2 = state.Insert();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreSame(step2, state.MoveUp(step2));
+                Assert.IsNull(state.MoveUp(step2));
+                Assert.IsNull(state.MoveUp(0));
+
+                Assert.AreSame(step2, state.MoveDown(step2));
+                Assert.IsNull(state.MoveDown(step2));
+                Assert.IsNull(state.MoveDown(0));
+            });
+        }
     }
 }

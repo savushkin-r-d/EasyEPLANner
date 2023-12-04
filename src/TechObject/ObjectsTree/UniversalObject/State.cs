@@ -9,7 +9,7 @@ namespace TechObject
     /// Состояние операции. Содержит группу шагов, выполняемых последовательно
     /// (или в ином порядке).
     /// </summary>
-    public class State : TreeViewItem, IOnValueChanged
+    public class State : TreeViewItem
     {
         /// <summary>
         /// Получение шага по номеру (нумерация с -1 - шаг операции, который 
@@ -368,7 +368,7 @@ namespace TechObject
                 return null;
 
 
-            Swap(index, index - 1);
+            SwapSteps(index, index - 1);
             OnValueChanged(this);
 
             return child as ITreeViewItem;
@@ -386,16 +386,16 @@ namespace TechObject
                 return null;
 
             
-            Swap(index, index + 1);
+            SwapSteps(index, index + 1);
             OnValueChanged(this);
 
             return child as ITreeViewItem;
         }
 
-        private void Swap(int index1, int index2)
+        private void SwapSteps(int index1, int index2)
         {
             (steps[index1], steps[index2]) = (steps[index2], steps[index1]);
-            Editor.Editor.GetInstance().EditorForm.editorTView.RefreshObject(this);
+            Editor.Editor.GetInstance().RefreshObject(this);
         }
 
         override public ITreeViewItem Replace(object child, object copyObject)
@@ -566,7 +566,7 @@ namespace TechObject
                     step != null && stepsByName[0] != null &&
                     stepsByName[0] != step)
                 {
-                    Swap(stepIndex, Steps.IndexOf(stepsByName[0]));
+                    SwapSteps(stepIndex, Steps.IndexOf(stepsByName[0]));
                 }
 
                 if (step != null && stepByBaseStep != null &&
