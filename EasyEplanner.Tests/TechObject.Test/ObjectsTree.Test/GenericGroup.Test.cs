@@ -53,6 +53,15 @@ namespace TechObjectTests
             };
 
             var baseObject = new BaseObject("BTO", techObjectManagerMock.Object);
+            typeof(BaseObject).GetField("baseTechObject",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(baseObject, baseTechObject);
+
+            var baseObject2 = new BaseObject("BTO2", techObjectManagerMock.Object);
+            typeof(BaseObject).GetField("baseTechObject",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(baseObject, baseTechObject_2);
+
 
             var techObject1 = new TechObject.TechObject("Танк", GetN => 1, 1, 2, "TANK", -1, "", "", baseTechObject);
             var techObject2 = new TechObject.TechObject("Танк", GetN => 2, 2, 2, "TANK", -1, "", "", baseTechObject);
@@ -61,6 +70,7 @@ namespace TechObjectTests
 
             var techObject3 = new TechObject.TechObject("Танк", GetN => 2, 2, 2, "TANK", -1, "", "", baseTechObject_2);
             techObject3.MarkToCut = true;
+            techObject3.AddParent(baseObject2);
 
             techObjects.Add(techObject1);
             techObjects.Add(techObject2);
@@ -87,8 +97,50 @@ namespace TechObjectTests
                 var NotTechObjectNullResult = genericGroup.InsertCopy(1);
                 Assert.IsNull(NotTechObjectNullResult);
 
-                var TechObjectOtherParentNullResult = genericGroup.InsertCopy(techObject3);
-                Assert.IsNull(TechObjectOtherParentNullResult);
+                var OtherBaseTechObjectCut = genericGroup.InsertCopy(techObject3);
+                Assert.AreSame(techObject3, OtherBaseTechObjectCut);
+                Assert.AreEqual(4, techObjects.Count);
+                Assert.AreEqual(3, genericGroup.InheritedTechObjects.Count);
+            });
+        }
+
+        [Test]
+        public void Cut()
+        {
+            var techObjects = new List<TechObject.TechObject>();
+
+            var techObjectManagerMock = new Mock<ITechObjectManager>();
+            techObjectManagerMock.Setup(tom => tom.TechObjects).Returns(techObjects);
+
+            var baseTechObject = new BaseTechObject()
+            {
+                EplanName = "BTO",
+                Name = "BTO_NAME",
+            };
+
+            var techObject = new TechObject.TechObject("Танк", GetN => 1, 1, 2, "TANK", -1, "", "", baseTechObject);
+
+            var baseObject = new BaseObject("BTO", techObjectManagerMock.Object);
+            typeof(BaseObject).GetField("baseTechObject",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(baseObject, baseTechObject);
+
+            var genericGroup = new GenericGroup(techObject, baseObject, techObjectManagerMock.Object);
+            genericGroup.AddTechObjectWhenLoadFromLua(techObject);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsNotNull(techObject.GenericTechObject);
+                Assert.AreEqual(1, genericGroup.InheritedTechObjects.Count);
+
+
+                var res = genericGroup.Cut(techObject);
+                Assert.AreSame(techObject, res);
+                Assert.IsNull(techObject.GenericTechObject);
+                Assert.AreEqual(0, genericGroup.InheritedTechObjects.Count);
+
+                res = genericGroup.Cut(baseObject);
+                Assert.IsNull(res);
             });
         }
 
