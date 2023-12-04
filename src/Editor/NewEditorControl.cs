@@ -30,6 +30,8 @@ namespace Editor
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
+            searchIterator.IndexChanged += SearchIterator_IndexChanged;
+
             //Фильтр
             editorTView.ModelFilter = new ModelFilter((obj)
                 => (obj as ITreeViewItem).Filter(searchText, hideEmptyItemsBtn.Checked));
@@ -326,7 +328,7 @@ namespace Editor
             // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
             // так как они ломают отрисовку
             // (переключаются вкладки дерево-список на оригинальном окне)
-            if (wParam == PI.WM.KEYDOWN && Ctrl && 
+            if (wParam == PI.WM.KEYDOWN && Ctrl &&
                 (vkCode == PI.VIRTUAL_KEY.VK_PRIOR ||
                  vkCode == PI.VIRTUAL_KEY.VK_NEXT))
             {
@@ -395,13 +397,13 @@ namespace Editor
         /// <summary>
         /// Комманды работы с текстом по соответствующим клавишам
         /// </summary>
-        private static readonly Dictionary<uint, uint> KeyCommands 
+        private static readonly Dictionary<uint, uint> KeyCommands
             = new Dictionary<uint, uint>
-        {
-            [(uint)Keys.X] = (int)PI.WM.CUT,    // Вырезать
-            [(uint)Keys.C] = (int)PI.WM.COPY,   // Копировать
-            [(uint)Keys.V] = (int)PI.WM.PASTE,  // Втсавить
-        };
+            {
+                [(uint)Keys.X] = (int)PI.WM.CUT,    // Вырезать
+                [(uint)Keys.C] = (int)PI.WM.COPY,   // Копировать
+                [(uint)Keys.V] = (int)PI.WM.PASTE,  // Втсавить
+            };
 
         /// <summary>
         /// Функция для обработки завершения работы окна редактора.
@@ -483,11 +485,12 @@ namespace Editor
             PI.GetWindowRect(dialogPtr, out rect);
 
             mainTableLayoutPanel.Location = new Point(0, 0);
-            
+
             mainTableLayoutPanel.Width = rect.Right - rect.Left;
             mainTableLayoutPanel.Height = rect.Bottom - rect.Top;
 
-            tableLayoutPanelSearchBox.Refresh();
+            // Перерисовка окна поиска
+            searchBoxTLP.Invalidate();
         }
 
         public static bool editIsShown = false; //Показано ли окно.
@@ -580,7 +583,7 @@ namespace Editor
                 {
                     if (drawDev_toolStripButton.Checked is false)
                         continue;
-                        
+
                     ProjectManager.GetInstance().RemoveHighLighting();
                     if (itemDraw.IsDrawOnEplanPage)
                         drawInfoList.AddRange(itemDraw.GetObjectToDrawOnEplanPage());
@@ -660,7 +663,7 @@ namespace Editor
                         editorTView.SelectedIndex--;
                     editorTView.FocusedObject = editorTView.SelectedObject;
                     break;
-                
+
                 //// Переходу к следующему элементу
                 case Keys.Down:
                     if (singleSelection is false)
@@ -803,7 +806,7 @@ namespace Editor
             {
                 if (item.IsDeletable is false)
                     continue;
-                
+
                 DialogResult showWarningResult;
                 if (item.ShowWarningBeforeDelete && permissionToDelete is false)
                 {
@@ -830,7 +833,7 @@ namespace Editor
                     {
                         editorTView.RefreshObjects(item.Items);
                     }
-                    
+
                 }
             }
             if (itemsDeleted)
@@ -939,7 +942,7 @@ namespace Editor
                 ITreeViewItem itemParent = item.Parent;
                 ITreeViewItem isMove = itemParent.MoveDown(item);
                 if (isMove != null) // Если перемещенный объект не null
-                {       
+                {
                     editorTView.RefreshObjects(itemParent.Items);
                 }
                 HiglihtItems();
@@ -1759,8 +1762,8 @@ namespace Editor
             bool singleSelection = items.Count == 1;
 
             var item = items.FirstOrDefault();
-            
-            if (items is null || items.Count <= 0 || item is null) 
+
+            if (items is null || items.Count <= 0 || item is null)
                 return;
 
             // Создание нового типового объекта
@@ -1781,26 +1784,26 @@ namespace Editor
             contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
                 .Enabled = Editable && items.TrueForAll(i => i.IsCopyable);
             contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
-                .Enabled = Editable && (item.Parent?.IsCuttable ?? false) 
+                .Enabled = Editable && (item.Parent?.IsCuttable ?? false)
                 && items.TrueForAll(i => i.Parent == item.Parent);
 
             // Возможность вставки и замены скопированного элемента
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
-                .Enabled = Editable && item.IsInsertableCopy 
+                .Enabled = Editable && item.IsInsertableCopy
                 && copyItems != null && singleSelection;
             contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
-                .Enabled = Editable && item.IsReplaceable && copyItems != null 
+                .Enabled = Editable && item.IsReplaceable && copyItems != null
                 && (copyItems.Count() == 1)
-                && (copyItems.SingleOrDefault() as ITreeViewItem)?.MarkToCut is false 
-                && (copyItems.SingleOrDefault()?.GetType() == item.GetType()) 
+                && (copyItems.SingleOrDefault() as ITreeViewItem)?.MarkToCut is false
+                && (copyItems.SingleOrDefault()?.GetType() == item.GetType())
                 && singleSelection;
 
             // Возможность перемещения объектов
             contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
-                .Enabled = Editable && (item.Parent?.CanMoveUp(item) ?? false) 
+                .Enabled = Editable && (item.Parent?.CanMoveUp(item) ?? false)
                 && singleSelection;
             contextMenuStrip.Items[nameof(moveDownToolStripMenuItem)]
-                .Enabled = Editable && (item.Parent?.CanMoveDown(item) ?? false) 
+                .Enabled = Editable && (item.Parent?.CanMoveDown(item) ?? false)
                 && singleSelection;
 
             // toolTip показывает скопированный или вырезанный элемент
@@ -1857,7 +1860,6 @@ namespace Editor
         {
             var rect = e.ClipRectangle;
             rect.Inflate(-1, -1);
-
             e.Graphics.Clear(Color.White);
             e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.Black)), rect);
         }
@@ -1871,7 +1873,8 @@ namespace Editor
         {
             if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
             {
-                formatNumericUpDown_SearchSelectedItem.Value = 0;
+                searchIterator.Maximum = 0;
+
                 searchText = string.Empty;
 
                 UpdateModelFilter();
@@ -1919,40 +1922,70 @@ namespace Editor
 
         private void textBox_search_Leave(object sender, EventArgs e)
         {
-            if (textBox_search.Text == string.Empty)
+            if (textBox_search.Text == string.Empty && UpdatingModelFilter is false)
             {
                 textBox_search.ForeColor = Color.Gray;
                 textBox_search.Text = "Поиск...";
+                searchBoxTLP.Visible = false;
+                searchTSButton.Visible = true;
             }
+        }
+
+        /// <summary>
+        /// Кнопка поиска, расскрывает (Visible) поисковую строку, сама скрывается,
+        /// если поле поиска будет постым и без фокуса, то автоматически скроется 
+        /// и снова покажется кнопка поиска.
+        /// </summary>
+        private void SearchTSButton_Click(object sender, EventArgs e)
+        {
+            searchTSButton.Visible = false;
+            searchBoxTLP.Visible = true;
+
+            textBox_search.Focus();
         }
 
         private void UpdateModelFilter()
         {
+            UpdatingModelFilter = true;
+
+            bool searchBoxWasFocused = textBox_search.Focused;
+
+
             editorTView.UseFiltering = false;
 
             FoundTreeViewItemsList.Clear();
-            formatNumericUpDown_SearchSelectedItem.Value = 0;
             treeViewItemsList.ForEach(item => item.ResetFilter());
 
             if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
             {
                 editorTView.UseFiltering = true;
-                formatNumericUpDown_SearchSelectedItem.Maximum = FoundTreeViewItemsList.Count;
+                searchIterator.Maximum = FoundTreeViewItemsList.Count;
             }
+
+
+            if (searchBoxWasFocused)
+                textBox_search.Focus();
+
+            UpdatingModelFilter = false;
         }
 
-        private void formatNumericUpDown_SearchSelectedItem_ValueChanged(object sender, EventArgs e)
-        {
-            var item = FoundTreeViewItemsList?.ElementAtOrDefault((int)formatNumericUpDown_SearchSelectedItem.Value - 1);
+        /// <summary>
+        /// Свойство, устанавливающееся при обновлении фильтра
+        /// </summary>
+        private bool UpdatingModelFilter { get; set; } = false;
 
-            if (item != null)
-            {
-                RecursiveExpand(item.Parent);
-                if (editorTView.CanExpand(item))
-                    editorTView.Expand(item);
-                editorTView.SelectObject(item, true);
-                editorTView.EnsureModelVisible(item);
-            }
+        private void SearchIterator_IndexChanged(object sender, int index)
+        {
+            var item = FoundTreeViewItemsList?.ElementAtOrDefault(index - 1);
+
+            if (item is null)
+                return;
+
+            RecursiveExpand(item.Parent);
+            if (editorTView.CanExpand(item))
+                editorTView.Expand(item);
+            editorTView.SelectObject(item, true);
+            editorTView.EnsureModelVisible(item);
         }
 
         private void RecursiveExpand(ITreeViewItem parent)

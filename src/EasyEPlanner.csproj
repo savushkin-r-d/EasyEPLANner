@@ -129,6 +129,12 @@
     <Compile Include="Device\IODevices\F.cs" />
     <Compile Include="Device\IODevices\C.cs" />
     <Compile Include="Device\IODevices\HLA.cs" />
+    <Compile Include="Editor\Controls\SearchIterator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\Controls\SearchIterator.Designer.cs">
+      <DependentUpon>SearchIterator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\DrawInfo.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\IBaseObjChangeable.cs" />
@@ -157,12 +163,6 @@
     </Compile>
     <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Editor\ObjectProperty.cs" />
-    <Compile Include="Editor\Controls\FormatNumericUpDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\Controls\FormatNumericUpDown.Designer.cs">
-      <DependentUpon>FormatNumericUpDown.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editor\ObjectAdder\ObjectAdder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -389,6 +389,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\Controls\SearchIterator.resx">
+      <DependentUpon>SearchIterator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\ImportExport\TechObjectsExportForm.resx">
       <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
