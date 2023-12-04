@@ -102,8 +102,13 @@ namespace Editor
         /// <param name="attachedObjects">Привязанные агрегаты</param>
         public TechObject.TechObject LoadObjects(int globalNumber, int techN, 
             string name, int techType, string nameEplan, int cooperParamNumber, 
-            string NameBC, string baseTechObjectName, string attachedObjects)
+            string NameBC, string baseTechObjectName, string attachedObjects,
+            int genericTechObjectNumber, bool isGeneric)
         {
+            //Не используются для импорта:
+            _ = genericTechObjectNumber;
+            _ = isGeneric;
+
             var baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObjectCopy(baseTechObjectName);
 
