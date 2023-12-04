@@ -9,7 +9,7 @@ namespace TechObject
     /// Состояние операции. Содержит группу шагов, выполняемых последовательно
     /// (или в ином порядке).
     /// </summary>
-    public class State : TreeViewItem, IOnValueChanged
+    public class State : TreeViewItem
     {
         /// <summary>
         /// Получение шага по номеру (нумерация с -1 - шаг операции, который 
@@ -359,39 +359,43 @@ namespace TechObject
         override public ITreeViewItem MoveUp(object child)
         {
             var step = child as Step;
-            if (step != null)
-            {
-                int index = steps.IndexOf(step);
-                if (index > 1)
-                {
-                    steps.Remove(step);
-                    steps.Insert(index - 1, step);
+            if (step is null)
+                return null;
 
-                    steps[index].AddParent(this);
-                    return steps[index];
-                }
-            }
+            int index = steps.IndexOf(step);
 
-            return null;
+            if (index <= 1)
+                return null;
+
+
+            SwapSteps(index, index - 1);
+            OnValueChanged(this);
+
+            return child as ITreeViewItem;
         }
 
         override public ITreeViewItem MoveDown(object child)
         {
             var step = child as Step;
-            if (step != null)
-            {
-                int index = steps.IndexOf(step);
-                if (index <= steps.Count - 2 && index > 0)
-                {
-                    steps.Remove(step);
-                    steps.Insert(index + 1, step);
+            if (step is null)
+                return null;
 
-                    steps[index].AddParent(this);
-                    return steps[index];
-                }
-            }
+            int index = steps.IndexOf(step);
+            
+            if (index > steps.Count - 2 || index <= 0)
+                return null;
 
-            return null;
+            
+            SwapSteps(index, index + 1);
+            OnValueChanged(this);
+
+            return child as ITreeViewItem;
+        }
+
+        private void SwapSteps(int index1, int index2)
+        {
+            (steps[index1], steps[index2]) = (steps[index2], steps[index1]);
+            Editor.Editor.GetInstance().RefreshObject(this);
         }
 
         override public ITreeViewItem Replace(object child, object copyObject)
@@ -552,8 +556,25 @@ namespace TechObject
 
             foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count))
             {
-                var step = Steps.ElementAtOrDefault(stepIndex);
                 var genericStep = genericState.Steps.ElementAtOrDefault(stepIndex);
+
+                var step = Steps.ElementAtOrDefault(stepIndex);
+                var stepByBaseStep = Steps.Find(s => s.GetBaseStepLuaName() == genericStep.GetBaseStepLuaName() && genericStep.GetBaseStepLuaName() != "");
+                var stepsByName = Steps.FindAll(s => s.GetStepName() == genericStep.GetStepName());
+
+                if (stepsByName.Count == 1 &&
+                    step != null && stepsByName[0] != null &&
+                    stepsByName[0] != step)
+                {
+                    SwapSteps(stepIndex, Steps.IndexOf(stepsByName[0]));
+                }
+
+                if (step != null && stepByBaseStep != null &&
+                    step != stepByBaseStep)
+                {
+                    step.SetNewValue("", true);
+                    stepByBaseStep.SetNewValue("", true);
+                }
 
                 if (genericStep is null)
                     continue;

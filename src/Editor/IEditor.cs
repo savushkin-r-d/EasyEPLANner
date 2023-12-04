@@ -31,6 +31,11 @@ namespace Editor
         void RefreshEditor();
 
         /// <summary>
+        /// Обновить элементв
+        /// </summary>
+        void RefreshObject(object item);
+
+        /// <summary>
         /// Диалоговое окно с подтверждением сброса доп.свойств агрегатов в операции
         /// </summary>
         /// <returns>

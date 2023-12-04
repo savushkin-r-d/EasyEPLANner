@@ -12,7 +12,7 @@ namespace TechObject
     /// Шаг технологического объекта. Состоит из параллельно выполняемых 
     /// действий.
     /// </summary>
-    public class Step : TreeViewItem, IOnValueChanged
+    public class Step : TreeViewItem
     {
         /// <summary>
         /// Создание нового шага.

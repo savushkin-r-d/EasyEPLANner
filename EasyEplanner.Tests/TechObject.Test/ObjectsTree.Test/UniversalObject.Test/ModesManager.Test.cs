@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Editor;
+using Moq;
 using NUnit.Framework;
 
 
@@ -73,8 +74,31 @@ namespace TechObject.Tests
             {
                 Assert.IsTrue(modesManager.CanMoveDown(mode1));
                 Assert.IsFalse(modesManager.CanMoveDown(mode2));
+                Assert.IsFalse(modesManager.CanMoveDown(0));
                 Assert.IsFalse(modesManager.CanMoveUp(mode1));
                 Assert.IsTrue(modesManager.CanMoveUp(mode2));
+                Assert.IsFalse(modesManager.CanMoveUp(0));
+            });
+        }
+
+        [Test]
+        public void Move()
+        {
+            var editorMock = new Mock<IEditor>();
+
+            var modesManager = new ModesManager(null);
+            var mode1 = modesManager.AddMode("operation 1", "");
+            var mode2 = modesManager.AddMode("operation 2", "");
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreSame(mode2, modesManager.MoveUp(mode2));
+                Assert.IsNull(modesManager.MoveUp(mode2));
+                Assert.IsNull(modesManager.MoveUp(0));
+
+                Assert.AreSame(mode2, modesManager.MoveDown(mode2));
+                Assert.IsNull(modesManager.MoveDown(mode2));
+                Assert.IsNull(modesManager.MoveDown(0));
             });
         }
     }
