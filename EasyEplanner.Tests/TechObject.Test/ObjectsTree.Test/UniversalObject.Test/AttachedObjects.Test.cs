@@ -104,5 +104,81 @@ namespace TechObjectTests
 
             Assert.AreEqual(expectedResultString, res);
         }
+
+        [Test]
+        public void InsertCopy()
+        {
+            var techObjectManagerMock = new Mock<ITechObjectManager>();
+
+            var baseTechObject_tank = new BaseTechObject()
+            {
+                S88Level = 1,
+                EplanName = "TANK",
+                Name = "tank",
+            };
+
+            var baseTechObject_aggregate = new BaseTechObject()
+            {
+                S88Level = 2,
+                EplanName = "TANK",
+                Name = "aggregate_1",
+            };
+
+            var baseTechObject_aggregate2 = new BaseTechObject()
+            {
+                S88Level = 2,
+                EplanName = "TANK",
+                Name = "aggregate_2",
+            };
+
+            var techObject_1 = new TechObject.TechObject("Танк", GetN => 1, 1, 2, "", -1, "", "", baseTechObject_tank);
+            var techObject_2 = new TechObject.TechObject("Агрегат", GetN => 2, 2, 2, "", -1, "", "", baseTechObject_tank);
+            var techObject_3 = new TechObject.TechObject("Агрегат", GetN => 3, 3, 3, "", -1, "", "", baseTechObject_aggregate);
+            var techObject_4 = new TechObject.TechObject("Агрегат", GetN => 4, 4, 3, "", -1, "", "", baseTechObject_aggregate);
+            var techObject_5 = new TechObject.TechObject("Агрегат2", GetN => 5, 5, 3, "", -1, "", "", baseTechObject_aggregate2);
+
+            techObjectManagerMock.Setup(m => m.GetTObject(1)).Returns(techObject_1);
+            techObjectManagerMock.Setup(m => m.GetTObject(2)).Returns(techObject_2);
+            techObjectManagerMock.Setup(m => m.GetTObject(3)).Returns(techObject_3);
+            techObjectManagerMock.Setup(m => m.GetTObject(4)).Returns(techObject_4);
+            techObjectManagerMock.Setup(m => m.GetTObject(5)).Returns(techObject_5);
+
+            techObjectManagerMock.Setup(m => m.GetTechObjectN(techObject_1)).Returns(1);
+            techObjectManagerMock.Setup(m => m.GetTechObjectN(techObject_2)).Returns(2);
+            techObjectManagerMock.Setup(m => m.GetTechObjectN(techObject_3)).Returns(3);
+            techObjectManagerMock.Setup(m => m.GetTechObjectN(techObject_4)).Returns(4);
+            techObjectManagerMock.Setup(m => m.GetTechObjectN(techObject_5)).Returns(5);
+
+            var managerInstance = typeof(TechObject.TechObject).GetProperty("TechObjectManagerInstance",
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.Public);
+            managerInstance.SetValue(techObject_1, techObjectManagerMock.Object);
+            managerInstance.SetValue(techObject_2, techObjectManagerMock.Object);
+            managerInstance.SetValue(techObject_3, techObjectManagerMock.Object);
+            managerInstance.SetValue(techObject_4, techObjectManagerMock.Object);
+            managerInstance.SetValue(techObject_5, techObjectManagerMock.Object);
+
+            var baseStrategyTechObjectManager = typeof(BaseStrategy).GetField("techObjectManager",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+            baseStrategyTechObjectManager.SetValue(techObject_1.AttachedObjects.WorkStrategy,
+                techObjectManagerMock.Object);
+            baseStrategyTechObjectManager.SetValue(techObject_2.AttachedObjects.WorkStrategy,
+                techObjectManagerMock.Object);
+
+            Assert.Multiple(() =>
+            {
+                techObject_1.AttachedObjects.SetNewValue("3");
+                techObject_2.AttachedObjects.SetNewValue("4 5");
+
+                techObject_1.AttachedObjects.InsertCopy(techObject_2.AttachedObjects);
+                Assert.AreEqual("3 5", techObject_1.AttachedObjects.Value);
+
+                techObject_1.AttachedObjects.Replace(null, techObject_2.AttachedObjects);
+                Assert.AreEqual("4 5", techObject_1.AttachedObjects.Value);
+            });
+
+
+        }
     }
 }

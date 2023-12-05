@@ -211,8 +211,8 @@ namespace TechObject
 
             foreach (var number in objectNumbers)
             {
-                TechObject removingObject = TechObjectManager
-                    .GetInstance().GetTObject(number);
+                TechObject removingObject = Owner
+                    .TechObjectManagerInstance.GetTObject(number);
                 BaseTechObject removingBaseTechObject = removingObject
                     .BaseTechObject;
                 List<BaseParameter> properties = removingBaseTechObject
@@ -367,7 +367,7 @@ namespace TechObject
             if (Owner.BaseTechObject.S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
             {
                 List<TechObject> newObjects = newValues
-                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .Select(x => Owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
 
                 var usedTypes = new HashSet<string>();
@@ -386,12 +386,13 @@ namespace TechObject
 
         #region реализация ITreeViewItem
         public override ITreeViewItem InsertCopy(object obj)
-        {
-            
-            if ( obj is AttachedObjects copy)
+        {   
+            if ( obj is AttachedObjects attachedObjects)
             {
-                List<int> copyValues = strategy.GetValidTechObjNums(copy.Value, copy.Owner.GlobalNum, copy.Owner is GenericTechObject);
-                List<int> oldValues = strategy.GetValidTechObjNums(Value, this.Owner.GlobalNum, Owner is GenericTechObject);
+                List<int> copyValues = strategy.GetValidTechObjNums(attachedObjects.Value,
+                    attachedObjects.Owner.GlobalNum, attachedObjects.Owner is GenericTechObject);
+                List<int> oldValues = strategy.GetValidTechObjNums(Value,
+                    this.Owner.GlobalNum, Owner is GenericTechObject);
 
                 List<int> newValues = oldValues.Union(copyValues).ToList();
 
@@ -404,11 +405,10 @@ namespace TechObject
 
         public override ITreeViewItem Replace(object child, object copyObject)
         {
-            var copy = copyObject as AttachedObjects;
-
-            if (copy != null)
+            if (copyObject is AttachedObjects copyAttachedObjects)
             {
-                List<int> newValues = strategy.GetValidTechObjNums(copy.Value, copy.Owner.GlobalNum, copy.Owner is GenericTechObject);
+                List<int> newValues = strategy.GetValidTechObjNums(copyAttachedObjects.Value,
+                    copyAttachedObjects.Owner.GlobalNum, copyAttachedObjects.Owner is GenericTechObject);
 
                 SetNewValues(newValues);
                 return this;
@@ -709,7 +709,8 @@ namespace TechObject
                     .Where(n => int.TryParse(n, out _))
                     .Select(int.Parse)
                     .Where(num => num > 0).ToList();
-                List<int> allowedObjectsNums = AllowedObjects?.Select(objType => (int)objType).ToList();
+                List<int> allowedObjectsNums = AllowedObjects?
+                    .Select(objType => (int)objType).ToList() ?? new List<int>();
 
                 foreach (var attachedObjectIndex in numbers)
                 {
