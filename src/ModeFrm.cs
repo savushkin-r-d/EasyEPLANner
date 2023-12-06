@@ -348,7 +348,7 @@ namespace EasyEPlanner
             Node parentNode = subNode.Parent;
             int objectNum = TechObject.TechObjectManager
                 .GetInstance()
-                .GetTechObjectN(parentNode.Text.Split(new[] { " {" }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                .GetTechObjectN(parentNode.Tag);
             int modeNum = nodes.IndexOf(subNode) + 1;
             bool correctRestriction =
                 restriction.RestrictDictionary != null &&
@@ -379,7 +379,7 @@ namespace EasyEPlanner
 
             int objectNum = TechObject.TechObjectManager
                 .GetInstance()
-                .GetTechObjectN(subNode.Text.Split(new[] { " {" }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                .GetTechObjectN(subNode.Tag);
             bool correctObject = attachedObjects.Value
                 .Split(' ').ToArray()
                 .Contains(objectNum.ToString());
@@ -830,13 +830,13 @@ namespace EasyEPlanner
                     if (item.IsMainObject)
                     {
                         int objectIndex = TechObject.TechObjectManager
-                            .GetInstance().GetTechObjectN(node.Text.Split(new[] { " {" }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                            .GetInstance().GetTechObjectN(node.Tag);
                         AddToResDict(objectIndex);
                     }
                     else if (item.IsMode)
                     {
                         int objectIndex = TechObject.TechObjectManager
-                            .GetInstance().GetTechObjectN(node.Parent.Text);
+                            .GetInstance().GetTechObjectN(node.Parent.Tag);
                         int modeIndex = node.Parent.Nodes.IndexOf(node) + 1;
                         AddToResDict(objectIndex, modeIndex);
                     }
@@ -916,7 +916,7 @@ namespace EasyEPlanner
             {
                 Node parentNode = node.Parent;
                 int objectIndex = TechObject.TechObjectManager.GetInstance()
-                    .GetTechObjectN(parentNode.Text.Split(new[] { " {" }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                    .GetTechObjectN(parentNode.Tag);
                 int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
 
                 switch(checkState)
@@ -982,7 +982,7 @@ namespace EasyEPlanner
                 CheckState checkState)
             {
                 int objectIndex = TechObject.TechObjectManager.GetInstance()
-                    .GetTechObjectN(node.Text.Split(new[] { " {" }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                    .GetTechObjectN(node.Tag);
 
                 // Заполняем нулями список т.к правая часть не нужна.
                 switch (checkState)
