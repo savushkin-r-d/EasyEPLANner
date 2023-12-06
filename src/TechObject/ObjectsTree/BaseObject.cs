@@ -145,6 +145,8 @@ namespace TechObject
 
             var newGenericObject = new GenericTechObject(baseTechObject.Name,
                 techTypeNum, DefaultEplanName, cooperParamNum, "", "", baseTechObject);
+            newGenericObject.SetUpFromBaseTechObject();
+            
             var newGenericGroup = new GenericGroup(newGenericObject, this, techObjectManager);
 
             globalGenericTechObjects.Add(newGenericGroup.GenericTechObject);
