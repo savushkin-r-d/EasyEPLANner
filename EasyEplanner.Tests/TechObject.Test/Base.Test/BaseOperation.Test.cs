@@ -719,7 +719,7 @@ namespace EasyEplanner.Tests
             {
                 Assert.IsTrue(baseOperation_1.IsCopyable);
                 Assert.IsTrue(baseOperation_1.IsInsertableCopy);
-                Assert.IsTrue(copy is List<BaseParameter>);
+                Assert.IsTrue(copy is BaseOperation);
                 Assert.AreEqual("value", baseOperation_2.Properties.ElementAt(0).Value);
             });
         }

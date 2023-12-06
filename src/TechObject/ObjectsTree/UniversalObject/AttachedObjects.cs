@@ -27,8 +27,9 @@ namespace TechObject
         {
             string oldValue = Value;
             var thisObjNum = owner?.GlobalNum ?? 0;
+            var isGeneric = owner is GenericTechObject;
             List<int> newNumbers = strategy.GetValidTechObjNums(newValue,
-                thisObjNum);
+                thisObjNum, isGeneric);
 
             newValue = string.Join(" ", newNumbers);
             string sortedValue = MoveNewValuesInTheEndOfString(newValue,
@@ -43,7 +44,7 @@ namespace TechObject
                     .Select(x => owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
                 List<TechObject> oldObjects = strategy
-                    .GetValidTechObjNums(oldValue, thisObjNum)
+                    .GetValidTechObjNums(oldValue, thisObjNum, isGeneric)
                     .Select(x => owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
                 bool bindToUnit = owner.BaseTechObject
@@ -210,8 +211,8 @@ namespace TechObject
 
             foreach (var number in objectNumbers)
             {
-                TechObject removingObject = TechObjectManager
-                    .GetInstance().GetTObject(number);
+                TechObject removingObject = Owner
+                    .TechObjectManagerInstance.GetTObject(number);
                 BaseTechObject removingBaseTechObject = removingObject
                     .BaseTechObject;
                 List<BaseParameter> properties = removingBaseTechObject
@@ -290,7 +291,7 @@ namespace TechObject
         {
             var res = "";
             var objNum = TechObjectManager.GetInstance().GetTechObjectN(Owner);
-            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum);
+            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum, Owner is GenericTechObject);
             string checkedValue = string.Join(" ", numbers);
             if (checkedValue != Value)
             {
@@ -366,11 +367,11 @@ namespace TechObject
             if (Owner.BaseTechObject.S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
             {
                 List<TechObject> newObjects = newValues
-                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .Select(x => Owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
 
-                var usedTypes = new HashSet<int>();
-                newValues = newObjects.Where(techObject => usedTypes.Add(techObject.TechType))
+                var usedTypes = new HashSet<string>();
+                newValues = newObjects.Where(techObject => usedTypes.Add(techObject.BaseTechObject.Name))
                     .Select(techObject => techObject.GlobalNum).ToList();
             }
 
@@ -385,13 +386,13 @@ namespace TechObject
 
         #region реализация ITreeViewItem
         public override ITreeViewItem InsertCopy(object obj)
-        {
-            var copy = obj as AttachedObjects;
-
-            if (copy != null)
+        {   
+            if ( obj is AttachedObjects attachedObjects)
             {
-                List<int> copyValues = strategy.GetValidTechObjNums(copy.Value, copy.Owner.GlobalNum);
-                List<int> oldValues = strategy.GetValidTechObjNums(Value, this.Owner.GlobalNum);
+                List<int> copyValues = strategy.GetValidTechObjNums(attachedObjects.Value,
+                    attachedObjects.Owner.GlobalNum, attachedObjects.Owner is GenericTechObject);
+                List<int> oldValues = strategy.GetValidTechObjNums(Value,
+                    this.Owner.GlobalNum, Owner is GenericTechObject);
 
                 List<int> newValues = oldValues.Union(copyValues).ToList();
 
@@ -404,11 +405,10 @@ namespace TechObject
 
         public override ITreeViewItem Replace(object child, object copyObject)
         {
-            var copy = copyObject as AttachedObjects;
-
-            if (copy != null)
+            if (copyObject is AttachedObjects copyAttachedObjects)
             {
-                List<int> newValues = strategy.GetValidTechObjNums(copy.Value, copy.Owner.GlobalNum);
+                List<int> newValues = strategy.GetValidTechObjNums(copyAttachedObjects.Value,
+                    copyAttachedObjects.Owner.GlobalNum, copyAttachedObjects.Owner is GenericTechObject);
 
                 SetNewValues(newValues);
                 return this;
@@ -626,7 +626,7 @@ namespace TechObject
             /// <param name="value">Входная строка</param>
             /// <param name="objNum">Номер редактируемого объекта</param>
             /// <returns></returns>
-            List<int> GetValidTechObjNums(string value, int objNum);
+            List<int> GetValidTechObjNums(string value, int objNum, bool isGeneric);
 
             /// <summary>
             /// Нужно ли инициализировать привязанные объекты
@@ -691,53 +691,43 @@ namespace TechObject
             }
 
             /// <summary>
-            /// Получить корректные номера технологических объектов из
-            /// входной строки
+            /// Получить корректные номера технологических объектов из входной строки
             /// </summary>
+            /// <remarks>
+            /// Проверка на двустороннюю привязку. <br/>
+            /// Если к привязываемым агргатам <paramref name="value"/> уже привязан <paramref name="selectedObjNum"/>, <br/>
+            /// то исключаем такие агргаты. (Не касается типовых объектов)
+            /// </remarks>
             /// <param name="value">Входная строка</param>
-            /// <param name="selectedObjNum">Номер редактируемого объекта
-            /// <returns></returns>
+            /// <param name="selectedObjNum">Номер редактируемого объекта</param>
+            /// <param name="isGeneric"><paramref name="selectedObjNum"/> - типовой объект</param>
             public List<int> GetValidTechObjNums(string value,
-                int selectedObjNum)
+                int selectedObjNum, bool isGeneric)
             {
-                var numbers = new List<int>();
-                string[] numbersAsStringArray = value.Split(' ').ToArray();
-
+                var validNumbers = new List<int>();
+                List<int> numbers = value.Split(' ')
+                    .Where(n => int.TryParse(n, out _))
+                    .Select(int.Parse)
+                    .Where(num => num > 0).ToList();
                 List<int> allowedObjectsNums = AllowedObjects?
-                    .Select(x => (int)x).ToList();
-                foreach (var numAsString in numbersAsStringArray)
+                    .Select(objType => (int)objType).ToList() ?? new List<int>();
+
+                foreach (var attachedObjectIndex in numbers)
                 {
-                    int.TryParse(numAsString, out int number);
-                    if (number <= 0)
-                    {
-                        continue;
-                    }
-
-                    TechObject obj = techObjectManager
-                        .GetTObject(number);
-                    if (obj == null || obj.BaseTechObject == null)
-                    {
+                    var attachedObject = techObjectManager.GetTObject(attachedObjectIndex);
+                    if (attachedObject is null || attachedObject.BaseTechObject is null)
                         return new List<int>();
-                    }
 
-                    var objValues = obj?.AttachedObjects.Value.Split(' ')
-                        .Where(x => int.TryParse(x, out _))
-                        .Select(x => int.Parse(x)).ToList();
-                    if (objValues?.Contains(selectedObjNum) == true)
-                    {
+                    if (isGeneric || 
+                        attachedObject.AttachedObjects.Value.Split(' ').Where(n => int.TryParse(n, out _))
+                        .Select(int.Parse).Contains(selectedObjNum))
                         continue;
-                    }
 
-                    bool correctBaseObject = allowedObjectsNums
-                        .Contains(obj.BaseTechObject.S88Level);
-                    if (correctBaseObject)
-                    {
-                        numbers.Add(number);
-                    }
+                    if (allowedObjectsNums.Contains(attachedObject.BaseTechObject.S88Level))
+                        validNumbers.Add(attachedObjectIndex);
                 }
 
-                numbers = numbers.Distinct().ToList();
-                return numbers;
+                return validNumbers.Distinct().ToList();
             }
 
             /// <summary>
