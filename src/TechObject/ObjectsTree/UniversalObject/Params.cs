@@ -349,6 +349,8 @@ namespace TechObject
                     parameters.Insert(index + 1, par);
 
                     parameters[index].AddParent(this);
+                    
+                    OnValueChanged(this);
                     return parameters[index];
                 }
             }
@@ -368,6 +370,8 @@ namespace TechObject
                     parameters.Insert(index - 1, par);
 
                     parameters[index].AddParent(this);
+
+                    OnValueChanged(this);
                     return parameters[index];
                 }
             }

@@ -118,10 +118,20 @@ namespace Editor
         }
 
         virtual public bool CanMoveUp(object child)
-            => (child as ITreeViewItem).IsMoveable;
+        {
+            var item = child as ITreeViewItem;
+
+            return item?.IsMoveable is true 
+                && item?.Parent?.Items.FirstOrDefault() != item;
+        }
 
         virtual public bool CanMoveDown(object child)
-            => (child as ITreeViewItem).IsMoveable;
+        {
+            var item = child as ITreeViewItem;
+
+            return item?.IsMoveable is true
+                && item?.Parent?.Items.LastOrDefault() != item;
+        }
 
         virtual public bool IsReplaceable
         {
