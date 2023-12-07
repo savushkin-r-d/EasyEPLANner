@@ -1787,6 +1787,16 @@ namespace Editor
             if (items is null || items.Count <= 0 || item is null)
                 return;
 
+            ContextMenuStrip_CreateGenericAndGrouping(item, items, singleSelection);
+            ContextMenuStrip_InsertableAndDeletable(item, items, singleSelection);
+            ContextMenuStrip_CopyableAndCuttable(item, items, singleSelection);
+            ContextMenuStrip_PasteableAndReplaceable(item, items, singleSelection);
+            ContextMenuStrip_Movable(item, items, singleSelection);
+            ContextMenuStrip_ToolTips(item, items, singleSelection);
+        }
+
+        private void ContextMenuStrip_CreateGenericAndGrouping(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
             // Создание нового типового объекта
             contextMenuStrip.Items[nameof(createGenericToolStripMenuItem)].Visible = item is BaseObject && singleSelection;
             contextMenuStrip.Items[nameof(createGenericToolStripMenuItem)].Enabled = Editable;
@@ -1794,12 +1804,20 @@ namespace Editor
             // Объеденение технологических объектов в группу с типовым объектом
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Visible = items.TrueForAll(o => o is TechObject.TechObject && o.Parent is BaseObject);
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Enabled = Editable;
+        }
 
+        private void ContextMenuStrip_InsertableAndDeletable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
             // Возможность создания и удаления объекта
             contextMenuStrip.Items[nameof(createToolStripMenuItem)]
                 .Enabled = Editable && item.IsInsertable && singleSelection;
             contextMenuStrip.Items[nameof(deleteToolStripMenuItem)]
                 .Enabled = Editable && items.TrueForAll(i => i.IsDeletable);
+        }
+
+        private void ContextMenuStrip_CopyableAndCuttable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = singleSelection;
 
             // Возможность копирования и вырезки объекта
             contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
@@ -1807,6 +1825,11 @@ namespace Editor
             contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
                 .Enabled = Editable && (item.Parent?.IsCuttable ?? false)
                 && items.TrueForAll(i => i.Parent == item.Parent);
+        }
+
+        private void ContextMenuStrip_PasteableAndReplaceable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = items;
 
             // Возможность вставки и замены скопированного элемента
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
@@ -1818,16 +1841,28 @@ namespace Editor
                 && (copyItems.SingleOrDefault() as ITreeViewItem)?.MarkToCut is false
                 && (copyItems.SingleOrDefault()?.GetType() == item.GetType())
                 && singleSelection;
+        }
+
+        private void ContextMenuStrip_Movable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = singleSelection;
 
             // Возможность перемещения объектов
             contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
-                .Enabled = Editable 
+                .Enabled = Editable
                 && items.TrueForAll(i => i.Parent == item.Parent && i.IsMoveable)
                 && (item.Parent?.CanMoveUp(items.FirstOrDefault()) ?? false);
             contextMenuStrip.Items[nameof(moveDownToolStripMenuItem)]
                 .Enabled = Editable
                 && items.TrueForAll(i => i.Parent == item.Parent && i.IsMoveable)
                 && (item.Parent?.CanMoveDown(items.LastOrDefault()) ?? false);
+        }
+
+        private void ContextMenuStrip_ToolTips(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = singleSelection;
+            _ = items;
+            _ = item;
 
             // toolTip показывает скопированный или вырезанный элемент
             var copies = copyItems?.Cast<ITreeViewItem>().ToList();

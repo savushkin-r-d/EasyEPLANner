@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Editor;
+using Moq;
 using NUnit.Framework;
 
 namespace Tests.Editor
@@ -453,6 +454,27 @@ namespace Tests.Editor
             var multiselect = item2.QuickMultiSelect();
 
             CollectionAssert.AreEqual(new List<ITreeViewItem>() { item1, item2, item3 }, multiselect);
+        }
+
+        [Test]
+        public void CanMove()
+        {
+            var itemMock1 = new Mock<ITreeViewItem>();
+            itemMock1.Setup(i => i.IsMoveable).Returns(true);
+
+            var itemMock2 = new Mock<ITreeViewItem>();
+            itemMock2.Setup(i => i.IsMoveable).Returns(true);
+
+            var parent = GetNewTreeViewItem();
+            parent.Childs = new ITreeViewItem[] { itemMock1.Object, itemMock2.Object };
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(parent.CanMoveDown(itemMock1.Object));
+                Assert.IsFalse(parent.CanMoveDown(itemMock2.Object));
+                Assert.IsTrue(parent.CanMoveUp(itemMock2.Object));
+                Assert.IsFalse(parent.CanMoveUp(itemMock1.Object));
+            });
         }
 
         public InheritedTreeViewItem GetNewTreeViewItem()

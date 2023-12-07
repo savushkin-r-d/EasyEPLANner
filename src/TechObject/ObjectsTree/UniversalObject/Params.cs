@@ -339,20 +339,16 @@ namespace TechObject
 
         override public ITreeViewItem MoveDown(object child)
         {
-            var par = child as Param;
-            if (par != null)
+            if (child is Param par)
             {
                 int index = parameters.IndexOf(par);
-                if (index <= parameters.Count - 2)
-                {
-                    parameters.Remove(par);
-                    parameters.Insert(index + 1, par);
+                if (index >= parameters.Count - 1)
+                    return null;
 
-                    parameters[index].AddParent(this);
-                    
-                    OnValueChanged(this);
-                    return parameters[index];
-                }
+                SwapParameters(index, index + 1);
+                OnValueChanged(this);
+
+                return par;
             }
 
             return null;
@@ -360,23 +356,24 @@ namespace TechObject
 
         override public ITreeViewItem MoveUp(object child)
         {
-            var par = child as Param;
-            if (par != null)
+            if (child is Param par)
             {
                 int index = parameters.IndexOf(par);
-                if (index > 0)
-                {
-                    parameters.Remove(par);
-                    parameters.Insert(index - 1, par);
+                if (index <= 0)
+                    return null;
 
-                    parameters[index].AddParent(this);
+                SwapParameters(index, index - 1);
+                OnValueChanged(this);
 
-                    OnValueChanged(this);
-                    return parameters[index];
-                }
+                return par;
             }
 
             return null;
+        }
+
+        public void SwapParameters(int index1, int index2)
+        {
+            (parameters[index1], parameters[index2]) = (parameters[index2], parameters[index1]);
         }
 
         override public ITreeViewItem Replace(object child,
@@ -421,6 +418,14 @@ namespace TechObject
             foreach (Param genericPar in genericParams.parameters)
             {
                 var par = GetParam(genericParams.GetIdx(genericPar) - 1);
+                var parByLuaName = parameters.Find(p => p.GetNameLua() == genericPar.GetNameLua() && p.GetNameLua() != "P");
+
+                if (par != null && parByLuaName != null &&
+                    par != parByLuaName)
+                {
+                    SwapParameters(parameters.IndexOf(par), parameters.IndexOf(parByLuaName));
+                    Editor.Editor.GetInstance().RefreshObject(this);
+                }
 
                 if (par is null)
                 {
