@@ -30,10 +30,14 @@ Software engineer creates code in Lua programming language for the project. Easy
 
 ### How to build
 You could clone repository by next command:  
-`git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git`
+```bash
+git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
+```
 
 or, if you are cloned without initializing and updating submodules, try next:  
-`git submodule update --init --recursive`
+```bash
+git submodule update --init --recursive
+```
 
 Congratulations, now you can build our solution (_if you have a EPLAN P8 app_).
 
