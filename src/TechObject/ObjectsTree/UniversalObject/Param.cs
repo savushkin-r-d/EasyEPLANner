@@ -352,6 +352,8 @@ namespace TechObject
 
         public ParamProperty ValueItem => value;
 
+        public ParamProperty MeterItem => meter;
+
         public const string ValuePropertyName = "Значение";
         public const string OperationPropertyName = "Операция";
         public const string MeterPropertyName = "Размерность";
