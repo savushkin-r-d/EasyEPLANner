@@ -58,5 +58,22 @@ namespace TechObjectTests
                 Assert.AreEqual("P", par2.GetNameLua());
             });
         }
+
+        [Test]
+        public void Move()
+        {
+            var parameters = new Params("параметры", "params", false, "", true);
+            var par1 = parameters.AddParam(new Param(GetN => 1, "par 1", false, 0, "c", "same_name", true));
+            var par2 = parameters.AddParam(new Param(GetN => 2, "par 2", false, 0, "c", "same_name", true));
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsNotNull(parameters.MoveUp(par2));
+                Assert.IsNotNull(parameters.MoveDown(par2));
+                Assert.IsNull(parameters.MoveDown(par2));
+                Assert.IsNull(parameters.MoveDown(0));
+                Assert.IsNull(parameters.MoveUp(0));
+            });
+        }
     }
 }

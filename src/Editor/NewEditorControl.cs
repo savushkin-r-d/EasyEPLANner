@@ -614,15 +614,15 @@ namespace Editor
             switch (e.KeyCode)
             {
                 // Перемещение элемента вверх
-                case Keys.Up when e.Control && singleSelection:
+                case Keys.Up when e.Control:
                     if (Editable)
-                        MoveUpItem(item);
+                        MoveUpItem(items);
                     break;
 
                 // Перемещение элемента вниз
-                case Keys.Down when e.Control && singleSelection:
+                case Keys.Down when e.Control:
                     if (Editable)
-                        MoveDownItem(item);
+                        MoveDownItems(items);
                     break;
 
                 // Выделение элементов
@@ -916,38 +916,54 @@ namespace Editor
         /// Передвинуть элемент вверх (Shift + KeyUp)
         /// </summary>
         /// <param name="item">Передвигаемый элемент</param>
-        private void MoveUpItem(ITreeViewItem item)
+        private void MoveUpItem(List<ITreeViewItem> items)
         {
-            if (item.IsMoveable)
+            var parent = items.FirstOrDefault()?.Parent;
+            bool isMove = false;
+
+            if (items.TrueForAll(i => i.Parent == parent && i.IsMoveable) && parent.CanMoveUp(items.FirstOrDefault()))
             {
-                ITreeViewItem itemParent = item.Parent;
-                ITreeViewItem isMove = itemParent.MoveUp(item);
-                if (isMove != null) // Если перемещенный объект не null
+                foreach (var item in items)
                 {
-                    editorTView.RefreshObjects(itemParent.Items);
+                    ITreeViewItem movedItem = parent.MoveUp(item);
+                    isMove |= movedItem != null;
                 }
+            }
+
+            if (isMove)
+            {
+                editorTView.RefreshObjects(parent.Items);
                 HiglihtItems();
             }
-            editorTView.SelectObject(item, true);
+
+            editorTView.SelectObjects(items);
         }
 
         /// <summary>
         /// Передвинуть элемент вниз (Shift + KeyDown)
         /// </summary>
         /// <param name="item">Передвигаемый элемент</param>
-        private void MoveDownItem(ITreeViewItem item)
+        private void MoveDownItems(List<ITreeViewItem> items)
         {
-            if (item.IsMoveable)
+            var parent = items.FirstOrDefault()?.Parent;
+            bool isMove = false;
+
+            if (items.TrueForAll(i => i.Parent == parent && i.IsMoveable) && parent.CanMoveDown(items.LastOrDefault()))
             {
-                ITreeViewItem itemParent = item.Parent;
-                ITreeViewItem isMove = itemParent.MoveDown(item);
-                if (isMove != null) // Если перемещенный объект не null
+                foreach (var item in items.Reverse<ITreeViewItem>())
                 {
-                    editorTView.RefreshObjects(itemParent.Items);
+                    ITreeViewItem movedItem = parent.MoveDown(item);
+                    isMove |= movedItem != null;
                 }
+            }
+
+            if (isMove)
+            {
+                editorTView.RefreshObjects(parent.Items);
                 HiglihtItems();
             }
-            editorTView.SelectObject(item, true);
+            
+            editorTView.SelectObjects(items);
         }
 
         /// <summary>
@@ -1722,19 +1738,19 @@ namespace Editor
 
         private void moveUpButton_Click(object sender, EventArgs e)
         {
-            ITreeViewItem item = GetActiveItem();
-            if (item != null && Editable is true)
+            var items = GetActiveItems();
+            if (items != null && items.Count > 0 && Editable is true)
             {
-                MoveUpItem(item);
+                MoveUpItem(items);
             }
         }
 
         private void moveDownButton_Click(object sender, EventArgs e)
         {
-            ITreeViewItem item = GetActiveItem();
-            if (item != null && Editable is true)
+            var items = GetActiveItems();
+            if (items != null && items.Count > 0&& Editable is true)
             {
-                MoveDownItem(item);
+                MoveDownItems(items);
             }
         }
 
@@ -1768,9 +1784,19 @@ namespace Editor
 
             var item = items.FirstOrDefault();
 
-            if (items is null || items.Count <= 0 || item is null)
+            if (items.Count <= 0 || item is null)
                 return;
 
+            ContextMenuStrip_CreateGenericAndGrouping(item, items, singleSelection);
+            ContextMenuStrip_InsertableAndDeletable(item, items, singleSelection);
+            ContextMenuStrip_CopyableAndCuttable(item, items, singleSelection);
+            ContextMenuStrip_PasteableAndReplaceable(item, items, singleSelection);
+            ContextMenuStrip_Movable(item, items, singleSelection);
+            ContextMenuStrip_ToolTips(item, items, singleSelection);
+        }
+
+        private void ContextMenuStrip_CreateGenericAndGrouping(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
             // Создание нового типового объекта
             contextMenuStrip.Items[nameof(createGenericToolStripMenuItem)].Visible = item is BaseObject && singleSelection;
             contextMenuStrip.Items[nameof(createGenericToolStripMenuItem)].Enabled = Editable;
@@ -1778,12 +1804,20 @@ namespace Editor
             // Объеденение технологических объектов в группу с типовым объектом
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Visible = items.TrueForAll(o => o is TechObject.TechObject && o.Parent is BaseObject);
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Enabled = Editable;
+        }
 
+        private void ContextMenuStrip_InsertableAndDeletable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
             // Возможность создания и удаления объекта
             contextMenuStrip.Items[nameof(createToolStripMenuItem)]
                 .Enabled = Editable && item.IsInsertable && singleSelection;
             contextMenuStrip.Items[nameof(deleteToolStripMenuItem)]
                 .Enabled = Editable && items.TrueForAll(i => i.IsDeletable);
+        }
+
+        private void ContextMenuStrip_CopyableAndCuttable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = singleSelection;
 
             // Возможность копирования и вырезки объекта
             contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
@@ -1791,6 +1825,11 @@ namespace Editor
             contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
                 .Enabled = Editable && (item.Parent?.IsCuttable ?? false)
                 && items.TrueForAll(i => i.Parent == item.Parent);
+        }
+
+        private void ContextMenuStrip_PasteableAndReplaceable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = items;
 
             // Возможность вставки и замены скопированного элемента
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
@@ -1802,14 +1841,28 @@ namespace Editor
                 && (copyItems.SingleOrDefault() as ITreeViewItem)?.MarkToCut is false
                 && (copyItems.SingleOrDefault()?.GetType() == item.GetType())
                 && singleSelection;
+        }
+
+        private void ContextMenuStrip_Movable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = singleSelection;
 
             // Возможность перемещения объектов
             contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
-                .Enabled = Editable && (item.Parent?.CanMoveUp(item) ?? false)
-                && singleSelection;
+                .Enabled = Editable
+                && items.TrueForAll(i => i.Parent == item.Parent && i.IsMoveable)
+                && (item.Parent?.CanMoveUp(items.FirstOrDefault()) ?? false);
             contextMenuStrip.Items[nameof(moveDownToolStripMenuItem)]
-                .Enabled = Editable && (item.Parent?.CanMoveDown(item) ?? false)
-                && singleSelection;
+                .Enabled = Editable
+                && items.TrueForAll(i => i.Parent == item.Parent && i.IsMoveable)
+                && (item.Parent?.CanMoveDown(items.LastOrDefault()) ?? false);
+        }
+
+        private void ContextMenuStrip_ToolTips(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        {
+            _ = singleSelection;
+            _ = items;
+            _ = item;
 
             // toolTip показывает скопированный или вырезанный элемент
             var copies = copyItems?.Cast<ITreeViewItem>().ToList();

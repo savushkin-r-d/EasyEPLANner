@@ -186,6 +186,8 @@ namespace TechObject
 
         public override bool IsInsertableCopy => false;
 
+        public override bool IsMoveable => false;
+
         public override bool IsMainObject => false;
         #endregion
 
