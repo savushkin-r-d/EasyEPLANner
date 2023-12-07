@@ -1784,7 +1784,7 @@ namespace Editor
 
             var item = items.FirstOrDefault();
 
-            if (items is null || items.Count <= 0 || item is null)
+            if (items.Count <= 0 || item is null)
                 return;
 
             ContextMenuStrip_CreateGenericAndGrouping(item, items, singleSelection);
