@@ -24,6 +24,19 @@
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
 
+### Как собрать
+Вы можете клонировать репозиторий этой командой:  
+```bash
+git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
+```
+
+или, если вы склонировали без инициализации и обновления подмодулей, попробуйте это:  
+```bash
+git submodule update --init --recursive
+```
+
+Поздравляем, теперь вы можете собрать это решение (_если у вас есть EPLAN P8 app_).
+
 ### Пользовательская документация
 
 По [этой](../user_manual/ReadMe.md) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
