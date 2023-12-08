@@ -167,15 +167,11 @@ jobs:
         del EplanBaseNetu.dll
         del Microsoft.mshtml.dll
 
-    - name: Pack
-      working-directory: src/bin
-      run: cmake -E tar cfv EasyEPLANner.zip --format=zip ${{env.BUILD_CONFIGURATION}}
-
     - name: Upload artifact    
       uses: actions/upload-artifact@v3
       with:
         name: EasyEPLANner
-        path: src/bin/EasyEPLANner.zip
+        path: src/bin/${{env.BUILD_CONFIGURATION}}
     
   release:
     if: startsWith(github.ref, 'refs/tags/')
@@ -201,9 +197,11 @@ jobs:
       id: assembly-version
       shell: powershell
       run: |
-        Expand-Archive -Force './EasyEPLANner.zip'
-        $version=[System.Reflection.Assembly]::LoadFrom("./EasyEPLANner/Release/EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
+        $version=[System.Reflection.Assembly]::LoadFrom("./EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
         echo "version=$version" >> $env:GITHUB_OUTPUT
+
+    - name: Pack
+      run: cmake -E tar cfv EasyEPLANner.zip --format=zip ./
 
     - name: Create Release
       id: create_release
