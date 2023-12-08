@@ -241,18 +241,25 @@ namespace TechObject
         public string SaveRestrictionAsLua(string prefix)
         {
             var res = new StringBuilder();
+            var genericRstrBldr = new StringBuilder();
 
-            res.Append("generic_restrictions =\n")
-                .Append("\t{\n");
             foreach (GenericTechObject obj in GenericTechObjects)
             {
                 int num = GenericTechObjects.IndexOf(obj) + 1;
-                res.Append(obj.SaveRestrictionAsLua(prefix + "\t", num));
+                genericRstrBldr.Append(obj.SaveRestrictionAsLua(prefix + "\t", num));
             }
-            res.Append("\t}\n")
+
+            if (genericRstrBldr.Length > 0)
+            {
+                res.Append("generic_restrictions =\n")
+                .Append("\t{\n")
+                .Append(genericRstrBldr)
+                .Append("\t}\n")
                 .Append($"{new string('-', 80)}\n")
-                .Append($"{new string('-', 80)}\n")
-                .Append("restrictions =\n")
+                .Append($"{new string('-', 80)}\n");
+            }
+
+            res.Append("restrictions =\n")
                 .Append("\t{\n");
             foreach (TechObject obj in TechObjects)
             {
