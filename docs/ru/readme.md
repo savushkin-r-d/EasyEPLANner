@@ -35,7 +35,7 @@ git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
 git submodule update --init --recursive
 ```
 
-Поздравляем, теперь вы можете собрать это решение (_если у вас есть EPLAN P8 app_).
+Поздравляем, теперь вы можете собрать это решение (_если у вас есть приложение EPLAN P8_).
 
 ### Пользовательская документация
 
