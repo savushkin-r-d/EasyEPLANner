@@ -35,7 +35,7 @@ oder, wenn Sie geklont werden, ohne die Untermodule zu initialisieren und zu akt
 git submodule update --init --recursive
 ```
 
-Herzlichen Glückwunsch, Sie können jetzt diese Lösung erstellen (_wenn Sie die EPLAN P8_ Anwendung haben).
+Herzlichen Glückwunsch, Sie können jetzt diese Lösung erstellen (_wenn Sie die EPLAN P8 Anwendung haben_).
 
 ### Benutzerdokumentation
 Die neueste Version der Benutzerdokumentation für das Projekt finden Sie [hier](../user_manual/ReadMe.md).
