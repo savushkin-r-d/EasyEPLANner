@@ -13,13 +13,25 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
+
     /// <summary>
     /// Читатель привязки устройств.
     /// </summary>
     public class DeviceBindingReader
     {
+
         IProjectHelper projectHelper;
         IApiHelper apiHelper;
+
+        /// <summary>
+        /// Менеджер устройств.
+        /// </summary>
+        DeviceManager deviceManager;
+
+        /// <summary>
+        /// Менеджер узлов и модулей ввода-вывода.
+        /// </summary>
+        IO.IOManager IOManager;
 
         public DeviceBindingReader(IProjectHelper projectHelper, IApiHelper apiHelper)
         {
@@ -612,14 +624,5 @@ namespace EasyEPlanner
         /// </summary>
         Function[] functionsForSearching;
 
-        /// <summary>
-        /// Менеджер устройств.
-        /// </summary>
-        DeviceManager deviceManager;
-
-        /// <summary>
-        /// Менеджер узлов и модулей ввода-вывода.
-        /// </summary>
-        IO.IOManager IOManager;
     }
 }

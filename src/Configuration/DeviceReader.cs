@@ -40,6 +40,10 @@ namespace EasyEPlanner
         IProjectHelper projectHelper;
         IDeviceHelper deviceHelper;
         IIOHelper ioHelper;
+        /// <summary>
+        /// Менеджер устройств.
+        /// </summary>
+        IDeviceManager deviceManager;
 
         public DeviceReader(IApiHelper apiHelper, IDeviceHelper deviceHelper,
             IProjectHelper projectHelper, IIOHelper ioHelper,
@@ -308,9 +312,5 @@ namespace EasyEPlanner
         /// </summary>
         Function[] deviceFunctions;
 
-        /// <summary>
-        /// Менеджер устройств.
-        /// </summary>
-        IDeviceManager deviceManager;
     }
 }

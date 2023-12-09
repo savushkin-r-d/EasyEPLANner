@@ -15,6 +15,32 @@ namespace EasyEPlanner
         IDeviceHelper deviceHelper;
         IProjectHelper projectHelper;
 
+        /// <summary>
+        /// Содержит ли проект узлы ввода-вывода.
+        /// </summary>
+        bool isContainsNodes;
+
+        /// <summary>
+        /// Содержит ли проект управляющий контроллер А1.
+        /// </summary>
+        bool isContainsA1;
+
+        /// <summary>
+        /// Обрабатывающий Regex.
+        /// </summary>
+        Regex IONameRegex;
+
+        /// <summary>
+        /// Номер узла А1, характерного для проектов, где используется 
+        /// Phoenix Contact контроллер для управляющей программы
+        /// </summary>
+        const int numberA1 = 1;
+
+        /// <summary>
+        /// Менеджер узлов и модулей ввода-вывода.
+        /// </summary>
+        IO.IOManager IOManager;
+
         public IOReader(IProjectHelper projectHelper, IDeviceHelper deviceHelper)
         {
             this.IOManager = IO.IOManager.GetInstance();
@@ -451,36 +477,9 @@ namespace EasyEPlanner
         {
             return x.VisibleName.CompareTo(y.VisibleName);
         }
-
-        /// <summary>
-        /// Содержит ли проект узлы ввода-вывода.
-        /// </summary>
-        bool isContainsNodes;
-
-        /// <summary>
-        /// Содержит ли проект управляющий контроллер А1.
-        /// </summary>
-        bool isContainsA1;
-
         /// <summary>
         /// Функции для поиска узлов и модулей ввода-вывода.
         /// </summary>
         List<Function> functionsForSearching;
-
-        /// <summary>
-        /// Обрабатывающий Regex.
-        /// </summary>
-        Regex IONameRegex;
-
-        /// <summary>
-        /// Номер узла А1, характерного для проектов, где используется 
-        /// Phoenix Contact контроллер для управляющей программы
-        /// </summary>
-        const int numberA1 = 1;
-
-        /// <summary>
-        /// Менеджер узлов и модулей ввода-вывода.
-        /// </summary>
-        IO.IOManager IOManager;
     }
 }

@@ -9,6 +9,11 @@ namespace EasyEPlanner
     /// </summary>
     public class ProjectHealthChecker
     {
+        private readonly string connectCommandsChar = "&";
+        private readonly string cmdFileName = "cmd.exe";
+        private ProjectManager projectManager;
+        private EProjectManager eProjectManager;
+
         public ProjectHealthChecker()
         {
             projectManager = ProjectManager.GetInstance();
@@ -204,9 +209,6 @@ namespace EasyEPlanner
             return string.Join(connectCommandsChar, arguments);
         }
 
-        private readonly string connectCommandsChar = "&";
-        private readonly string cmdFileName = "cmd.exe";
-        private ProjectManager projectManager;
-        private EProjectManager eProjectManager;
+
     }
 }

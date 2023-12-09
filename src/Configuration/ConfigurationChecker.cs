@@ -12,7 +12,23 @@ namespace EasyEPlanner
     /// </summary>
     public class ConfigurationChecker
     {
+        /// <summary>
+        /// Доп.поле 1 из свойств проекта
+        /// </summary>
+        private const string rangesIP_FieldName = "EPLAN.Project.UserSupplementaryField1";
+
+        /// <summary>
+        /// Доп.поле 2 из свойств проекта
+        /// </summary>
+        private const string endIpProperty = "EPLAN.Project.UserSupplementaryField2";
+
+        string errors;
+
         IProjectHelper projectHelper;
+        EplanDevice.DeviceManager deviceManager;
+        IO.IOManager IOManager;
+        TechObject.ITechObjectManager techObjectManager;
+        ProjectHealthChecker projectHealthChecker;
 
         public ConfigurationChecker(IProjectHelper projectHelper)
         {
@@ -96,21 +112,8 @@ namespace EasyEPlanner
             } 
         }
 
-        string errors;
 
-        EplanDevice.DeviceManager deviceManager;
-        IO.IOManager IOManager;
-        TechObject.ITechObjectManager techObjectManager;
-        ProjectHealthChecker projectHealthChecker;
 
-        /// <summary>
-        /// Доп.поле 1 из свойств проекта
-        /// </summary>
-        private const string rangesIP_FieldName = "EPLAN.Project.UserSupplementaryField1";
 
-        /// <summary>
-        /// Доп.поле 2 из свойств проекта
-        /// </summary>
-        private const string endIpProperty = "EPLAN.Project.UserSupplementaryField2";
     }
 }
