@@ -43,10 +43,8 @@ namespace TechObject
         override public void Synch(int[] array)
         {
             base.Synch(array);
-            foreach (IAction subAction in subActions)
-            {
-                subAction.Synch(array);
-            }
+            SubActions?.ForEach(sa => sa.Synch(array));
+            parameters?.ForEach(p => p.Synch(array));
         }
         #endregion
 
