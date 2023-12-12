@@ -10,7 +10,7 @@ on:
     types: [ opened, synchronize, labeled ]
   push:
     tags:
-      - 'v*'
+      - '*'
   merge_group:
     types: [ checks_requested ]
     
@@ -52,7 +52,7 @@ jobs:
         (github.event.action == 'labeled' && github.event.label.name == 'safe to test') ||
         ((github.event.action == 'synchronize' || github.event.action == 'opened') && steps.is_organization_member.outputs.response == '204') ||
         github.event_name == 'merge_group' ||
-        contains(github.ref, 'tags/v')
+        startsWith(github.ref, 'refs/tags/')
       run: echo "result=success" >> $env:GITHUB_OUTPUT
     # On linux: >> $GITHUB_OUTPUT
     
@@ -67,6 +67,10 @@ jobs:
     if: needs.check.outputs.result == 'success'
 
     steps:
+    - name: Set Timezone
+      shell: powershell
+      run: Set-Timezone -Id 'Belarus Standard Time'
+
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
@@ -161,75 +165,53 @@ jobs:
         del *.pdb 
         del Eplan.EplApi.*
         del EplanBaseNetu.dll
-
-    - name: Pack
-      working-directory: src/bin
-      run: cmake -E tar cfv EasyEPLANner.zip --format=zip ${{env.BUILD_CONFIGURATION}}
+        del Microsoft.mshtml.dll
 
     - name: Upload artifact    
       uses: actions/upload-artifact@v3
       with:
         name: EasyEPLANner
-        path: src/bin/EasyEPLANner.zip
+        path: src/bin/${{env.BUILD_CONFIGURATION}}
     
   release:
-    if: contains(github.ref, 'tags/v')
+    if: startsWith(github.ref, 'refs/tags/')
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
 
     steps:
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-    
-    - name: Store Release url
-      run: |
-        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
-    - uses: actions/upload-artifact@v1
-      with:
-        path: ./upload_url
-        name: upload_url
+    - name: Set Timezone
+      shell: powershell
+      run: Set-Timezone -Id 'Belarus Standard Time'
 
-          
-  publish:
-    if: contains(github.ref, 'tags/v')
-    name: publish
-    runs-on: ubuntu-latest
-    needs: release
+    - id: get-date
+      run: echo "date=$(date +'%d.%m.%Y')" >> $env:GITHUB_OUTPUT
 
-    steps:
     - name: Download artifact
       uses: actions/download-artifact@v1
       with:
         name: EasyEPLANner
         path: ./
-    
-    - name: Download URL
-      uses: actions/download-artifact@v1
-      with:
-        name: upload_url
-        path: ./
-    
-    - id: set_upload_url
+
+    - name: Get assembly version
+      id: assembly-version
+      shell: powershell
       run: |
-        upload_url=`cat ./upload_url`
-        echo ::set-output name=upload_url::$upload_url
-    
-    - name: Upload to Release
-      id: upload_to_release
-      uses: actions/upload-release-asset@v1.0.1
+        $version=[System.Reflection.Assembly]::LoadFrom("./EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+
+    - name: Pack
+      run: cmake -E tar cfv EasyEPLANner.zip --format=zip ./
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
-        asset_path: ./EasyEPLANner.zip
-        asset_name: EasyEPLANner.zip
-        asset_content_type: application/zip
+        name: ${{ github.ref_name }}
+        body: "Обновление от ${{ steps.get-date.outputs.date }}. Версия надстройки - ${{ steps.assembly-version.outputs.version }}:"
+        files: |
+          EasyEPLANner.zip
+        draft: false
+        prerelease: false
