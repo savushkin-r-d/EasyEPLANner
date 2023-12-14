@@ -24,6 +24,19 @@ EasyEPLANner hilft bei der Beschreibung von technologischen Objekten (Tank, Kess
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
 
+### Wie man baut
+Sie können das Repository mit dem nächsten Befehl klonen:   
+```bash
+git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
+```
+
+oder, wenn Sie geklont werden, ohne die Untermodule zu initialisieren und zu aktualisieren, versuchen Sie Folgendes: 
+```bash
+git submodule update --init --recursive
+```
+
+Herzlichen Glückwunsch, Sie können jetzt diese Lösung erstellen (_wenn Sie die EPLAN P8 Anwendung haben_).
+
 ### Benutzerdokumentation
 Die neueste Version der Benutzerdokumentation für das Projekt finden Sie [hier](../user_manual/ReadMe.md).
 
