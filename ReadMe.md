@@ -1,7 +1,7 @@
 
 # EasyEPLANner - Open Source
 
-**Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).**
+**Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).النسخة العربية هي [هنا](docs/ae/readme.md) **
 
 ### Repository
 
