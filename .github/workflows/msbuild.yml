@@ -201,7 +201,8 @@ jobs:
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
     - name: Pack
-      run: cmake -E tar cfv EasyEPLANner.zip --format=zip ./
+      shell: powershell
+      run: Compress-Archive -Path .\* -Update -DestinationPath EasyEPLANner.zip
 
     - name: Create Release
       id: create_release
