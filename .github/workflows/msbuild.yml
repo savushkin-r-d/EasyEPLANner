@@ -212,7 +212,7 @@ jobs:
       with:
         name: ${{ github.ref_name }}
         body: |
-          Список изменений:
+          **Список изменений**:
           ```ChangeLog
           Обновление от ${{ steps.get-date.outputs.date }}. Версия надстройки - ${{ steps.assembly-version.outputs.version }}:
           
