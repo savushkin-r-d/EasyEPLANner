@@ -60,7 +60,7 @@ Feel free to contact us via Slack or Google group.
 
 ### Code of conduct
 We are [using](docs/CODE_OF_CONDUCT.md)
-standart behavior rules (communication), provided by the GitHub service.
+standard behavior rules (communication), provided by the GitHub service.
 
 
 ### Code style
