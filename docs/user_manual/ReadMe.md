@@ -411,6 +411,7 @@ Phoenix Contact | AXL F DI8/1 DO8/1 1H (2701916) | DI/DO | 8 каналов DI �
 Phoenix Contact | AXL F AI2 AO2 1H 0-10V (2702072) | AI/AO | 2 канала AI и 2 канала DI
 Phoenix Contact | AXL F RS UNI 1H (2688666) | AI/AO | Коммуникационный модуль RS-232, RS-485, RS-422
 Phoenix Contact | AXL F AI8 1F | AI | 8 каналов
+Phoenix Contact | AXL F SGI2 1H (2702911) | AI | Измерительный модуль тензодатчика
 Phoenix Contact | AXL SE AI4 I 4-20 (1088062) | AI | 4 канала
 Phoenix Contact | AXL SE AI4 U 0-10 (1088126) | AI | 4 канала
 Phoenix Contact | AXL SE RTD4 PT100 (1088106) | AI | 4 канала RTD
