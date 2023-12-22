@@ -1,6 +1,9 @@
-﻿using Eplan.EplApi.ApplicationFramework;
+using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Starter;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 [assembly: EplanSignedAssemblyAttribute(true)]
 
@@ -65,8 +68,12 @@ namespace EasyEPlanner
                 "Генерация описания IOL-Conf", menuID, 1,
                 false, false);
 
+            menuID = oMenu.AddMenuItem(
+                "Обновления", nameof(OpenUpdater),
+                "", menuID, 1, true, false);
+
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", 
-                menuID, 1, true, false);
+                menuID, 1, false, false);
 
             ProjectManager.GetInstance().Init();
 
@@ -86,6 +93,17 @@ namespace EasyEPlanner
 
         public bool OnInit()
         {
+            var commandLines = Environment.GetCommandLineArgs();
+            if (commandLines.Contains(RunEplanWithoutUpdaterArg) is false)
+            {
+                var path = new FileInfo(AddInModule.OriginalAssemblyPath).Directory.FullName;
+                if (File.Exists(path + LauncherPath))
+                {
+                    var proc = Process.Start(path + LauncherPath, $"{RunUpdaterAtInit} {Process.GetCurrentProcess().Id}");
+                    proc.WaitForExit();
+                }
+            }
+
             return true;
         }
 
@@ -103,6 +121,26 @@ namespace EasyEPlanner
         /// Путь к дополнению (откуда подключена).
         /// </summary>
         public static string OriginalAssemblyPath;
+
+        /// <summary>
+        /// Путь к исполняемому файлу средства обновления
+        /// </summary>
+        public static readonly string LauncherPath = @"\Updater\EasyEPLANnerUpdater.exe";
+
+        /// <summary>
+        /// Аргумент для запуска EPLAN из средства обновления
+        /// </summary>
+        public static readonly string RunEplanWithoutUpdaterArg = "/WithoutUpdater";
+
+        /// <summary>
+        /// Аргумент запуска средства обновления при запуске EPLAN
+        /// </summary>
+        public static readonly string RunUpdaterAtInit = "es";
+
+        /// <summary>
+        /// Аргумент запуска средства обновления из меню Eplanner
+        /// </summary>
+        public static readonly string RunUpdaterFromMenu = "em";
     }
 
     /// <summary>    
