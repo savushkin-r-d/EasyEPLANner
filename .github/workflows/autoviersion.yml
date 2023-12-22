@@ -27,12 +27,8 @@ jobs:
           -replace '(?<start>Copyright ©  2012 - )\d{4}',
           "`${start}${{ steps.date.outputs.Year }}" 
           | Set-Content ${{ env.AssemblyInfoPath }}
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          title: Auto-update version to ${{ steps.date.outputs.MonthName }} ${{ steps.date.outputs.Year }}
-          body:
-          commit-message: Auto-update version
-          branch: autoupdate-version
-          delete-branch: true
-          reviewers: idzm
+      - name: Commit update
+        run: |
+          git config --global user.name 'Git bot'
+          git config --global user.email 'bot@noreply.github.com'
+          git commit -am "[config] Auto-update version to ${{ steps.date.outputs.MonthName }} ${{ steps.date.outputs.Year }}" && git push || echo "No changes to commit"
