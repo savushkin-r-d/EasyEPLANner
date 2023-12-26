@@ -2,6 +2,7 @@ using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Starter;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Точка входа в приложение, стартовый класс.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class AddInModule : IEplAddIn, IEplAddInShadowCopy
     {
         /// <summary>
