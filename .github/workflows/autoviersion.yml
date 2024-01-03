@@ -14,6 +14,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.BOT_ACCESS_TO_EPLAN }}
       - id: date
         run: |
           echo "Month=$(date +'%m')" >> $env:GITHUB_OUTPUT
