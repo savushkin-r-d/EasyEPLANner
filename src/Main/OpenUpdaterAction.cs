@@ -24,9 +24,14 @@ namespace EasyEPlanner
                 Process.Start(path + AddInModule.LauncherPath, $"{AddInModule.RunUpdaterFromMenu} {Process.GetCurrentProcess().Id}");
                 return true;
             }
+            
+            if (MessageBox.Show($"Средство обновления {AddInModule.LauncherPath} не найдено!\nОткрыть страницу приложения?",
+                "Eplanner", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
+            {
+                Process.Start(new ProcessStartInfo("https://github.com/savushkin-r-d/EasyEPLANnerUpdater")
+                    { UseShellExecute = true });
+            }
 
-            MessageBox.Show($"Средство обновления {AddInModule.LauncherPath} не найдено!",
-                "Eplanner", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
         }
 
