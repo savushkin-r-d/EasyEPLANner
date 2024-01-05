@@ -21,8 +21,7 @@ namespace EasyEPlanner
             var path = new FileInfo(AddInModule.OriginalAssemblyPath).Directory.FullName;
             if (File.Exists(path + AddInModule.LauncherPath))
             {
-                var proc = Process.Start(path + AddInModule.LauncherPath, $"{AddInModule.RunUpdaterFromMenu} {Process.GetCurrentProcess().Id}");
-                proc.WaitForExit();
+                Process.Start(path + AddInModule.LauncherPath, $"{AddInModule.RunUpdaterFromMenu} {Process.GetCurrentProcess().Id}");
                 return true;
             }
 
