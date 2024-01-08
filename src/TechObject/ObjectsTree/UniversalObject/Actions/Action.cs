@@ -736,6 +736,18 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool IsInsertableCopy => true;
+
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            if (obj is Action copiedAction)
+            {
+                SetNewValue(copiedAction.ToString());
+                return this;
+            }
+            return null;
+        }
         #endregion
 
         public virtual bool HasSubActions

@@ -127,6 +127,43 @@ namespace TechObject
                 }
             }
         }
+
+        private bool IdenticalActions(GroupableAction first, GroupableAction second)
+        {
+            return Enumerable.SequenceEqual(
+                    first.SubActions.Select(a => (a.Name, a.LuaName)),
+                    second.SubActions.Select(a => (a.Name, a.LuaName)))
+                && Enumerable.SequenceEqual(
+                    first.Parameters.Select(p => (p.Name, p.LuaName)),
+                    second.Parameters.Select(p => (p.Name, p.LuaName)));
+        }
+
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            if (obj is GroupableAction copiedAction)
+            {
+                if (Parent is Step step)
+                {
+                    if (IdenticalActions(subActions.FirstOrDefault() as GroupableAction, copiedAction))
+                    {
+                        return Insert().InsertCopy(obj);
+                    }
+
+                    return step.Replace(this, obj);
+                }
+
+                if (IdenticalActions(this, copiedAction))
+                {
+                    foreach (var subActionIndex in Enumerable.Range(0, SubActions.Count))
+                        (SubActions[subActionIndex] as Action)?.InsertCopy(copiedAction.SubActions[subActionIndex]);
+                    foreach (var parameterIndex in Enumerable.Range(0, Parameters.Count))
+                        Parameters[parameterIndex].SetNewValue(copiedAction.Parameters[parameterIndex].Value);
+                    return this;
+                }
+            }
+
+            return null;
+        }
         #endregion
 
         public override string ToString()
