@@ -758,6 +758,75 @@ namespace Tests.TechObject
                     action.GenericDevicesIndexAfterExclude);
             });            
         }
+
+        [Test]
+        public void InsertCopy()
+        {
+            var deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
+            var action1 = new Action("Устройства", null, "devs", null, null, null);
+            var action2 = new Action("Устройства", null, "_devs_", null, null, null);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(action2.IsInsertableCopy);
+
+                ITreeViewItem result = null;
+                action1.SetNewValue("TANK1V1 TANK1V2 KOAG1V1");
+                result = action2.InsertCopy(action1);
+
+                Assert.AreSame(action2, result);
+                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 }, action2.DevicesIndex);
+
+                result = action2.InsertCopy(0);
+                Assert.IsNull(result);
+            });
+        }
+
+        [Test]
+        public void InsertCopy_GroupableAction()
+        {
+            var deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
+            var step1 = new Step("Шаг1", GetN => 1, null);
+            var step2 = new Step("Шаг2", GetN => 2, null);
+
+            var action1 = step1.Items[2] as GroupableAction;
+            var action2 = step2.Items[2] as GroupableAction;
+
+            action1.AddParent(step1);
+            action2.AddParent(step2);
+
+            (action1.SubActions[0].SubActions[0] as Action)?.SetNewValue("TANK1V1 TANK1V2 KOAG1V1");
+            (action1.SubActions[0] as GroupableAction).Parameters[0].SetNewValue("2");
+
+            Assert.Multiple(() =>
+            {
+                ITreeViewItem result = null;
+
+                result = action2.InsertCopy(action1);
+
+                Assert.AreNotSame(action2, result);
+                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 },
+                    (result as IAction).SubActions[0].SubActions[0].DevicesIndex);
+                Assert.AreEqual("2", ((result as IAction).SubActions[0] as GroupableAction).Parameters[0].Value);
+
+                result = action1.InsertCopy(action1.SubActions[0]);
+
+                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 },
+                    (result as IAction).SubActions[0].DevicesIndex);
+                Assert.AreEqual("2", (result as GroupableAction).Parameters[0].Value);
+
+                result = action2.InsertCopy(0);
+                Assert.IsNull(result);
+            });
+        }
     }
 
     class DefaultActionProcessingStrategyTest
