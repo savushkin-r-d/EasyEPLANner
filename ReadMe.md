@@ -1,6 +1,16 @@
 
 # EasyEPLANner - Open Source
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-orange.svg)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=bugs)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=coverage)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
 **Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).**
 
 ### Repository
