@@ -33,7 +33,7 @@ namespace EditorControls
             if (maximum == 0)
                 return;
 
-            if (Index == 1)
+            if (Index == 1 || Index == 0)
                 Index = maximum;
             else
                 Index--;
@@ -128,6 +128,96 @@ namespace EditorControls
                     new PointF(width - (width / 4.0f), height / 3.0f),
                     new PointF(width / 2.0f, height - (height / 3.0f)),
                 });
+        }
+        
+        public bool SettingsButtonsFocused => UseRegexButton.Focused || SearchWholeButton.Focused;
+
+
+        private void SearchWholeButton_Click(object sender, EventArgs e)
+        {
+            Search.SearchWholeWord = !Search.SearchWholeWord;
+            SearchWholeButton.Invalidate();
+            SearchSettingsChanged?.Invoke();
+        }
+        
+        private void UseRegexButton_Click(object sender, EventArgs e)
+        {
+            Search.UseRegex = !Search.UseRegex;
+            UseRegexButton.Invalidate();
+            SearchSettingsChanged?.Invoke();
+        }
+
+        private void SearchWholeButton_Paint(object sender, PaintEventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            if (Search.SearchWholeWord)
+            {
+                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid);
+            }
+            else
+            {
+                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid);
+            }
+        }
+
+        private void UseRegexButton_Paint(object sender, PaintEventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            if (Search.UseRegex)
+            {
+                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
+                                Color.LightGreen, 1, ButtonBorderStyle.Solid);
+            }
+            else
+            {
+                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid,
+                                Color.LightGray, 1, ButtonBorderStyle.Solid);
+            }
+        }
+
+        public delegate void SearchSettingsChangedHandler();
+
+        public event SearchSettingsChangedHandler SearchSettingsChanged;
+
+        private ToolTip SearchSettingsToolTip = new ToolTip()
+        {
+            InitialDelay = 1500
+        };
+
+        private void SearchWholeButton_MouseEnter(object sender, EventArgs e)
+        {
+            SearchSettingsToolTip.Show("Слово целиком", SearchWholeButton, 15, 25, 5000);
+        }
+
+        private void SearchWholeButton_MouseLeave(object sender, EventArgs e)
+        {
+            SearchSettingsToolTip.Hide(SearchWholeButton);
+        }
+
+        private void UseRegexButton_MouseEnter(object sender, EventArgs e)
+        {
+            SearchSettingsToolTip.Show("Использовать регулярное выражение", UseRegexButton, 15, 25, 5000);
+        }
+
+        private void UseRegexButton_MouseLeave(object sender, EventArgs e)
+        {
+            SearchSettingsToolTip.Hide(UseRegexButton);
         }
     }
 }

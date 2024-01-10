@@ -466,13 +466,8 @@ namespace Editor
         public static bool Contains(string valueForSearch, string searchedValue)
         {
             searchedValue = searchedValue.Trim().ToUpper();
-            if ((searchedValue.StartsWith("\"") && searchedValue.EndsWith("\"")) ||
-                (searchedValue.StartsWith("'") && searchedValue.EndsWith("'")) ||
-                searchedValue.StartsWith("@"))
+            if (UseRegex)
             {
-                searchedValue = searchedValue.Trim('\'', '"');
-                searchedValue = searchedValue.TrimStart('@');
-
                 var valuesOR = searchedValue.Split(new string[] { "|" }, StringSplitOptions.None);
                 var patternsAnd = new List<string>();
                 foreach (var valueOR in valuesOR)
@@ -497,7 +492,24 @@ namespace Editor
                 }
             }
 
+            if (SearchWholeWord)
+            {
+                try
+                {
+                    return Regex.IsMatch(valueForSearch, $@"(^| ){searchedValue}($| )",
+                        RegexOptions.None, TimeSpan.FromMilliseconds(100));
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
             return valueForSearch.Contains(searchedValue);
         }
+
+        public static bool SearchWholeWord { get; set; } = false;
+
+        public static bool UseRegex { get; set; } = false;
     }
 }
