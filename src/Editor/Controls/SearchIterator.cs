@@ -152,7 +152,7 @@ namespace EditorControls
             Button btn = (Button)sender;
 
             if (Search.SearchWholeWord)
-                DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
+                DrawButtonBorderColor(btn, Color.LightGreen, e.Graphics);
             else
                 DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
         }
@@ -162,7 +162,7 @@ namespace EditorControls
             Button btn = (Button)sender;
 
             if (Search.UseRegex)
-                DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
+                DrawButtonBorderColor(btn, Color.LightGreen, e.Graphics);
             else
                 DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
         }
