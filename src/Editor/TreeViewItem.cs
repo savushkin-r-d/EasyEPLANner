@@ -488,7 +488,8 @@ namespace Editor
 
                 try
                 {
-                    return Regex.IsMatch(valueForSearch, string.Join("|", patternsAnd));
+                    return Regex.IsMatch(valueForSearch, string.Join("|", patternsAnd),
+                        RegexOptions.None, TimeSpan.FromMilliseconds(100));
                 }
                 catch
                 {
