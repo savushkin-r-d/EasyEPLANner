@@ -152,21 +152,9 @@ namespace EditorControls
             Button btn = (Button)sender;
 
             if (Search.SearchWholeWord)
-            {
-                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid);
-            }
+                DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
             else
-            {
-                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid);
-            }
+                DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
         }
 
         private void UseRegexButton_Paint(object sender, PaintEventArgs e)
@@ -174,21 +162,18 @@ namespace EditorControls
             Button btn = (Button)sender;
 
             if (Search.UseRegex)
-            {
-                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid,
-                                Color.LightGreen, 1, ButtonBorderStyle.Solid);
-            }
+                DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
             else
-            {
-                ControlPaint.DrawBorder(e.Graphics, btn.ClientRectangle,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid,
-                                Color.LightGray, 1, ButtonBorderStyle.Solid);
-            }
+                DrawButtonBorderColor(btn, Color.LightGray, e.Graphics);
+        }
+
+        private void DrawButtonBorderColor(Button btn, Color color, Graphics graphics)
+        {
+            ControlPaint.DrawBorder(graphics, btn.ClientRectangle,
+                                color, 1, ButtonBorderStyle.Solid,
+                                color, 1, ButtonBorderStyle.Solid,
+                                color, 1, ButtonBorderStyle.Solid,
+                                color, 1, ButtonBorderStyle.Solid);
         }
 
         public delegate void SearchSettingsChangedHandler();
