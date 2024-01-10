@@ -393,13 +393,29 @@ namespace Tests.Editor
         [Test]
         public void Contains()
         {
-            var property = new ObjectProperty("property", "value");
+            var property1 = new ObjectProperty("property", "TANK1V1 TANK1V12 TANK1V13");
+            var property2 = new ObjectProperty("property", "TANK1V13 TANK1V23");
 
             Assert.Multiple(() =>
             {
-                Assert.IsTrue(property.Contains("prop"));
-                Assert.IsTrue(property.Contains("value"));
-                Assert.IsFalse(property.Contains("123"));
+                Assert.IsTrue(property1.Contains("prop"));
+                Assert.IsTrue(property1.Contains("TANK1V1"));
+                Assert.IsFalse(property1.Contains("123"));
+
+                Assert.IsTrue(property1.Contains("@TANK1V1"));
+                Assert.IsFalse(property2.Contains("@TANK1V1"));
+                Assert.IsTrue(property1.Contains("'TANK1V1'"));
+                Assert.IsFalse(property2.Contains("'TANK1V1'"));
+
+                Assert.IsTrue(property1.Contains("@TANK1V1 TANK1V13"));
+                Assert.IsFalse(property1.Contains("@TANK1V1 TANK1V23"));
+
+                Assert.IsTrue(property1.Contains("@TANK1V1 | TANK1V23"));
+                Assert.IsFalse(property1.Contains("@TANK1V2 | TANK1V23"));
+
+                Assert.IsTrue(property1.Contains("@TANK1V1 TANK1V13 | TANK1V23"));
+                Assert.IsTrue(property1.Contains("@TANK1V5 TANK1V11 | TANK1V12"));
+                Assert.IsFalse(property1.Contains("@TANK1V5 TANK1V11 | TANK1V23"));
             });
         }
 

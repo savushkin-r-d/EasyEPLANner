@@ -464,11 +464,8 @@ namespace Editor
 
         public virtual bool Contains(string value)
         {
-            value = value.Trim().ToUpper();
-            return DisplayText[0].ToUpper().Contains(value) ||
-                DisplayText[1].ToUpper().Contains(value) ||
-                EditText[0].ToUpper().Contains(value) ||
-                EditText[1].ToUpper().Contains(value);
+            var valueForSearch = $"{DisplayText[0].ToUpper()} {EditText[0].ToUpper()} {DisplayText[1].ToUpper()} {EditText[1].ToUpper()}";
+            return Search.Contains(valueForSearch, value);
         }
 
         public virtual bool ContainsBaseObject

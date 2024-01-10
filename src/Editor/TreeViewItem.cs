@@ -3,6 +3,8 @@ using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Editor
 {
@@ -353,11 +355,8 @@ namespace Editor
 
         public virtual bool Contains(string value)
         {
-            value = value.Trim().ToUpper();
-            return DisplayText[0].ToUpper().Contains(value) ||
-                DisplayText[1].ToUpper().Contains(value) ||
-                EditText[0].ToUpper().Contains(value) ||
-                EditText[1].ToUpper().Contains(value);
+            var valueForSearch = $"{DisplayText[0].ToUpper()} {EditText[0].ToUpper()} {DisplayText[1].ToUpper()} {EditText[1].ToUpper()}";
+            return Search.Contains(valueForSearch, value);
         }
 
         /// <summary>
@@ -461,4 +460,43 @@ namespace Editor
     }
 
     public delegate void OnValueChanged(object sender);
+
+    public static class Search
+    {
+        public static bool Contains(string valueForSearch, string searchedValue)
+        {
+            searchedValue = searchedValue.Trim().ToUpper();
+            if ((searchedValue.StartsWith("\"") && searchedValue.EndsWith("\"")) ||
+                (searchedValue.StartsWith("'") && searchedValue.EndsWith("'")) ||
+                searchedValue.StartsWith("@"))
+            {
+                searchedValue = searchedValue.Trim('\'', '"');
+                searchedValue = searchedValue.TrimStart('@');
+
+                var valuesOR = searchedValue.Split(new string[] { "|" }, StringSplitOptions.None);
+                var patternsAnd = new List<string>();
+                foreach (var valueOR in valuesOR)
+                {
+                    var valuesAND = valueOR.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    var patternAND = new StringBuilder();
+                    foreach (var valueAND in valuesAND)
+                    {
+                        patternAND.Append($@"(?=.*(^| ){valueAND}($| ))");
+                    }
+                    patternsAnd.Add(patternAND.ToString());
+                }
+
+                try
+                {
+                    return Regex.IsMatch(valueForSearch, string.Join("|", patternsAnd));
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            return valueForSearch.Contains(searchedValue);
+        }
+    }
 }
