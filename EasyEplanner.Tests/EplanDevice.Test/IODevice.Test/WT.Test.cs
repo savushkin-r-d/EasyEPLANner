@@ -313,17 +313,10 @@ namespace Tests.EplanDevices
                 { DI, 0 },
                 { DO, 0 },
             };
-            var RS232Channels = new Dictionary<string, int>()
+            var RS232_AXL_Channels = new Dictionary<string, int>()
             {
                 { AI, 1 },
                 { AO, 1 },
-                { DI, 0 },
-                { DO, 0 },
-            };
-            var AXLChanneks = new Dictionary<string, int>()
-            {
-                { AI, 1 },
-                { AO, 0 },
                 { DI, 0 },
                 { DO, 0 },
             };
@@ -356,7 +349,7 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    RS232Channels,
+                    RS232_AXL_Channels,
                     WT_RS232,
                     GetRandomWTDevice(),
                 },
@@ -368,7 +361,7 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    AXLChanneks,
+                    RS232_AXL_Channels,
                     WT_AXL,
                     GetRandomWTDevice(),
                 },

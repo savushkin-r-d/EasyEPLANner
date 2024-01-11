@@ -56,6 +56,7 @@ namespace EplanDevice
 
                 case "WT_AXL":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
 
                     parameters.Add(Parameter.P_DT, null);
                     break;
