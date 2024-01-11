@@ -54,9 +54,16 @@ namespace EplanDevice
                     properties.Add(Property.IP, null);
                     break;
 
+                case "WT_AXL":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
+                    parameters.Add(Parameter.P_DT, null);
+                    break;
+
+
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (WT, WT_RS232, WT_VIRT, WT_ETH).\n", Name);
+                        " (WT, WT_RS232, WT_VIRT, WT_ETH, WT_AXL).\n", Name);
                     break;
             }
 
@@ -93,6 +100,8 @@ namespace EplanDevice
                             return "WT_RS232";
                         case DeviceSubType.WT_ETH:
                             return "WT_ETH";
+                        case DeviceSubType.WT_AXL:
+                            return "WT_AXL";
                     }
                     break;
             }
@@ -144,6 +153,15 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_CZ, 1},
+                            };
+
+                        case DeviceSubType.WT_AXL:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_DT, 1},
                             };
                     }
                     break;
