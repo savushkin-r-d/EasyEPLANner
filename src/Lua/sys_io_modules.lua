@@ -967,7 +967,7 @@ local io_modules =
             n = 2702911,
             name = 'AXL F SGI2 1H',
             description = 'Axioline F, strain gauge capture module',
-            addressSpaceType = 4,
+            addressSpaceType = 5,
             typeName = 'Аналоговый',
             groupName = 'AXL F',
             channelClamps = { 10, 12 },
@@ -985,7 +985,7 @@ local io_modules =
             },
             DO_count = 0,
             DI_count = 0,
-            AO_count = 0,
+            AO_count = 12,
             AI_count = 12,
             Color = 'Green'
             },
