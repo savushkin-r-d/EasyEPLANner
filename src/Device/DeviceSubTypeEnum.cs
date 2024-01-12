@@ -144,7 +144,7 @@ namespace EplanDevice
         WT_VIRT, ///< Виртуальные весы.
         WT_RS232, ///< Весы с интерфейсом RS-232
         WT_ETH, ///< Весы с ethernet
-        WT_AXL, ///< Весы Axioline F (для модуля Phoenix Contact)
+        WT_PXC_AXL, ///< Весы Axioline F (для модулей Phoenix Contact)
 
         ///CAM
         CAM_DO1_DI2 = 1, ///< Камера с готовностью, результатом обработки и сигналом активации.
