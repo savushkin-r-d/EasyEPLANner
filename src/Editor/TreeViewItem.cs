@@ -465,26 +465,14 @@ namespace Editor
     {
         public static bool Contains(string valueForSearch, string searchedValue)
         {
-            if (UseRegex)
-            {
-                var valuesOR = searchedValue.Split(new string[] { "||" }, StringSplitOptions.None);
-                var patternsAnd = new List<string>();
-                foreach (var valueOR in valuesOR)
-                {
-                    var valuesAND = valueOR.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                    var patternAND = new StringBuilder();
-                    foreach (var valueAND in valuesAND)
-                    {
-                        if (SearchWholeWord)
-                            patternAND.Append($"(?=.*(^| ){valueAND}($| ))");
-                        else patternAND.Append(valueAND.Trim());
-                    }
-                    patternsAnd.Add(patternAND.ToString());
-                }
+            if (UseRegex is false && SearchWholeWord is false)
+                return valueForSearch.IndexOf(searchedValue, StringComparison.OrdinalIgnoreCase) >= 0;
 
+            if (SearchWholeWord)
+            {
                 try
                 {
-                    return Regex.IsMatch(valueForSearch, string.Join("|", patternsAnd),
+                    return Regex.IsMatch(valueForSearch, $"(^| ){searchedValue}($| )",
                         RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
                 }
                 catch
@@ -493,23 +481,25 @@ namespace Editor
                 }
             }
 
-            searchedValue = searchedValue.Trim().ToUpper();
-            valueForSearch = valueForSearch.ToUpper();
+            var pattern = string.Join("|", searchedValue
+                .Split(new string[] { "||" }, StringSplitOptions.None)
+                .Select(valueOR =>
+                {
+                    var valuesAND = valueOR.Trim().Split(new string[] { "&&" }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (SearchWholeWord)
+                    return string.Join("", valuesAND
+                        .Select(value => SearchWholeWord ? $"(?=.*(^| ){value}($| ))" : value.Trim()));
+                }));
+
+            try
             {
-                try
-                {
-                    return Regex.IsMatch(valueForSearch, $"(^| ){searchedValue}($| )",
-                        RegexOptions.None, TimeSpan.FromMilliseconds(100));
-                }
-                catch
-                {
-                    return false;
-                }
+                return Regex.IsMatch(valueForSearch, pattern,
+                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             }
-
-            return valueForSearch.Contains(searchedValue);
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool SearchWholeWord { get; set; } = false;
