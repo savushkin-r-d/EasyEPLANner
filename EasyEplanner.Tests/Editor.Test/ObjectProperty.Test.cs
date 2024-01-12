@@ -390,40 +390,32 @@ namespace Tests.Editor
         }
 
 
-        [Test]
-        public void Contains()
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "prop", false, false, true)]
+        [TestCase("TANK1V11 TANK1V12 TANK1V13", "TANK1V1", false, false, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "123", false, false, false)]
+        [TestCase("TANK1V11 TANK1V12 TANK1V13", "TANK1V1", false, false, true)]
+        [TestCase("TANK1V11 TANK1V12 TANK1V13", "TANK1V1", true, false, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 && TANK1V13", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 && TANK1V23", true, true, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 || TANK1V23", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V2 || TANK1V23", true, true, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 && TANK1V13 || TANK1V23", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V5 && TANK1V11 || TANK1V12", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V5 && TANK1V11 || TANK1V23", true, true, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1\\d", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V2\\d", true, true, false)]
+        public void Contains(string propertyValue, string pattern,
+            bool searchWholeWord, bool useRegex, bool expected)
         {
-            var property1 = new ObjectProperty("property", "TANK1V1 TANK1V12 TANK1V13");
-            var property2 = new ObjectProperty("property", "TANK1V13 TANK1V23");
+            var property = new ObjectProperty("property", propertyValue);
 
-            Assert.Multiple(() =>
-            {
-                Assert.IsTrue(property1.Contains("prop"));
-                Assert.IsTrue(property1.Contains("TANK1V1"));
-                Assert.IsFalse(property1.Contains("123"));
+            Search.SearchWholeWord = searchWholeWord;
+            Search.UseRegex = useRegex;
 
-                Search.SearchWholeWord = true;
+            Assert.AreEqual(expected, property.Contains(pattern));
 
-                Assert.IsTrue(property1.Contains("TANK1V1"));
-                Assert.IsFalse(property2.Contains("TANK1V1"));
-
-                Search.UseRegex = true;
-
-                Assert.IsTrue(property1.Contains("TANK1V1 TANK1V13"));
-                Assert.IsFalse(property1.Contains("TANK1V1 TANK1V23"));
-
-                Assert.IsTrue(property1.Contains("TANK1V1 || TANK1V23"));
-                Assert.IsFalse(property1.Contains("TANK1V2 || TANK1V23"));
-
-                Assert.IsTrue(property1.Contains("TANK1V1 TANK1V13 || TANK1V23"));
-                Assert.IsTrue(property1.Contains("TANK1V5 TANK1V11 || TANK1V12"));
-                Assert.IsFalse(property1.Contains("TANK1V5 TANK1V11 || TANK1V23"));
-
-                Assert.IsTrue(property1.Contains("TANK1V1\\d"));
-
-                Search.UseRegex = false;
-                Search.SearchWholeWord = false;
-            });
+            Search.SearchWholeWord = false;
+            Search.UseRegex = false;
         }
 
         [Test]

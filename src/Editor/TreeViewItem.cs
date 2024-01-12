@@ -468,8 +468,9 @@ namespace Editor
             if (UseRegex is false && SearchWholeWord is false)
                 return valueForSearch.IndexOf(searchedValue, StringComparison.OrdinalIgnoreCase) >= 0;
 
-            if (SearchWholeWord)
+            if (UseRegex is false)
             {
+                // слово целиком
                 try
                 {
                     return Regex.IsMatch(valueForSearch, $"(^| ){searchedValue}($| )",
@@ -488,7 +489,7 @@ namespace Editor
                     var valuesAND = valueOR.Trim().Split(new string[] { "&&" }, StringSplitOptions.RemoveEmptyEntries);
 
                     return string.Join("", valuesAND
-                        .Select(value => SearchWholeWord ? $"(?=.*(^| ){value}($| ))" : value.Trim()));
+                        .Select(value => SearchWholeWord ? $"(?=.*(^| ){value.Trim()}($| ))" : value.Trim()));
                 }));
 
             try
