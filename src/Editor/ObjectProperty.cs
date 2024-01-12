@@ -464,7 +464,7 @@ namespace Editor
 
         public virtual bool Contains(string value)
         {
-            var valueForSearch = $"{DisplayText[0].ToUpper()} {EditText[0].ToUpper()} {DisplayText[1].ToUpper()} {EditText[1].ToUpper()}";
+            var valueForSearch = $"{DisplayText[0]} {EditText[0]} {DisplayText[1]} {EditText[1]}";
             return Search.Contains(valueForSearch, value);
         }
 

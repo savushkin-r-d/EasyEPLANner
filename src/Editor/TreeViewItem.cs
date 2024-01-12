@@ -465,10 +465,9 @@ namespace Editor
     {
         public static bool Contains(string valueForSearch, string searchedValue)
         {
-            searchedValue = searchedValue.Trim().ToUpper();
             if (UseRegex)
             {
-                var valuesOR = searchedValue.Split(new string[] { "|" }, StringSplitOptions.None);
+                var valuesOR = searchedValue.Split(new string[] { "||" }, StringSplitOptions.None);
                 var patternsAnd = new List<string>();
                 foreach (var valueOR in valuesOR)
                 {
@@ -476,7 +475,9 @@ namespace Editor
                     var patternAND = new StringBuilder();
                     foreach (var valueAND in valuesAND)
                     {
-                        patternAND.Append($@"(?=.*(^| ){valueAND}($| ))");
+                        if (SearchWholeWord)
+                            patternAND.Append($"(?=.*(^| ){valueAND}($| ))");
+                        else patternAND.Append(valueAND.Trim());
                     }
                     patternsAnd.Add(patternAND.ToString());
                 }
@@ -484,7 +485,7 @@ namespace Editor
                 try
                 {
                     return Regex.IsMatch(valueForSearch, string.Join("|", patternsAnd),
-                        RegexOptions.None, TimeSpan.FromMilliseconds(100));
+                        RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
                 }
                 catch
                 {
@@ -492,11 +493,14 @@ namespace Editor
                 }
             }
 
+            searchedValue = searchedValue.Trim().ToUpper();
+            valueForSearch = valueForSearch.ToUpper();
+
             if (SearchWholeWord)
             {
                 try
                 {
-                    return Regex.IsMatch(valueForSearch, $@"(^| ){searchedValue}($| )",
+                    return Regex.IsMatch(valueForSearch, $"(^| ){searchedValue}($| )",
                         RegexOptions.None, TimeSpan.FromMilliseconds(100));
                 }
                 catch
