@@ -412,12 +412,14 @@ namespace Tests.Editor
                 Assert.IsTrue(property1.Contains("TANK1V1 TANK1V13"));
                 Assert.IsFalse(property1.Contains("TANK1V1 TANK1V23"));
 
-                Assert.IsTrue(property1.Contains("TANK1V1 | TANK1V23"));
-                Assert.IsFalse(property1.Contains("TANK1V2 | TANK1V23"));
+                Assert.IsTrue(property1.Contains("TANK1V1 || TANK1V23"));
+                Assert.IsFalse(property1.Contains("TANK1V2 || TANK1V23"));
 
-                Assert.IsTrue(property1.Contains("TANK1V1 TANK1V13 | TANK1V23"));
-                Assert.IsTrue(property1.Contains("TANK1V5 TANK1V11 | TANK1V12"));
-                Assert.IsFalse(property1.Contains("TANK1V5 TANK1V11 | TANK1V23"));
+                Assert.IsTrue(property1.Contains("TANK1V1 TANK1V13 || TANK1V23"));
+                Assert.IsTrue(property1.Contains("TANK1V5 TANK1V11 || TANK1V12"));
+                Assert.IsFalse(property1.Contains("TANK1V5 TANK1V11 || TANK1V23"));
+
+                Assert.IsTrue(property1.Contains("TANK1V1\\d"));
 
                 Search.UseRegex = false;
                 Search.SearchWholeWord = false;
