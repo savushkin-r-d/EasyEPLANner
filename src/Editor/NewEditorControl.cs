@@ -31,6 +31,7 @@ namespace Editor
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
             searchIterator.IndexChanged += SearchIterator_IndexChanged;
+            searchIterator.SearchSettingsChanged += () => UpdateModelFilter();
 
             //Фильтр
             editorTView.ModelFilter = new ModelFilter((obj)
@@ -1980,6 +1981,12 @@ namespace Editor
 
         private void textBox_search_Leave(object sender, EventArgs e)
         {
+            if (searchIterator.SettingsButtonsFocused)
+            {
+                textBox_search.Focus();
+                return;
+            }
+
             if (textBox_search.Text == string.Empty && UpdatingModelFilter is false)
             {
                 textBox_search.ForeColor = Color.Gray;

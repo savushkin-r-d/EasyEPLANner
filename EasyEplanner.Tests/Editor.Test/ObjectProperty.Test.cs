@@ -390,17 +390,32 @@ namespace Tests.Editor
         }
 
 
-        [Test]
-        public void Contains()
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "prop", false, false, true)]
+        [TestCase("TANK1V11 TANK1V12 TANK1V13", "TANK1V1", false, false, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "123", false, false, false)]
+        [TestCase("TANK1V11 TANK1V12 TANK1V13", "TANK1V1", false, false, true)]
+        [TestCase("TANK1V11 TANK1V12 TANK1V13", "TANK1V1", true, false, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 && TANK1V13", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 && TANK1V23", true, true, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 || TANK1V23", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V2 || TANK1V23", true, true, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1 && TANK1V13 || TANK1V23", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V5 && TANK1V11 || TANK1V12", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V5 && TANK1V11 || TANK1V23", true, true, false)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V1\\d", true, true, true)]
+        [TestCase("TANK1V1 TANK1V12 TANK1V13", "TANK1V2\\d", true, true, false)]
+        public void Contains(string propertyValue, string pattern,
+            bool searchWholeWord, bool useRegex, bool expected)
         {
-            var property = new ObjectProperty("property", "value");
+            var property = new ObjectProperty("property", propertyValue);
 
-            Assert.Multiple(() =>
-            {
-                Assert.IsTrue(property.Contains("prop"));
-                Assert.IsTrue(property.Contains("value"));
-                Assert.IsFalse(property.Contains("123"));
-            });
+            Search.SearchWholeWord = searchWholeWord;
+            Search.UseRegex = useRegex;
+
+            Assert.AreEqual(expected, property.Contains(pattern));
+
+            Search.SearchWholeWord = false;
+            Search.UseRegex = false;
         }
 
         [Test]
