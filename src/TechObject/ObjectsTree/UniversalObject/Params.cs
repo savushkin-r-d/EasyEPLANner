@@ -163,7 +163,7 @@ namespace TechObject
 
             // Проверка на дефолтные Lua-name
             int[] parametersWithDefaultLuaName = parameters
-                .Where(p => p.GetNameLua() == dfltLuaName)
+                .Where(p => p.GetNameLua() == dfltLuaName && p.GetName() != "Название параметра")
                 .Select(p => p.GetParameterNumber).ToArray();
             if( parametersWithDefaultLuaName.Any())
             {
