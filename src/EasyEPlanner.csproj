@@ -298,6 +298,12 @@
     <Compile Include="FileSavers\PrgLuaSaver.cs" />
     <Compile Include="Configuration\ProjectConfiguration.cs" />
     <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
+    <Compile Include="Presets\Preset.cs" />
+    <Compile Include="Presets\PresetDevices.cs" />
+    <Compile Include="Presets\PresetParameter.cs" />
+    <Compile Include="Presets\PresetsContainer.cs" />
+    <Compile Include="Presets\PresetTechObject.cs" />
+    <Compile Include="Presets\PresetTechObjectsContainer.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -456,6 +462,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_io_nodes.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_presets.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_restriction.lua">

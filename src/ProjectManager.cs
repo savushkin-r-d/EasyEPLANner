@@ -125,6 +125,15 @@ namespace EasyEPlanner
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
                     thrownExceptions += restrictionsErrors;
                     techObjectManager.LoadRestrictions(luaStr);
+
+                    // Чтение пресетов
+                    luaStr = string.Empty;
+                    res += LoadDescriptionFromFile(out luaStr,
+                       out string presetErrors, projectName,
+                       $"\\{ProjectDescriptionSaver.presetsFileName}");
+                    thrownExceptions += presetErrors;
+                    techObjectManager.LoadPresets(luaStr);
+
                     oProgress.EndPart();
                 }
                 else
@@ -137,6 +146,9 @@ namespace EasyEPlanner
                 oProgress.BeginPart(15, "Расчет IO-Link");
                 ioManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
+
+
+
                 eProjectManager.ProjectDataIsLoaded = true;
             }
             catch (System.Exception ex)

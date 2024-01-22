@@ -41,6 +41,7 @@ namespace TechObject
             lua = new Lua();
             InitReadDescriptionLuaScript();
             InitReadRestrictionsLuaScript();
+            InitReadPresetsLuaScript();
         }
 
         /// <summary>
@@ -70,6 +71,16 @@ namespace TechObject
                 .Combine(ProjectManager.GetInstance().SystemFilesPath,
                 restrictionFileName);
             lua.DoFile(pathToRestrictionInitializer);
+        }
+
+        private void InitReadPresetsLuaScript()
+        {
+            lua.RegisterFunction("ADD_PRESET", this,
+                GetType().GetMethod("AddPreset"));
+            string pathToPresetInitializer = Path
+                .Combine(ProjectManager.GetInstance().SystemFilesPath,
+                "sys_presets.lua");
+            lua.DoFile(pathToPresetInitializer);
         }
         #endregion
 
@@ -130,7 +141,7 @@ namespace TechObject
             TechObject findedObject = TechObjects
                 .Find(x => x.DisplayText[0] == displayText);
 
-            if(findedObject != null)
+            if (findedObject != null)
             {
                 return findedObject.GlobalNum;
             }
@@ -144,7 +155,7 @@ namespace TechObject
         public int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber)
         {
             var techObject = TechObjects
-                .Find(to => 
+                .Find(to =>
                     (to.BaseTechObject?.EplanName.Equals(baseObjectName) ?? false) &&
                     to.NameEplan.Equals(nameEplan) && to.TechNumber == techNumber);
 
@@ -271,6 +282,11 @@ namespace TechObject
             return res.ToString();
         }
 
+        public string SavePresetsAsLua(string prefix)
+        {
+            return Presets.SaveAsLuaTable(prefix);
+        }
+
         #region Загрузка описания из LUA
         /// <summary>
         /// Загрузка описания проекта из строки
@@ -283,6 +299,7 @@ namespace TechObject
             treeObjects.Clear();
             techObjects.Clear();
             genericTechObjects.Clear();
+            Presets = null;
 
             //Сброс описания объектов.
             lua.DoString("init_tech_objects_modes = nil");
@@ -324,6 +341,12 @@ namespace TechObject
             lua.DoString("init_restrictions()");
             lua.DoString("init_generic_restrictions()");
         }
+        
+        public void LoadPresets(string LuaStr)
+        {
+            lua.DoString(LuaStr);
+            lua.DoString("init_presets()");
+        }
         #endregion
 
         #region Добавление объекта из LUA
@@ -362,6 +385,24 @@ namespace TechObject
                 AddObject(obj, genericTechObjectNumber);
                 return obj;
             }
+        }
+
+        /// <summary>
+        /// Добавление нового пресета из Lua
+        /// </summary>
+        public Preset AddPreset(string name)
+        {
+            if (Presets is null)
+            {
+                Presets = new PresetsContainer(this);
+                treeObjects.Add(Presets);
+                SortTreeObjectsByCustomComparer();
+                Presets.AddParent(instance);
+            }
+
+            var preset = Presets.Insert();
+            preset.SetNewValue(name);
+            return preset as Preset;
         }
 
         /// <summary>
@@ -406,7 +447,7 @@ namespace TechObject
             switch (type)
             {
                 case BaseTechObjectManager.ObjectType.ProcessCell:
-                     AddProcessCell(obj);
+                    AddProcessCell(obj);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Unit:
@@ -472,7 +513,7 @@ namespace TechObject
         {
             var userObject = treeObjects.Where(x => x is UserObject)
                 .FirstOrDefault() as UserObject;
-            if(userObject == null)
+            if (userObject == null)
             {
                 userObject = new UserObject(instance);
                 treeObjects.Add(userObject);
@@ -607,7 +648,7 @@ namespace TechObject
         public override ITreeViewItem InsertCopy(object obj)
         {
             var techObj = obj as TechObject;
-            if(techObj != null && techObj.MarkToCut)
+            if (techObj != null && techObj.MarkToCut)
             {
                 ChooseObjectTypes(out string selectedType,
                     out string selectedSubType);
@@ -700,7 +741,7 @@ namespace TechObject
             if (treeItem == null)
             {
                 ITreeViewItem newTreeItem;
-                switch(selectedType)
+                switch (selectedType)
                 {
                     case ProcessCell.Name:
                         newTreeItem = new ProcessCell(instance);
@@ -708,6 +749,11 @@ namespace TechObject
 
                     case UserObject.Name:
                         newTreeItem = new UserObject(instance);
+                        break;
+
+                    case Preset.PRESET_NAME:
+                        Presets = new PresetsContainer(instance);
+                        newTreeItem = Presets;
                         break;
 
                     default:
@@ -996,13 +1042,13 @@ namespace TechObject
         /// <summary>
         /// Имя проекта.
         /// </summary>
-        private string ProjectName { get;set; }
+        private string ProjectName { get; set; }
 
         /// <summary>
         /// Список типовых тех.объектов в дереве
         /// </summary>
         public List<GenericTechObject> GenericTechObjects => genericTechObjects;
-        
+
         /// <summary>
         /// Список всех технологических объектов в дереве.
         /// </summary>
@@ -1013,6 +1059,8 @@ namespace TechObject
                 return techObjects;
             }
         }
+
+        public PresetsContainer Presets { get; private set; }
 
 
         /// <summary>

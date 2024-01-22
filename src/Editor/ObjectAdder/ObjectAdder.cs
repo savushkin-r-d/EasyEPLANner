@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyEPlanner;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -46,6 +47,9 @@ namespace Editor
                 baseObjectsTypes
                     .Add(baseTechObjectsManager.GetS88Name(s88level));
             }
+            
+            // Presets
+            baseObjectsTypes.Add(Preset.PRESET_NAME);
 
             objectTypes.Items.AddRange(baseObjectsTypes.ToArray());
         }
@@ -100,6 +104,13 @@ namespace Editor
             else
             {
                 string selectedType = objectTypes.SelectedItem.ToString();
+
+                if (selectedType == Preset.PRESET_NAME)
+                {
+                    objectSubTypes.Items.AddRange(new string[] { Preset.PRESET_NAME });
+                    return;
+                }
+
                 int level = baseTechObjectsManager.GetS88Level(selectedType);
                 var subTypes = baseTechObjectsManager.Objects
                     .Where(x => x.S88Level == level &&

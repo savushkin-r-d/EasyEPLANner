@@ -93,6 +93,7 @@ namespace EasyEPlanner
                 SaveProfibusFile(par);
                 SavePrgFile(par);
                 SaveSharedFile(par);
+                SavePresetFile(par);
 
                 if (par.silentMode == false)
                 {
@@ -242,6 +243,30 @@ namespace EasyEPlanner
                 fileWriter.Flush();
                 fileWriter.Close();
             }
+        }
+
+        /// <summary>
+        /// Сохранить файл пресетов recipes.lua (presetsFileName)
+        /// </summary>
+        private static void SavePresetFile(ParametersForSave par)
+        {
+            string pathToFile = par.path + @"\" + presetsFileName;
+
+            string versionForPlc = string.Format(VersionPattern,
+                    mainTechObjectsFileVersion);
+            string pacName = string
+                .Format(PacNamePattern, par.PAC_Name);
+            string presets = techObjectManager.SavePresetsAsLua("");
+
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(presets);
+
+            SaveData(pathToFile, fileData);
         }
 
         public static void AddPackage(string package)
@@ -426,6 +451,7 @@ namespace EasyEPlanner
         private const string mainPRGFileName = "prg.lua";
         private const string sharedFileName = "shared.lua";
         private const string mainDevicesLua = "main.devices.lua";
+        public const string presetsFileName = "recipes.lua";
 
         private const int numberOfDashes = 78;
 

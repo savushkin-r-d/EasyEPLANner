@@ -28,6 +28,7 @@ namespace Editor
         Equipment = 13,
         GenericTechObject = 14,
         GenericGroup = 15,
+        Preset = 16,
         NONE = 100,
     }
 }

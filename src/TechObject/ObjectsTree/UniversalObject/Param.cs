@@ -346,7 +346,7 @@ namespace TechObject
                 meter.SetNewValue("");
         }
 
-
+        public bool Reserved => GetNameLua() == "P" && GetName() == "Название параметра";
 
         public Params Params => Parent as Params;
 

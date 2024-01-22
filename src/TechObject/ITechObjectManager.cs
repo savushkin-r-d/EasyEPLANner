@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyEPlanner;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,11 @@ namespace TechObject
         void LoadRestrictions(string LuaStr);
 
         /// <summary>
+        /// Загрузка пресетов
+        /// </summary>
+        void LoadPresets(string LuaStr);
+
+        /// <summary>
         /// Сохранить описание проекта
         /// </summary>
         /// <param name="prefixStr">Отступ</param>
@@ -38,6 +44,11 @@ namespace TechObject
         /// <param name="prefixStr">Отступ</param>
         /// <returns></returns>
         string SaveRestrictionAsLua(string prefixStr);
+
+        /// <summary>
+        /// Сохранить пресеты
+        /// </summary>
+        string SavePresetsAsLua(string prefix);
 
         /// <summary>
         /// Список типовых объектов
@@ -179,5 +190,7 @@ namespace TechObject
         /// </param>
         /// <returns>Результат изменения, true - успех, false - нет</returns>
         bool ChangeBaseObject(TechObject techObject);
+
+        PresetsContainer Presets { get; }
     }
 }

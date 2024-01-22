@@ -493,6 +493,8 @@ namespace TechObject
         }
 
         public ParamsManager ParamsManager => Parent as ParamsManager;
+        public List<Param> Parameters => parameters;
+
 
         private string name;
         private string nameLua;

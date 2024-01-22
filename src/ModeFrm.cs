@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using TechObject;
 
 namespace EasyEPlanner
 {
@@ -325,9 +326,34 @@ namespace EasyEPlanner
                     {
                         SelectRestriction(nodes, subNode, checkedMode);
                     }
+                    else if (item is Param)
+                    {
+                        SelectParameters(nodes, subNode, checkedMode);
+                    }
                 }
                 SelectedDevices(subNode.Nodes.ToList(), checkedMode);
             }
+        }
+        /// <summary>
+        /// Отметка параметров в дереве
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <param name="subNode"></param>
+        /// <param name="checkedMode"></param>
+        private void SelectParameters(List<Node> nodes, Node subNode,
+            Editor.ITreeViewItem checkedMode)
+        {
+            var presetTechObjectsContainer = (checkedMode as PresetTechObjectsContainer) ??
+                (checkedMode as Preset)?.PresetTechObjectsContainer;
+            var techObject = subNode.Parent.Tag as TechObject.TechObject;
+            var presetTechObject = presetTechObjectsContainer
+                ?.PresetsTechObjects?.FirstOrDefault(pto => pto.TechObject == techObject) 
+                ?? (checkedMode as PresetTechObject);
+
+            subNode.CheckState =
+                (presetTechObject?.PresetParameters.FirstOrDefault(pp => pp.Parameter == subNode.Tag) != null)
+                ? CheckState.Checked : CheckState.Unchecked;
+            StaticHelper.GUIHelper.CheckCheckState(subNode);
         }
 
         /// <summary>
@@ -465,6 +491,12 @@ namespace EasyEPlanner
                     SelectedTreeItem = EditType.Restriction;
                     break;
 
+                case Preset _:
+                case PresetTechObjectsContainer _:
+                case PresetTechObject _:
+                    SelectedTreeItem = EditType.PresetParameters;
+                    break;
+
                 default:
                     SelectedTreeItem = EditType.None;
                     break;
@@ -535,8 +567,20 @@ namespace EasyEPlanner
                 return;
             }
 
-            foreach (var treeItem in treeItems)
+            foreach (var treeItem in treeItems.Where(item => !(item is PresetsContainer)))
             {
+                if (checkedMode is PresetTechObject presetTechObject)
+                {
+                    if ((treeItem as BaseObject)?.TechObjects.Contains(presetTechObject.TechObject) is false ||
+                        treeItem is TechObject.TechObject && presetTechObject.TechObject != treeItem)
+                        continue;
+                }
+
+                //if ((treeItem is TechObject.TechObject || treeItem is BaseObject baseObject) &&
+                //    !(!(checkedMode is PresetTechObject presetTechObject) || presetTechObject.TechObject == treeItem || (treeItem as BaseObject)?.TechObjects.Contains(presetTechObject.TechObject) is true))
+                //{
+                //    continue;
+                //}
 
                 string treeItemName = $"{treeItem.DisplayText[0]}";
                 int? techType = (treeItem as TechObject.TechObject)?.TechType;
@@ -562,6 +606,12 @@ namespace EasyEPlanner
                             techObject, ref techObjNum, ref modeNum);
                     }
 
+                    if (SelectedTreeItem == EditType.PresetParameters )
+                    {
+                        FillTreeObjectsParameters(parentNode, checkedMode,
+                            techObject, ref techObjNum, ref modeNum);
+                    }
+
                     SetUpTechObjectNodeVisibility(showOneNode, parentNode,
                         techObject, mainTechObject);
                 }
@@ -573,6 +623,30 @@ namespace EasyEPlanner
             }
         }
 
+        private void FillTreeObjectsParameters(
+            Node parentNode, Editor.ITreeViewItem checkedMode,
+           TechObject.TechObject techObject, ref int techObjNum,
+           ref int modeNum)
+        {
+            var presetTechObjectsContainer = (checkedMode as PresetTechObjectsContainer) ??
+                (checkedMode as Preset)?.PresetTechObjectsContainer;
+            var presetTechObject = presetTechObjectsContainer
+                ?.PresetsTechObjects?.FirstOrDefault(pto => pto.TechObject == techObject);
+
+            foreach (var parameter in techObject.GetParamsManager().Float.Parameters.Where(p => !p.Reserved))
+            {
+                modeNum = parameter.GetParameterNumber;
+                var childNode = new Node(parameter.DisplayText[0])
+                {
+                    Tag = parameter
+                };
+                parentNode.Nodes.Add(childNode);
+
+                childNode.CheckState = 
+                    (presetTechObject?.PresetParameters.FirstOrDefault(pp => pp.Parameter == childNode.Tag) != null)
+                    ? CheckState.Checked : CheckState.Unchecked;
+            }
+        }
         /// <summary>
         /// Заполнение дерева объектов операциями.
         /// </summary>
@@ -840,6 +914,12 @@ namespace EasyEPlanner
                         int modeIndex = node.Parent.Nodes.IndexOf(node) + 1;
                         AddToResDict(objectIndex, modeIndex);
                     }
+                    else if (item is Param)
+                    {
+                        int objectIndex = (node.Parent.Tag as TechObject.TechObject)?.GlobalNum ?? 0;
+                        int paramIndex = (node.Tag as Param).GetParameterNumber;
+                        AddToResDict(objectIndex, paramIndex);
+                    }
                 }
 
                 foreach(var child in node.Nodes)
@@ -895,6 +975,10 @@ namespace EasyEPlanner
                     {
                         ExecuteRestrictions(node, node.CheckState);
                     }
+                    else if (item is Param && selectedEditType is EditType.PresetParameters)
+                    {
+                        ExecutePresetParameters(node, node.CheckState);
+                    }
                 }
 
                 if (node.Nodes.Count > 0)
@@ -906,6 +990,25 @@ namespace EasyEPlanner
                     }
                 }
             }
+
+            private static void ExecutePresetParameters(Node node, CheckState checkState)
+            {
+                int objectIndex = (node.Parent.Tag as TechObject.TechObject).GlobalNum;
+                int parameterIndex = (node.Tag as Param).GetParameterNumber;
+
+                switch (checkState)
+                {
+                    case CheckState.Checked:
+                        AddRestriction(objectIndex, parameterIndex);
+                        break;
+
+                    case CheckState.Unchecked:
+                        DeleteRestriction(objectIndex, parameterIndex);
+                        break;
+                }
+            }
+
+
 
             /// <summary>
             /// Обработка отметки операции в новом редакторе в ограничениях
@@ -1190,6 +1293,7 @@ namespace EasyEPlanner
             AttachedUnitsToObjectGroup,
             AttachedAggregatesToAggregates,
             AttachedObjectToStep, // Привязка объекта к шагу в поле "Связанный объект"
+            PresetParameters,
         }
     }
 }
