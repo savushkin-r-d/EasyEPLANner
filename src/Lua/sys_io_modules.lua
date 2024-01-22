@@ -985,8 +985,8 @@ local io_modules =
             },
             DO_count = 0,
             DI_count = 0,
-            AO_count = 12,
-            AI_count = 12,
+            AO_count = 6,
+            AI_count = 6,
             Color = 'Green'
             },
     }
