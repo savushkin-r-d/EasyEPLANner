@@ -1536,7 +1536,7 @@ namespace Editor
 
             // Активировать режим редактирования при выборе IAction: 
             // Раньше активировался только при изменении страницы в EPLAN
-            if (item is IAction)
+            if (item is IAction && Editable)
                 EProjectManager.GetInstance().StartEditModesWithDelay();
 
             DFrm.CheckShown();
