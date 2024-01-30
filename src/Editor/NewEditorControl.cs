@@ -449,7 +449,7 @@ namespace Editor
             // Сообщение msg содержит lParam, который указывает CDockablePane на закрываемое окно.
             // Но как определить по нему окно...¯\_(ツ)_/¯.
             // Поэтому определяем размеры окна и позицию курсора мыши, и регистрируем нажатие в правый верхний угол размером ~ 30x30 px.
-            if (msg.message == 0xC0C7 && Editable)
+            if ((msg.message == 0xC0C7 || msg.message == 0xC0BA) && Editable)
             {
                 PI.GetWindowRect(PI.GetParent(dialogHandle), out var windowRect);
                 PI.GetCursorPos(out var cursorPos);
