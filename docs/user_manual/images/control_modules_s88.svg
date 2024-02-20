@@ -81,9 +81,6 @@
       ><path d="M0 0 L0 30 L90 30 L90 0 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath26"
-      ><path d="M0 0 L0 30 L100 30 L100 0 Z"
-      /></clipPath
-      ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath27"
       ><path d="M0 0 L0 70 L140 70 L140 0 Z"
       /></clipPath
     ></defs
@@ -585,11 +582,11 @@
     ><path fill="none" d="M0.5 0.5 L138.5 0.5 L149 12.5 L149 69 L0.5 69 Z" clip-path="url(#clipPath7)"
       /><path fill="none" d="M138.5 0.5 L138.5 12.5 L149 12.5" clip-path="url(#clipPath7)"
       /><text x="5" font-size="14px" y="17.9688" clip-path="url(#clipPath7)" font-family="sans-serif" stroke="none" xml:space="preserve"
-      >Исполнительные </text
+      >Датчики,</text
       ><text x="5" font-size="14px" y="33.9375" clip-path="url(#clipPath7)" font-family="sans-serif" stroke="none" xml:space="preserve"
-      >механизмы,датчики,</text
+      >исполнительные</text
       ><text x="5" font-size="14px" y="49.9062" clip-path="url(#clipPath7)" font-family="sans-serif" stroke="none" xml:space="preserve"
-      >клапана и др.</text
+      >механизмы и др.</text
     ></g
     ><g fill="rgb(255,255,255)" fill-opacity="0" transform="translate(600,550)" stroke-opacity="0" stroke="rgb(255,255,255)"
     ><rect x="0.5" width="148.5" height="68.5" y="0.5" clip-path="url(#clipPath7)" stroke="none"
@@ -859,12 +856,12 @@
       /><path fill="none" d="M22.2583 4 L11 10.5 L22.2583 17 Z" clip-path="url(#clipPath25)"
     /></g
     ><g fill="blue" stroke-width="2" transform="translate(500,580)" stroke="blue"
-    ><path fill="none" d="M80.5 10.5 L11.5 10.5" clip-path="url(#clipPath26)"
-      /><path fill="white" d="M22.2583 4 L11 10.5 L22.2583 17 Z" clip-path="url(#clipPath26)" stroke="none"
-      /><path fill="none" d="M22.2583 4 L11 10.5 L22.2583 17 Z" clip-path="url(#clipPath26)"
+    ><path fill="none" d="M100.5 10.5 L11.5 10.5" clip-path="url(#clipPath8)"
+      /><path fill="white" d="M22.2583 4 L11 10.5 L22.2583 17 Z" clip-path="url(#clipPath8)" stroke="none"
+      /><path fill="none" d="M22.2583 4 L11 10.5 L22.2583 17 Z" clip-path="url(#clipPath8)"
     /></g
     ><g stroke-linecap="butt" transform="translate(460,200)" fill="blue" stroke-dasharray="8,5" stroke="blue" stroke-width="2" stroke-miterlimit="5"
-    ><path fill="none" d="M120.5 50.5 L10.5 10.5" clip-path="url(#clipPath27)"
+    ><path fill="none" d="M120.5 50.5 L10.5 10.5" clip-path="url(#clipPath26)"
     /></g
   ></g
 ></svg
