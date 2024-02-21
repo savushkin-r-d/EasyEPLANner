@@ -873,13 +873,13 @@ namespace TechObject
         private void RemoveAttachingToObject(AttachedObjects attachedObjects,
             int objNum)
         {
-            if (attachedObjects?.Value == string.Empty)
+            if (attachedObjects is null || attachedObjects.Value == string.Empty)
             {
                 return;
             }
 
-            List<int> attachedObjectsNums = attachedObjects?.Value.Split(' ')
-                .Select(int.Parse).ToList() ?? new List<int>();
+            List<int> attachedObjectsNums = attachedObjects.Value.Split(' ')
+                .Select(int.Parse).ToList();
             if (attachedObjectsNums.Contains(objNum))
             {
                 attachedObjectsNums.Remove(objNum);
