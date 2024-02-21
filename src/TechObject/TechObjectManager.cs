@@ -790,7 +790,7 @@ namespace TechObject
                 return;
             }
 
-            string attachingObjectsStr = attachedObjects?.Value;
+            string attachingObjectsStr = attachedObjects?.Value ?? "";
             int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
                 .Select(int.Parse).ToArray();
             for (int index = 0; index < attachingObjectsArr.Length; index++)
@@ -801,7 +801,7 @@ namespace TechObject
                     attachingObjectsArr[index] = attachedObjectNum - 1;
                 }
             }
-            attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
+            attachedObjects?.SetValue(string.Join(" ", attachingObjectsArr));
         }
 
         public void ChangeAttachedObjectsAfterMove(int oldNum, int newNum)
@@ -879,7 +879,7 @@ namespace TechObject
             }
 
             List<int> attachedObjectsNums = attachedObjects?.Value.Split(' ')
-                .Select(int.Parse).ToList();
+                .Select(int.Parse).ToList() ?? new List<int>();
             if (attachedObjectsNums.Contains(objNum))
             {
                 attachedObjectsNums.Remove(objNum);
