@@ -140,7 +140,7 @@ namespace Editor
             this.hideEmptyItemsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(636, 29);
+            this.toolStrip.Size = new System.Drawing.Size(555, 29);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -629,10 +629,10 @@ namespace Editor
             this.toolSettingsStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolSettingsStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolSettingDropDownButton});
-            this.toolSettingsStrip.Location = new System.Drawing.Point(838, 0);
+            this.toolSettingsStrip.Location = new System.Drawing.Point(807, 0);
             this.toolSettingsStrip.Name = "toolSettingsStrip";
             this.toolSettingsStrip.ShowItemToolTips = false;
-            this.toolSettingsStrip.Size = new System.Drawing.Size(23, 29);
+            this.toolSettingsStrip.Size = new System.Drawing.Size(54, 29);
             this.toolSettingsStrip.TabIndex = 3;
             this.toolSettingsStrip.Text = "toolStrip1";
             // 
@@ -864,19 +864,19 @@ namespace Editor
             this.searchBoxTLP.ColumnCount = 3;
             this.searchBoxTLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 19F));
             this.searchBoxTLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.searchBoxTLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+            this.searchBoxTLP.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this.searchBoxTLP.Controls.Add(this.pictureBox1, 0, 0);
             this.searchBoxTLP.Controls.Add(this.textBox_search, 1, 0);
             this.searchBoxTLP.Controls.Add(this.searchIterator, 2, 0);
             this.searchBoxTLP.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.searchBoxTLP.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchBoxTLP.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.searchBoxTLP.Location = new System.Drawing.Point(638, 2);
+            this.searchBoxTLP.Location = new System.Drawing.Point(557, 2);
             this.searchBoxTLP.Margin = new System.Windows.Forms.Padding(2);
             this.searchBoxTLP.Name = "searchBoxTLP";
             this.searchBoxTLP.RowCount = 1;
             this.searchBoxTLP.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.searchBoxTLP.Size = new System.Drawing.Size(166, 25);
+            this.searchBoxTLP.Size = new System.Drawing.Size(216, 25);
             this.searchBoxTLP.TabIndex = 4;
             this.searchBoxTLP.Visible = false;
             this.searchBoxTLP.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanelSearchBox_Paint);
@@ -906,10 +906,10 @@ namespace Editor
             this.textBox_search.ForeColor = System.Drawing.Color.Gray;
             this.textBox_search.Location = new System.Drawing.Point(20, 5);
             this.textBox_search.Margin = new System.Windows.Forms.Padding(1, 5, 1, 5);
-            this.textBox_search.MaximumSize = new System.Drawing.Size(160, 0);
-            this.textBox_search.MinimumSize = new System.Drawing.Size(100, 0);
+            this.textBox_search.MaximumSize = new System.Drawing.Size(110, 0);
+            this.textBox_search.MinimumSize = new System.Drawing.Size(110, 0);
             this.textBox_search.Name = "textBox_search";
-            this.textBox_search.Size = new System.Drawing.Size(100, 13);
+            this.textBox_search.Size = new System.Drawing.Size(110, 13);
             this.textBox_search.TabIndex = 0;
             this.textBox_search.Text = "Поиск...";
             this.textBox_search.TextChanged += new System.EventHandler(this.textBox_search_TextChanged);
@@ -921,11 +921,11 @@ namespace Editor
             this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchIterator.Index = 0;
-            this.searchIterator.Location = new System.Drawing.Point(121, 2);
+            this.searchIterator.Location = new System.Drawing.Point(131, 2);
             this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
             this.searchIterator.Maximum = 0;
             this.searchIterator.Name = "searchIterator";
-            this.searchIterator.Size = new System.Drawing.Size(44, 22);
+            this.searchIterator.Size = new System.Drawing.Size(84, 22);
             this.searchIterator.TabIndex = 7;
             // 
             // searchButtonToolStrip
@@ -936,7 +936,7 @@ namespace Editor
             this.searchTSButton,
             this.toolStripSeparator7});
             this.searchButtonToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.searchButtonToolStrip.Location = new System.Drawing.Point(806, 0);
+            this.searchButtonToolStrip.Location = new System.Drawing.Point(775, 0);
             this.searchButtonToolStrip.Name = "searchButtonToolStrip";
             this.searchButtonToolStrip.Size = new System.Drawing.Size(32, 29);
             this.searchButtonToolStrip.TabIndex = 5;

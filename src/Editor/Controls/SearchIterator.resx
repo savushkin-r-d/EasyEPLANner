@@ -117,7 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="checkStateRenderer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="UseRegexButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAJBJREFUOE/F
+        kkEKgzAQRePChSIUj+ZCb+IN9QA9Rq/QhfofJDCoMKml9cMjTEw+Mz+Gf6kQbVwvqRHvuH6kTlTCGtSC
+        fVelmMVT9AKDIdaT4LsrDo3iJZa4UmddRl8ZcIhWaZnWGYFRqBkty4SwCM2GSKiHENM7W+ybW4NTPcS6
+        g70k90fyDFzdb+CF+CuFsAHFeSgJqC6oGQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="SearchWholeButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAANxJREFUOE/V
+        0D0LQVEAxvHLoiyyiFIsyifwBSSTwUApO7PFZPIymSmFb2BgldFqkFIK34T/c9+65Q7uNXnqdzv3nHue
+        0z3GX6SIjDUMlwU61jBcvi6IoIs1ZihAUUEfUyxRg29imKOKMbZQVHBGA008UYJv8mhDp101QVQwsIZm
+        tOZ9d1PGBSP0cIOiAv2ak6HtIxM4Cy14C0TRbx5RN9/sJKELrOCBHTa4Q1nhgD1O0EXqe9Fe44WEBiQF
+        3X4UzlwcOjmNrCbsaF17zUcOagtCe9yCX/i2B/FLDOMNknE3GZDOC2UAAAAASUVORK5CYII=
+</value>
+  </data>
 </root>

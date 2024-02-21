@@ -31,6 +31,7 @@ namespace Editor
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
             searchIterator.IndexChanged += SearchIterator_IndexChanged;
+            searchIterator.SearchSettingsChanged += () => UpdateModelFilter();
 
             //Фильтр
             editorTView.ModelFilter = new ModelFilter((obj)
@@ -448,7 +449,7 @@ namespace Editor
             // Сообщение msg содержит lParam, который указывает CDockablePane на закрываемое окно.
             // Но как определить по нему окно...¯\_(ツ)_/¯.
             // Поэтому определяем размеры окна и позицию курсора мыши, и регистрируем нажатие в правый верхний угол размером ~ 30x30 px.
-            if (msg.message == 0xC0C7 && Editable)
+            if ((msg.message == 0xC0C7 || msg.message == 0xC0BA) && Editable)
             {
                 PI.GetWindowRect(PI.GetParent(dialogHandle), out var windowRect);
                 PI.GetCursorPos(out var cursorPos);
@@ -1535,7 +1536,7 @@ namespace Editor
 
             // Активировать режим редактирования при выборе IAction: 
             // Раньше активировался только при изменении страницы в EPLAN
-            if (item is IAction)
+            if (item is IAction && Editable)
                 EProjectManager.GetInstance().StartEditModesWithDelay();
 
             DFrm.CheckShown();
@@ -1980,6 +1981,12 @@ namespace Editor
 
         private void textBox_search_Leave(object sender, EventArgs e)
         {
+            if (searchIterator.SettingsButtonsFocused)
+            {
+                textBox_search.Focus();
+                return;
+            }
+
             if (textBox_search.Text == string.Empty && UpdatingModelFilter is false)
             {
                 textBox_search.ForeColor = Color.Gray;

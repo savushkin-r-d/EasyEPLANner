@@ -484,6 +484,16 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap regex {
+            get {
+                object obj = ResourceManager.GetObject("regex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap replace {
             get {
                 object obj = ResourceManager.GetObject("replace", resourceCulture);
@@ -697,6 +707,16 @@ namespace EasyEPlanner.Properties {
         public static System.Drawing.Bitmap wash {
             get {
                 object obj = ResourceManager.GetObject("wash", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap wholeword {
+            get {
+                object obj = ResourceManager.GetObject("wholeword", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
