@@ -22,9 +22,9 @@ fg=blue</panel_attributes>
       <w>120</w>
       <h>56</h>
     </coordinates>
-    <panel_attributes>Исполнительные 
-механизмы,датчики,
-клапана и др.
+    <panel_attributes>Датчики,
+исполнительные
+механизмы и др.
 bg=#ccffe5
 fg=blue</panel_attributes>
     <additional_attributes/>
@@ -319,13 +319,13 @@ fg=blue</panel_attributes>
     <coordinates>
       <x>400</x>
       <y>464</y>
-      <w>80</w>
+      <w>96</w>
       <h>24</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;
 lw=2.0
 fg=blue</panel_attributes>
-    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLNote</id>
