@@ -92,7 +92,6 @@ namespace IO
         /// <returns>Модуль ввода-вывода</returns>
         public IIOModule GetModuleByPhysicalNumber(int number)
         {
-            IOModule findedModule = null;
             foreach (var node in iONodes)
             {
                 foreach (var module in node.IOModules)
@@ -104,12 +103,8 @@ namespace IO
                 }
             }
 
-            if (findedModule == null)
-            {
-                const string Message = "Модуль не найден";
-                throw new Exception(Message);
-            }
-            return findedModule;
+           const string Message = "Модуль не найден";
+           throw new Exception(Message);
         }
 
         /// <summary>

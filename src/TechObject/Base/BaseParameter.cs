@@ -454,10 +454,10 @@ namespace TechObject
                 {
                     string operationLuaName = modeInParameter.BaseOperation
                         .LuaName.ToUpper();
-                    TechObject obj = baseTechObject.Owner;
+                    TechObject obj = baseTechObject?.Owner;
                     string objVarName =
-                        $"prg.{obj.NameEplanForFile.ToLower()}" +
-                        $"{obj.TechNumber}";
+                        $"prg.{obj?.NameEplanForFile.ToLower()}" +
+                        $"{obj?.TechNumber}";
                     res = $"{prefix}{LuaName} = " +
                         $"{objVarName}.operations.{operationLuaName}";
                 }

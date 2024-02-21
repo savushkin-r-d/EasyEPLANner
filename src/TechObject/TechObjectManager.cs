@@ -790,7 +790,7 @@ namespace TechObject
                 return;
             }
 
-            string attachingObjectsStr = attachedObjects.Value;
+            string attachingObjectsStr = attachedObjects?.Value;
             int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
                 .Select(int.Parse).ToArray();
             for (int index = 0; index < attachingObjectsArr.Length; index++)
@@ -878,7 +878,7 @@ namespace TechObject
                 return;
             }
 
-            List<int> attachedObjectsNums = attachedObjects.Value.Split(' ')
+            List<int> attachedObjectsNums = attachedObjects?.Value.Split(' ')
                 .Select(int.Parse).ToList();
             if (attachedObjectsNums.Contains(objNum))
             {

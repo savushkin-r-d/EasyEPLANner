@@ -1032,7 +1032,7 @@ namespace EplanDevice
                             $"{device.EplanName} некорректно задан параметр " +
                             $"R_AS_NUMBER.\n ";
                     }
-                    if (isNumber == true && ASNumber < 1 && ASNumber > 62)
+                    if (isNumber == true && (ASNumber < 1 || ASNumber > 62))
                     {
                         errorsBuffer += $"В устройстве " +
                             $"{device.EplanName} некорректно задан диапазон " +

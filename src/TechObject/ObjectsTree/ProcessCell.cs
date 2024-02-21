@@ -162,10 +162,6 @@ namespace TechObject
             if (correctedBaseObject && processCellNotAdd)
             {
                 int newN = 1;
-                if (objects.Count > 0)
-                {
-                    newN = objects[objects.Count - 1].TechNumber + 1;
-                }
                 //Старый и новый номер объекта - для замены в ограничениях
                 int oldObjNum = globalObjectsList
                     .IndexOf(obj as TechObject) + 1;
