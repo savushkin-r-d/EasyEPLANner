@@ -37,12 +37,14 @@ Software engineer creates code in Lua programming language for the project. Easy
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### How to build
-You could clone repository by next command:  
+You could clone repository by next command:
+
 ```bash
 git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
 ```
 
-or, if you are cloned without initializing and updating submodules, try next:  
+or, if you are cloned without initializing and updating submodules, try next:
+
 ```bash
 git submodule update --init --recursive
 ```
@@ -61,7 +63,7 @@ If you want to contribute to the development of our project then check out [how 
 
 ### Feedback
 
-Feel free to contact us via Slack or Google group.
+Feel free to contact us via Slack:
 
 * Channel in [Slack](https://slack.com) - easyEPLANner.slack.com.
 

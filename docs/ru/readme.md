@@ -25,12 +25,14 @@
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### Как собрать
-Вы можете клонировать репозиторий этой командой:  
+Вы можете клонировать репозиторий этой командой:
+
 ```bash
 git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
 ```
 
-или, если вы склонировали без инициализации и обновления подмодулей, попробуйте это:  
+или, если вы склонировали без инициализации и обновления подмодулей, попробуйте это:
+
 ```bash
 git submodule update --init --recursive
 ```
@@ -47,7 +49,8 @@ git submodule update --init --recursive
 
 ### Обратная связь (Feedback)
 
-Если вы хотите связаться с нами, можно использовать несколько способов:
+Если вы хотите связаться с нами, можно использовать Slack:
+
 * Канал в [Slack](https://slack.com) - EasyEPLANner.slack.com.
 
 ### Нормы поведения (Code of conduct)

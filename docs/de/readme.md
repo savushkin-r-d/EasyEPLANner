@@ -25,12 +25,14 @@ EasyEPLANner hilft bei der Beschreibung von technologischen Objekten (Tank, Kess
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### Wie man baut
-Sie können das Repository mit dem nächsten Befehl klonen:   
+Sie können das Repository mit dem nächsten Befehl klonen:
+
 ```bash
 git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
 ```
 
-oder, wenn Sie geklont werden, ohne die Untermodule zu initialisieren und zu aktualisieren, versuchen Sie Folgendes: 
+oder, wenn Sie geklont werden, ohne die Untermodule zu initialisieren und zu aktualisieren, versuchen Sie Folgendes:
+
 ```bash
 git submodule update --init --recursive
 ```
@@ -44,7 +46,8 @@ Die neueste Version der Benutzerdokumentation für das Projekt finden Sie [hier]
 Wenn Sie zur Entwicklung unseres Projekts beitragen möchten, lesen Sie vor dem Beginn [wie man es am besten machen kann](../contributing.md).
 
 ### Feedback
-Kontaktieren Sie uns über Slack oder die Google-Gruppe:
+Kontaktieren Sie uns über Slack:
+
 * Kanal in [Slack](https://slack.com) - EasyEPLANner.slack.com.
 
 ### Verhaltensregeln
