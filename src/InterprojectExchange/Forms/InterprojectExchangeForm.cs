@@ -1102,9 +1102,9 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void saveButton_Click(object sender, EventArgs e)
+        private async void saveButton_Click(object sender, EventArgs e)
         {
-            interprojectExchange.Save();
+            await interprojectExchange.Save();
             Close();
         }
     }

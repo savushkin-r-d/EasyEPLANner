@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using EasyEPlanner;
 
@@ -420,9 +421,9 @@ namespace InterprojectExchange
         /// <summary>
         /// Сохранение межконтроллерного обмена
         /// </summary>
-        public void Save()
+        public async Task Save()
         {
-            Owner.Save();
+            await Owner.Save();
         }
 
         /// <summary>
