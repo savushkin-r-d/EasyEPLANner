@@ -1,6 +1,14 @@
 
 # EasyEPLANner - Open Source
 
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=bugs)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=coverage)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
 **Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).**
 
 ### Repository
@@ -29,12 +37,14 @@ Software engineer creates code in Lua programming language for the project. Easy
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### How to build
-You could clone repository by next command:  
+You could clone repository by next command:
+
 ```bash
 git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git
 ```
 
-or, if you are cloned without initializing and updating submodules, try next:  
+or, if you are cloned without initializing and updating submodules, try next:
+
 ```bash
 git submodule update --init --recursive
 ```
@@ -53,7 +63,7 @@ If you want to contribute to the development of our project then check out [how 
 
 ### Feedback
 
-Feel free to contact us via Slack or Google group.
+Feel free to contact us via Slack:
 
 * Channel in [Slack](https://slack.com) - easyEPLANner.slack.com.
 
