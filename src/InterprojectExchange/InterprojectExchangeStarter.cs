@@ -427,7 +427,7 @@ namespace InterprojectExchange
             }
             interprojectExchangeSaver = new InterprojectExchangeSaver(
                 interprojectExchange, signalsFile);
-            interprojectExchangeSaver.SaveAsync();
+            _ = interprojectExchangeSaver.SaveAsync();
         }
 
         const string devicesAndPLCFile = "main.io.lua";

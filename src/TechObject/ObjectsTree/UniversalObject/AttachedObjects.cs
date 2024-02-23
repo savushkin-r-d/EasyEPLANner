@@ -185,7 +185,7 @@ namespace TechObject
                 }
             }
 
-            foreach (var replacedObj in replacedObjects?.Keys)
+            foreach (var replacedObj in replacedObjects?.Keys ?? Enumerable.Empty<TechObject>())
             {
                 var replacedObjNum = TechObjectManager.GetInstance()
                     .GetTechObjectN(replacedObj);
