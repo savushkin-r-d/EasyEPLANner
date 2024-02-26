@@ -185,13 +185,16 @@ namespace TechObject
                 }
             }
 
-            foreach (var replacedObj in replacedObjects?.Keys ?? Enumerable.Empty<TechObject>())
+            if (replacedObjects != null)
             {
-                var replacedObjNum = TechObjectManager.GetInstance()
-                    .GetTechObjectN(replacedObj);
-                if (oldNumbers.Contains(replacedObjNum))
+                foreach (var replacedObj in replacedObjects.Keys)
                 {
-                    oldNumbers.Remove(replacedObjNum);
+                    var replacedObjNum = TechObjectManager.GetInstance()
+                        .GetTechObjectN(replacedObj);
+                    if (oldNumbers.Contains(replacedObjNum))
+                    {
+                        oldNumbers.Remove(replacedObjNum);
+                    }
                 }
             }
 
