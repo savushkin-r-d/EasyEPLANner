@@ -532,14 +532,11 @@ namespace EasyEPlanner
                     $"\"{description}\".");
             }
 
-            int matchIndex = 0;
-
-            foreach (Match descriptionMatch in descriptionMatches)
+            int devIndex = 0;
+            var devices = descriptionMatches.Cast<Match>().Select(match => deviceManager.GetDevice(match.Groups["name"].Value));
+            foreach (var device in devices)
             {
-                string deviceName = descriptionMatch.Groups["name"].Value;
-                var device = deviceManager.GetDevice(deviceName);
-
-                var clampComment = GetClampComment(actions?.ElementAtOrDefault(matchIndex) ?? string.Empty);
+                var clampComment = GetClampComment(actions?.ElementAtOrDefault(devIndex) ?? string.Empty);
 
                 string error;
                 string channelName = "IO-Link";
@@ -548,27 +545,39 @@ namespace EasyEPlanner
                 int moduleOffset = module.InOffset;
 
                 if (devicesCount == 1 &&
-                    module.Info.AddressSpaceType == 
+                    module.Info.AddressSpaceType ==
                     IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                 {
-                    channelName = GetChannelNameForIOLinkModule(device, comments?.ElementAtOrDefault(matchIndex) ?? string.Empty);
+                    channelName = GetChannelNameForIOLinkModule(device, comments?.ElementAtOrDefault(devIndex) ?? string.Empty);
                 }
 
                 DeviceManager.GetInstance().AddDeviceChannel(device,
-                        module.Info.AddressSpaceType, node.N - 1, 
-                        module.PhysicalNumber % 100, clamp, clampComment, 
-                        out error, module.PhysicalNumber, logicalPort, 
+                        module.Info.AddressSpaceType, node.N - 1,
+                        module.PhysicalNumber % 100, clamp, clampComment,
+                        out error, module.PhysicalNumber, logicalPort,
                         moduleOffset, channelName);
 
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
-                        ioModule.Function.VisibleName , clampStr, error);
+                        ioModule.Function.VisibleName, clampStr, error);
                     Logs.AddMessage(error);
                 }
 
-                matchIndex++;
+                devIndex++;
             }
+
+            var devicesGroupingByAS = devices
+                .GroupBy(dev => dev.RuntimeParameters
+                    .TryGetValue(IODevice.RuntimeParameter.R_AS_NUMBER, out var r_as_number) 
+                        ? int.Parse(r_as_number.ToString()) : -1)
+                .Where(r_as_dev => r_as_dev.Key != -1);
+
+            foreach (var group in devicesGroupingByAS.Where(r_as_dev => r_as_dev.Count() > 1))
+            {
+                Logs.AddMessage($"К модулю {module.Name} узла {node.Name} привязано несколько устройств " +
+                    $"с одинаковым AS ({group.Key}): {string.Join(", ", group.ToList().Select(dev => dev.EplanName))}");
+            };
         }
 
         private string GetClampComment(string action)
