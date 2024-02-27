@@ -990,9 +990,9 @@ namespace EasyEPlanner
                 return false;
             }
 
-            var parametersNode = new Node("Параметры");
             if (dev.Parameters.Count > 0)
-            {     
+            {
+                var parametersNode = new Node(ParametersNodeName);
                 devNode.Nodes.Add(parametersNode);
                 int padding = dev.Parameters.Select(x => x.Key.Name).Max(parNmae => parNmae.Length);
                 foreach (var parameter in dev.Parameters)
@@ -1006,9 +1006,9 @@ namespace EasyEPlanner
                 }
             }
 
-            var propertiesNode = new Node("Свойства");
             if (dev.Properties.Count > 0)
             {
+                var propertiesNode = new Node(PropertiesNodeName);
                 devNode.Nodes.Add(propertiesNode);
                 foreach (var property in dev.Properties)
                 {
@@ -1017,6 +1017,19 @@ namespace EasyEPlanner
 
                     propertyNode.Tag = property;
                     propertiesNode.Nodes.Add(propertyNode);
+                }
+            }
+
+            if (dev.RuntimeParameters.Count > 0)
+            {
+                var rtParametersNode = new Node(RuntimeParametersNodeName);
+                devNode.Nodes.Add(rtParametersNode);
+                foreach(var rtParameter in dev.RuntimeParameters)
+                {
+                    var value = rtParameter.Value?.ToString() ?? string.Empty;
+
+                    var rtParameterNode = new ColumnNode(rtParameter.Key, value);
+                    rtParametersNode.Nodes.Add(rtParameterNode);
                 }
             }
 
@@ -1484,32 +1497,50 @@ namespace EasyEPlanner
 
             switch ((e.Subject as Node).Parent.Text)
             {
-                case "Параметры":
-                    if (double.TryParse(e.NewLabel, out double parValue))
+                case ParametersNodeName:
                     {
-                        var parameter = (IODevice.Parameter)(e.Subject as ColumnNode).Tag;
-                        device.SetParameter(parameter.Name, parValue);
-                        device.UpdateParameters();
-                    }
-                    else
-                    {
-                        (e.Subject as ColumnNode).Value = e.OldLabel;
+                        if (double.TryParse(e.NewLabel, out double parValue))
+                        {
+                            var parameter = (IODevice.Parameter)(e.Subject as ColumnNode).Tag;
+                            device.SetParameter(parameter.Name, parValue);
+                            device.UpdateParameters();
+                        }
+                        else
+                        {
+                            (e.Subject as ColumnNode).Value = e.OldLabel;
+                        }
                     }
                     break;
 
-                case "Свойства":
-                    var property = (e.Subject as ColumnNode).Text;
-                    var value = e.NewLabel;
-
-                    if (!device.MultipleProperties().Contains(property) &&
-                        value.Contains(","))
+                case PropertiesNodeName:
                     {
-                        (e.Subject as ColumnNode).Value = e.OldLabel;
-                        break;
+                        var property = (e.Subject as ColumnNode).Text;
+                        var value = e.NewLabel;
+
+                        if (!device.MultipleProperties().Contains(property) &&
+                            value.Contains(","))
+                        {
+                            (e.Subject as ColumnNode).Value = e.OldLabel;
+                            break;
+                        }
+
+                        device.SetProperty(property, value);
+                        device.UpdateProperties();
                     }
-                    
-                    device.SetProperty(property, value);
-                    device.UpdateProperties();
+                    break;
+
+                case RuntimeParametersNodeName:
+                    {
+                        if (int.TryParse(e.NewLabel, out int value))
+                        {
+                            device.SetRuntimeParameter((e.Subject as ColumnNode).Text, value);
+                            device.UpdateRuntimeParameters();
+                        } 
+                        else
+                        {
+                            (e.Subject as ColumnNode).Value = e.OldLabel;
+                        }
+                    }
                     break;
             }
         }
@@ -1615,5 +1646,11 @@ namespace EasyEPlanner
                 devicesTreeViewAdv.AutoSizeColumn(column);
             }
         }
+
+        public const string ParametersNodeName = "Параметры";
+
+        public const string RuntimeParametersNodeName = "Параметры времени выполенения";
+
+        public const string PropertiesNodeName = "Свойства";
     }
 }

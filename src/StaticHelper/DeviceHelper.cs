@@ -178,6 +178,11 @@ namespace StaticHelper
             return apiHelper.GetSupplementaryFieldValue(function, runtimeParametersIndex);
         }
 
+        public void SetRuntimeParameters(Function function, string value)
+        {
+            apiHelper.SetSupplementaryFieldValue(function, 5, value);
+        }
+
         public int GetLocation(Function function)
         {
             int locationIndex = 6;
