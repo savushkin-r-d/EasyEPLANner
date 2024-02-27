@@ -30,7 +30,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сохранить межконтроллерный обмен
         /// </summary>
-        public async void SaveAsync()
+        public async Task SaveAsync()
         {
             await Task.Run(() => WriteMainProject());
             await WriteAdvancedProjectsAsync();
