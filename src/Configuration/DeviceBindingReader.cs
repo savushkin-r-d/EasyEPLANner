@@ -576,8 +576,8 @@ namespace EasyEPlanner
             foreach (var group in devicesGroupingByAS.Where(r_as_dev => r_as_dev.Count() > 1))
             {
                 Logs.AddMessage($"К модулю {module.Name} узла {node.Name} привязано несколько устройств " +
-                    $"с одинаковым AS ({group.Key}): {string.Join(", ", group.ToList().Select(dev => dev.EplanName))}");
-            };
+                    $"с одинаковым AS ({group.Key}): {string.Join(", ", group.Select(dev => dev.EplanName))}");
+            }
         }
 
         private string GetClampComment(string action)
