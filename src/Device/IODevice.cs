@@ -235,6 +235,23 @@ namespace EplanDevice
         }
 
         /// <summary>
+        /// Установка параметров времени выполнения на ФСА
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        public void UpdateRuntimeParameters()
+        {
+            var runtimeParametersList = new List<string>();
+            foreach (var rtPar in rtParameters)
+            {
+                runtimeParametersList.Add($"{rtPar.Key}={rtPar.Value}");
+            }
+
+            var helper = new DeviceHelper(new ApiHelper());
+            helper.SetRuntimeParameters(EplanObjectFunction,
+                string.Join(",", runtimeParametersList));
+        }
+
+        /// <summary>
         /// Установка рабочего параметра.
         /// </summary>
         public string SetRuntimeParameter(string name, double value)
