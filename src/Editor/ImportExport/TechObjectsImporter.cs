@@ -244,10 +244,10 @@ namespace Editor
         /// <param name="checkedItems">Выбранные на дереве объекты</param>
         public void Import(List<ITreeViewItem> checkedItems)
         {
-            foreach(var item in checkedItems)
+            foreach(var item in checkedItems.OfType<TechObject.TechObject>())
             {
-                techObjectManager
-                    .ImportObject(item as TechObject.TechObject);
+                techObjectManager.ImportObject(item);
+                item.ModesManager.ModifyRestrictObj(0, item.GlobalNum);
             }
 
             (techObjectManager as ITreeViewItem).AddParent(null);
