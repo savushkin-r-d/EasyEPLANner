@@ -445,7 +445,7 @@ namespace Editor
             PI.CWPSTRUCT msg =
                 (PI.CWPSTRUCT)System.Runtime.InteropServices.Marshal.PtrToStructure(lParam, typeof(PI.CWPSTRUCT));
 
-            // AFX_WM_ON_PRESS_CLOSE_BUTTON - зарегестрированное сообщение, вызываемое при закрытии дочернего окна в EPLAN.
+            // AFX_WM_ON_PRESS_CLOSE_BUTTON - зарегистрированное сообщение, вызываемое при закрытии дочернего окна в EPLAN.
             // Сообщение msg содержит lParam, который указывает CDockablePane на закрываемое окно.
             // Но как определить по нему окно...¯\_(ツ)_/¯.
             // Поэтому определяем размеры окна и позицию курсора мыши, и регистрируем нажатие в правый верхний угол размером ~ 30x30 px.
