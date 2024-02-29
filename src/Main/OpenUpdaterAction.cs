@@ -16,7 +16,7 @@ namespace EasyEPlanner
     {
         ~OpenUpdater() { }
 
-        public bool Execute(ActionCallingContext ctx)
+        public bool Execute(ActionCallingContext oActionCallingContext)
         {
             var path = new FileInfo(AddInModule.OriginalAssemblyPath).Directory.FullName;
             if (File.Exists(path + AddInModule.LauncherPath))

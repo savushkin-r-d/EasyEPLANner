@@ -550,9 +550,9 @@ namespace TechObject
                 return;
             }
 
-            var genericState = genericObject as State;
-            if (genericState is null)
+            if (!(genericObject is State genericState))
                 return;
+
 
             foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count))
             {
@@ -580,15 +580,11 @@ namespace TechObject
                     continue;
 
                 if (step is null)
-                {
                     step = AddStep(genericStep.GetStepName(), genericStep.GetBaseStepLuaName());
-                }
+                else if (!string.IsNullOrEmpty(genericStep.GetBaseStepLuaName()))
+                    step.SetNewValue(genericStep.GetBaseStepLuaName(), true);
                 else
-                {
-                    if (!string.IsNullOrEmpty(genericStep.GetBaseStepLuaName()))
-                        step.SetNewValue(genericStep.GetBaseStepLuaName(), true);
                     step.SetNewValue(genericStep.GetStepName());
-                }
 
                 step.UpdateOnGenericTechObject(genericStep);
             }

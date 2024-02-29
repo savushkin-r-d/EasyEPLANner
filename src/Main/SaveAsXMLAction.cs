@@ -16,7 +16,7 @@ namespace EasyEPlanner.Main
         ///This function is called when executing the action.
         /// </summary>
         ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
+        public bool Execute(ActionCallingContext oActionCallingContext)
         {
             try
             {

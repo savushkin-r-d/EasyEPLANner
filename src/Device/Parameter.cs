@@ -195,41 +195,30 @@ namespace EplanDevice
 
             public static string GetFormatValue(Parameter parameter, object value, IODevice device = null)
             {
-                if (parameter.description == string.Empty && parameter.format == string.Empty) return value.ToString();
+                if (parameter.description == string.Empty && parameter.format == string.Empty) 
+                    return value.ToString();
 
                 string displayedValue = value.ToString();
-                double editedValue = 0;
 
-                if (!double.TryParse(value.ToString(), out editedValue))
+                if (!double.TryParse(value.ToString(), out double editedValue))
                     displayedValue = "-";
 
                 // Формат параметров в зависимости от типа устройства
-                switch (device.DeviceType)
+                if (device.DeviceType is DeviceType.WT && new[] { P_C0, P_DT }.Contains(parameter))
+                    return string.Format(UnitFormat.Kilograms, displayedValue);
+
+                if (device.DeviceType is DeviceType.C &&
+                    new [] { P_max, P_min, P_delta }.Contains(parameter))
                 {
-                    case DeviceType.WT:
-                        if (parameter == P_C0 || parameter == P_DT)
-                            return string.Format(UnitFormat.Kilograms, displayedValue);
-                        break;
-                    case DeviceType.C:
-                        if (parameter == P_max || parameter == P_min || parameter == P_delta)
-                        {
-                            var inValue = device.Properties[Property.IN_VALUE];
+                    var signalDevice = DeviceManager.GetInstance().Devices
+                        .Find(dev => dev.Name == device.Properties[Property.IN_VALUE]?.ToString());
 
-                            if (inValue == null) break;
-                            var signalDevice = EplanDevice.DeviceManager
-                                .GetInstance().Devices
-                                .Find(dev => dev.Name == inValue.ToString());
-                            if (signalDevice == null) break;
-                            
-                            if (signalDevice.DeviceType == DeviceType.C)
-                            {
-                                return GetFormatValue(parameter, value,
-                                        signalDevice);
-                            }
-
-                            return string.Format(signalDevice.PIDUnitFormat, displayedValue);
-                        }
-                        break;
+                    if (signalDevice != null)
+                    {
+                        return signalDevice.DeviceType is DeviceType.C ?
+                            GetFormatValue(parameter, value, signalDevice)
+                            : string.Format(signalDevice.PIDUnitFormat, displayedValue);
+                    }
                 }
 
                 if (parameter.format == UnitFormat.Boolean)

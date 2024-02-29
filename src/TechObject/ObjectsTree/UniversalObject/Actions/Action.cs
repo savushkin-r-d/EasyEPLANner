@@ -872,48 +872,14 @@ namespace TechObject
             /// <returns></returns>
             private bool ValidateDevice(EplanDevice.IDevice device)
             {
-                bool isValidType = false;
                 EplanDevice.DeviceType deviceType = device.DeviceType;
                 EplanDevice.DeviceSubType deviceSubType = device.DeviceSubType;
 
                 Action.GetDisplayObjects(out EplanDevice.DeviceType[] validTypes,
                     out EplanDevice.DeviceSubType[] validSubTypes, out _);
 
-                if (validTypes == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    foreach (EplanDevice.DeviceType type in validTypes)
-                    {
-                        if (type == deviceType)
-                        {
-                            isValidType = true;
-                            break;
-                        }
-                        else
-                        {
-                            isValidType = false;
-                        }
-                    }
-
-                    if (validSubTypes != null)
-                    {
-                        bool isValidSubType = false;
-                        foreach (EplanDevice.DeviceSubType subType in validSubTypes)
-                        {
-                            if ((subType == deviceSubType) && isValidType)
-                            {
-                                isValidSubType = true;
-                            }
-                        }
-
-                        return isValidType && isValidSubType;
-                    }
-                }
-
-                return isValidType;
+                return (validTypes?.Contains(deviceType) ?? true) 
+                    && (validSubTypes?.Contains(deviceSubType) ?? true);
             }
 
             public IAction Action { get; set; }

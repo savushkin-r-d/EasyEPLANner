@@ -491,60 +491,33 @@ namespace TechObject
         /// <param name="curr">Новый номер операции</param>
         public void ChangeModeNum(TechObject techObject, int prev, int curr)
         {
-            var objNum = TechObjectManager.GetInstance()
-                .GetTechObjectN(techObject);
+            var objNum = TechObjectManager.GetInstance().GetTechObjectN(techObject);
 
             const int markAsDelete = -1;
             if (curr != markAsDelete)
-            {               
-                // Замена нового на старый    
-                if (restrictStr.Contains($"{{ {objNum}, {curr} }}"))
-                {
-                    restrictStr = restrictStr
-                        .Replace($"{{ {objNum}, {curr} }}",
-                        $"{{ {objNum}, {prev} N}}");
-                }
-
-                //Замена старого на новый
-                if (restrictStr.Contains($"{{ {objNum}, {prev} }}"))
-                {
-                    restrictStr = restrictStr
-                        .Replace($"{{ {objNum}, {prev} }}",
-                        $"{{ {objNum}, {curr} }}");
-                }
-
-                // Убираем букву-заглушку, которая закрывала уже измененный
-                // текст от изменений
-                if (restrictStr.Contains("N"))
-                {
-                    restrictStr = restrictStr.Replace("N", "");
-                }
+            {
+                restrictStr = restrictStr
+                    // Замена нового на старый    
+                    .Replace($"{{ {objNum}, {curr} }}", $"{{ {objNum}, {prev} N}}")
+                    //Замена старого на новый
+                    .Replace($"{{ {objNum}, {prev} }}", $"{{ {objNum}, {curr} }}")
+                    // Убираем букву-заглушку, которая закрывала уже измененный текст от изменений
+                    .Replace("N", "");
             }
-            // Удаление объекта (индекс -1)
+            else if (restrictStr.Contains($"{{ {objNum}, {prev} }}"))
+            {
+                restrictStr = (restrictStr + "").Replace($"{{ {objNum}, {prev} }} ", "").Trim();
+                ChangeModeNum(techObject, prev, markAsDelete);
+            }
             else
             {
-                if (restrictStr.Contains($"{{ {objNum}, {prev} }}"))
+                var modesCount = techObject.ModesManager.Modes.Count;
+                for (int i = prev + 1; i <= modesCount; i++)
                 {
-                    restrictStr += " ";
-                    restrictStr = restrictStr
-                        .Replace($"{{ {objNum}, {prev} }} ", "");
-                    restrictStr = restrictStr.Trim();
-                    ChangeModeNum(techObject, prev, markAsDelete);
-                }
-                else
-                {
-                    var modesCount = techObject.ModesManager.Modes.Count;
-                    for (int i = prev + 1; i <= modesCount; i++)
-                    {
-                        if (restrictStr.Contains($"{{ {objNum}, {i} }}"))
-                        {
-                            restrictStr = restrictStr
-                                .Replace($"{{ {objNum}, {i} }}",
-                                $"{{ {objNum}, {i - 1} }}");
-                        }
-                    }
+                    restrictStr = restrictStr.Replace($"{{ {objNum}, {i} }}", $"{{ {objNum}, {i - 1} }}");
                 }
             }
+
             ChangeRestrictList();
         }
 
