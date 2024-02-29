@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Editor;
 using EplanDevice;
@@ -341,6 +342,7 @@ namespace TechObject
 
         public void SetJumpToStateIf()
         {
+            var IDLE = (int)State.StateType.IDLE;
             var RUN = (int)State.StateType.RUN;
             var PAUSE = (int)State.StateType.PAUSE;
             var STOP = (int)State.StateType.STOP;
@@ -349,28 +351,34 @@ namespace TechObject
 
             if (Owner.Type == State.StateType.RUN)
             {
-                CBParameterValues.Add("3. " + State.stateStr[PAUSE], PAUSE.ToString());
-                CBParameterValues.Add("4. " + State.stateStr[STOP], STOP.ToString());
+                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
+                CBParameterValues.Add(State.stateStr[PAUSE], PAUSE.ToString());
+                CBParameterValues.Add(State.stateStr[STOP], STOP.ToString());
             }
             else if (Owner.Type == State.StateType.IDLE)
             {
-                CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
             }
             else if (Owner.Type == State.StateType.STARTING)
             {
-                CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
             }
             else if (Owner.Type == State.StateType.PAUSING)
             {
-                CBParameterValues.Add("3. " + State.stateStr[PAUSE], PAUSE.ToString());
+                CBParameterValues.Add( State.stateStr[PAUSE], PAUSE.ToString());
+            }
+            else if (Owner.Type == State.StateType.PAUSE)
+            {
+                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
+                CBParameterValues.Add(State.stateStr[STOP], STOP.ToString());
             }
             else if (Owner.Type == State.StateType.UNPAUSING)
             {
-                CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
             }
             else if (Owner.Type == State.StateType.STOPPING)
             {
-                CBParameterValues.Add("4. " + State.stateStr[STOP], STOP.ToString());
+                CBParameterValues.Add( State.stateStr[STOP], STOP.ToString());
             }
             else return;
 
