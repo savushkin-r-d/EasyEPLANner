@@ -1130,7 +1130,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="nodes">Список Nodes в узле</param>
         /// <param name="parent">Родительский узел, где лежат Nodes</param>
-        private void TreeSort(List<Node> nodes, Node parent)
+        public static void TreeSort(List<Node> nodes, Node parent)
         {
             // Если меньше или 1, то нет смысла сортировать
             if (nodes.Count <= 1)
