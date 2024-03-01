@@ -15,7 +15,7 @@ namespace Tests.EplanDevices
     public class DFrmTest
     {
         [Test]
-        public void T()
+        public void TreeSortTest()
         {
             var root = new Node("Устройства проекта")
             {

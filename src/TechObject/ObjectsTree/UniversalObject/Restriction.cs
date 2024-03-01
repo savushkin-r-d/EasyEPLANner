@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Editor;
 
 namespace TechObject
@@ -506,7 +507,7 @@ namespace TechObject
             }
             else if (restrictStr.Contains($"{{ {objNum}, {prev} }}"))
             {
-                restrictStr = (restrictStr + "").Replace($"{{ {objNum}, {prev} }} ", "").Trim();
+                restrictStr = restrictStr.Replace($"{{ {objNum}, {prev} }}", "");
                 ChangeModeNum(techObject, prev, markAsDelete);
             }
             else
