@@ -17,26 +17,26 @@ namespace TechObject
 
         public override bool SetNewValue(string newValue)
         {
+            newValue = newValue.Trim();
             if (Param?.Params?.ParamsManager?.TechObject is GenericTechObject &&
                 Name == Param.ValuePropertyName)
             { // Установка пустого значения для параметра в типовом объекте
-                if (newValue.Trim() == "-")
+                if (newValue == "-")
                 {
                     value = "-";
                     defaultValue = "-";
+                    return true;
                 }
-                else if (double.TryParse(newValue, out var newValueAsDouble))
+                
+                if (double.TryParse(newValue, out var newValueAsDouble))
                 {
                     value = newValueAsDouble;
                     defaultValue = string.Empty;
                     OnValueChanged(this);
-                }
-                else
-                {
-                    return false;
+                    return true;
                 }
 
-                return true;
+                return false;
             }
             else if (Name == Param.NameLuaPropertyName 
                 && (Param?.Params?.HaveSameLuaName(newValue) ?? false))
