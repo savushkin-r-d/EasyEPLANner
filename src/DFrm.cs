@@ -1130,66 +1130,37 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="nodes">Список Nodes в узле</param>
         /// <param name="parent">Родительский узел, где лежат Nodes</param>
-        private void TreeSort(List<Node> nodes, Node parent)
+        public static void TreeSort(List<Node> nodes, Node parent)
         {
             // Если меньше или 1, то нет смысла сортировать
-            if (nodes.Count > 1)
+            if (nodes.Count <= 1)
+                return;
+
+            // Собственный Comparer для List
+            nodes.Sort((frst, scnd) =>
             {
-                // Собственный Comparer для List
-                nodes.Sort((x, y) =>
-               {
-                   int res = 0;
-                   if (x.Tag is EplanDevice.IODevice.IOChannel &&
-                       y.Tag is EplanDevice.IODevice.IOChannel)
-                   {
-                       var wx = x.Tag as EplanDevice.IODevice.IOChannel;
-                       var wy = y.Tag as EplanDevice.IODevice.IOChannel;
+                if (frst.Tag is IODevice.IOChannel frstCh &&
+                    scnd.Tag is IODevice.IOChannel scndCh)
+                    return IODevice.IOChannel.Compare(frstCh, scndCh);
 
-                       res = EplanDevice.IODevice.IOChannel.Compare(wx, wy);
-                       return res;
-                   }
+                if (frst.Nodes.FirstOrDefault()?.Tag is Device frstChildDev &&
+                    scnd.Nodes.FirstOrDefault()?.Tag is Device scndChildDev)
+                    return Device.Compare(frstChildDev, scndChildDev);
 
-                   bool checkDevTypeSubType =
-                   (x.Tag is EplanDevice.DeviceType || 
-                   x.Tag is EplanDevice.DeviceSubType) &&
-                   (y.Tag is EplanDevice.DeviceType || 
-                   y.Tag is EplanDevice.DeviceSubType);
-                   if (checkDevTypeSubType)
-                   {
-                       res = x.Text.CompareTo(y.Text);
-                       return res;
-                   }
+                if (frst.Tag is Device frstDev &&
+                    scnd.Tag is Device scndDev)
+                    return Device.Compare(frstDev, scndDev);
 
-                   if (x.Nodes.Count > 0 && x.Nodes[0].Tag is EplanDevice.Device &&
-                       y.Nodes.Count > 0 && y.Nodes[0].Tag is EplanDevice.Device)
-                   {
-                       res = EplanDevice.Device.Compare(
-                           x.Nodes[0].Tag as EplanDevice.Device,
-                           y.Nodes[0].Tag as EplanDevice.Device);
-                       return res;
-                   }
+                return frst.Text.CompareTo(scnd.Text);
+            });
 
-                   if (x.Tag is EplanDevice.Device && y.Tag is EplanDevice.Device)
-                   {
-                       var xDev = x.Tag as EplanDevice.Device;
-                       var yDev = y.Tag as EplanDevice.Device;
-
-                       res = EplanDevice.Device.Compare(xDev, yDev);
-                       return res;
-                   }
-
-                   res = x.Text.CompareTo(y.Text);
-                   return res;
-               });
-
-                // Очищаем Nodes
-                parent.Nodes.Clear();
-                // Записываем отсортированные и сортируем сразу следующие
-                foreach (Node node in nodes)
-                {
-                    parent.Nodes.Add(node);
-                    TreeSort(node.Nodes.ToList(), node);
-                }
+            // Очищаем Nodes
+            parent.Nodes.Clear();
+            // Записываем отсортированные и сортируем сразу следующие
+            foreach (Node node in nodes)
+            {
+                parent.Nodes.Add(node);
+                TreeSort(node.Nodes.ToList(), node);
             }
         }
         #endregion

@@ -473,55 +473,50 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix, bool isShortForm = false)
         {
+            if (isShortForm)
+                return string.Join(string.Empty,
+                    actions.Select(a => a.SaveAsLuaTable(prefix)));
+                
             var resultBuilder = new StringBuilder();
 
-            if (isShortForm)
+            string time_param_n = timeParam.EditText[1].Trim();
+            string next_step_n = nextStepN.EditText[1].Trim();
+            string attached_object = attachedObject.Value.ToString();
+
+            double leadTime = double.Parse(time_param_n,
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            if (leadTime <= 0)
             {
-                foreach (IAction action in actions)
-                {
-                    resultBuilder.Append(action.SaveAsLuaTable(prefix));
-                }
+                next_step_n = "-1";
+                time_param_n = "-1";
+                nextStepN.SetNewValue("-1");
+                timeParam.SetNewValue("-1");
             }
-            else
+
+            string time_param_n_str = (string.IsNullOrEmpty(time_param_n)) ? string.Empty :
+                $"{prefix}time_param_n = {time_param_n},\n";
+            string next_step_n_str = (string.IsNullOrEmpty(next_step_n)) ? string.Empty :
+                $"{prefix}next_step_n = {next_step_n},\n";
+            string baseStep_str = (string.IsNullOrEmpty(baseStep.LuaName)) ? string.Empty :
+                $"{prefix}baseStep = '{baseStep.LuaName}',\n";
+            string attachedObject_str = (string.IsNullOrEmpty(attached_object)) ? string.Empty :
+                $"{prefix}attached_object = {attached_object},\n";
+
+            resultBuilder.Append(prefix).Append("{\n")
+                .Append(prefix).Append($"name = '{name}',\n")
+                .Append(time_param_n_str)
+                .Append(next_step_n_str)
+                .Append(baseStep_str)
+                .Append(attachedObject_str);
+
+            foreach (IAction action in actions)
             {
-                string time_param_n = timeParam.EditText[1].Trim();
-                string next_step_n = nextStepN.EditText[1].Trim();
-                string attached_object = attachedObject.Value.ToString();
-
-                double leadTime = double.Parse(time_param_n,
-                    System.Globalization.CultureInfo.InvariantCulture);
-
-                if (leadTime <= 0)
-                {
-                    next_step_n = "-1";
-                    time_param_n = "-1";
-                    nextStepN.SetNewValue("-1");
-                    timeParam.SetNewValue("-1");
-                }
-
-                string time_param_n_str = (string.IsNullOrEmpty(time_param_n))? string.Empty :
-                    $"{prefix}time_param_n = {time_param_n},\n";
-                string next_step_n_str = (string.IsNullOrEmpty(next_step_n)) ? string.Empty :
-                    $"{prefix}next_step_n = {next_step_n},\n";
-                string baseStep_str = (string.IsNullOrEmpty(baseStep.LuaName)) ? string.Empty :
-                    $"{prefix}baseStep = '{baseStep.LuaName}',\n";
-                string attachedObject_str = (string.IsNullOrEmpty(attached_object)) ? string.Empty :
-                    $"{prefix}attached_object = {attached_object},\n";
-
-                resultBuilder.Append(prefix).Append("{\n")
-                    .Append(prefix).Append($"name = '{name}',\n")
-                    .Append(time_param_n_str)
-                    .Append(next_step_n_str)
-                    .Append(baseStep_str)
-                    .Append(attachedObject_str);
-
-                foreach (IAction action in actions)
-                {
-                    resultBuilder.Append(action.SaveAsLuaTable(prefix));
-                }
-
-                resultBuilder.Append(prefix).Append("},\n");
+                resultBuilder.Append(action.SaveAsLuaTable(prefix));
             }
+
+            resultBuilder.Append(prefix).Append("},\n");
+
 
             return resultBuilder.ToString();
         }

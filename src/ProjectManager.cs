@@ -12,6 +12,8 @@ using EasyEPlanner.PxcIolinkConfiguration;
 using System;
 using System.Text;
 using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
+using StaticHelper;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -203,78 +205,47 @@ namespace EasyEPlanner
         /// Путь к файлам .lua (к проекту)
         /// </summary>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         public string GetPtusaProjectsPath(string projectName)
         {
             try
             {
-                // Поиск пути к каталогу с надстройкой
-                string[] originalAssemblyPath = OriginalAssemblyPath
-                    .Split('\\');
+                string path = Path.Combine(OriginalAssemblyPath, StaticHelper.CommonConst.ConfigFileName);
 
-                int sourceEnd = originalAssemblyPath.Length;
-                string path = @"";
-                for (int source = 0; source < sourceEnd; source++)
-                {
-                    path += originalAssemblyPath[source].ToString() + "\\";
-                }
-                path += StaticHelper.CommonConst.ConfigFileName;
-
-                PInvoke.IniFile iniFile;
+                PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
                 // Поиск файла .ini
                 if (!File.Exists(path))
                 {
                     // Если не нашли - создаем новый, 
                     // записываем дефолтные данные
-                    iniFile = new PInvoke.IniFile(path);
-
                     StreamWriter sr = new StreamWriter(path, true);
                     sr.WriteLine("[path]\nfolder_path=");
                     sr.Close();
                     sr.Flush();
-                } else
-                {
-                    iniFile = new PInvoke.IniFile(path);
                 }
-               
+
                 // Считывание и возврат пути каталога проектов
-                string projectsFolders =
-                    iniFile.ReadString("path", "folder_path", "");
-                string[] projectsFolderArray = projectsFolders.Split(';');
-                string projectsFolder = "";
-                bool firstPathIsSaved = false;
-                string firstPath = "";
+                string[] projectsFolderArray = iniFile
+                    .ReadString("path", "folder_path", "")
+                    .Split(';');
+
                 foreach (string pathFromArray in projectsFolderArray)
                 {
-                    if (pathFromArray != "")
+                    if (string.IsNullOrEmpty(pathFromArray))
+                        continue;
+
+                    if (Directory.Exists(Path.Combine(pathFromArray, projectName)))
                     {
-                        if (firstPathIsSaved == false)
-                        {
-                            firstPath = pathFromArray;
-                            firstPathIsSaved = true;
-                        }
-                        projectsFolder = pathFromArray;
-                        if (projectsFolder.Last() != '\\')
-                        {
-                            projectsFolder += '\\';
-                        }
-                        string projectsPath = projectsFolder + projectName;
-                        if (Directory.Exists(projectsPath))
-                        {
-                            return projectsFolder;
-                        }
+                        return pathFromArray + '\\';
                     }
                 }
 
-                if (firstPathIsSaved == false && firstPath == "")
-                {
-                    MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
-                        "Пожалуйста, проверьте конфигурацию!", "Внимание",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    return firstPath + '\\';
-                }
+                if (!string.IsNullOrEmpty(projectsFolderArray.FirstOrDefault()))
+                    return projectsFolderArray.FirstOrDefault() + '\\';
+
+                MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
+                    "Пожалуйста, проверьте конфигурацию!", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch
             {
@@ -865,13 +836,7 @@ namespace EasyEPlanner
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
         /// </summary>
-        public string OriginalAssemblyPath
-        {
-            get
-            {
-                return Path.GetDirectoryName(AddInModule.OriginalAssemblyPath);
-            }
-        }
+        public string OriginalAssemblyPath => Path.GetDirectoryName(AddInModule.OriginalAssemblyPath);
 
         /// <summary>
         /// Название папки с системными скриптами

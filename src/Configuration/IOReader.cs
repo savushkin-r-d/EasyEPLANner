@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using StaticHelper;
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -60,7 +61,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            ReadModules(isContainsNodes);
+            ReadModules();
         }
 
         /// <summary>
@@ -237,76 +238,61 @@ namespace EasyEPlanner
         /// <summary>
         /// Чтение модулей ввода-вывода
         /// </summary>
-        /// <param name="isContainsNodes">Прочитаны или нет узлы</param>
-        private void ReadModules(bool isContainsNodes)
+        [ExcludeFromCodeCoverage]
+        private void ReadModules()
         {
             foreach (var function in functionsForSearching)
             {
-                bool needSkipModule = NeedSkipModule(function);
-                if (needSkipModule == true)
-                {
+                if (NeedSkipModule(function))
                     continue;
-                }
 
                 var match = IONameRegex.Match(function.VisibleName);
                 int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
                 int shortModuleNumber = moduleNumber % 100;
-                int shortNodeNumber;
-                if (isContainsA1 == true)
-                {
-                    shortNodeNumber = moduleNumber/100;
-                }
-                else
-                {
-                    shortNodeNumber = moduleNumber/100 - numberA1;
-                }
+                int shortNodeNumber = moduleNumber / 100 - (isContainsA1 ? numberA1 : 0);
 
                 string type = GetModuleTypeFromFunction(function);
                 IO.IIONode node = IOManager[shortNodeNumber];
-                if (IOManager[shortNodeNumber] != null)
+
+                if (IOManager[shortNodeNumber] is null)
                 {
-                    IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, 
+                    Logs.AddMessage($"Для \"{function.VisibleName}\" - \"{type}\"," +
+                        $" не найден узел номер {++shortNodeNumber}.");
+                    continue;
+                }
+
+                IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function,
                         type);
 
-                    int inOffset;
-                    int outOffset;
-                    GetInAndOutOffset(shortNodeNumber, moduleInfo,
-                        out inOffset, out outOffset);
+                GetInAndOutOffset(shortNodeNumber, moduleInfo,
+                    out int inOffset, out int outOffset);
 
-                    string articleName = deviceHelper.GetArticleName(function);
-                    IO.IOModule nodeModule = new IO.IOModule(inOffset,
-                        outOffset, moduleInfo, moduleNumber, articleName, function);
+                IO.IOModule nodeModule = new IO.IOModule(inOffset,
+                    outOffset, moduleInfo, moduleNumber,
+                    deviceHelper.GetArticleName(function), function);
 
-                    node.DI_count += moduleInfo.DICount;
-                    node.DO_count += moduleInfo.DOCount;
-                    node.AI_count += moduleInfo.AICount;
-                    node.AO_count += moduleInfo.AOCount;
+                node.DI_count += moduleInfo.DICount;
+                node.DO_count += moduleInfo.DOCount;
+                node.AI_count += moduleInfo.AICount;
+                node.AO_count += moduleInfo.AOCount;
 
-                    bool moduleNotExist = node[shortModuleNumber - 1] == null;
-                    if(moduleNotExist)
+                if (node[shortModuleNumber - 1] is null)
+                {
+                    try
                     {
-                        try
-                        {
-                            node.SetModule(nodeModule, shortModuleNumber);
-                        }
-                        catch(Exception ex)
-                        {
-                            Logs.AddMessage(ex.Message);
-                        }
+                        node.SetModule(nodeModule, shortModuleNumber);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Logs.AddMessage($"Главная функция модуля " +
-                            $"ввода-вывода \'{function.VisibleName}\' " +
-                            $"определяется дважды, проверьте расстановку " +
-                            $"главных функций на модулях. ");
+                        Logs.AddMessage(ex.Message);
                     }
                 }
                 else
                 {
-                    Logs.AddMessage($"Для" +
-                        $" \"{function.VisibleName}\" - \"{type}\", " +
-                        $"не найден узел номер {++shortNodeNumber}.");
+                    Logs.AddMessage($"Главная функция модуля " +
+                        $"ввода-вывода \'{function.VisibleName}\' " +
+                        $"определяется дважды, проверьте расстановку " +
+                        $"главных функций на модулях. ");
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace EasyEPlanner
     {
         ~AboutProgramm() { }
 
-        public bool Execute(ActionCallingContext ctx)
+        public bool Execute(ActionCallingContext oActionCallingContext)
         {
             string version = AssemblyVersion.GetVersion();
             string message = $"Версия надстройки - {version}\n" +

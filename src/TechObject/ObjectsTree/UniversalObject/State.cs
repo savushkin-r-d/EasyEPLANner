@@ -550,8 +550,7 @@ namespace TechObject
                 return;
             }
 
-            var genericState = genericObject as State;
-            if (genericState is null)
+            if (!(genericObject is State genericState))
                 return;
 
             foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count))
@@ -562,33 +561,22 @@ namespace TechObject
                 var stepByBaseStep = Steps.Find(s => s.GetBaseStepLuaName() == genericStep.GetBaseStepLuaName() && genericStep.GetBaseStepLuaName() != "");
                 var stepsByName = Steps.FindAll(s => s.GetStepName() == genericStep.GetStepName());
 
-                if (stepsByName.Count == 1 &&
-                    step != null && stepsByName[0] != null &&
-                    stepsByName[0] != step)
+                if (step != null)
                 {
-                    SwapSteps(stepIndex, Steps.IndexOf(stepsByName[0]));
-                }
+                    if (stepsByName.Count == 1 && stepsByName[0] != null && stepsByName[0] != step)
+                        SwapSteps(stepIndex, Steps.IndexOf(stepsByName[0]));
 
-                if (step != null && stepByBaseStep != null &&
-                    step != stepByBaseStep)
-                {
-                    step.SetNewValue("", true);
-                    stepByBaseStep.SetNewValue("", true);
-                }
+                    if (stepByBaseStep != null && step != stepByBaseStep)
+                    {
+                        step.SetNewValue("", true);
+                        stepByBaseStep.SetNewValue("", true);
+                    }
 
-                if (genericStep is null)
-                    continue;
-
-                if (step is null)
-                {
-                    step = AddStep(genericStep.GetStepName(), genericStep.GetBaseStepLuaName());
-                }
-                else
-                {
                     if (!string.IsNullOrEmpty(genericStep.GetBaseStepLuaName()))
                         step.SetNewValue(genericStep.GetBaseStepLuaName(), true);
                     step.SetNewValue(genericStep.GetStepName());
                 }
+                else step = AddStep(genericStep.GetStepName(), genericStep.GetBaseStepLuaName());
 
                 step.UpdateOnGenericTechObject(genericStep);
             }
