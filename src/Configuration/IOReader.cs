@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using StaticHelper;
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -237,6 +238,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Чтение модулей ввода-вывода
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ReadModules()
         {
             foreach (var function in functionsForSearching)

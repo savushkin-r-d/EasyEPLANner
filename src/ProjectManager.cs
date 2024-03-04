@@ -12,6 +12,8 @@ using EasyEPlanner.PxcIolinkConfiguration;
 using System;
 using System.Text;
 using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
+using StaticHelper;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -203,6 +205,7 @@ namespace EasyEPlanner
         /// Путь к файлам .lua (к проекту)
         /// </summary>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         public string GetPtusaProjectsPath(string projectName)
         {
             try
@@ -833,13 +836,7 @@ namespace EasyEPlanner
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
         /// </summary>
-        public string OriginalAssemblyPath
-        {
-            get
-            {
-                return Path.GetDirectoryName(AddInModule.OriginalAssemblyPath);
-            }
-        }
+        public string OriginalAssemblyPath => Path.GetDirectoryName(AddInModule.OriginalAssemblyPath);
 
         /// <summary>
         /// Название папки с системными скриптами
