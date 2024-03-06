@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Editor;
 using Moq;
 using NUnit.Framework;
+using TechObject;
+using TechObject.AttachedObjectStrategy;
 
 namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjecsTest
 {
@@ -78,5 +81,31 @@ namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjecsTest
 
         }
 
+
+        [Test]
+        public void Replace_AttachedObjects()
+        {
+            var baseTechObject = new BaseTechObject()
+            {
+                Name = "BTO",
+                LuaModuleName = "BTO",
+            };
+
+            var techObject1 = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", baseTechObject);
+            var techObject2 = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", baseTechObject);
+
+            var replaced = techObject1.Replace(techObject1.AttachedObjects, techObject2.AttachedObjects);
+
+            // Заменяется не поле привязанных агрегатов а его значение
+            Assert.AreSame(replaced, techObject1.AttachedObjects);
+        }
+
+        [Test]
+        public void Replace_Empty()
+        {
+            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
+
+            Assert.IsNull(techObject.Replace(0, 0));
+        }
     }
 }
