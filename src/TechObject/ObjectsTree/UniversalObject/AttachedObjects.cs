@@ -2,6 +2,7 @@
 using Editor;
 using IO;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using TechObject.AttachedObjectStrategy;
@@ -552,12 +553,14 @@ namespace TechObject
             }
         }
 
+        [ExcludeFromCodeCoverage]
         public override IRenderer[] CellRenderer =>
             new IRenderer[] { null, GenericAttachedObjectsRenderer };
 
         /// <summary>
         /// Подсветка устройств из типового объекта
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private HighlightTextRenderer GenericAttachedObjectsRenderer
         {
             get

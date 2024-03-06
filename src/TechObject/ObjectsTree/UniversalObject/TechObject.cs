@@ -965,10 +965,8 @@ namespace TechObject
                 return equipment;
             }
 
-            var attachedObjectsTarget = child as AttachedObjects;
-            var attachedObjectsCopy = copyObject as AttachedObjects;
-            bool AttachedObjectsIsNotNull = !(attachedObjectsTarget is null || attachedObjectsCopy is null);
-            if (AttachedObjectsIsNotNull)
+            if (child is AttachedObjects attachedObjectsTarget &&
+                copyObject is AttachedObjects attachedObjectsCopy)
             {
                 return attachedObjectsTarget.Replace(child, attachedObjectsCopy);
             }

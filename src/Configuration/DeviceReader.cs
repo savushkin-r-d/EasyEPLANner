@@ -185,7 +185,7 @@ namespace EasyEPlanner
         private void PrepareForReading() 
         {
             deviceManager.Clear();
-            var objectFinder = new DMObjectsFinder(projectHelper.GetProject());
+            var objectFinder = new DMObjectsFinder((projectHelper as ProjectHelper).GetProject());
 
             var propertyList = new FunctionPropertyList();
             propertyList.FUNC_MAINFUNCTION = true;

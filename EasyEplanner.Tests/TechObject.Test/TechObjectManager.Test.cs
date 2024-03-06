@@ -244,6 +244,41 @@ namespace TechObjectTests
             });
         }
 
+        [Test]
+        public void SaveRestrictionAsLua()
+        {
+            var operation1 = techObjects[0].ModesManager.AddMode("operation 1", "");
+            var operation2 = techObjects[0].ModesManager.AddMode("operation 2", "");
+
+            operation1.SetRestriction("LocalRestriction", "{ 1, 2 }");
+            
+            var expected = new StringBuilder()
+                .Append("restrictions =\n")
+                .Append("    {\n")
+                .Append("    [ 1 ] =        --Танк 1\n")
+                .Append("        {\n")
+                .Append("        [ 1 ] =        --operation 1\n")
+                .Append("            {\n")
+                .Append("                [ 1 ] =\n")
+                .Append("                    {        --Ограничения внутри объекта\n")
+                .Append("                        [ 2 ] = 1,\n")
+                .Append("\n")
+                .Append("                    },\n")
+                .Append("            },\n")
+                .Append("        [ 2 ] =        --operation 2\n")
+                .Append("            {\n")
+                .Append("                [ 1 ] =\n")
+                .Append("                    {        --Ограничения внутри объекта\n")
+                .Append("                        [ 1 ] = 1,\n")
+                .Append("\n")
+                .Append("                    },\n")
+                .Append("            },\n")
+                .Append("        },\n")
+                .Append("    }");
+
+            Assert.AreEqual(expected.ToString(), techObjectManager.SaveRestrictionAsLua(""));
+        }
+
         private TechObjectManager techObjectManager;
         private List<TechObject.TechObject> techObjects;
         private List<GenericTechObject> genericTechObjects;

@@ -43,7 +43,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading()
         {
-            var objectsFinder = new DMObjectsFinder(projectHelper.GetProject());
+            var objectsFinder = new DMObjectsFinder((projectHelper as ProjectHelper).GetProject());
 
             var properties = new FunctionPropertyList();
             properties.FUNC_MAINFUNCTION = true;

@@ -420,10 +420,10 @@ namespace TechObject
         private Params parUint;
         private Params parUintRuntime;
 
-        private const string ParFloatLuaName = "par_float";
-        private const string ParFloatRuntimeLuaName = "rt_par_float";
-        private const string ParUintLuaName = "par_uint";
-        private const string ParUintRuntimeLuaName = "rt_par_uint";
+        public const string ParFloatLuaName = "par_float";
+        public const string ParFloatRuntimeLuaName = "rt_par_float";
+        public const string ParUintLuaName = "par_uint";
+        public const string ParUintRuntimeLuaName = "rt_par_uint";
 
         private List<ITreeViewItem> items;
     }
