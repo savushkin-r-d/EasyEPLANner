@@ -15,7 +15,8 @@ namespace EasyEplannerTests
         [TestCase("1.0.0.1 - 1.0.0.9", "")]
         [TestCase("1.0.0.1 - 1.0.0.9, 1.0.0.11-1.0.0.19", "")]
         [TestCase("1.0.0.11", ConfigurationChecker.WrongIPRanges + ConfigurationChecker.ExampleIPRanges)]
-        [TestCase("1.0.256.11-1.0.256.19", ConfigurationChecker.WrongIPRanges + ConfigurationChecker.ExampleIPRanges)]
+        [TestCase("1.0.0.11", ConfigurationChecker.WrongIPRanges + ConfigurationChecker.ExampleIPRanges)]
+        [TestCase("1.0.0.19-1.0.0.11", ConfigurationChecker.WrongIPRanges + ConfigurationChecker.ExampleIPRanges)]
         [TestCase("", ConfigurationChecker.WrongIPRanges + ConfigurationChecker.ExampleIPRanges)]
         public void CheckIPRanges(string ipRangesString, string expectedErrors)
         {
