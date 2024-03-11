@@ -83,25 +83,12 @@ namespace TechObject
         override public string SaveAsLuaTable(string prefix)
         {
             string res = string.Empty;
-            if (SubActions.Count == 0)
+            if (SubActions.Any() is false)
             {
                 return res;
             }
 
-            string singleGroupData = string.Empty;
-            string multiGroupData = string.Empty;
-            singleGroupData += SaveSingleGroup(prefix);
-            multiGroupData += SaveMultiGroup(prefix);
-
-            string oldVersionCompatibility = 
-                "Совместимость со старой версией";
-            if (singleGroupData != string.Empty)
-            {
-                res += $"{prefix}{SingleGroupAction} = --{name}." +
-                    $" {oldVersionCompatibility}\n" + 
-                    $"{singleGroupData}";
-            }
-
+            string multiGroupData = SaveMultiGroup(prefix);
             if (multiGroupData != string.Empty)
             {
                 res += $"{prefix}{MultiGroupAction} = --{name}\n" +
