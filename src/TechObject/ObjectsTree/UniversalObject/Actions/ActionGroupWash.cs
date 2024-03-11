@@ -116,19 +116,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сохранить первую группу мойки. Старая функциональность
-        /// </summary>
-        /// <param name="prefix">Префикс</param>
-        /// <returns></returns>
-        private string SaveSingleGroup(string prefix)
-        {
-            string res = string.Empty;
-            var firstGroup = SubActions.First();
-            res += firstGroup?.SaveAsLuaTable(prefix);
-            return res;
-        }
-
-        /// <summary>
         /// Сохранить все группы мойки
         /// </summary>
         /// <param name="prefix">Префикс</param>
