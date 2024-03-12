@@ -81,7 +81,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             double newValue = deviceParamValuePair.Value;
             if (defaultInternalValueParsed && defaultValueParsed)
             {
-                if (defaultValue == 0 || defaultInternalValue == 0)
+                if (Math.Abs(defaultValue) <= double.Epsilon || Math.Abs(defaultInternalValue) <= double.Epsilon)
                 {
                     string message = $"В шаблоне изделия {articleName}, параметр {deviceParamValuePair.Key}" +
                         $" содержит Value или InternalValue равное 0. Деление на 0. " +
