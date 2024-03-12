@@ -83,7 +83,7 @@ namespace TechObject
         override public string SaveAsLuaTable(string prefix)
         {
             string res = string.Empty;
-            if (SubActions.Any() is false)
+            if (!SubActions.Any())
             {
                 return res;
             }
