@@ -89,7 +89,7 @@ namespace InterprojectExchange
                 return;
             }
             interprojectExchange.MainModel.SelectedAdvancedProject =
-                interprojectExchange.SelectedModel.ProjectName;
+                interprojectExchange.SelectedModel?.ProjectName;
             ReloadListViewWithSignals();
         }
 

@@ -139,6 +139,7 @@ namespace TechObject
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
+            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.RED_BOX;
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
