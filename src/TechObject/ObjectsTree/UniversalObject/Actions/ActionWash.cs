@@ -102,16 +102,17 @@ namespace TechObject
                     EplanDevice.DeviceSubType.M_VIRT,
                 }));
 
-            var pumpFreqParam = new ActiveParameter("pump_freq",
+            var pumpFreqParam = new ActionParameter("pump_freq",
                 "Производительность/задание", "", new List<BaseParameter.DisplayObject> 
                 { 
                     BaseParameter.DisplayObject.Parameters,
                     BaseParameter.DisplayObject.Signals}
                 );
 
-            pumpFreqParam.OneValueOnly = true;
-            parameters = new List<BaseParameter>();
-            parameters.Add(pumpFreqParam);
+            parameters = new List<BaseParameter>
+            {
+                pumpFreqParam
+            };
 
             SubActions.ForEach(subAction => (subAction as Action).ValueChanged += (sender) => OnSubActionChanged(sender));
             pumpFreqParam.ValueChanged += (sender) => OnSubActionChanged(sender);

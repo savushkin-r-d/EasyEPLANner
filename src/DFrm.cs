@@ -10,6 +10,7 @@ using Aga.Controls.Tree.NodeControls;
 using StaticHelper;
 using EplanDevice;
 using System.Text.RegularExpressions;
+using TechObject;
 
 namespace EasyEPlanner
 {
@@ -1351,10 +1352,17 @@ namespace EasyEPlanner
                 int mainNodesLevel = 1;
                 List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes
                     .Where(x => x.Level == mainNodesLevel).ToList();
-                foreach(var treeNode in treeNodes)
+
+                // Если выбранный эелемент редактора - параметр действия,
+                // то можем выбрать только одно значение для него, остальные сбрасываем
+                if (treeViewItemLastSelected is ActionParameter actionParameter)
                 {
-                    OnCheckOperationTree.Execute(treeNode);
+                    devicesTreeViewAdv.AllNodes.Select(n => n.Tag as Node)
+                        .Where(n => n != e.Path.LastNode && n.IsChecked)
+                        .ToList().ForEach(n => n.CheckState = CheckState.Unchecked);
                 }
+
+                treeNodes.ForEach(OnCheckOperationTree.Execute);
 
                 devicesTreeViewAdv.Refresh();
 

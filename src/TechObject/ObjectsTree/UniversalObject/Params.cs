@@ -73,18 +73,8 @@ namespace TechObject
         /// Получение параметра по его Lua-имени.
         /// </summary>
         /// <param name="nameLua">Имя в Lua.</param>
-        public Param GetParam(string nameLua)
-        {
-            for (int i = 0; i < parameters.Count; i++)
-            {
-                if (parameters[i].GetNameLua() == nameLua)
-                {
-                    return parameters[i];
-                }
-            }
-
-            return null;
-        }
+        public Param GetParam(string nameLua) 
+            => parameters.FirstOrDefault(p => p.GetNameLua() == nameLua);
 
         /// <summary>
         /// Получение параметра по его индексу.
@@ -92,16 +82,7 @@ namespace TechObject
         /// <param name="paramIndex">Индекс параметра</param>
         /// <returns></returns>
         public Param GetParam(int paramIndex)
-        {
-            if (paramIndex < parameters.Count)
-            {
-                return parameters[paramIndex];
-            }
-            else
-            {
-                return null;
-            }
-        }
+            => parameters.ElementAtOrDefault(paramIndex);
 
         /// <summary>
         /// Сохранение в виде таблицы Lua.

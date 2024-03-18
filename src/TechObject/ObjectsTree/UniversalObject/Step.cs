@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -81,8 +81,9 @@ namespace TechObject
                             EplanDevice.DeviceType.DO,
                             EplanDevice.DeviceType.M
                         }));
-                    openedDeviceAction.CreateParameter(new ActiveParameter("",
-                        "Задержка включения"));
+                    openedDeviceAction.CreateParameter(
+                        new ActionParameter("", "Задержка включения", "",
+                        new List<BaseParameter.DisplayObject> { BaseParameter.DisplayObject.Parameters }));
                     return openedDeviceAction;
                 });
             actions.Add(openDevicesActionGroup);
@@ -132,8 +133,9 @@ namespace TechObject
                             EplanDevice.DeviceType.DO,
                             EplanDevice.DeviceType.M
                         }));
-                    closedDeviceAction.CreateParameter(new ActiveParameter("",
-                        "Задержка выключения"));
+                    closedDeviceAction.CreateParameter(
+                        new ActionParameter("", "Задержка выключения", "",
+                        new List<BaseParameter.DisplayObject> { BaseParameter.DisplayObject.Parameters }));
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
@@ -312,7 +314,10 @@ namespace TechObject
                 actions.Add(toStepByConditionAction);
                 items.Add(toStepByConditionAction);
 
-                timeParam = new ObjectProperty("Время (параметр)", -1, -1);
+                timeParam = new ActionParameter("", "Время (параметр)", "-1", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                });
                 items.Add(timeParam);
 
                 nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
