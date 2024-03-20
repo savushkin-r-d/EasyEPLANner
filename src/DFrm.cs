@@ -373,7 +373,7 @@ namespace EasyEPlanner
         /// <param name="node">Узел</param>
         /// <param name="param">Параметр</param>
         /// <param name="checkedObjects">Список выбранных объектов</param>
-        private void SetUpCheckStateParameter(Node node,
+        public static void SetUpCheckStateParameter(Node node,
             Param param, string checkedObjects)
         {
             if (checkedObjects.Contains($" {param.GetNameLua()} ") ||
