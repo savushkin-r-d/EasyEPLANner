@@ -11,18 +11,31 @@ namespace TechObject
     /// <summary>
     /// Параметр для действий. <br/>
     /// Используется для установки параметра для действия. <br/>
-    /// По-умолчанию устанавливается номер параметра. <br/>
-    /// Также может быть установлено имя параметра или устройство: для этого
-    /// в конструкторе нужно установить displayObjects
     /// </summary>
+    /// <remarks>
+    /// Класс имеет ссылку <c><see cref="Parameter"/></c> на привязанный параметр. <br/>
+    /// Эта ссылка используется для отслеживания изменений этого параметра, <br/>
+    /// перемещение привязанного параметра или его удаление из тех. объекта 
+    /// изменит значение поля (<c><see cref="Value"/></c>).
+    /// </remarks>
     public class ActionParameter : BaseParameter
     {
-        public ActionParameter(string luaName, string name,
-            string defaultValue = "", List<DisplayObject> displayObjects = null) 
-            : base(luaName, name, defaultValue, displayObjects)
+        /// <summary>
+        /// Параметр действия
+        /// </summary>
+        /// <param name="luaName">LUA-название</param>
+        /// <param name="name">Название</param>
+        /// <param name="defaultValue">Значение по-умолчанию</param>
+        /// <param name="displayObjects">Объекты отображаемые в меню "Устройства, параметры объектов"</param>
+        /// <param name="onlyParameterNumber">Можно установить только номер параметра</param>
+        public ActionParameter(string luaName, string name) 
+            : base(luaName, name, "-1", new List<DisplayObject>{ DisplayObject.Parameters })
         { }
 
-        public TechObject GetTechObject(ITreeViewItem item)
+        /// <summary>
+        /// Рекурсивный обход родительских элементов до получения тех. объекта
+        /// </summary>
+        private TechObject GetTechObject(ITreeViewItem item)
         {
             if (item is null)
                 return null;
@@ -31,42 +44,76 @@ namespace TechObject
                 techobject : GetTechObject(item.Parent);
         }
 
+        /// <summary>
+        /// Параметры тех.объекта
+        /// </summary>
+        private Params Parameters => GetTechObject(Parent)?.GetParamsManager()?.Float;
+
+
         public override bool SetNewValue(string newValue)
         {
-            if (int.TryParse(newValue, out var parameterIndex) && parameterIndex != -1 &&
-                 GetTechObject(Parent)?.GetParamsManager()?.Float.GetParam(parameterIndex - 1) == null)
-            {
-                return false;
-            }
-
+            Parameter = null;
             return base.SetNewValue(newValue);
+        }
+
+        public override string Value
+        {
+            get
+            {
+                if(Parameter is null)
+                {
+                    // Если параметр еще не привязан - пытаемся привязать параметр по значению
+                    Parameter = int.TryParse(value.ToString(), out var parameterIndex) ?
+                        Parameters?.GetParam(parameterIndex - 1) :
+                        Parameters?.GetParam(value.ToString());
+
+                    value = Parameter?.GetParameterNumber.ToString() ?? value;
+                }
+                else
+                {
+                    var parameterNumber = Parameter.GetParameterNumber;
+                    if (parameterNumber == 0)
+                        SetNewValue("-1"); // Параметр удален
+                    else if (parameterNumber.ToString() != value.ToString())
+                        SetNewValue(parameterNumber.ToString()); // Параметр перемещен
+                }
+
+                return base.Value;
+            }
         }
 
         public override string[] DisplayText
         {
             get
             {
-                var parameters = GetTechObject(Parent)?.GetParamsManager()?.Float;
-                int.TryParse(Value, out int value);
-                if ((parameters?.GetParam(value - 1) ?? parameters?.GetParam(Value)) is Param param )
-                {
-                    return new string[] { Name, $"{param.GetParameterNumber}. {param.GetNameLua()}: {param.GetValue()} {param.GetMeter()}" };
-                }
-                
-                if (value == -1)
+                var displayedValue = Value;
+                if (displayedValue == CommonConst.EmptyValue )
                 {
                     return new string[] { Name, CommonConst.StubForCells };
                 }
-                
-                return new string[] { Name, Value };
-            }
 
+                if (Parameter is null)
+                {
+                    return new string[] { Name, $"Параметр {displayedValue} не найден" };
+                }
+                
+                return new string[] 
+                { 
+                    Name,
+                    $"{Parameter.GetParameterNumber}. {Parameter.GetNameLua()}: " +
+                    $"{Parameter.GetValue()} {Parameter.GetMeter()}" 
+                };
+            }
         }
+
+        /// <summary>
+        /// Привязанный параметр
+        /// </summary>
+        public Param Parameter { get; private set; }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActionParameter(LuaName, Name,
-                DefaultValue, DisplayObjects);
+            var newProperty = new ActionParameter(LuaName, Name);
             newProperty.SetNewValue(Value);
             newProperty.NeedDisable = NeedDisable;
             

@@ -57,7 +57,7 @@ namespace Editor
         /// <summary>
         /// Значение свойства
         /// </summary>
-        public string Value => value.ToString();
+        public virtual string Value => value.ToString();
 
         /// <summary>
         /// Имя свойства

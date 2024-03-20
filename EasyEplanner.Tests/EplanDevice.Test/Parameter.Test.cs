@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using EplanDevice;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
-using static Tests.TechObject.DeviceManagerMock;
+using static TechObjectTests.DeviceManagerMock;
 
 namespace Tests.EplanDevices
 {

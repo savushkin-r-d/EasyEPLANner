@@ -342,8 +342,7 @@ namespace EasyEPlanner
                         break;
 
                     case TechObject.Param par:
-                        string parName = $" {par.GetNameLua()} ";
-                        SetUpCheckState(subNode, parName, checkedObjects);
+                        SetUpCheckStateParameter(subNode, par, checkedObjects);
                         break;
                 }
 
@@ -366,6 +365,23 @@ namespace EasyEPlanner
                 node.CheckState = CheckState.Checked;
                 StaticHelper.GUIHelper.CheckCheckState(node);
             };
+        }
+
+        /// <summary>
+        /// Настроить селектор CheckBox в узле для параметров
+        /// </summary>
+        /// <param name="node">Узел</param>
+        /// <param name="param">Параметр</param>
+        /// <param name="checkedObjects">Список выбранных объектов</param>
+        private void SetUpCheckStateParameter(Node node,
+            Param param, string checkedObjects)
+        {
+            if (checkedObjects.Contains($" {param.GetNameLua()} ") ||
+                checkedObjects.Contains($" {param.GetParameterNumber} "))
+            {
+                node.CheckState = CheckState.Checked;
+                StaticHelper.GUIHelper.CheckCheckState(node);
+            }
         }
 
         /// <summary>
@@ -670,8 +686,12 @@ namespace EasyEPlanner
 
             foreach(var name in luaNames.Distinct())
             {
-                var newNode = new Node(name);
-                newNode.Tag = parameters.GetParam(name);
+                var param = parameters.GetParam(name);
+
+                var newNode = new Node($"{param.GetParameterNumber}. {name}")
+                {
+                    Tag = param
+                };
                 root.Nodes.Add(newNode);
             }
 
@@ -1319,7 +1339,7 @@ namespace EasyEPlanner
                             break;
 
                         case TechObject.Param par:
-                            res += $"{par.GetNameLua()} ";
+                            res += $"{par.GetParameterNumber} ";
                             break;
                     }
                 }

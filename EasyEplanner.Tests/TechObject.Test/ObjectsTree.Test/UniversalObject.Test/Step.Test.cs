@@ -727,6 +727,14 @@ namespace EasyEplanner.Tests
             var step = new Step("Шаг", GetN => 1, null);
             var genericStep = new Step("Шаг 1", GetN => 1, null);
 
+            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
+
+            techObject.GetParamsManager().Float.Insert();
+            techObject.GetParamsManager().Float.Insert();
+
+            step.AddParent(techObject);
+            genericStep.AddParent(techObject);
+
             var genericActionMock = new Mock<IAction>();
             genericActionMock.Setup(a => a.Empty).Returns(false);
 
