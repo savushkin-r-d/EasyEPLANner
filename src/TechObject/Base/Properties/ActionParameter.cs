@@ -21,16 +21,18 @@ namespace TechObject
     public class ActionParameter : BaseParameter
     {
         /// <summary>
-        /// Параметр действия
+        /// Параметр дейтсвия
         /// </summary>
-        /// <param name="luaName">LUA-название</param>
-        /// <param name="name">Название</param>
-        /// <param name="defaultValue">Значение по-умолчанию</param>
-        /// <param name="displayObjects">Объекты отображаемые в меню "Устройства, параметры объектов"</param>
-        /// <param name="onlyParameterNumber">Можно установить только номер параметра</param>
-        public ActionParameter(string luaName, string name) 
-            : base(luaName, name, "-1", new List<DisplayObject>{ DisplayObject.Parameters })
-        { }
+        /// <param name="luaName">Lua-название (используется не везде)</param>
+        /// <param name="name">Название в Eplan</param>
+        /// <param name="onlyParameterNumber">Установка параметров только по номерам</param>
+        /// <param name="displayObject">Отображаемые значения в меню устройства и параметры объектов (По-умолчанию: только параметры)</param>
+        public ActionParameter(string luaName, string name,
+            bool onlyParameterNumber = true, List<DisplayObject> displayObject = null) 
+            : base(luaName, name, "-1", displayObject ?? new List<DisplayObject>{ DisplayObject.Parameters })
+        { 
+            OnlyParameterNumber = onlyParameterNumber;
+        }
 
         /// <summary>
         /// Рекурсивный обход родительских элементов до получения тех. объекта
@@ -67,20 +69,26 @@ namespace TechObject
                         Parameters?.GetParam(parameterIndex - 1) :
                         Parameters?.GetParam(value.ToString());
 
-                    value = Parameter?.GetParameterNumber.ToString() ?? value;
+                    if (OnlyParameterNumber)
+                        value = Parameter?.GetParameterNumber.ToString() ?? value;
                 }
                 else
                 {
                     var parameterNumber = Parameter.GetParameterNumber;
                     if (parameterNumber == 0)
                         SetNewValue("-1"); // Параметр удален
-                    else if (parameterNumber.ToString() != value.ToString())
-                        SetNewValue(parameterNumber.ToString()); // Параметр перемещен
+                    else if (OnlyParameterNumber && parameterNumber.ToString() != value.ToString())
+                        SetNewValue(parameterNumber.ToString()); // Параметр задан номером и перемещен
                 }
 
                 return base.Value;
             }
         }
+
+        /// <summary>
+        /// Для установки параметра использовать только номер параметра
+        /// </summary>
+        public bool OnlyParameterNumber { get; private set; }
 
         public override string[] DisplayText
         {
@@ -94,7 +102,12 @@ namespace TechObject
 
                 if (Parameter is null)
                 {
-                    return new string[] { Name, $"Параметр {displayedValue} не найден" };
+                    var dev = deviceManager.GetDeviceByEplanName(displayedValue);
+
+                    if (dev.Description != CommonConst.Cap)
+                        return new string[] { Name, displayedValue };
+                    else
+                        return new string[] { Name, $"Параметр {displayedValue} не найден" };
                 }
                 
                 return new string[] 

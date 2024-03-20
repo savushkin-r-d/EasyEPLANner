@@ -102,7 +102,12 @@ namespace TechObject
                     EplanDevice.DeviceSubType.M_VIRT,
                 }));
 
-            var pumpFreqParam = new ActionParameter("pump_freq", "Производительность/задание");
+            var pumpFreqParam = new ActionParameter("pump_freq", "Производительность/задание",
+                false, new List<BaseParameter.DisplayObject> 
+                { 
+                    BaseParameter.DisplayObject.Parameters,
+                    BaseParameter.DisplayObject.Signals
+                });
 
             parameters = new List<BaseParameter>
             {
