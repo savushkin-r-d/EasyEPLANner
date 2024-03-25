@@ -1339,7 +1339,7 @@ namespace EasyEPlanner
                             break;
 
                         case TechObject.Param par:
-                            res += $"{par.GetParameterNumber} ";
+                            res += $"{par.GetNameLua()} ";
                             break;
                     }
                 }
