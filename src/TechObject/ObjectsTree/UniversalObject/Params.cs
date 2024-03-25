@@ -74,7 +74,7 @@ namespace TechObject
         /// </summary>
         /// <param name="nameLua">Имя в Lua.</param>
         public Param GetParam(string nameLua) 
-            => parameters.FirstOrDefault(p => p.GetNameLua() == nameLua);
+            => parameters.Find(p => p.GetNameLua() == nameLua);
 
         /// <summary>
         /// Получение параметра по его индексу.

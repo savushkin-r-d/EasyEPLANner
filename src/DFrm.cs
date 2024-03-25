@@ -1375,7 +1375,7 @@ namespace EasyEPlanner
 
                 // Если выбранный эелемент редактора - параметр действия,
                 // то можем выбрать только одно значение для него, остальные сбрасываем
-                if (treeViewItemLastSelected is ActionParameter actionParameter)
+                if (treeViewItemLastSelected is ActionParameter)
                 {
                     devicesTreeViewAdv.AllNodes.Select(n => n.Tag as Node)
                         .Where(n => n != e.Path.LastNode && n.IsChecked)
