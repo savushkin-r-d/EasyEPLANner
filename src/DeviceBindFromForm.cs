@@ -288,8 +288,7 @@ namespace EasyEPlanner
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt();
 
             // Есть ли PXC A1 в проекте
-            if (IOManager.GetInstance().IONodes[0].Type ==
-                IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
+            if (IOManager.GetInstance().IONodes[0].NodeNumber == 1)
             {
                 // Если есть "A1", то учитываем, что он первый
                 nodeNumber = deviceNumber / 100;
