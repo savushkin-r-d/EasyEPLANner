@@ -10,6 +10,7 @@ using Aga.Controls.Tree.NodeControls;
 using StaticHelper;
 using EplanDevice;
 using System.Text.RegularExpressions;
+using TechObject;
 
 namespace EasyEPlanner
 {
@@ -341,8 +342,7 @@ namespace EasyEPlanner
                         break;
 
                     case TechObject.Param par:
-                        string parName = $" {par.GetNameLua()} ";
-                        SetUpCheckState(subNode, parName, checkedObjects);
+                        SetUpCheckStateParameter(subNode, par, checkedObjects);
                         break;
                 }
 
@@ -365,6 +365,23 @@ namespace EasyEPlanner
                 node.CheckState = CheckState.Checked;
                 StaticHelper.GUIHelper.CheckCheckState(node);
             };
+        }
+
+        /// <summary>
+        /// Настроить селектор CheckBox в узле для параметров
+        /// </summary>
+        /// <param name="node">Узел</param>
+        /// <param name="param">Параметр</param>
+        /// <param name="checkedObjects">Список выбранных объектов</param>
+        public static void SetUpCheckStateParameter(Node node,
+            Param param, string checkedObjects)
+        {
+            if (checkedObjects.Contains($" {param.GetNameLua()} ") ||
+                checkedObjects.Contains($" {param.GetParameterNumber} "))
+            {
+                node.CheckState = CheckState.Checked;
+                StaticHelper.GUIHelper.CheckCheckState(node);
+            }
         }
 
         /// <summary>
@@ -669,8 +686,12 @@ namespace EasyEPlanner
 
             foreach(var name in luaNames.Distinct())
             {
-                var newNode = new Node(name);
-                newNode.Tag = parameters.GetParam(name);
+                var param = parameters.GetParam(name);
+
+                var newNode = new Node($"{param.GetParameterNumber}. {name}")
+                {
+                    Tag = param
+                };
                 root.Nodes.Add(newNode);
             }
 
@@ -1351,10 +1372,17 @@ namespace EasyEPlanner
                 int mainNodesLevel = 1;
                 List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes
                     .Where(x => x.Level == mainNodesLevel).ToList();
-                foreach(var treeNode in treeNodes)
+
+                // Если выбранный эелемент редактора - параметр действия,
+                // то можем выбрать только одно значение для него, остальные сбрасываем
+                if (treeViewItemLastSelected is ActionParameter)
                 {
-                    OnCheckOperationTree.Execute(treeNode);
+                    devicesTreeViewAdv.AllNodes.Select(n => n.Tag as Node)
+                        .Where(n => n != e.Path.LastNode && n.IsChecked)
+                        .ToList().ForEach(n => n.CheckState = CheckState.Unchecked);
                 }
+
+                treeNodes.ForEach(OnCheckOperationTree.Execute);
 
                 devicesTreeViewAdv.Refresh();
 

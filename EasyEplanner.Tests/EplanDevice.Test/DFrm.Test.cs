@@ -10,7 +10,7 @@ using EplanDevice;
 using NUnit.Framework;
 
 
-namespace Tests.EplanDevices
+namespace TestsTechObject
 {
     public class DFrmTest
     {
@@ -86,5 +86,29 @@ namespace Tests.EplanDevices
             });
         }
 
+        [Test]
+        public void SetUpCheckStateParameter_Test()
+        {
+            var root = new Node();
+
+            var node = new Node()
+            {
+                Parent = root,
+            };
+
+            Assert.Multiple(() =>
+            {
+                DFrm.SetUpCheckStateParameter(node, new TechObject.Param(getN => 1, "Параметр", false, 0, "шт", "par", false), " 1 ");
+                Assert.IsTrue(node.IsChecked);
+
+                DFrm.SetUpCheckStateParameter(node, new TechObject.Param(getN => 1, "Параметр", false, 0, "шт", "par", false), " par ");
+                Assert.IsTrue(node.IsChecked);
+
+                DFrm.SetUpCheckStateParameter(node, new TechObject.Param(getN => 1, "Параметр", false, 0, "шт", "par", false), " 2 ");
+                Assert.IsTrue(node.IsChecked);
+            });
+
+
+        }
     }
 }

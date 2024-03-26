@@ -7,7 +7,7 @@ using System.Linq;
 using TechObject;
 using TechObject.ActionProcessingStrategy;
 
-namespace Tests.TechObject
+namespace TechObjectTests
 {
     class ActionTest
     {
@@ -797,6 +797,12 @@ namespace Tests.TechObject
             var step1 = new Step("Шаг1", GetN => 1, null);
             var step2 = new Step("Шаг2", GetN => 2, null);
 
+            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
+            techObject.GetParamsManager().Float.Insert();
+            techObject.GetParamsManager().Float.Insert();
+            step1.AddParent(techObject);
+            step2.AddParent(techObject);
+
             var action1 = step1.Items[2] as GroupableAction;
             var action2 = step2.Items[2] as GroupableAction;
 
@@ -813,7 +819,7 @@ namespace Tests.TechObject
                 result = action2.InsertCopy(action1);
 
                 Assert.AreNotSame(action2, result);
-                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 },
+                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 }, 
                     (result as IAction).SubActions[0].SubActions[0].DevicesIndex);
                 Assert.AreEqual("2", ((result as IAction).SubActions[0] as GroupableAction).Parameters[0].Value);
 
