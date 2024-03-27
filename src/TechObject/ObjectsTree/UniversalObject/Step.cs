@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -81,8 +81,8 @@ namespace TechObject
                             EplanDevice.DeviceType.DO,
                             EplanDevice.DeviceType.M
                         }));
-                    openedDeviceAction.CreateParameter(new ActiveParameter("",
-                        "Задержка включения"));
+                    openedDeviceAction.CreateParameter(
+                        new ActionParameter("", "Задержка включения"));
                     return openedDeviceAction;
                 });
             actions.Add(openDevicesActionGroup);
@@ -132,11 +132,12 @@ namespace TechObject
                             EplanDevice.DeviceType.DO,
                             EplanDevice.DeviceType.M
                         }));
-                    closedDeviceAction.CreateParameter(new ActiveParameter("",
-                        "Задержка выключения"));
+                    closedDeviceAction.CreateParameter(
+                        new ActionParameter("", "Задержка выключения"));
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
+            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.RED_BOX;
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
@@ -312,7 +313,7 @@ namespace TechObject
                 actions.Add(toStepByConditionAction);
                 items.Add(toStepByConditionAction);
 
-                timeParam = new ObjectProperty("Время (параметр)", -1, -1);
+                timeParam = new ActionParameter("", "Время (параметр)");
                 items.Add(timeParam);
 
                 nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
@@ -479,14 +480,11 @@ namespace TechObject
                 
             var resultBuilder = new StringBuilder();
 
-            string time_param_n = timeParam.EditText[1].Trim();
+            string time_param_n = timeParam.Value;
             string next_step_n = nextStepN.EditText[1].Trim();
             string attached_object = attachedObject.Value.ToString();
 
-            double leadTime = double.Parse(time_param_n,
-                System.Globalization.CultureInfo.InvariantCulture);
-
-            if (leadTime <= 0)
+            if (!int.TryParse(time_param_n, out var time_param_index) || time_param_index <= 0)
             {
                 next_step_n = "-1";
                 time_param_n = "-1";
@@ -1126,15 +1124,9 @@ namespace TechObject
         /// </summary>
         private bool IsMainStep { get; set; }
 
-        public string NextStepN
-        {
-            get { return nextStepN.DisplayText[1].Trim(); }
-        }
+        public string NextStepN => nextStepN.EditText[1].Trim();
 
-        public string TimeParam
-        {
-            get { return timeParam.DisplayText[1].Trim(); }
-        }
+        public string TimeParam => timeParam.Value.Trim();
 
         /// <summary>
         /// Устройства отображаемые в действии "Переход к ... по условию"

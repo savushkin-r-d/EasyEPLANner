@@ -130,7 +130,8 @@ namespace TechObject
 
         private bool IdenticalActions(GroupableAction first, GroupableAction second)
         {
-            return Enumerable.SequenceEqual(
+            return first != null && second != null
+                && Enumerable.SequenceEqual(
                     first.SubActions.Select(a => (a.Name, a.LuaName)),
                     second.SubActions.Select(a => (a.Name, a.LuaName)))
                 && Enumerable.SequenceEqual(

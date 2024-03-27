@@ -357,6 +357,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionCustom.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionGroupCustom.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionGroupWash.cs" />
+    <Compile Include="TechObject\Base\Properties\ActionParameter.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionWash.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionGroup.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\AttachedObjects.cs" />

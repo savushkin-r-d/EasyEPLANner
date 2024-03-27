@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -124,5 +124,29 @@ namespace EasyEplannerTests
             });
         }
 
+        [Test]
+        public void SetUpCheckStateParameter_Test()
+        {
+            var root = new Node();
+
+            var node = new Node()
+            {
+                Parent = root,
+            };
+
+            Assert.Multiple(() =>
+            {
+                DFrm.SetUpCheckStateParameter(node, new TechObject.Param(getN => 1, "Параметр", false, 0, "шт", "par", false), " 1 ");
+                Assert.IsTrue(node.IsChecked);
+
+                DFrm.SetUpCheckStateParameter(node, new TechObject.Param(getN => 1, "Параметр", false, 0, "шт", "par", false), " par ");
+                Assert.IsTrue(node.IsChecked);
+
+                DFrm.SetUpCheckStateParameter(node, new TechObject.Param(getN => 1, "Параметр", false, 0, "шт", "par", false), " 2 ");
+                Assert.IsTrue(node.IsChecked);
+            });
+
+
+        }
     }
 }

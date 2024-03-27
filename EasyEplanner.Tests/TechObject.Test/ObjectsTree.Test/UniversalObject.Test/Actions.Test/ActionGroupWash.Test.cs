@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using TechObject;
 using NUnit.Framework;
 using Moq;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
+using EplanDevice;
 
 namespace TechObjectTests
 {
@@ -39,6 +41,57 @@ namespace TechObjectTests
 
                 Assert.AreEqual(2, actionGroupWash.SubActions.Count());
             });
+        }
+
+        [Test]
+        public void SaveAsLuaTable_Test()
+        {
+            var actionGroupWash = new ActionGroupWash("Устройства", null, "devices");
+
+            var deviceManagerMock = new Mock<IDeviceManager>();
+
+            var DO1 = new DO("DO1", "DO1", "desc", 1, "", 0);
+            var DI1 = new DI("DI1", "DI1", "desc", 1, "", 0);
+
+            deviceManagerMock.Setup(m => m.GetDeviceByIndex(0)).Returns(DO1);
+            deviceManagerMock.Setup(m => m.GetDeviceByIndex(1)).Returns(DI1);
+
+            typeof(TechObject.Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+
+            actionGroupWash.AddDev(1, 1, "DI");
+            actionGroupWash.AddDev(0, 0, "DO");
+
+
+
+            Assert.AreEqual(
+                "    devices_data = --Устройства\n" +
+                "        {\n" +
+                "         --Группа\n" +
+                "            {\n" +
+                "            DO = --DO\n" +
+                "                {\n" +
+                "                'DO1'\n" +
+                "                },\n" +
+                "            },\n" +
+                "         --Группа\n" +
+                "            {\n" +
+                "            DI = --DI\n" +
+                "                {\n" +
+                "                'DI1'\n" +
+                "                },\n" +
+                "            },\n" +
+                "        },\n",
+                actionGroupWash.SaveAsLuaTable("\t").Replace("\t", "    "));
+        }
+
+        [Test]
+        public void SaveAsLueTable_EmptySubActions()
+        {
+            var actionGroupWash = new ActionGroupWash("Устройства", null, "devices");
+            actionGroupWash.SubActions.Clear();
+            Assert.AreEqual(string.Empty, actionGroupWash.SaveAsLuaTable("\t"));
         }
     }
 }

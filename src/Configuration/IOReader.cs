@@ -249,7 +249,7 @@ namespace EasyEPlanner
                 var match = IONameRegex.Match(function.VisibleName);
                 int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
                 int shortModuleNumber = moduleNumber % 100;
-                int shortNodeNumber = moduleNumber / 100 - (isContainsA1 ? numberA1 : 0);
+                int shortNodeNumber = moduleNumber / 100 - (isContainsA1 ? 0 : 1);
 
                 string type = GetModuleTypeFromFunction(function);
                 IO.IIONode node = IOManager[shortNodeNumber];
