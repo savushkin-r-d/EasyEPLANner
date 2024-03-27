@@ -250,9 +250,9 @@ namespace EasyEPlanner
                 int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
                 int shortModuleNumber = moduleNumber % 100;
                 
-                // Нумерация узлов в IOManager начинается с 1 (0 - контроллер)
-                // Если контроллер - A1,    то A100 - первый узел: 100 / 100 - 0 = 1
-                // Если контроллер - A100,  то A200 - первый узел: 200 / 100 - 1 = 1 
+                // Индексация узлов в IOManager начинается при наличии A1 начинается с 1, иначе с 0
+                // Если контроллер - A1, то A100 - первый узел: 100 / 100 - 0 = 1
+                // Если контроллер - A100, он же и первый узел: 100 / 100 - 1 = 0 
                 int shortNodeNumber = moduleNumber / 100 - (isContainsA1 ? 0 : 1);
 
                 string type = GetModuleTypeFromFunction(function);
