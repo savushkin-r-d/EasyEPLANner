@@ -792,7 +792,7 @@ namespace EasyEPlanner
             Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
                 dev, deviceDescription);
             bool isDevVisible = AddDevChannels(devNode, dev) |
-                AddDevParametersAndProperties(devNode, dev);
+               (displayParamsBtn.Checked)? AddDevParametersAndProperties(devNode, dev) : false;
             
             HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
                 dev);
@@ -1003,10 +1003,9 @@ namespace EasyEPlanner
             return isDevVisible;
         }
 
-        private bool AddDevParametersAndProperties(Node devNode, EplanDevice.IODevice dev)
+        public static bool AddDevParametersAndProperties(Node devNode, EplanDevice.IODevice dev)
         {
-            if ( (dev.Parameters.Count == 0 && dev.Properties.Count == 0) || 
-                displayParamsBtn.Checked == false)
+            if (dev.Parameters.Count == 0 && dev.Properties.Count == 0 && dev.RuntimeParameters.Count == 0)
             {
                 return false;
             }
@@ -1648,7 +1647,7 @@ namespace EasyEPlanner
 
         public const string ParametersNodeName = "Параметры";
 
-        public const string RuntimeParametersNodeName = "Параметры времени выполенения";
+        public const string RuntimeParametersNodeName = "Параметры времени выполнения";
 
         public const string PropertiesNodeName = "Свойства";
     }

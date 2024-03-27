@@ -6,10 +6,23 @@ using System.Linq;
 
 namespace EasyEPlanner
 {
+    public interface IProjectConfiguration
+    {
+        /// <summary>
+        /// Интервалы IP-адресов проекта.
+        /// </summary>
+        (long, long)[] RangesIP { get; set; }
+
+        /// <summary>
+        /// Сбросить интервал IP-адресов проекта.
+        /// </summary>
+        void ResetIPAddressesInterval();
+    }
+
     /// <summary>
     /// Класс-фасад для работы с конфигурацией проекта
     /// </summary>
-    public class ProjectConfiguration
+    public class ProjectConfiguration : IProjectConfiguration
     {
         /// <summary>
         /// Закрытый конструктор.
@@ -21,7 +34,7 @@ namespace EasyEPlanner
             IIOHelper ioHelper = new IOHelper(projectHelper);
             IDeviceHelper deviceHelper = new DeviceHelper(apiHelper);
 
-            this.configurationChecker = new ConfigurationChecker(projectHelper);
+            this.configurationChecker = new ConfigurationChecker(projectHelper, new ProjectHealthChecker(), this);
             this.deviceReader = new DeviceReader(apiHelper, deviceHelper, projectHelper, ioHelper,
                 DeviceManager.GetInstance());
             this.deviceBindingReader = new DeviceBindingReader(projectHelper, apiHelper);
@@ -139,14 +152,8 @@ namespace EasyEPlanner
         /// </summary>
         public long EndingIPInterval { get; set; }
 
-        /// <summary>
-        /// Интервалы IP-адресов проекта.
-        /// </summary>
         public (long, long)[] RangesIP { get; set; }
 
-        /// <summary>
-        /// Сбросить интервал IP-адресов проекта.
-        /// </summary>
         public void ResetIPAddressesInterval()
         {
             StartingIPInterval = 0;

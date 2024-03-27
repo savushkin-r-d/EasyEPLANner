@@ -180,5 +180,17 @@ namespace TechObjectTests
 
 
         }
+
+        [Test]
+        public void AttachedObjectsAbilities()
+        {
+            var attachedObj = new AttachedObjects("", null, new AttachedWithoutInitStrategy("", "", null));
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(attachedObj.IsCopyable);
+                Assert.IsTrue(attachedObj.IsReplaceable);
+                Assert.IsTrue(attachedObj.IsInsertableCopy);
+            });
+        }
     }
 }

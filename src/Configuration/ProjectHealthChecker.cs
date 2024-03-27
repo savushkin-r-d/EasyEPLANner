@@ -4,10 +4,19 @@ using System.Text;
 
 namespace EasyEPlanner
 {
+    public interface IProjectHealthChecker
+    {
+        /// <summary>
+        /// Протестировать текущий проект на наличие ошибок.
+        /// </summary>
+        /// <returns>Строка с ошибками</returns>
+        string Check();
+    }
+
     /// <summary>
     /// Тестер работоспособности проекта
     /// </summary>
-    public class ProjectHealthChecker
+    public class ProjectHealthChecker : IProjectHealthChecker
     {
         public ProjectHealthChecker()
         {
@@ -15,10 +24,6 @@ namespace EasyEPlanner
             eProjectManager = EProjectManager.GetInstance();
         }
 
-        /// <summary>
-        /// Протестировать текущий проект на наличие ошибок.
-        /// </summary>
-        /// <returns>Строка с ошибками</returns>
         public string Check()
         {
             bool enabled = CheckEnable();

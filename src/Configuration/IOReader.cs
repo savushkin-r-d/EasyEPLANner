@@ -69,7 +69,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading()
         {
-            var project = projectHelper.GetProject();
+            var project = (projectHelper as ProjectHelper).GetProject();
             var objectsFinder = new DMObjectsFinder(project);
             var functionsFilter = new FunctionsFilter();
 

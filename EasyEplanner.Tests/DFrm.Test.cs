@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Aga.Controls.Tree;
@@ -10,7 +11,7 @@ using EplanDevice;
 using NUnit.Framework;
 
 
-namespace TestsTechObject
+namespace EasyEplannerTests
 {
     public class DFrmTest
     {
@@ -83,6 +84,43 @@ namespace TestsTechObject
                 Assert.IsTrue(objects.Select(n => n.Text).SequenceEqual(new[] { "TANK1", "TANK2" }));
                 Assert.IsTrue(devs.Select(n => n.Text).SequenceEqual(new[] { "V1", "V2" }));
                 Assert.IsTrue(channels.Select(n => n.Text).SequenceEqual(new[] { "DI", "AO" }));
+            });
+        }
+
+
+        [Test]
+        public void AddDevParametersTest()
+        {
+            var root_v = new Node("dev");
+            var dev_v = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+            dev_v.SetSubType("V_AS_MIXPROOF");
+
+            var root_wt = new Node("dev");
+            var dev_wt = new WT("OBJ1WT1", "+OBJ1-WT1", "", 1, "OBJ", 1, "");
+            dev_wt.SetSubType("WT_ETH");
+
+            var root_do = new Node("dev");
+            var dev_do = new DO("OBJ1DO1", "+OBJ1-DO1", "", 1, "OBJ", 1);
+            dev_do.SetSubType("DO_VIRT");
+
+            DFrm.AddDevParametersAndProperties(root_v, dev_v);
+            DFrm.AddDevParametersAndProperties(root_wt, dev_wt);
+            DFrm.AddDevParametersAndProperties(root_do, dev_do);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Параметры", root_v.Nodes[0].Text);
+                Assert.AreEqual("Параметры времени выполнения", root_v.Nodes[1].Text);
+                Assert.AreEqual("P_ON_TIME Время включения", root_v.Nodes[0].Nodes[0].Text);
+                Assert.AreEqual("P_FB      Обратная связь", root_v.Nodes[0].Nodes[1].Text);
+                Assert.AreEqual("R_AS_NUMBER", root_v.Nodes[1].Nodes[0].Text);
+
+                Assert.AreEqual("Параметры", root_wt.Nodes[0].Text);
+                Assert.AreEqual("Свойства", root_wt.Nodes[1].Text);
+                Assert.AreEqual("P_C0 Сдвиг нуля", root_wt.Nodes[0].Nodes[0].Text);
+                Assert.AreEqual("IP", root_wt.Nodes[1].Nodes[0].Text);
+
+                Assert.AreEqual(0, root_do.Nodes.Count);
             });
         }
 

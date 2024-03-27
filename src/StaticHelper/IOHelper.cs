@@ -150,7 +150,7 @@ namespace StaticHelper
                 throw new Exception(Message);
             }
 
-            var objectFinder = new DMObjectsFinder(projectHelper.GetProject());
+            var objectFinder = new DMObjectsFinder((projectHelper as ProjectHelper).GetProject());
             var functionsFilter = new FunctionsFilter();
             var properties = new FunctionPropertyList();
             properties.FUNC_MAINFUNCTION = true;

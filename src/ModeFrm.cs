@@ -1059,7 +1059,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="root"></param>
         /// <param name="checkedNode"></param>
-        private void Unchecked(Node root, Node checkedNode)
+        public static void Unchecked(Node root, Node checkedNode)
         {
             foreach (var node in root.Nodes)
             {

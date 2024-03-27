@@ -35,7 +35,7 @@ namespace EplanDevice
             public static readonly Parameter P_RKP = new Parameter("P_RKP", "Рабочий коэффициент передачи", UnitFormat.RKP);
 
             /// <summary> Сдвиг нуля. </summary>
-            public static readonly Parameter P_C0 = new Parameter("P_C0", "Сдивг нуля");
+            public static readonly Parameter P_C0 = new Parameter("P_C0", "Сдвиг нуля");
 
             /// <summary> Время порогового фильтра. </summary>
             public static readonly Parameter P_DT = new Parameter("P_DT", "Время порогового фильтра", UnitFormat.Milliseconds);

@@ -8,12 +8,6 @@ namespace StaticHelper
     public interface IProjectHelper
     {
         /// <summary>
-        /// Получить текущий проект
-        /// </summary>
-        /// <returns>Проект</returns>
-        Project GetProject();
-
-        /// <summary>
         /// Получить свойство проекта.
         /// </summary>
         /// <param name="propertyName">Имя свойства</param>
