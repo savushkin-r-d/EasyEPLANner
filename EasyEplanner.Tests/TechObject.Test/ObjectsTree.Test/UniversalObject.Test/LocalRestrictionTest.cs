@@ -126,6 +126,7 @@ namespace TechObject.Tests
 
                 Assert.AreEqual(string.Empty, to3Mode1.GetRestrictionManager().Restrictions[0].EditText[1]);
                 Assert.AreEqual(string.Empty, to3Mode2.GetRestrictionManager().Restrictions[0].EditText[1]);
+                TechObjectManager.GetInstance().TechObjects.Clear();
             });
         }
     }
