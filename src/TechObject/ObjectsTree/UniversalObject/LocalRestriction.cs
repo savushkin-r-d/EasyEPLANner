@@ -48,11 +48,11 @@ namespace TechObject
                 var newDict = MakeSimilarObjectDictionary(dict, techObject);
 
                 var mode = techObject.ModesManager.Modes
-                    .FirstOrDefault(x => x.Name == operation.Name);
+                    .Find(x => x.Name == operation.Name);
                 if (mode != null)
                 {
                     var restrictions = mode.GetRestrictionManager().Restrictions
-                        .FirstOrDefault(x => x.Name == Name);
+                        .Find(x => x.Name == Name);
                     try
                     {
                         restrictions?.SetValue(newDict);
