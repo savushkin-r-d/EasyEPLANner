@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: lua dict
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,22 +23,24 @@ namespace TechObject
         private void SetNewValueAtTheSameObjects(
             IDictionary<int, List<int>> dict)
         {
-            var selectedLocalRestriction = this;
-            var selectedRestrictionManager = selectedLocalRestriction.Parent;
-            var selectedMode = selectedRestrictionManager.Parent as Mode;
-            var selectedModesManager = selectedMode.Parent;
-            var selectedTechObject = selectedModesManager.Parent as TechObject;
-            var selectedBaseObject = selectedTechObject.Parent as BaseObject;
+            var restrictionManager = Parent;
+            var operation = restrictionManager.Parent as Mode;
+            var modesManager = operation.Parent;
+            var selectedTechObject = modesManager.Parent as TechObject;
+            var baseObject = selectedTechObject.Parent as BaseObject;
+
+            if (selectedTechObject.Parent is ProcessCell)
+                return;
+
             if (selectedTechObject.Parent is GenericGroup)
-                selectedBaseObject = selectedTechObject.Parent.Parent as BaseObject;
+                baseObject = selectedTechObject.Parent.Parent as BaseObject;
 
             int objTechTypeNum = 0;
-            foreach (TechObject techObject in selectedBaseObject.LocalObjects
-                .Concat(selectedBaseObject.GenericGroups.Select(x => x.GenericTechObject)))
+
+            foreach (TechObject techObject in baseObject.LocalObjects
+                .Concat(baseObject.GenericGroups.Select(x => x.GenericTechObject)))
             {
-                bool skipObjectBecauseTechType =
-                    techObject.TechType != selectedTechObject.TechType;
-                if (skipObjectBecauseTechType)
+                if (techObject.TechType != selectedTechObject.TechType)
                 {
                     continue;
                 }
@@ -44,7 +48,7 @@ namespace TechObject
                 var newDict = MakeSimilarObjectDictionary(dict, techObject);
 
                 var mode = techObject.ModesManager.Modes
-                    .Where(x => x.Name == selectedMode.Name)
+                    .Where(x => x.Name == operation.Name)
                     .FirstOrDefault();
                 if (mode != null)
                 {
