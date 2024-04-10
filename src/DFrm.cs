@@ -791,8 +791,8 @@ namespace EasyEPlanner
                 dev.ObjectNumber, devTypeNode);
             Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
                 dev, deviceDescription);
-            bool isDevVisible = AddDevChannels(devNode, dev) |
-               (displayParamsBtn.Checked)? AddDevParametersAndProperties(devNode, dev) : false;
+            bool isDevVisible = AddDevChannels(devNode, dev) ||
+               (displayParamsBtn.Checked && AddDevParametersAndProperties(devNode, dev));
             
             HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
                 dev);
