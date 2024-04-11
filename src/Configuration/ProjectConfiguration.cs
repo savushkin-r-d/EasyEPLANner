@@ -120,7 +120,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Проверка принадлежности ip адреса к диапозону адресов проекта.
+        /// Проверка принадлежности ip адреса к диапазону адресов проекта.
         /// </summary>
         /// <param name="ip">ip</param>
         /// <returns>
@@ -128,7 +128,7 @@ namespace EasyEPlanner
         /// </returns>
         public bool BelongToRangesIP(long ip)
         {
-            return RangesIP.Any(range => ip >= range.Item1 && ip <= range.Item2);
+            return RangesIP?.Any(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
         }
 
         /// <summary>
