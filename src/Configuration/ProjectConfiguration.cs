@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using StaticHelper;
 using EplanDevice;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -124,12 +125,11 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="ip">ip</param>
         /// <returns>
-        ///  true if belong to range
+        ///  true if belong to range or range not set.
         /// </returns>
+        [ExcludeFromCodeCoverage]
         public bool BelongToRangesIP(long ip)
-        {
-            return RangesIP?.Any(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
-        }
+            => RangesIP?.Any(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
 
         /// <summary>
         /// Свойство, указывающее прочитаны устройства или нет.

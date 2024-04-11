@@ -178,7 +178,7 @@ namespace InterprojectExchange
         /// <param name="advancedProjectSignals">Список сигналов альтернативного
         /// проекта</param>
         /// <returns></returns>
-        private List<string[]> GetSignalsPairs(
+        private static List<string[]> GetSignalsPairs(
             List<string> currentProjectSignals, 
             List<string> advancedProjectSignals)
         {

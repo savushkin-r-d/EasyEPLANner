@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.SqlServer.Server;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -321,6 +322,7 @@ namespace EasyEPlanner
             SaveData(pathToFile, fileData);
         }
 
+        [ExcludeFromCodeCoverage]
         private static void SaveSharedFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + sharedFileName;

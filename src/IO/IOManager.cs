@@ -114,6 +114,7 @@ namespace IO
         /// <param name="n">Номер (c единицы).</param>
         /// <param name="type">Тип (например 750-352).</param>
         /// <param name="IP">IP-адрес.</param>
+        [ExcludeFromCodeCoverage]
         public void AddNode(int n, int nodeNumber, string type, string IP,
             string name, string location)
         {
