@@ -1015,12 +1015,7 @@ namespace TechObject
         }
         #endregion
 
-        public override string GetLinkToHelpPage()
-        {
-            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
-                .GetOstisHelpSystemLink();
-            return ostisLink + "?sys_id=phase";
-        }
+        public override string SystemIdentifier => "phase";
 
         public void SetUpFromBaseTechObject(BaseStep baseStep)
         {

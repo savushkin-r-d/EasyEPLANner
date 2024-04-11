@@ -303,6 +303,8 @@ namespace TechObject
             }
         }
 
+        public override string SystemIdentifier => "process_cell";
+
         public const string Name = "Ячейка процесса";
 
         List<TechObject> objects;

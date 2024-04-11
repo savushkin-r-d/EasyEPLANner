@@ -261,6 +261,10 @@ namespace TechObject
         }
         #endregion
 
+        public override string SystemIdentifier => 
+            name == "Аппарат"?
+            "unit" : "equipment_module";
+
         string name;
         List<ITreeViewItem> objects;
         ITechObjectManager techObjectManager;

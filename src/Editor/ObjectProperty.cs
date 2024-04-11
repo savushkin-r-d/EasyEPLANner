@@ -525,14 +525,14 @@ namespace Editor
         #endregion
 
         #region реализация IHelperItem
-        /// <summary>
-        /// Получить ссылку на страницу с справкой
-        /// </summary>
-        /// <returns></returns>
         public virtual string GetLinkToHelpPage()
         {
-            return null;
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return $"{ostisLink}?sys_id={SystemIdentifier}";
         }
+
+        public virtual string SystemIdentifier => "";
         #endregion
 
         public void UpdateOnGenericTechObject(ObjectProperty genericProperty)

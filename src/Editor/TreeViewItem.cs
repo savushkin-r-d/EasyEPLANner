@@ -454,8 +454,12 @@ namespace Editor
         /// <returns></returns>
         public virtual string GetLinkToHelpPage()
         {
-            return null;
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return $"{ostisLink}?sys_id={SystemIdentifier}";
         }
+
+        public virtual string SystemIdentifier => "";
         #endregion
     }
 

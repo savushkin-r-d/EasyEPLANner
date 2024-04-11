@@ -658,6 +658,9 @@ namespace TechObject
             }
         }
 
+        public override string SystemIdentifier => 
+            baseTechObject.BasicName;
+
         public int Count => localObjects.Count;
 
         /// <summary>

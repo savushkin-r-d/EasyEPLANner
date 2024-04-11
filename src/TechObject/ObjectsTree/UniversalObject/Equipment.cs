@@ -406,12 +406,7 @@ namespace TechObject
             }
         }
 
-        public override string GetLinkToHelpPage()
-        {
-            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
-                .GetOstisHelpSystemLink();
-            return ostisLink + "?sys_id=control_module";
-        }
+        public override string SystemIdentifier => "control_module";
 
         public override bool ShowWarningBeforeDelete
         {
