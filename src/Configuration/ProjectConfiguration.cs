@@ -23,6 +23,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Класс-фасад для работы с конфигурацией проекта
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ProjectConfiguration : IProjectConfiguration
     {
         /// <summary>
@@ -127,7 +128,6 @@ namespace EasyEPlanner
         /// <returns>
         ///  true if belong to range or range not set.
         /// </returns>
-        [ExcludeFromCodeCoverage]
         public bool BelongToRangesIP(long ip)
             => RangesIP?.Exists(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
 
