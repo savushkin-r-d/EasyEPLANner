@@ -12,7 +12,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Интервалы IP-адресов проекта.
         /// </summary>
-        (long, long)[] RangesIP { get; set; }
+        List<(long, long)> RangesIP { get; set; }
 
         /// <summary>
         /// Сбросить интервал IP-адресов проекта.
@@ -129,7 +129,7 @@ namespace EasyEPlanner
         /// </returns>
         [ExcludeFromCodeCoverage]
         public bool BelongToRangesIP(long ip)
-            => RangesIP?.Any(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
+            => RangesIP?.Exists(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
 
         /// <summary>
         /// Свойство, указывающее прочитаны устройства или нет.
@@ -152,7 +152,7 @@ namespace EasyEPlanner
         /// </summary>
         public long EndingIPInterval { get; set; }
 
-        public (long, long)[] RangesIP { get; set; }
+        public List<(long, long)> RangesIP { get; set; }
 
         public void ResetIPAddressesInterval()
         {
