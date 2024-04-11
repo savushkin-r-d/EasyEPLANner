@@ -17,8 +17,8 @@ namespace StaticHelper
         /// <returns>0 - если не конвертировалось</returns>
         public static long ConvertIPStrToLong(string IP)
         {
-            int offset = 0;
-            return IP.Split('.').Select(long.Parse).Reverse().Aggregate((result, octet) => result | octet << (offset += 8));
+            return IP.Split('.').Select(long.Parse)
+                .Aggregate((result, octet) => (result << 8) + octet);
         }
     }
 }
