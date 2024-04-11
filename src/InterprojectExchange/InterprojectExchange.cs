@@ -182,30 +182,17 @@ namespace InterprojectExchange
             List<string> currentProjectSignals, 
             List<string> advancedProjectSignals)
         {
-            var result = new List<string[]>();
             if (currentProjectSignals.Count > 0 &&
                 advancedProjectSignals.Count > 0)
             {
-
                 return (from cps in currentProjectSignals
                         join aps in advancedProjectSignals
                         on currentProjectSignals.IndexOf(cps) equals advancedProjectSignals.IndexOf(aps)
                         select new [] { cps, aps }).ToList();
-
-                //for (int i = 0; i < currentProjectSignals.Count && i < advancedProjectSignals.Count; i++)
-                //{
-                //    var bindedSignals = new string[]
-                //    {
-                //        currentProjectSignals[i],
-                //        advancedProjectSignals[i]
-                //    };
-                //    result.Add(bindedSignals);
-                //}
-                //return result;
             }
             else
             {
-                return result;
+                return new List<string[]>();
             }
         }
 
