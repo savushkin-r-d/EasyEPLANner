@@ -265,7 +265,7 @@ namespace Tests.Editor
         [Test]
         public void GetLinkToHelpPage_NewObject_ReturnsNull()
         {
-            Assert.AreEqual(string.Empty, GetNewTreeViewItem().GetLinkToHelpPage());
+            Assert.IsNull(GetNewTreeViewItem().GetLinkToHelpPage());
         }
 
         [TestCase(true, true)]
