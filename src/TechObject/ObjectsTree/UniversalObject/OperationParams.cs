@@ -127,6 +127,8 @@ namespace TechObject
         }
         #endregion
 
+        public override string SystemIdentifier => "process_parameter";
+
         private List<ITreeViewItem> items;
     }
 }

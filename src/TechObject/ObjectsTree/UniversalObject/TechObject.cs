@@ -1049,8 +1049,6 @@ namespace TechObject
             SetItems();
         }
 
-        public override string SystemIdentifier => $"{baseTechObject.BasicName}_{TechNumber}";
-
         /// <summary>
         /// Удалить типовой объект
         /// </summary>

@@ -527,6 +527,9 @@ namespace Editor
         #region реализация IHelperItem
         public virtual string GetLinkToHelpPage()
         {
+            if (string.IsNullOrEmpty(SystemIdentifier))
+                return string.Empty;
+
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return $"{ostisLink}?sys_id={SystemIdentifier}";

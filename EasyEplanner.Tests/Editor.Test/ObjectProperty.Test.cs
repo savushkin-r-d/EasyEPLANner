@@ -328,7 +328,7 @@ namespace Tests.Editor
         [Test]
         public void GetLinkToHelpPage_EmptyObject_ReturnsNull()
         {
-            Assert.IsNull(GetEmptyProperty().GetLinkToHelpPage());
+            Assert.AreEqual(string.Empty, GetEmptyProperty().GetLinkToHelpPage());
         }
 
         [TestCase(true, true)]
