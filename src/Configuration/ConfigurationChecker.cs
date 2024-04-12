@@ -4,6 +4,7 @@ using System;
 using StaticHelper;
 using Spire.Pdf.Exporting.XPS.Schema;
 using EplanDevice;
+using System.Collections.Generic;
 
 namespace EasyEPlanner
 {
@@ -45,7 +46,7 @@ namespace EasyEPlanner
         {
             string errors = "";
             string rangesIP_str;
-            (long, long)[] RangesIP;
+            List<(long, long)> RangesIP = null;
 
             try
             {
@@ -55,9 +56,9 @@ namespace EasyEPlanner
                     .Matches(rangesIP_str, CommonConst.RangeOfIPAddresses,
                         RegexOptions.None, TimeSpan.FromMilliseconds(100))
                     .Cast<Match>().Select(match => (IPConverter.ConvertIPStrToLong(match.Groups["ip"].Captures[0].Value),
-                    IPConverter.ConvertIPStrToLong(match.Groups["ip"].Captures[1].Value))).ToArray();
+                    IPConverter.ConvertIPStrToLong(match.Groups["ip"].Captures[1].Value))).ToList();
 
-                if ( RangesIP.Length == 0 )
+                if ( RangesIP.Count == 0 )
                 {
                     string errMsg = WrongIPRanges + ExampleIPRanges;
                     throw new Exception(errMsg);

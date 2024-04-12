@@ -178,28 +178,21 @@ namespace InterprojectExchange
         /// <param name="advancedProjectSignals">Список сигналов альтернативного
         /// проекта</param>
         /// <returns></returns>
-        private List<string[]> GetSignalsPairs(
+        private static List<string[]> GetSignalsPairs(
             List<string> currentProjectSignals, 
             List<string> advancedProjectSignals)
         {
-            var result = new List<string[]>();
             if (currentProjectSignals.Count > 0 &&
                 advancedProjectSignals.Count > 0)
             {
-                for (int i = 0; i < currentProjectSignals.Count; i++)
-                {
-                    var bindedSignals = new string[]
-                    {
-                        currentProjectSignals[i],
-                        advancedProjectSignals[i]
-                    };
-                    result.Add(bindedSignals);
-                }
-                return result;
+                return (from cps in currentProjectSignals
+                        join aps in advancedProjectSignals
+                        on currentProjectSignals.IndexOf(cps) equals advancedProjectSignals.IndexOf(aps)
+                        select new [] { cps, aps }).ToList();
             }
             else
             {
-                return result;
+                return new List<string[]>();
             }
         }
 

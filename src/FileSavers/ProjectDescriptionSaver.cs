@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.SqlServer.Server;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -321,6 +322,7 @@ namespace EasyEPlanner
             SaveData(pathToFile, fileData);
         }
 
+        [ExcludeFromCodeCoverage]
         private static void SaveSharedFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + sharedFileName;
@@ -333,6 +335,36 @@ namespace EasyEPlanner
                     "\n", sharedContent);
                 File.WriteAllText(fileName, sharedContent,
                     EncodingDetector.MainFilesEncoding);
+            }
+            else
+            {
+                // Проверка ip-адресов связанных проектов
+                foreach(Match advPrj in 
+                    Regex.Matches(File.ReadAllText(fileName),
+                    @"(\['(?<name>[\w-]+)'\])\W+(?:ip\s+=\s'(?<ip>[\w\d.]*)',)",
+                    RegexOptions.None, TimeSpan.FromMilliseconds(100)))
+                {
+                    var pathToIO = Path.Combine(ProjectManager.GetInstance().GetPtusaProjectsPath(""),
+                        advPrj.Groups["name"].Value,
+                        "main.io.lua");
+                    if (File.Exists(pathToIO))
+                    {
+                        var advPrjIP = Regex.Match(File.ReadAllText(pathToIO),
+                            @"IP\s+=\s'(?<ip>[\w.]+)'",
+                            RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+                        if (advPrjIP.Success && advPrjIP.Groups["ip"].Value != advPrj.Groups["ip"].Value)
+                        {
+                            Logs.AddMessage($"В связанном проекте ['{advPrj.Groups["name"]}']" +
+                                $" ip контроллера ({advPrj.Groups["ip"]}) не совпадает с указанным в" +
+                                $" файле shared.lua ({advPrjIP.Groups["ip"]});\n");
+                        }
+                    }
+                    else
+                    {
+                        Logs.AddMessage($"Файл main.io.lua связанного проекта ['{advPrj.Groups["name"]}'] не найден;\n");
+                    }
+                }
             }
         }
 

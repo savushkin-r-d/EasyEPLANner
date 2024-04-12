@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using StaticHelper;
 using EplanDevice;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -11,7 +12,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Интервалы IP-адресов проекта.
         /// </summary>
-        (long, long)[] RangesIP { get; set; }
+        List<(long, long)> RangesIP { get; set; }
 
         /// <summary>
         /// Сбросить интервал IP-адресов проекта.
@@ -22,6 +23,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Класс-фасад для работы с конфигурацией проекта
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ProjectConfiguration : IProjectConfiguration
     {
         /// <summary>
@@ -120,16 +122,14 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Проверка принадлежности ip адреса к диапозону адресов проекта.
+        /// Проверка принадлежности ip адреса к диапазону адресов проекта.
         /// </summary>
         /// <param name="ip">ip</param>
         /// <returns>
-        ///  true if belong to range
+        ///  true if belong to range or range not set.
         /// </returns>
         public bool BelongToRangesIP(long ip)
-        {
-            return RangesIP.Any(range => ip >= range.Item1 && ip <= range.Item2);
-        }
+            => RangesIP?.Exists(range => ip >= range.Item1 && ip <= range.Item2) ?? true;
 
         /// <summary>
         /// Свойство, указывающее прочитаны устройства или нет.
@@ -152,7 +152,7 @@ namespace EasyEPlanner
         /// </summary>
         public long EndingIPInterval { get; set; }
 
-        public (long, long)[] RangesIP { get; set; }
+        public List<(long, long)> RangesIP { get; set; }
 
         public void ResetIPAddressesInterval()
         {

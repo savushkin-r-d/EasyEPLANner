@@ -1,5 +1,6 @@
 using EasyEPlanner;
 using LuaInterface;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -113,6 +114,7 @@ namespace IO
         /// <param name="n">Номер (c единицы).</param>
         /// <param name="type">Тип (например 750-352).</param>
         /// <param name="IP">IP-адрес.</param>
+        [ExcludeFromCodeCoverage]
         public void AddNode(int n, int nodeNumber, string type, string IP,
             string name, string location)
         {
@@ -128,6 +130,17 @@ namespace IO
                         "", "", ""));
                     voidNodeNumber -= 100;
                 }
+            }
+
+            if (ProjectConfiguration.GetInstance()?.
+                BelongToRangesIP(IPConverter.ConvertIPStrToLong(IP)) is false)
+            {
+                Logs.AddMessage($"IP-адрес узла '{name}' ({IP}) выходит за диапазон ip-адресов проекта;");
+            }
+
+            if (iONodes.Find(node => node.IP == IP) is IONode nodeWithSameIp)
+            {
+                Logs.AddMessage($"IP-адрес узла '{name}' совпадает с адресом узла '{nodeWithSameIp.Name}': ({IP});");
             }
 
             iONodes[n - 1] = new IONode(type, n, nodeNumber, IP, name, location);

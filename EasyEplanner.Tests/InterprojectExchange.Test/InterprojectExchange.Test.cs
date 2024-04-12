@@ -51,5 +51,46 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             Assert.AreEqual(expected, interprojectExchange.CheckBindingSignals());
         }
 
+
+        [TestCaseSource(nameof(GetSignalsPairs_Test_CaseSrc))]
+        public void GetSignalsPairs_Test(List<string> currSignals,
+            List<string> advSignals, List<string[]> expected)
+        {
+            var result = typeof(InterprojectExchange.InterprojectExchange)
+                .GetMethod("GetSignalsPairs", BindingFlags.Static | BindingFlags.NonPublic)
+                .Invoke(null, new object[] { currSignals, advSignals }) as List<string[]>;
+
+            CollectionAssert.AreEqual(expected, result);
+        }
+
+        public static object[] GetSignalsPairs_Test_CaseSrc = new object[]
+        {
+            new object[]
+            {
+                new List<string>{ "S1", "S2" },
+                new List<string>{ "S1", "S2" },
+                new List<string[]>{ new []{"S1", "S1"}, new []{"S2", "S2"}, },
+            },
+            new object[]
+            {
+                new List<string>{ "S1", "S2" },
+                new List<string>{ "S1" },
+                new List<string[]>{ new []{"S1", "S1"}, },
+            },
+            new object[]
+            {
+                new List<string>{ "S1", },
+                new List<string>{ "S1", "S2" },
+                new List<string[]>{ new []{"S1", "S1"}, },
+            }
+            ,
+            new object[]
+            {
+                new List<string>{ "S1", },
+                new List<string>{ },
+                new List<string[]>{ },
+            }
+        };
+
     }
 }
