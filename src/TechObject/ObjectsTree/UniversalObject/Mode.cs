@@ -707,8 +707,6 @@ namespace TechObject
         }
         #endregion
 
-        public override string SystemIdentifier => "operation";
-
         public void SetUpFromBaseTechObject(BaseOperation baseOperation)
         {
             bool setBaseOperation = true;

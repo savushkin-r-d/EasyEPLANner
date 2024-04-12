@@ -799,6 +799,8 @@ namespace TechObject
             OnValueChanged(sender);
         }
 
+        public override string SystemIdentifier => "process_action";
+
         protected string luaName;
         protected string name;
 

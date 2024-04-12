@@ -455,7 +455,7 @@ namespace Editor
         public virtual string GetLinkToHelpPage()
         {
             if (string.IsNullOrEmpty(SystemIdentifier))
-                return string.Empty;
+                return null;
 
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
