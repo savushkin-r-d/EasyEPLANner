@@ -1,15 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Editor;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+using NUnit.Framework.Internal;
 using TechObject;
 
 namespace EasyEplannerTests
 {
+    public class TestParameter : ObjectProperty
+    {
+        public TestParameter(string name, object value, object defaultValue = null) 
+            : base(name, value, defaultValue)
+        {
+        }
+
+        public override string SystemIdentifier => "test_sys_idtf";
+    }
+
+
     public class IHelperItemTest
     {
         [Test]
@@ -33,6 +47,8 @@ namespace EasyEplannerTests
 
             var equipment = new Equipment(null);
 
+            var testParameter = new TestParameter("par", 0);
+
             Assert.Multiple(() => 
             {
                 Assert.AreEqual("process_cell", processCell.SystemIdentifier);
@@ -51,8 +67,14 @@ namespace EasyEplannerTests
                 Assert.AreEqual("process_parameter", systemParams.SystemIdentifier);
 
                 Assert.AreEqual("control_module", equipment.SystemIdentifier);
+
+                // Исключение, так как используется ссылка на API
+                Assert.Throws<FileNotFoundException>(() => state.GetLinkToHelpPage());
+                Assert.Throws<FileNotFoundException>(() => testParameter.GetLinkToHelpPage());
             });
         }
+
+
 
     }
 }
