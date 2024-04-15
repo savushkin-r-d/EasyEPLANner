@@ -660,7 +660,6 @@ namespace TechObject
             return false;
         }
         #endregion
-        public override string SystemIdentifier => "process_parameter";
 
         private ITreeViewItem[] items = new ITreeViewItem[0];
         

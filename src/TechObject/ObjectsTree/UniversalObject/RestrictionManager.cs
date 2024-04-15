@@ -165,8 +165,6 @@ namespace TechObject
         }
         #endregion
 
-        public override string SystemIdentifier => "process_parameter";
-
         private string name;
         private List<Restriction> restrictions;
     }

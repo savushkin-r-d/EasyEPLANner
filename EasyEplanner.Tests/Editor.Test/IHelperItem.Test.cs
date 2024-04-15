@@ -26,11 +26,12 @@ namespace EasyEplannerTests
             var phase = new Step("", getN => 1, state);
             var action = new TechObject.Action("", phase, "");
             
-            
             var parameters = new Params("", "", false, "");
             var parametersManager = new ParamsManager();
             var operationParams = new OperationParams();
+            var systemParams = new SystemParams();
 
+            var equipment = new Equipment(null);
 
             Assert.Multiple(() => 
             {
@@ -47,6 +48,9 @@ namespace EasyEplannerTests
                 Assert.AreEqual("process_parameter", parameters.SystemIdentifier);
                 Assert.AreEqual("process_parameter", parametersManager.SystemIdentifier);
                 Assert.AreEqual("process_parameter", operationParams.SystemIdentifier);
+                Assert.AreEqual("process_parameter", systemParams.SystemIdentifier);
+
+                Assert.AreEqual("control_module", equipment.SystemIdentifier);
             });
         }
 
