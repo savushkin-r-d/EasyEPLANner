@@ -707,13 +707,6 @@ namespace TechObject
         }
         #endregion
 
-        public override string GetLinkToHelpPage()
-        {
-            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
-                .GetOstisHelpSystemLink();
-            return ostisLink + "?sys_id=operation";
-        }
-
         public void SetUpFromBaseTechObject(BaseOperation baseOperation)
         {
             bool setBaseOperation = true;

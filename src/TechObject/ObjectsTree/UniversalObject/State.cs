@@ -535,12 +535,7 @@ namespace TechObject
         }
         #endregion
 
-        public override string GetLinkToHelpPage()
-        {
-            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
-                .GetOstisHelpSystemLink();
-            return ostisLink + "?sys_id=state";
-        }
+        public override string SystemIdentifier => "state";
 
         public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
         {

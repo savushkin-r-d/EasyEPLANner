@@ -1049,20 +1049,6 @@ namespace TechObject
             SetItems();
         }
 
-        public override string GetLinkToHelpPage()
-        {
-            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
-                .GetOstisHelpSystemLink();
-            if (baseTechObject.S88Level == 1)
-            {
-                return ostisLink + "?sys_id=unit";
-
-            }
-            else
-            {
-                return ostisLink + "?sys_id=equipment_module";
-            }
-        }
         /// <summary>
         /// Удалить типовой объект
         /// </summary>
