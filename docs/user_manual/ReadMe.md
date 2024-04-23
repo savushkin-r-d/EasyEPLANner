@@ -1226,8 +1226,8 @@ HLA | PXC.1191993 | 0 | 1
 8. <img src=images/ToolBar/copy.png width = 20 height = 20> - Копировать выделенный объект <kbd>Ctrl</kbd>+<kbd>C</kbd>.  
 9. <img src=images/ToolBar/paste.png width = 20 height = 20> - Вставить скопированный объект в выделенное место как новый <kbd>Ctrl</kbd>+<kbd>V</kbd>.
 10. <img src=images/ToolBar/replace.png width = 20 height = 20> - Вставить скопированный объект в выделенное место с заменой выделенного объекта <kbd>Ctrl</kbd> + <kbd>B</kbd>. 
-11. <img src=images/ToolBar/moveUp.png width = 20 height = 20> - Переместить выделеный объект выше <kbd>Ctrl</kbd>+<kbd>&uarr;</kbd>.
-12. <img src=images/ToolBar/moveDown.png width = 20 height = 20> - Переместить выделенный объект ниже <kbd>Ctrl</kbd>+<kbd>&darr;</kbd>.  
+11. <img src=images/ToolBar/moveup.png width = 20 height = 20> - Переместить выделеный объект выше <kbd>Ctrl</kbd>+<kbd>&uarr;</kbd>.
+12. <img src=images/ToolBar/movedown.png width = 20 height = 20> - Переместить выделенный объект ниже <kbd>Ctrl</kbd>+<kbd>&darr;</kbd>.  
 13. <img src=images/ToolBar/import.png width = 20 height = 20> - Импорт объектов в проект.
 14. <img src=images/ToolBar/export.png width = 20 height = 20> - Экспорт объектов из проекта. 
 15. <img src=images/ToolBar/changeObj.png width = 20 height = 20> - Сброс базового объекта.
