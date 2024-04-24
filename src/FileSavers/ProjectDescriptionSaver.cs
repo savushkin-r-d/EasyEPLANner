@@ -344,7 +344,8 @@ namespace EasyEPlanner
                     @"(\['(?<name>[\w-]+)'\])\W+(?:ip\s+=\s'(?<ip>[\w\d.]*)',)",
                     RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                 {
-                    var pathToIO = Path.Combine(ProjectManager.GetInstance().GetPtusaProjectsPath(""),
+                    var pathToIO = Path.Combine(
+                        ProjectManager.GetInstance().GetPtusaProjectsPath(advPrj.Groups["name"].Value),
                         advPrj.Groups["name"].Value,
                         "main.io.lua");
                     if (File.Exists(pathToIO))
