@@ -43,6 +43,14 @@ namespace IO
         }
 
         /// <summary>
+        /// Исключение нулевого значения AddressArea
+        /// </summary>
+        public class AddressAreaNullReferenceException : Exception
+        {
+            public AddressAreaNullReferenceException(string message) : base(message) { }
+        }
+
+        /// <summary>
         /// Исключение переполнения количества модулей в узле
         /// </summary>
         public class ModulesPerNodeOutOfRageException : Exception
@@ -62,7 +70,7 @@ namespace IO
         {
             if (AddressArea is null)
             {
-                throw new NullReferenceException($"Ошибка доступа к диапазону ip-адресов:" +
+                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону ip-адресов:" +
                     $" {nameof(AddressArea)} is null;\n");
             }
 
