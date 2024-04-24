@@ -254,7 +254,7 @@ namespace IO
         /// <summary>
         /// Объем адрессного пространства
         /// </summary>
-        public IOAddressArea AddressArea { get; }
+        public IOAddressArea AddressArea { get; private set; }
 
         public string TypeStr
         {

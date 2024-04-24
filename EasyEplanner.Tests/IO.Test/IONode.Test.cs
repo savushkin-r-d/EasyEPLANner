@@ -261,6 +261,16 @@ namespace Tests.IO
             Assert.Throws<IONode.AddressAreaOutOfRangeException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
         }
 
+        [Test]
+        public void SetModule_AddressAreaNullReferenceException()
+        {
+            var testNode = new IONode("AXC F 1152", 1, 1, string.Empty, string.Empty, string.Empty);
+            typeof(IONode).GetProperty("AddressArea", BindingFlags.Public | BindingFlags.Instance)
+                .SetValue(testNode, null);
+
+            Assert.Throws<IONode.AddressAreaNullReferenceException>(() => { testNode.SetModule(null, 0); });
+        }
+
         const string StrStub = "";
         const int IntStub = 0;
     }
