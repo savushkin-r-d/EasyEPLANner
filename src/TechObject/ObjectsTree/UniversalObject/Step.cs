@@ -316,6 +316,9 @@ namespace TechObject
                 timeParam = new ActionParameter("", "Время (параметр)");
                 items.Add(timeParam);
 
+                maxDurationParam = new ActionParameter("step_max_duration_par_n", "Максимальное время шага (параметр)");
+                items.Add(maxDurationParam);
+
                 nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
                 items.Add(nextStepN);
 
@@ -428,9 +431,11 @@ namespace TechObject
             if (!IsMainStep)
             {
                 clone.timeParam = timeParam.Clone();
+                clone.maxDurationParam = maxDurationParam.Clone();
                 clone.nextStepN = nextStepN.Clone();
 
                 clone.items.Add(clone.timeParam);
+                clone.items.Add(clone.maxDurationParam);
                 clone.items.Add(clone.nextStepN);
             }
 
@@ -480,20 +485,28 @@ namespace TechObject
                 
             var resultBuilder = new StringBuilder();
 
-            string time_param_n = timeParam.Value;
+            int timeParamNumber = int.TryParse(timeParam.Value, out timeParamNumber) ? timeParamNumber : -1;
+            int maxDurationParamNumber = int.TryParse(maxDurationParam.Value, out maxDurationParamNumber) ? maxDurationParamNumber : -1;
+
             string next_step_n = nextStepN.EditText[1].Trim();
             string attached_object = attachedObject.Value.ToString();
 
-            if (!int.TryParse(time_param_n, out var time_param_index) || time_param_index <= 0)
+            // Если не установлены параметры времени шага, то сбрасываем номер следующего шага
+            // и сбрасываем эти параметры в -1
+            if (timeParamNumber <= 0 && maxDurationParamNumber <= 0)
             {
                 next_step_n = "-1";
-                time_param_n = "-1";
+                timeParamNumber = -1;
+
                 nextStepN.SetNewValue("-1");
                 timeParam.SetNewValue("-1");
+                maxDurationParam.SetNewValue("-1");
             }
 
-            string time_param_n_str = (string.IsNullOrEmpty(time_param_n)) ? string.Empty :
-                $"{prefix}time_param_n = {time_param_n},\n";
+            string timeStr = (string.IsNullOrEmpty(timeParam.Value)) ? string.Empty :
+                $"{prefix}time_param_n = {timeParamNumber},\n";
+            string maxDurationStr = (maxDurationParamNumber <= 0) ? string.Empty :
+                $"{prefix}{(maxDurationParam as ActionParameter).LuaName} = {maxDurationParamNumber},\n";
             string next_step_n_str = (string.IsNullOrEmpty(next_step_n)) ? string.Empty :
                 $"{prefix}next_step_n = {next_step_n},\n";
             string baseStep_str = (string.IsNullOrEmpty(baseStep.LuaName)) ? string.Empty :
@@ -503,7 +516,8 @@ namespace TechObject
 
             resultBuilder.Append(prefix).Append("{\n")
                 .Append(prefix).Append($"name = '{name}',\n")
-                .Append(time_param_n_str)
+                .Append(timeStr)
+                .Append(maxDurationStr)
                 .Append(next_step_n_str)
                 .Append(baseStep_str)
                 .Append(attachedObject_str);
@@ -533,6 +547,7 @@ namespace TechObject
                 res.Add(action.SaveAsExcel()); 
             }
             res.Add(TimeParam);
+            res.Add(TimeParam);
             res.Add(NextStepN);
 
             return res.ToArray();
@@ -545,10 +560,11 @@ namespace TechObject
         /// <param name="time_param_n">Номер параметра со временем шага.
         /// </param>
         /// <param name="next_step_n">Номер следующего шага.</param>
-        public void SetPar(int timeParamN, int nextStepN)
+        public void SetPar(int timeParamN, int nextStepN, int maxDurationParamNumber)
         {
             this.timeParam.SetNewValue(timeParamN.ToString());
             this.nextStepN.SetNewValue(nextStepN.ToString());
+            this.maxDurationParam.SetNewValue(maxDurationParamNumber.ToString());
         }
 
         public void SetAttachedObject(int attachedObject)
@@ -1050,6 +1066,9 @@ namespace TechObject
             if (genericStep.timeParam?.IsFilled ?? false)
                 timeParam?.UpdateOnGenericTechObject(genericStep.timeParam);
 
+            if (genericStep.maxDurationParam?.IsFilled ?? false)
+                maxDurationParam?.UpdateOnGenericTechObject(genericStep.maxDurationParam);
+
             if (genericStep.nextStepN?.IsFilled ?? false)
                 nextStepN?.UpdateOnGenericTechObject(genericStep.nextStepN);
         }
@@ -1123,6 +1142,8 @@ namespace TechObject
 
         public string TimeParam => timeParam.Value.Trim();
 
+        public string MaxDurationParam => maxDurationParam.Value.Trim();
+
         /// <summary>
         /// Устройства отображаемые в действии "Переход к ... по условию"
         /// </summary>
@@ -1143,6 +1164,8 @@ namespace TechObject
 
         private ObjectProperty nextStepN; ///< Номер следующего шага.
         private ObjectProperty timeParam; ///< Параметр времени.
+        private ObjectProperty maxDurationParam; ///< Параметр максимального времени шага
+
         private AttachedObjects attachedObject; // Связанный объект
         private List<ITreeViewItem> items;
 

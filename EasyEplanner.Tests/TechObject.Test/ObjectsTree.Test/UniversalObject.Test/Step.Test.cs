@@ -63,7 +63,7 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedCount, actualCount);
         }
 
-        private static readonly int NotMainStepActionsCount = 18;
+        private static readonly int NotMainStepActionsCount = 19;
         private static readonly int MainStepActionsCount = 14;
         private static readonly int MainStepActionsWithToStateCount = 15;
 
@@ -742,7 +742,7 @@ namespace EasyEplanner.Tests
 
             genericStep.GetActions[0] = genericActionMock.Object;
             
-            genericStep.SetPar(2, 3);
+            genericStep.SetPar(2, 3, 1);
 
 
             var actionMock = new Mock<IAction>();
@@ -763,6 +763,7 @@ namespace EasyEplanner.Tests
 
                 Assert.AreEqual("2", step.TimeParam);
                 Assert.AreEqual("3", step.NextStepN);
+                Assert.AreEqual("1", step.MaxDurationParam);
             });
         }
     }

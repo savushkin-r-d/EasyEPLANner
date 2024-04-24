@@ -164,9 +164,10 @@ function proc_operation_devices(value, mode, state_n)
 
             local next_step_n = value.next_step_n or 0
             local time_param_n = value.time_param_n or 0
+            local step_max_duration_par_n = value.step_max_duration_par_n or -1
             local attached_object = value.attached_object or -1
-            if time_param_n > 0 then
-                step:SetPar(time_param_n, next_step_n)
+            if time_param_n > 0 or step_max_duration_par_n then
+                step:SetPar(time_param_n, next_step_n, step_max_duration_par_n)
             end
             step:SetAttachedObject(attached_object)
         end
