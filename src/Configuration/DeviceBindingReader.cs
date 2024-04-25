@@ -10,6 +10,7 @@ using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Aga.Controls.Tree;
 using IO;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
@@ -122,7 +123,7 @@ namespace EasyEPlanner
             }
 
             SetBind(description, actions, module, node, clampFunction,
-                comments);
+                comments, valveTerminalMatch.Success);
         }
 
         /// <summary>
@@ -512,7 +513,7 @@ namespace EasyEPlanner
         /// <param name="comment">Комментарий к устройству</param>
         private void SetBind(string description, List<string> actions, 
             IO.IIOModule module, IO.IIONode node, Function clampFunction, 
-            List<string> comments)
+            List<string> comments, bool bindToValveTerminal)
         {
             // Конвертируем в IOModule, потому что не тестируется IIOModule
             // из-за Function (еплановская библиотека).
@@ -557,6 +558,20 @@ namespace EasyEPlanner
                         out error, module.PhysicalNumber, logicalPort,
                         moduleOffset, channelName);
 
+                // Проверка типов привязки к модулю/пневмоострову
+                try
+                {
+                    if (bindToValveTerminal)
+                        CheckBindAllowedSubTypesToValveTerminal(device, devices.FirstOrDefault()?.EplanName);
+                    else
+                        CheckBindAllowedSubTypesToDOModule(device, module);
+                }
+                catch (InvalidBindingTypeException ex)
+                {
+                    Logs.AddMessage(ex.Message);
+                }
+
+
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
@@ -579,6 +594,82 @@ namespace EasyEPlanner
                     $"с одинаковым AS ({group.Key}): {string.Join(", ", group.Select(dev => dev.EplanName))}");
             }
         }
+
+
+        /// <summary>
+        /// Исключение некорректной привязки каналов устройства к модулю/пневмоострову
+        /// </summary>
+        public class InvalidBindingTypeException : Exception
+        {
+            public InvalidBindingTypeException(IODevice device, string bindingException)
+                : base($"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны {bindingException}")
+            { }
+        }
+
+        /// <summary>
+        /// Проверка привязки НЕ IO-link клапанов к пневмоострову
+        /// </summary>
+        /// <param name="device">Устройство</param>
+        /// <param name="ValveTerminalName">Название пневмоострова</param>
+        /// <exception cref="InvalidBindingTypeException">Не IO-link клапан привязан к пневмоострову</exception>
+        public static void CheckBindAllowedSubTypesToValveTerminal(IODevice device, string ValveTerminalName)
+        {
+            if (device.DeviceType != DeviceType.V)
+                return;
+
+            switch (device.DeviceSubType)
+            {
+                case DeviceSubType.V_DO1:
+                case DeviceSubType.V_DO2:
+                case DeviceSubType.V_DO1_DI1_FB_OFF:
+                case DeviceSubType.V_DO1_DI1_FB_ON:
+                case DeviceSubType.V_DO1_DI2:
+                case DeviceSubType.V_DO2_DI2:
+                    throw new InvalidBindingTypeException(device, $"к пневмоострову '{ValveTerminalName}';\n");
+
+                default:
+                    return;
+            }
+        }
+
+        /// <summary>
+        /// Проверка привязки IO-link клапанов к DI/DO модулям ввода вывода  
+        /// </summary>
+        /// <param name="device">Устройство</param>
+        /// <param name="module">Модулю</param>
+        /// <exception cref="InvalidBindingTypeException">IO-link клапан привязан к модулю DO/DI</exception>
+        public static void CheckBindAllowedSubTypesToDOModule(IODevice device, IIOModule module)
+        {
+            if (device.DeviceType != DeviceType.V)
+                return;
+
+            switch (module.Info.AddressSpaceType)
+            {
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
+                    break;
+
+                default:
+                    return;
+            }
+
+            switch (device.DeviceSubType)
+            {
+                case DeviceSubType.V_IOLINK_DO1_DI2:
+                case DeviceSubType.V_IOLINK_VTUG_DO1:
+                case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
+                case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
+                case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
+                case DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3:
+                case DeviceSubType.V_IOLINK_MIXPROOF:
+                    throw new InvalidBindingTypeException(device, $"к модулю DO/DI: '{module.Name}';\n");
+
+                default:
+                    return;
+            }
+        }
+
 
         private string GetClampComment(string action)
         {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EasyEPlanner;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using EplanDevice;
 using IO;
 using Moq;
 using NUnit.Framework;
@@ -72,5 +73,80 @@ namespace EasyEplannerTests.ConfigurationTest
             new object[] { new List<List<int>> { new List<int> { 0, 20 }, new List<int> { 1, 21 } }, 20, new Dictionary<int, string> { { 0, "" } }, null },
             new object[] { new List<List<int>> { new List<int> { 0 }, new List<int> { 1 } }, 1, new Dictionary<int, string> { { 0, "bind" } }, null },
         };
+
+        [TestCase("V_DO1", false)]
+        [TestCase("V_DO2", false)]
+        [TestCase("V_DO1_DI1_FB_OFF", false)]
+        [TestCase("V_DO1_DI1_FB_ON", false)]
+        [TestCase("V_DO1_DI2", false)]
+        [TestCase("V_DO2_DI2", false)]
+        [TestCase("V_IOLINK_DO1_DI2", true)]
+        [TestCase("V_IOLINK_VTUG_DO1", true)]
+        [TestCase("V_IOLINK_VTUG_DO1_FB_OFF", true)]
+        [TestCase("V_IOLINK_VTUG_DO1_FB_ON", true)]
+        [TestCase("V_IOLINK_VTUG_DO1_DI2", true)]
+        [TestCase("V_IOL_TERMINAL_MIXPROOF_DO3", true)]
+        [TestCase("V_IOLINK_MIXPROOF", true)]
+        public void CheckBindAllowedSubTypesToValveTerminal_Tests(string subtype, bool isCorrect)
+        {
+            var device = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+            device.SetSubType(subtype);
+            
+            if (isCorrect)
+            {
+                Assert.DoesNotThrow(() =>
+                {
+                    DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName");
+                });
+            }   
+            else
+            {
+                Assert.Throws<DeviceBindingReader.InvalidBindingTypeException>(() =>
+                {
+                    DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName");
+                });
+            }
+        }
+
+        [TestCase("V_DO1", true)]
+        [TestCase("V_DO2", true)]
+        [TestCase("V_DO1_DI1_FB_OFF", true)]
+        [TestCase("V_DO1_DI1_FB_ON", true)]
+        [TestCase("V_DO1_DI2", true)]
+        [TestCase("V_DO2_DI2", true)]
+        [TestCase("V_IOLINK_DO1_DI2", false)]
+        [TestCase("V_IOLINK_VTUG_DO1", false)]
+        [TestCase("V_IOLINK_VTUG_DO1_FB_OFF", false)]
+        [TestCase("V_IOLINK_VTUG_DO1_FB_ON", false)]
+        [TestCase("V_IOLINK_VTUG_DO1_DI2", false)]
+        [TestCase("V_IOL_TERMINAL_MIXPROOF_DO3", false)]
+        [TestCase("V_IOLINK_MIXPROOF", false)]
+        public void CheckBindAllowedSubTypesToDOModule_Tests(string subtype, bool isCorrect)
+        {
+            var device = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+            device.SetSubType(subtype);
+
+            var ioModuleInfo = IOModuleInfo.Stub;
+            ioModuleInfo.AddressSpaceType = IOModuleInfo.ADDRESS_SPACE_TYPE.DODI;
+            var moduleMock = new Mock<IIOModule>();
+            moduleMock.Setup(m => m.Name).Returns("Module");
+            moduleMock.Setup(m => m.Info).Returns(ioModuleInfo);
+
+
+            if (isCorrect)
+            {
+                Assert.DoesNotThrow(() =>
+                {
+                    DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object);
+                });
+            }
+            else
+            {
+                Assert.Throws<DeviceBindingReader.InvalidBindingTypeException>(() =>
+                {
+                    DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object);
+                });
+            }
+        }
     }
 }
