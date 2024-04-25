@@ -558,25 +558,13 @@ namespace EasyEPlanner
                         out error, module.PhysicalNumber, logicalPort,
                         moduleOffset, channelName);
 
-                // Проверка типов привязки к модулю/пневмоострову
-                try
-                {
-                    if (bindToValveTerminal)
-                        CheckBindAllowedSubTypesToValveTerminal(device, devices.FirstOrDefault()?.EplanName);
-                    else
-                        CheckBindAllowedSubTypesToDOModule(device, module);
-                }
-                catch (InvalidBindingTypeException ex)
-                {
-                    Logs.AddMessage(ex.Message);
-                }
-
+                CheckValveBinding(device, module, bindToValveTerminal, devices.FirstOrDefault());
 
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
                         ioModule.Function.VisibleName, clampStr, error);
-                    Logs.AddMessage(error);
+                    Logs.AddMessage(error); 
                 }
 
                 devIndex++;
@@ -592,6 +580,29 @@ namespace EasyEPlanner
             {
                 Logs.AddMessage($"К модулю {module.Name} узла {node.Name} привязано несколько устройств " +
                     $"с одинаковым AS ({group.Key}): {string.Join(", ", group.Select(dev => dev.EplanName))}");
+            }
+        }
+
+        /// <summary>
+        /// Проверка типов привязки к модулю/пневмоострову
+        /// </summary>
+        /// <param name="device">Привязываемое устройство</param>
+        /// <param name="module">Модуль</param>
+        /// <param name="bindToValveTerminal">Привязка к пневмоострову</param>
+        /// <param name="valveTerminal">Пневмоостров</param>
+        [ExcludeFromCodeCoverage]
+        public void CheckValveBinding(IODevice device, IIOModule module, bool bindToValveTerminal, IODevice valveTerminal)
+        {  
+            try
+            {
+                if (bindToValveTerminal)
+                    CheckBindAllowedSubTypesToValveTerminal(device, valveTerminal.EplanName);
+                else
+                    CheckBindAllowedSubTypesToDOModule(device, module);
+            }
+            catch (InvalidBindingTypeException ex)
+            {
+                Logs.AddMessage(ex.Message);
             }
         }
 

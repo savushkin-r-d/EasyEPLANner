@@ -12,6 +12,7 @@ using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using StaticHelper;
+using static TechObjectTests.DeviceManagerMock;
 
 namespace EasyEplannerTests.ConfigurationTest
 {
@@ -108,6 +109,17 @@ namespace EasyEplannerTests.ConfigurationTest
             }
         }
 
+        [Test]
+        public void CheckBindAllowedSubTypesToValveTerminal_NotValve()
+        {
+            var device = new HLA("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+
+            Assert.DoesNotThrow(() =>
+            {
+                DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName");
+            });
+        }
+
         [TestCase("V_DO1", true)]
         [TestCase("V_DO2", true)]
         [TestCase("V_DO1_DI1_FB_OFF", true)]
@@ -148,5 +160,34 @@ namespace EasyEplannerTests.ConfigurationTest
                 });
             }
         }
+
+        [Test]
+        public void CheckBindAllowedSubTypesToDOModule_NotValve()
+        {
+            var device = new HLA("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+
+            Assert.DoesNotThrow(() =>
+            {
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, null);
+            });
+        }
+
+        [Test]
+        public void CheckBindAllowedSubTypesToDOModule_ModuleDoesNotDIDO()
+        {
+            var device = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+
+            var ioModuleInfo = IOModuleInfo.Stub;
+            ioModuleInfo.AddressSpaceType = IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI;
+            var moduleMock = new Mock<IIOModule>();
+            moduleMock.Setup(m => m.Name).Returns("Module");
+            moduleMock.Setup(m => m.Info).Returns(ioModuleInfo);
+
+            Assert.DoesNotThrow(() =>
+            {
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object);
+            });
+        }
+
     }
 }
