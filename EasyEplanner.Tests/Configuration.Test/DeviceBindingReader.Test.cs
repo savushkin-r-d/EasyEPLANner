@@ -88,25 +88,15 @@ namespace EasyEplannerTests.ConfigurationTest
         [TestCase("V_IOLINK_VTUG_DO1_DI2", true)]
         [TestCase("V_IOL_TERMINAL_MIXPROOF_DO3", true)]
         [TestCase("V_IOLINK_MIXPROOF", true)]
-        public void CheckBindAllowedSubTypesToValveTerminal_Tests(string subtype, bool isCorrect)
+        public void CheckBindAllowedSubTypesToValveTerminal_Tests(string subtype, bool withoutError)
         {
             var device = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
             device.SetSubType(subtype);
-            
-            if (isCorrect)
-            {
-                Assert.DoesNotThrow(() =>
-                {
-                    DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName");
-                });
-            }   
-            else
-            {
-                Assert.Throws<DeviceBindingReader.InvalidBindingTypeException>(() =>
-                {
-                    DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName");
-                });
-            }
+
+
+
+            Assert.AreEqual(withoutError,
+                DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName") == string.Empty);
         }
 
         [Test]
@@ -114,10 +104,8 @@ namespace EasyEplannerTests.ConfigurationTest
         {
             var device = new HLA("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
 
-            Assert.DoesNotThrow(() =>
-            {
-                DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName");
-            });
+            Assert.IsTrue(
+                DeviceBindingReader.CheckBindAllowedSubTypesToValveTerminal(device, "ValveTerminalName") == string.Empty);
         }
 
         [TestCase("V_DO1", true)]
@@ -133,7 +121,7 @@ namespace EasyEplannerTests.ConfigurationTest
         [TestCase("V_IOLINK_VTUG_DO1_DI2", false)]
         [TestCase("V_IOL_TERMINAL_MIXPROOF_DO3", false)]
         [TestCase("V_IOLINK_MIXPROOF", false)]
-        public void CheckBindAllowedSubTypesToDOModule_Tests(string subtype, bool isCorrect)
+        public void CheckBindAllowedSubTypesToDOModule_Tests(string subtype, bool withoutError)
         {
             var device = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
             device.SetSubType(subtype);
@@ -144,21 +132,8 @@ namespace EasyEplannerTests.ConfigurationTest
             moduleMock.Setup(m => m.Name).Returns("Module");
             moduleMock.Setup(m => m.Info).Returns(ioModuleInfo);
 
-
-            if (isCorrect)
-            {
-                Assert.DoesNotThrow(() =>
-                {
-                    DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object);
-                });
-            }
-            else
-            {
-                Assert.Throws<DeviceBindingReader.InvalidBindingTypeException>(() =>
-                {
-                    DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object);
-                });
-            }
+            Assert.AreEqual(withoutError,
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object) == string.Empty);
         }
 
         [Test]
@@ -166,10 +141,8 @@ namespace EasyEplannerTests.ConfigurationTest
         {
             var device = new HLA("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
 
-            Assert.DoesNotThrow(() =>
-            {
-                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, null);
-            });
+            Assert.IsTrue(
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, null) == string.Empty);
         }
 
         [Test]
@@ -183,10 +156,8 @@ namespace EasyEplannerTests.ConfigurationTest
             moduleMock.Setup(m => m.Name).Returns("Module");
             moduleMock.Setup(m => m.Info).Returns(ioModuleInfo);
 
-            Assert.DoesNotThrow(() =>
-            {
-                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object);
-            });
+            Assert.IsTrue(
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object) == string.Empty);
         }
 
     }

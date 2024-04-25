@@ -558,13 +558,17 @@ namespace EasyEPlanner
                         out error, module.PhysicalNumber, logicalPort,
                         moduleOffset, channelName);
 
-                CheckValveBinding(device, module, bindToValveTerminal, devices.FirstOrDefault());
-
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
                         ioModule.Function.VisibleName, clampStr, error);
                     Logs.AddMessage(error); 
+                }
+
+                var bindingError = CheckValveBinding(device, module, bindToValveTerminal, devices.FirstOrDefault());
+                if (bindingError != string.Empty)
+                {
+                    Logs.AddMessage(bindingError);
                 }
 
                 devIndex++;
@@ -591,31 +595,14 @@ namespace EasyEPlanner
         /// <param name="bindToValveTerminal">Привязка к пневмоострову</param>
         /// <param name="valveTerminal">Пневмоостров</param>
         [ExcludeFromCodeCoverage]
-        public void CheckValveBinding(IODevice device, IIOModule module, bool bindToValveTerminal, IODevice valveTerminal)
+        public string CheckValveBinding(IODevice device, IIOModule module, bool bindToValveTerminal, IODevice valveTerminal)
         {  
-            try
-            {
-                if (bindToValveTerminal)
-                    CheckBindAllowedSubTypesToValveTerminal(device, valveTerminal.EplanName);
-                else
-                    CheckBindAllowedSubTypesToDOModule(device, module);
-            }
-            catch (InvalidBindingTypeException ex)
-            {
-                Logs.AddMessage(ex.Message);
-            }
+            if (bindToValveTerminal)
+                return CheckBindAllowedSubTypesToValveTerminal(device, valveTerminal.EplanName);
+            else
+                return CheckBindAllowedSubTypesToDOModule(device, module);
         }
 
-
-        /// <summary>
-        /// Исключение некорректной привязки каналов устройства к модулю/пневмоострову
-        /// </summary>
-        public class InvalidBindingTypeException : Exception
-        {
-            public InvalidBindingTypeException(IODevice device, string bindingException)
-                : base($"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны {bindingException}")
-            { }
-        }
 
         /// <summary>
         /// Проверка привязки НЕ IO-link клапанов к пневмоострову
@@ -623,10 +610,10 @@ namespace EasyEPlanner
         /// <param name="device">Устройство</param>
         /// <param name="ValveTerminalName">Название пневмоострова</param>
         /// <exception cref="InvalidBindingTypeException">Не IO-link клапан привязан к пневмоострову</exception>
-        public static void CheckBindAllowedSubTypesToValveTerminal(IODevice device, string ValveTerminalName)
+        public static string CheckBindAllowedSubTypesToValveTerminal(IODevice device, string ValveTerminalName)
         {
             if (device.DeviceType != DeviceType.V)
-                return;
+                return string.Empty;
 
             switch (device.DeviceSubType)
             {
@@ -636,10 +623,10 @@ namespace EasyEPlanner
                 case DeviceSubType.V_DO1_DI1_FB_ON:
                 case DeviceSubType.V_DO1_DI2:
                 case DeviceSubType.V_DO2_DI2:
-                    throw new InvalidBindingTypeException(device, $"к пневмоострову '{ValveTerminalName}';\n");
+                    return $"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны к пневмоострову '{ValveTerminalName}';\n";
 
                 default:
-                    return;
+                    return string.Empty;
             }
         }
 
@@ -649,10 +636,10 @@ namespace EasyEPlanner
         /// <param name="device">Устройство</param>
         /// <param name="module">Модулю</param>
         /// <exception cref="InvalidBindingTypeException">IO-link клапан привязан к модулю DO/DI</exception>
-        public static void CheckBindAllowedSubTypesToDOModule(IODevice device, IIOModule module)
+        public static string CheckBindAllowedSubTypesToDOModule(IODevice device, IIOModule module)
         {
             if (device.DeviceType != DeviceType.V)
-                return;
+                return string.Empty;
 
             switch (module.Info.AddressSpaceType)
             {
@@ -662,7 +649,7 @@ namespace EasyEPlanner
                     break;
 
                 default:
-                    return;
+                    return string.Empty;
             }
 
             switch (device.DeviceSubType)
@@ -674,10 +661,10 @@ namespace EasyEPlanner
                 case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                 case DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3:
                 case DeviceSubType.V_IOLINK_MIXPROOF:
-                    throw new InvalidBindingTypeException(device, $"к модулю DO/DI: '{module.Name}';\n");
+                    return $"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны к пневмоострову к модулю DO/DI: '{module.Name}';\n";
 
                 default:
-                    return;
+                    return string.Empty;
             }
         }
 
