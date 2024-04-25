@@ -43,6 +43,14 @@ namespace IO
         }
 
         /// <summary>
+        /// Исключение нулевого значения AddressArea
+        /// </summary>
+        public class AddressAreaNullReferenceException : Exception
+        {
+            public AddressAreaNullReferenceException(string message) : base(message) { }
+        }
+
+        /// <summary>
         /// Исключение переполнения количества модулей в узле
         /// </summary>
         public class ModulesPerNodeOutOfRageException : Exception
@@ -51,7 +59,7 @@ namespace IO
         }
 
         /// <summary>
-        /// Исключение переполнения адрессного пространства в узле
+        /// Исключение переполнения адресного пространства в узле
         /// </summary>
         public class AddressAreaOutOfRangeException : Exception
         {
@@ -60,16 +68,22 @@ namespace IO
 
         public void SetModule(IIOModule iOModule, int position)
         {
-            if (position > AddressArea?.ModulesPerNodeMax)
+            if (AddressArea is null)
+            {
+                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону ip-адресов:" +
+                    $" {nameof(AddressArea)} is null;\n");
+            }
+
+            if (position > AddressArea.ModulesPerNodeMax)
             {
                 throw new ModulesPerNodeOutOfRageException($"Модуль \"{iOModule.Name}\" " +
-                    $"выходит за диапозон максимального количества модулей для узла \"{name}\". ");
+                    $"выходит за диапазон максимального количества модулей для узла \"{name}\". ");
             }
 
             if (currentAddressArea + iOModule.AddressArea > AddressArea.AddressAreaMax)
             {
                 throw new AddressAreaOutOfRangeException($"Модуль \"{iOModule.Name}\" {iOModule.ArticleName} ({iOModule.AddressArea} byte) " +
-                    $"выходит за диапозон адрессного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
+                    $"выходит за диапазон адресного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
             }
 
             if (iOModules.Count < position)
@@ -240,7 +254,7 @@ namespace IO
         /// <summary>
         /// Объем адрессного пространства
         /// </summary>
-        public IOAddressArea AddressArea { get; }
+        public IOAddressArea AddressArea { get; private set; }
 
         public string TypeStr
         {
