@@ -661,7 +661,7 @@ namespace EasyEPlanner
                 case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                 case DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3:
                 case DeviceSubType.V_IOLINK_MIXPROOF:
-                    return $"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны к пневмоострову к модулю DO/DI: '{module.Name}';\n";
+                    return $"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны к модулю DO/DI: '{module.Name}';\n";
 
                 default:
                     return string.Empty;
