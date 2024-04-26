@@ -11,6 +11,7 @@ using StaticHelper;
 using EplanDevice;
 using System.Text.RegularExpressions;
 using TechObject;
+using Editor;
 
 namespace EasyEPlanner
 {
@@ -242,6 +243,12 @@ namespace EasyEPlanner
 
                     deviceIsShown = true;
                     isLoaded = true;
+
+                    SysLogger.WriteLog(this,
+                        $"{nameof(ShowDlg)}():",
+                        $"-{nameof(windowName)} = {windowName}",
+                        $"-{nameof(wndWmCommand)} = {wndWmCommand}",
+                        $"-{nameof(wndDevVisibilePtr)} = {wndDevVisibilePtr}");
                 }           
             }
             ChangeUISize();
