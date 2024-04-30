@@ -71,20 +71,20 @@ jobs:
       shell: powershell
       run: Set-Timezone -Id 'Belarus Standard Time'
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
         ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 17
         distribution: 'zulu'
 
     - name: Cache SonarCloud packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~\sonar\cache
         key: ${{ runner.os }}-sonar
@@ -92,7 +92,7 @@ jobs:
 
     - name: Cache SonarCloud scanner
       id: cache-sonar-scanner
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: .\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
@@ -111,7 +111,7 @@ jobs:
         dotnet tool install --global dotnet-coverage
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -168,7 +168,7 @@ jobs:
         del Microsoft.mshtml.dll
 
     - name: Upload artifact    
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: EasyEPLANner
         path: src/bin/${{env.BUILD_CONFIGURATION}}
@@ -188,7 +188,7 @@ jobs:
       run: echo "date=$(date +'%d.%m.%Y')" >> $env:GITHUB_OUTPUT
 
     - name: Download artifact
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v4
       with:
         name: EasyEPLANner
         path: ./
@@ -206,7 +206,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
