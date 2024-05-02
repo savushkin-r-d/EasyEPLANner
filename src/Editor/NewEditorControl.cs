@@ -1314,6 +1314,7 @@ namespace Editor
             FormatItemsToBold(e, treeViewItemsList.ToArray());
             FormatActiveBoolParameters(e);
             FormatCuttedItems(e);
+            FormatCopiedItems(e);
         }
 
         /// <summary>
@@ -1369,6 +1370,20 @@ namespace Editor
             if (item.MarkToCut)
             {
                 e.Item.Font = strikeoutBoldFont8px;
+            }
+        }
+
+        /// <summary>
+        /// Форматирование скопированного элемента
+        /// </summary>
+        /// <param name="e"></param>
+        private void FormatCopiedItems(FormatCellEventArgs e)
+        {
+            var item = e.Model as ITreeViewItem;
+            if(copyItems?.Contains(item) is true && item?.MarkToCut is false)
+            {
+                e.Item.BackColor = Color.FromArgb(50, Color.Orange); 
+                e.Item.SelectedForeColor = Color.FromArgb(50, Color.Orange);
             }
         }
 
