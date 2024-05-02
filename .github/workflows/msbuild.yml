@@ -200,6 +200,24 @@ jobs:
         $version=[System.Reflection.Assembly]::LoadFrom("./EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+        fetch-depth: 0
+
+    - name: Generate ChangeLog
+      id: change-log
+      shell: powershell
+      run: |
+        echo "changelog<<^D" >> $env:GITHUB_OUTPUT
+        $index = 1
+        $logs = (git log --pretty=tformat:"%b" ((git tag --sort=committerdate | Select-Object -Last 2) -join "..")) -join "`n"
+        foreach ($match in [Regex]::Matches($logs, '```ChangeLog\n?([\w\W]*?)\n?```')) {
+          echo "$index. $($match.Groups[1].Value.Trim().TrimEnd(';,.'))." >> $env:GITHUB_OUTPUT
+          $index = $index + 1
+        }
+        echo ^D >> $env:GITHUB_OUTPUT
+
     - name: Pack
       shell: powershell
       run: Compress-Archive -Path .\* -Update -DestinationPath EasyEPLANner.zip
@@ -214,8 +232,8 @@ jobs:
         body: |
           **Список изменений**:
           ```ChangeLog
-          Обновление от ${{ steps.get-date.outputs.date }}. Версия надстройки - ${{ steps.assembly-version.outputs.version }}:
-          
+          Обновление от ${{ steps.get-date.outputs.date }}. Версия надстройки - ${{ steps.assembly-version.outputs.version }}.
+          ${{ steps.change-log.outputs.changelog }}
           ```
         files: |
           EasyEPLANner.zip
