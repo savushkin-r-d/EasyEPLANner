@@ -762,6 +762,7 @@ namespace Editor
             }
 
             copyItems = copies.ToArray();
+            editorTView.RefreshObjects(copyItems);
         }
 
         /// <summary>
