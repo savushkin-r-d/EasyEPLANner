@@ -191,23 +191,26 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: EasyEPLANner
-        path: ./
+        path: ./bin
 
     - name: Get assembly version
       id: assembly-version
       shell: powershell
+      working-directory: ./bin
       run: |
         $version=[System.Reflection.Assembly]::LoadFrom("./EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
     - uses: actions/checkout@v4
       with:
+        path: ./EasyEPLANner
         submodules: 'recursive'
         fetch-depth: 0
 
     - name: Generate ChangeLog
       id: change-log
       shell: powershell
+      working-directory: ./EasyEPLANner
       run: |
         echo "changelog<<^D" >> $env:GITHUB_OUTPUT
         $index = 1
@@ -220,6 +223,7 @@ jobs:
 
     - name: Pack
       shell: powershell
+      working-directory: ./bin
       run: Compress-Archive -Path .\* -Update -DestinationPath EasyEPLANner.zip
 
     - name: Create Release
@@ -236,7 +240,7 @@ jobs:
           ${{ steps.change-log.outputs.changelog }}
           ```
         files: |
-          EasyEPLANner.zip
+          ./bin/EasyEPLANner.zip
         generate_release_notes: true
         draft: false
         prerelease: false
