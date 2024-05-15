@@ -7,7 +7,7 @@ using IO;
 using Moq;
 using NUnit.Framework;
 
-namespace Tests.IO
+namespace IOTests
 {
     class IONodeTest
     {
