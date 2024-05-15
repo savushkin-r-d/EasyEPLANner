@@ -176,5 +176,24 @@ namespace Tests.EplanDevices
                 }
             };
         }
+
+
+        [TestCase("AO", "", 1)]
+        [TestCase("AI", "", 1)]
+        [TestCase("DI", "Открыт", 1)]
+        [TestCase("DI", "Закрыт", 1)]
+        [TestCase("DI", "", 0)]
+        [TestCase("DO", "", 0)]
+        public void GetChannels_Test(string channelName, string comment, int expectedChannelsCount)
+        {
+            var dev = new EplanDevice.V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+            
+            // 1 канал AO ""
+            // 2 канала DI "Открыть" и "Закрыть"
+            dev.SetSubType("V_IOLINK_VTUG_DO1_DI2");
+
+            var channels = dev.GetChannels(IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI, channelName, comment);
+            Assert.AreEqual(expectedChannelsCount, channels.Count);
+        }
     }
 }

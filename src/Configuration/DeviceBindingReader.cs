@@ -565,7 +565,7 @@ namespace EasyEPlanner
                     Logs.AddMessage(error); 
                 }
 
-                var bindingError = CheckValveBinding(device, module, bindToValveTerminal, devices.FirstOrDefault());
+                var bindingError = CheckValveBinding(device, module, bindToValveTerminal, devices.FirstOrDefault(), clampComment);
                 if (bindingError != string.Empty)
                 {
                     Logs.AddMessage(bindingError);
@@ -595,12 +595,12 @@ namespace EasyEPlanner
         /// <param name="bindToValveTerminal">Привязка к пневмоострову</param>
         /// <param name="valveTerminal">Пневмоостров</param>
         [ExcludeFromCodeCoverage]
-        public string CheckValveBinding(IODevice device, IIOModule module, bool bindToValveTerminal, IODevice valveTerminal)
+        public string CheckValveBinding(IODevice device, IIOModule module, bool bindToValveTerminal, IODevice valveTerminal, string clampComment)
         {  
             if (bindToValveTerminal)
                 return CheckBindAllowedSubTypesToValveTerminal(device, valveTerminal.EplanName);
-            else
-                return CheckBindAllowedSubTypesToDOModule(device, module);
+            
+            return CheckBindAllowedSubTypesToDOModule(device, module, clampComment);
         }
 
 
@@ -636,7 +636,7 @@ namespace EasyEPlanner
         /// <param name="device">Устройство</param>
         /// <param name="module">Модулю</param>
         /// <exception cref="InvalidBindingTypeException">IO-link клапан привязан к модулю DO/DI</exception>
-        public static string CheckBindAllowedSubTypesToDOModule(IODevice device, IIOModule module)
+        public static string CheckBindAllowedSubTypesToDOModule(IODevice device, IIOModule module, string clampComment)
         {
             if (device.DeviceType != DeviceType.V)
                 return string.Empty;
@@ -661,11 +661,16 @@ namespace EasyEPlanner
                 case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                 case DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3:
                 case DeviceSubType.V_IOLINK_MIXPROOF:
-                    return $"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны к модулю DO/DI: '{module.Name}';\n";
+                    break;
 
                 default:
                     return string.Empty;
             }
+
+            if (device.GetChannels(module.Info.AddressSpaceType, "DO", clampComment).Any())
+                return string.Empty;
+
+            return $"Каналы устройства '{device.EplanName}' с подтипом {device.GetDeviceSubTypeStr(device.DeviceType, device.DeviceSubType)} привязаны к модулю DO/DI: '{module.Name}';\n";
         }
 
 

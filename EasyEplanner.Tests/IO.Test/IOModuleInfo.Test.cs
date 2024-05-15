@@ -5,7 +5,7 @@ using System.Linq;
 using IO;
 using NUnit.Framework;
 
-namespace Tests.IO
+namespace IOTests
 {
     public class IOModuleInfoTest
     {

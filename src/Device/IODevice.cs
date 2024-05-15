@@ -387,7 +387,7 @@ namespace EplanDevice
         /// <param name="channelName">Имя канала для IO-Link</param>
         /// <param name="comment">Комментарий канала</param>
         /// <returns></returns>
-        private List<IOChannel> GetChannels(
+        public List<IOChannel> GetChannels(
             IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace, string channelName,
             string comment)
         {
@@ -424,17 +424,17 @@ namespace EplanDevice
                 case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
                     switch (channelName)
                     {
-                        default:
-                            IO.AddRange(AO);
-                            IO.AddRange(AI);
-                            break;
-
                         case IOChannel.DO:
                             IO.AddRange(DO);
                             break;
 
                         case IOChannel.DI:
                             IO.AddRange(DI);
+                            break;
+
+                        default:
+                            IO.AddRange(AO);
+                            IO.AddRange(AI);
                             break;
                     }
                     break;

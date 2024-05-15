@@ -1,7 +1,7 @@
 ﻿using IO;
 using NUnit.Framework;
 
-namespace Tests.IO
+namespace IOTests
 {
     internal class IONodeInfoTest
     {
