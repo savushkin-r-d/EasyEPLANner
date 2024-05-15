@@ -116,12 +116,14 @@ namespace EasyEplannerTests.ConfigurationTest
         [TestCase("V_DO2_DI2", true)]
         [TestCase("V_IOLINK_DO1_DI2", false)]
         [TestCase("V_IOLINK_VTUG_DO1", false)]
-        [TestCase("V_IOLINK_VTUG_DO1_FB_OFF", false)]
-        [TestCase("V_IOLINK_VTUG_DO1_FB_ON", false)]
-        [TestCase("V_IOLINK_VTUG_DO1_DI2", false)]
+        [TestCase("V_IOLINK_VTUG_DO1_FB_OFF", true)]
+        [TestCase("V_IOLINK_VTUG_DO1_FB_ON", true)]
+        [TestCase("V_IOLINK_VTUG_DO1_DI2", false, "")]
+        [TestCase("V_IOLINK_VTUG_DO1_DI2", true, "Открыт")]
+        [TestCase("V_IOLINK_VTUG_DO1_DI2", true, "Закрыт")]
         [TestCase("V_IOL_TERMINAL_MIXPROOF_DO3", false)]
         [TestCase("V_IOLINK_MIXPROOF", false)]
-        public void CheckBindAllowedSubTypesToDOModule_Tests(string subtype, bool withoutError)
+        public void CheckBindAllowedSubTypesToDOModule_Tests(string subtype, bool withoutError, string comment = "")
         {
             var device = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
             device.SetSubType(subtype);
@@ -133,7 +135,7 @@ namespace EasyEplannerTests.ConfigurationTest
             moduleMock.Setup(m => m.Info).Returns(ioModuleInfo);
 
             Assert.AreEqual(withoutError,
-                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object) == string.Empty);
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object, comment) == string.Empty);
         }
 
         [Test]
@@ -142,7 +144,7 @@ namespace EasyEplannerTests.ConfigurationTest
             var device = new HLA("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
 
             Assert.IsTrue(
-                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, null) == string.Empty);
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, null, "") == string.Empty);
         }
 
         [Test]
@@ -157,7 +159,7 @@ namespace EasyEplannerTests.ConfigurationTest
             moduleMock.Setup(m => m.Info).Returns(ioModuleInfo);
 
             Assert.IsTrue(
-                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object) == string.Empty);
+                DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object, "") == string.Empty);
         }
 
     }
