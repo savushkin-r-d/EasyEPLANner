@@ -24,9 +24,8 @@ namespace EplanDevice
             string errStr = string.Empty;
             switch (subtype)
             {
-                case "G":
-                case "":
-                    dSubType = DeviceSubType.G;
+                case "G_IOL_4":
+                    dSubType = DeviceSubType.G_IOL_4;
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
@@ -34,12 +33,18 @@ namespace EplanDevice
                     SetIOLinkSizes(ArticleName);
                     break;
 
-                case "G_VIRT":
+                case "G_IOL_8":
+                    dSubType = DeviceSubType.G_IOL_8;
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (пустая строка, G, G_VIRT).\n",
+                        " (пустая строка, G ).\n",
                         Name);
                     break;
             }
@@ -51,9 +56,7 @@ namespace EplanDevice
         {
             string res = base.Check();
 
-            bool emptyArticle = ArticleName == string.Empty;
-            bool needCheckArticle = DeviceSubType != DeviceSubType.G_VIRT;
-            if (needCheckArticle && emptyArticle)
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -69,17 +72,18 @@ namespace EplanDevice
                 case DeviceType.G:
                     switch (dst)
                     {
-                        case DeviceSubType.G:
-                            return "G";
-                        case DeviceSubType.G_VIRT:
-                            return "G_VIRT";
+                        case DeviceSubType.G_IOL_4:
+                            return "G_IOL_4";
+
+                        case DeviceSubType.G_IOL_8:
+                            return "G_IOL_8";
                     }
                     break;
             }
 
             return string.Empty;
         }
-
+        
         public override Dictionary<string, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
@@ -112,14 +116,6 @@ namespace EplanDevice
                                 {Tag.NOMINAL_CURRENT_CH, 8},
                                 {Tag.LOAD_CURRENT_CH, 8},
                                 {Tag.ERR_CH, 8},
-                            };
-
-                        case DeviceSubType.G_VIRT:
-                            return new Dictionary<string, int>()
-                            {
-                                {Tag.M, 1},
-                                {Tag.ST, 1},
-                                {Tag.V, 1},
                             };
                     }
                     break;

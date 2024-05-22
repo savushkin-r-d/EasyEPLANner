@@ -116,9 +116,9 @@ namespace EplanDevice
         HLA_IOLINK, ///< Сигнальная колонна IO-Link (настраиваемая)
 
         //G
-        /// <summary> Phoenix Contact 4 канала.
+        /// <summary> Phoenix Contact 4 канала. </summary>
         G_IOL_4 = 1,
-        /// <summary>  Phoenix Contact 8 каналов.
+        /// <summary>  Phoenix Contact 8 каналов. </summary>
         G_IOL_8, 
 
         //GS
