@@ -289,16 +289,16 @@ namespace Tests.EplanDevices
             switch (value)
             {
                 case 1:
-                    return new F("KOAG4F1", "+KOAG4-F1",
+                    return new G("KOAG4G1", "+KOAG4-G1",
                         "Test device", 1, "KOAG", 4, string.Empty);
                 case 2:
-                    return new F("LINE1F2", "+LINE1-F2",
+                    return new G("LINE1G2", "+LINE1-G2",
                         "Test device", 2, "LINE", 1, string.Empty);
                 case 3:
-                    return new F("TANK2F1", "+TANK2-F1",
+                    return new G("TANK2G1", "+TANK2-G1",
                         "Test device", 1, "TANK", 2, string.Empty);
                 default:
-                    return new F("CW_TANK3F3", "+CW_TANK3-F3",
+                    return new G("CW_TANK3G3", "+CW_TANK3-G3",
                         "Test device", 3, "CW_TANK", 3, string.Empty);
             }
         }
