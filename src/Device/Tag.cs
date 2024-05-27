@@ -28,7 +28,7 @@
             public const string P_CZ = "P_CZ";
 
             /// <summary>
-            /// Индикация местонахождения устройства (по умолчанию мигает фиолетовым цветом).
+            /// Индикация местонахождения устройства.
             /// </summary>
             public const string BLINK = "BLINK";
 
