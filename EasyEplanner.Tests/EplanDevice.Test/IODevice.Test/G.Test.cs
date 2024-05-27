@@ -42,14 +42,14 @@ namespace Tests.EplanDevices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.G_IOL_4, string.Empty,
-                    GetRandomFDevice() },
+                new object[] { DeviceSubType.NONE, string.Empty,
+                    GetRandomGDevice() },
                 new object[] { DeviceSubType.G_IOL_4, G_IOL_4,
-                    GetRandomFDevice() },
+                    GetRandomGDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomFDevice() },
+                    GetRandomGDevice() },
                 new object[] { DeviceSubType.G_IOL_8, G_IOL_8,
-                    GetRandomFDevice() },
+                    GetRandomGDevice() },
             };
         }
 
@@ -78,10 +78,10 @@ namespace Tests.EplanDevices
         {
             return new object[]
             {
-                new object[] { G_IOL_4, string.Empty, GetRandomFDevice() },
-                new object[] { G_IOL_4, G_IOL_4, GetRandomFDevice() },
-                new object[] { G_IOL_8, G_IOL_8, GetRandomFDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomFDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomGDevice() },
+                new object[] { G_IOL_4, G_IOL_4, GetRandomGDevice() },
+                new object[] { G_IOL_8, G_IOL_8, GetRandomGDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomGDevice() },
             };
         }
 
@@ -135,10 +135,10 @@ namespace Tests.EplanDevices
 
             return new object[]
             {
-                new object[] {exportForG_IOL_4, string.Empty, GetRandomFDevice()},
-                new object[] {exportForG_IOL_4, G_IOL_4, GetRandomFDevice()},
-                new object[] {null, Incorrect, GetRandomFDevice()},
-                new object[] {exportForG_IOL_8, G_IOL_8, GetRandomFDevice()},
+                new object[] {null, string.Empty, GetRandomGDevice()},
+                new object[] {exportForG_IOL_4, G_IOL_4, GetRandomGDevice()},
+                new object[] {null, Incorrect, GetRandomGDevice()},
+                new object[] {exportForG_IOL_8, G_IOL_8, GetRandomGDevice()},
             };
         }
 
@@ -174,25 +174,25 @@ namespace Tests.EplanDevices
                 {
                     new string[0],
                     string.Empty,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     G_IOL_4,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     G_IOL_8,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
             };
         }
@@ -253,27 +253,27 @@ namespace Tests.EplanDevices
             {
                 new object[]
                 {
-                    iolinkDeviceChannels,
+                    emptyChannels,
                     string.Empty,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
                 new object[]
                 {
                     iolinkDeviceChannels,
                     G_IOL_4,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
                 new object[]
                 {
-                    emptyChannels,
+                    iolinkDeviceChannels,
                     G_IOL_8,
-                    GetRandomFDevice()
+                    GetRandomGDevice()
                 },
             };
         }
@@ -282,7 +282,7 @@ namespace Tests.EplanDevices
         /// Генератор AI устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomFDevice()
+        private static IODevice GetRandomGDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
