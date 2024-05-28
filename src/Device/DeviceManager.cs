@@ -437,6 +437,7 @@ namespace EplanDevice
             "CAM",
             "PDS",
             "TS",
+            "G",
         };
 
         public IODevice AddDeviceAndEFunction(string devName, string description,
@@ -633,6 +634,11 @@ namespace EplanDevice
 
                 case "TS":
                     dev = new TS(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "G":
+                    dev = new G(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, articleName);
                     break;
 
