@@ -294,7 +294,7 @@ namespace TechObject
         {
             var res = "";
             var objNum = TechObjectManager.GetInstance().GetTechObjectN(Owner);
-            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum, Owner is GenericTechObject);
+            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum);
             string checkedValue = string.Join(" ", numbers);
             if (checkedValue != Value)
             {
