@@ -29,8 +29,7 @@ namespace TechObject
             string oldValue = Value;
             var thisObjNum = owner?.GlobalNum ?? 0;
             var isGeneric = owner is GenericTechObject;
-            List<int> newNumbers = strategy.GetValidTechObjNums(newValue,
-                thisObjNum, isGeneric);
+            List<int> newNumbers = strategy.GetValidTechObjNums(newValue, thisObjNum);
 
             newValue = string.Join(" ", newNumbers);
             string sortedValue = MoveNewValuesInTheEndOfString(newValue,
@@ -295,7 +294,7 @@ namespace TechObject
         {
             var res = "";
             var objNum = TechObjectManager.GetInstance().GetTechObjectN(Owner);
-            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum, Owner is GenericTechObject);
+            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum);
             string checkedValue = string.Join(" ", numbers);
             if (checkedValue != Value)
             {
@@ -631,8 +630,9 @@ namespace TechObject
             /// </summary>
             /// <param name="value">Входная строка</param>
             /// <param name="objNum">Номер редактируемого объекта</param>
+            /// <param name="isGeneric">Редактируемый объект - типовой</param>
             /// <returns></returns>
-            List<int> GetValidTechObjNums(string value, int objNum, bool isGeneric);
+            List<int> GetValidTechObjNums(string value, int objNum, bool isGeneric = false);
 
             /// <summary>
             /// Нужно ли инициализировать привязанные объекты
@@ -708,7 +708,7 @@ namespace TechObject
             /// <param name="selectedObjNum">Номер редактируемого объекта</param>
             /// <param name="isGeneric"><paramref name="selectedObjNum"/> - типовой объект</param>
             public List<int> GetValidTechObjNums(string value,
-                int selectedObjNum, bool isGeneric)
+                int selectedObjNum, bool isGeneric = false)
             {
                 var validNumbers = new List<int>();
                 List<int> numbers = value.Split(' ')
