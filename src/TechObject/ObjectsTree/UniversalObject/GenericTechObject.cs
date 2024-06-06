@@ -69,6 +69,7 @@ namespace TechObject
             paramsManager.ValueChanged += UpdateParamsManager;
             ModesManager.ValueChanged += UpdateModesManager;
             AttachedObjects.ValueChanged += UpdateAttachedObjects;
+            BaseTechObject.ObjectGroupsList.ForEach(gr => gr.ValueChanged += UpdateObjectGroups);
         }
 
         /// <summary>
@@ -83,6 +84,7 @@ namespace TechObject
             UpdateEquipment(null);
             UpdateParamsManager(null);
             UpdateTechObjectsData(null);
+            UpdateObjectGroups(null);
         }
 
         /// <summary>
@@ -97,6 +99,24 @@ namespace TechObject
         private void UpdateAttachedObjects(object sender)
         {
             InheritedTechObjects.ForEach(to => to.AttachedObjects.UpdateOnGenericTechObject(AttachedObjects));
+        }
+
+        /// <summary>
+        /// Обновить поля групп танков: Группа танков, Источники/Приемники
+        /// </summary>
+        private void UpdateObjectGroups(object sender)
+        {
+            inheritedTechObjects.ForEach(to =>
+            {
+                var genericObjGrList = BaseTechObject.ObjectGroupsList;
+                var inheritedObjGrList = to.BaseTechObject.ObjectGroupsList;
+
+                var objectsGroups = genericObjGrList.Zip(inheritedObjGrList, (g, i) => new { Generic = g, Inherited = i });
+                foreach (var og in objectsGroups)
+                {
+                    og.Inherited.UpdateOnGenericTechObject(og.Generic);
+                }
+            });
         }
 
         /// <summary>
