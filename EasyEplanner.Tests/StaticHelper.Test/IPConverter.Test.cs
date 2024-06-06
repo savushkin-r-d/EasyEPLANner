@@ -11,6 +11,8 @@ namespace EasyEplannerTests.StaticHelperTest
 {
     public class IPConverterTest
     {
+        [TestCase("", 0)]
+        [TestCase(" ", 0)]
         [TestCase("0.0.0.1", 1)]
         [TestCase("0.2", 2)]
         [TestCase("1.2", 258)]

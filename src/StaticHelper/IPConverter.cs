@@ -17,8 +17,15 @@ namespace StaticHelper
         /// <returns>0 - если не конвертировалось</returns>
         public static long ConvertIPStrToLong(string IP)
         {
-            return IP.Split('.').Select(long.Parse)
-                .Aggregate((result, octet) => (result << 8) + octet);
+            try
+            {
+                return IP.Trim().Split('.').Select(long.Parse)
+                    .Aggregate((result, octet) => (result << 8) + octet);
+            }
+            catch
+            {
+                return 0;
+            }
         }
     }
 }
