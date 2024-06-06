@@ -603,6 +603,7 @@ namespace TechObject
                 if (mode is null)
                 {
                     mode = AddMode(genericMode.Name, genericMode.BaseOperation.LuaName);
+                    mode.AddParent(this);
                 }
                 else
                 {
