@@ -58,6 +58,12 @@ namespace TechObject
             return base.SetNewValue(newValue);
         }
 
+        public override void UpdateOnGenericTechObject(ObjectProperty genericProperty)
+        {
+            Parameter = null;
+            base.UpdateOnGenericTechObject(genericProperty);
+        }
+
         public override string Value
         {
             get
