@@ -28,7 +28,7 @@
             public const string P_CZ = "P_CZ";
 
             /// <summary>
-            /// Световая индикация устройства.
+            /// Индикация местонахождения устройства.
             /// </summary>
             public const string BLINK = "BLINK";
 
