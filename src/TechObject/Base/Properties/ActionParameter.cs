@@ -70,7 +70,7 @@ namespace TechObject
 
             if (dev.Description == CommonConst.Cap ||
                 dev.ObjectName != objName ||
-                dev.ObjectNumber <= oldID) 
+                dev.ObjectNumber <= 0) 
                 return;
 
             if (dev.ObjectNumber == newID && oldID != -1)
