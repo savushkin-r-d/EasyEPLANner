@@ -384,6 +384,10 @@ namespace TechObject
             {
                 CBParameterValues.Add( State.stateStr[STOP], STOP.ToString());
             }
+            else if (Owner.Type == State.StateType.STOP)
+            {
+                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
+            }
             else return;
 
             var toStateByConditionAction = new ActionGroupCustom(

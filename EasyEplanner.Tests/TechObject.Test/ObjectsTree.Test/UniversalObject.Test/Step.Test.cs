@@ -44,7 +44,7 @@ namespace EasyEplanner.Tests
         {
             new object[] { RUN, true, 15 },
             new object[] { RUN, false, 15 },
-            new object[] { STOP, true, 14 },
+            new object[] { STOP, true, 15 },
             new object[] { STOP, false, 15 },
             new object[] { PAUSE, true, 15 },
             new object[] { PAUSE, false, 15 },
@@ -64,7 +64,7 @@ namespace EasyEplanner.Tests
         }
 
         private static readonly int NotMainStepActionsCount = 19;
-        private static readonly int MainStepActionsCount = 14;
+        private static readonly int MainStepActionsCount = 15;
         private static readonly int MainStepActionsWithToStateCount = 15;
 
         static object[] Constructor_NewStep_CheckItemsCountCases =
