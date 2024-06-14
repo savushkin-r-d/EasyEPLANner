@@ -58,6 +58,31 @@ namespace TechObject
             return base.SetNewValue(newValue);
         }
 
+        public override void UpdateOnGenericTechObject(ObjectProperty genericProperty)
+        {
+            Parameter = null;
+            base.UpdateOnGenericTechObject(genericProperty);
+        }
+
+        public void ModifyDevName(int newID, int oldID, string objName)
+        {
+            var dev = deviceManager.GetDeviceByEplanName(Value);
+
+            if (dev.Description == CommonConst.Cap ||
+                dev.ObjectName != objName ||
+                dev.ObjectNumber <= 0) 
+                return;
+
+            if (dev.ObjectNumber == newID && oldID != -1)
+            {
+                SetNewValue($"{objName}{oldID}{dev.DeviceType}{dev.DeviceNumber}");
+            }
+            if (oldID == -1 || oldID == dev.ObjectNumber)
+            { 
+               SetNewValue($"{objName}{newID}{dev.DeviceType}{dev.DeviceNumber}");
+            }
+        }
+
         public override string Value
         {
             get

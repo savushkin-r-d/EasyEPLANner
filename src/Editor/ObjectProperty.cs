@@ -538,7 +538,7 @@ namespace Editor
         public virtual string SystemIdentifier => "";
         #endregion
 
-        public void UpdateOnGenericTechObject(ObjectProperty genericProperty)
+        public virtual void UpdateOnGenericTechObject(ObjectProperty genericProperty)
         {
             this.value = genericProperty.Value;
             this.defaultValue = genericProperty.DefaultValue;

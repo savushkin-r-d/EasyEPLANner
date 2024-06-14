@@ -251,6 +251,19 @@ namespace TechObject
             }
         }
 
+        public override void ModifyDevNames(int newTechObjectN, int oldTechObjectN, string techObjectName)
+        {
+            Parameters.ForEach(p =>
+            {
+                if (p is ActionParameter actionParameter)
+                {
+                    actionParameter.ModifyDevName(newTechObjectN, oldTechObjectN, techObjectName);
+                }
+            });
+
+            base.ModifyDevNames(newTechObjectN, oldTechObjectN, techObjectName);
+        }
+
         #region Реализация ITreeViewItem
         override public ITreeViewItem[] Items
         {
