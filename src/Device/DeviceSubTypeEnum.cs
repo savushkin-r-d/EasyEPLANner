@@ -115,6 +115,12 @@ namespace EplanDevice
         HLA_VIRT, ///< Виртуальная сигнальная колонна (без привязки к модулям).
         HLA_IOLINK, ///< Сигнальная колонна IO-Link (настраиваемая)
 
+        //G
+        /// <summary> Phoenix Contact 4 канала. </summary>
+        G_IOL_4 = 1,
+        /// <summary>  Phoenix Contact 8 каналов. </summary>
+        G_IOL_8, 
+
         //GS
         /// <summary> Датчик положения. </summary>
         GS = 1,
