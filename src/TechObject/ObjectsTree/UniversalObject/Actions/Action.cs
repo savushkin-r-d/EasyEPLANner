@@ -304,11 +304,11 @@ namespace TechObject
             //Для устройств в пределах объекта меняем номер объекта.
             if (objNum == newID && oldID != -1)
             { // 1 -> 2 - COAG2V1 --> COAG1V1
-                return $"{objName}{oldID}{device.DeviceType}{device.DeviceNumber}";
+                return $"{objName}{oldID}{device.DeviceDesignation}";
             }
             if (oldID == -1 || oldID == objNum)
             { // COAG1V1 --> COAG(new_id)V1; COAGxV1 -> COAG1V1, COAG2V1 ...
-                return $"{objName}{newID}{device.DeviceType}{device.DeviceNumber}";
+                return $"{objName}{newID}{device.DeviceDesignation}";
             }
 
             return string.Empty;

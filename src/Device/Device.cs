@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace EplanDevice
 {
@@ -175,6 +176,8 @@ namespace EplanDevice
                 return eplanName;
             }
         }
+
+        public string DeviceDesignation => EplanName.Split('-').LastOrDefault() ?? string.Empty;
 
         public long DeviceNumber
         {

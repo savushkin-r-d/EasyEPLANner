@@ -13,6 +13,12 @@
         string EplanName { get; }
 
         /// <summary>
+        /// Обозначение устройства без объекта. Пример: V1 <br/>
+        /// Используется если обозначение устройства не соответствует типу: "FC1" (подтип "C") 
+        /// </summary>
+        string DeviceDesignation { get; }
+
+        /// <summary>
         /// Описание устройства.
         /// </summary>
         string Description { get; }
