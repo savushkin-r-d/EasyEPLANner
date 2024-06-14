@@ -75,11 +75,11 @@ namespace TechObject
 
             if (dev.ObjectNumber == newID && oldID != -1)
             {
-                SetNewValue($"{objName}{oldID}{dev.DeviceType}{dev.DeviceNumber}");
+                SetNewValue($"{objName}{oldID}{dev.DeviceDesignation}");
             }
             if (oldID == -1 || oldID == dev.ObjectNumber)
             { 
-               SetNewValue($"{objName}{newID}{dev.DeviceType}{dev.DeviceNumber}");
+               SetNewValue($"{objName}{newID}{dev.DeviceDesignation}");
             }
         }
 

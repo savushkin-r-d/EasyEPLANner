@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using EplanDevice;
+using NUnit.Framework;
 
 namespace Tests.EplanDevices
 {
@@ -194,6 +195,15 @@ namespace Tests.EplanDevices
 
             var channels = dev.GetChannels(IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI, channelName, comment);
             Assert.AreEqual(expectedChannelsCount, channels.Count);
+        }
+
+        [TestCase("OBJ1" ,"V1")]
+        [TestCase("" , "V1")]
+        public void DeviceDesignationTest(string obj, string expectedDesignation)
+        {
+            var dev = new V($"{obj}V1", $"+{obj}-V1", "", 1, "OBJ", 1, "");
+
+            Assert.AreEqual("V1", dev.DeviceDesignation);
         }
     }
 }

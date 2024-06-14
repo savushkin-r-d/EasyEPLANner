@@ -501,7 +501,7 @@ namespace TechObjectTests
             var DO1 = new DO("DO1", "DO1", "desc", 1, "", 0);
             var LS1 = new LS("LS1", "LS1", "desc", 1, "", 0, "");
             var TANK1V1 = new V("TANK1V1", "+TANK1-V1", "desc", 1, "TANK", 1, "");
-            var TANK2V1 = new V("TANK2V1", "+TANK2V-1", "desc", 1, "TANK", 2, "");
+            var TANK2V1 = new V("TANK2V1", "+TANK2-V1", "desc", 1, "TANK", 2, "");
 
 
             deviceManagerMock.Setup(m => m.GetDeviceByEplanName("LS1")).Returns(LS1);

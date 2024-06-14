@@ -1371,6 +1371,7 @@ namespace TechObjectTests
             EplanDevice.DeviceSubType deviceSubType, int devNumber, string devName)
         {
             var devMock = new Mock<EplanDevice.IDevice>();
+            devMock.SetupGet(x => x.DeviceDesignation).Returns($"{devType}{devNumber}");
             devMock.SetupGet(x => x.ObjectName).Returns(objName);
             devMock.SetupGet(x => x.ObjectNumber).Returns(objNum);
             devMock.SetupGet(x => x.DeviceType).Returns(devType);
