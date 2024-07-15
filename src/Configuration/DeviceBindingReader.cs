@@ -575,9 +575,14 @@ namespace EasyEPlanner
             }
 
             var devicesGroupingByAS = devices
-                .GroupBy(dev => dev.RuntimeParameters
-                    .TryGetValue(IODevice.RuntimeParameter.R_AS_NUMBER, out var r_as_number) 
-                        ? int.Parse(r_as_number.ToString()) : -1)
+                .GroupBy(dev =>
+                    {
+                        dev.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_AS_NUMBER,
+                            out var r_as_number_str);        
+                        if (r_as_number_str != null && int.TryParse(r_as_number_str.ToString(), out var r_as_number))
+                            return r_as_number;
+                        return -1;
+                    })
                 .Where(r_as_dev => r_as_dev.Key != -1);
 
             foreach (var group in devicesGroupingByAS.Where(r_as_dev => r_as_dev.Count() > 1))
