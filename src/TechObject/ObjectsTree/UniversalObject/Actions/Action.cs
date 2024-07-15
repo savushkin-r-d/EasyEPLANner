@@ -284,8 +284,6 @@ namespace TechObject
 
                 if (tmpDev >= 0)
                     tmpDevs[devIndex] = tmpDev;
-                else
-                    tmpDevs.RemoveAt(devIndex);
             }
 
             return tmpDevs;
