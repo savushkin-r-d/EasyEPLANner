@@ -1648,7 +1648,7 @@ namespace EasyEPlanner
 
         public const string ParametersNodeName = "Параметры";
 
-        public const string RuntimeParametersNodeName = "Параметры времени выполнения";
+        public const string RuntimeParametersNodeName = "Рабочие параметры";
 
         public const string PropertiesNodeName = "Свойства";
     }
