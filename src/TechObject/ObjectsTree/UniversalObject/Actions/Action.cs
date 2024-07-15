@@ -223,7 +223,7 @@ namespace TechObject
                 deviceIndex = ModifyDevNamesChangeTechNumbers(newTechObjectN,
                     oldTechObjectN, techObjectName, deviceIndex);
             genericDeviceIndex = ModifyDevNamesChangeTechNumbers(newTechObjectN,
-                oldTechObjectN, techObjectName, genericDeviceIndex);
+                oldTechObjectN, techObjectName, genericDeviceIndex, true);
             deviceIndex = IndexesExclude(deviceIndex, genericDeviceIndex);
         }
 
@@ -267,7 +267,7 @@ namespace TechObject
         }
 
         private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
-            int oldTechObjectN, string techObjectName, List<int> devs)
+            int oldTechObjectN, string techObjectName, List<int> devs, bool isGeneric = false)
         {
             List<int> tmpDevs = new List<int>();
             tmpDevs.AddRange(devs);
@@ -284,6 +284,8 @@ namespace TechObject
 
                 if (tmpDev >= 0)
                     tmpDevs[devIndex] = tmpDev;
+                else if (isGeneric)
+                    tmpDevs.RemoveAt(devIndex);
             }
 
             return tmpDevs;
