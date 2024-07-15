@@ -118,7 +118,9 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.ST_CH, 4},
                 {IODevice.Tag.NOMINAL_CURRENT_CH, 4},
                 {IODevice.Tag.LOAD_CURRENT_CH, 4},
-                {IODevice.Tag.ERR_CH, 4},
+                {IODevice.Tag.SUM_CURRENTS, 1},
+                {IODevice.Tag.VOLTAGE, 1},
+                {IODevice.Tag.OUT_POWER_90, 1},
             };
 
             var exportForG_IOL_8 = new Dictionary<string, int>()
@@ -130,7 +132,9 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.ST_CH, 8},
                 {IODevice.Tag.NOMINAL_CURRENT_CH, 8},
                 {IODevice.Tag.LOAD_CURRENT_CH, 8},
-                {IODevice.Tag.ERR_CH, 8},
+                {IODevice.Tag.SUM_CURRENTS, 1},
+                {IODevice.Tag.VOLTAGE, 1},
+                {IODevice.Tag.OUT_POWER_90, 1},
             };
 
             return new object[]

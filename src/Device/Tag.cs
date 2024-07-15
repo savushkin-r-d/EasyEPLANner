@@ -181,6 +181,22 @@
             /// Готовность.
             /// </summary>
             public const string READY = "READY";
+
+            /// <summary>
+            /// Суммарный код.
+            /// </summary>
+            public const string SUM_CURRENTS = nameof(SUM_CURRENTS);
+
+            /// <summary>
+            /// Напряжение.
+            /// </summary>
+            public const string VOLTAGE = nameof(VOLTAGE);
+
+            /// <summary>
+            /// Превышение нагрузки 90%.
+            /// </summary>
+            public const string OUT_POWER_90 = nameof(OUT_POWER_90);
+
         }
     }
 }
