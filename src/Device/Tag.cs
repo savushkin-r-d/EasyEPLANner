@@ -185,17 +185,17 @@
             /// <summary>
             /// Суммарный код.
             /// </summary>
-            public const string SUM_CURRENTS = nameof(SUM_CURRENTS);
+            public const string SUM_CURRENTS = "SUM_CURRENTS";
 
             /// <summary>
             /// Напряжение.
             /// </summary>
-            public const string VOLTAGE = nameof(VOLTAGE);
+            public const string VOLTAGE = "VOLTAGE";
 
             /// <summary>
             /// Превышение нагрузки 90%.
             /// </summary>
-            public const string OUT_POWER_90 = nameof(OUT_POWER_90);
+            public const string OUT_POWER_90 = "OUT_POWER_90";
 
         }
     }
