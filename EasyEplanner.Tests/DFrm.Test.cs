@@ -110,7 +110,7 @@ namespace EasyEplannerTests
             Assert.Multiple(() =>
             {
                 Assert.AreEqual("Параметры", root_v.Nodes[0].Text);
-                Assert.AreEqual("Параметры времени выполнения", root_v.Nodes[1].Text);
+                Assert.AreEqual("Рабочие параметры", root_v.Nodes[1].Text);
                 Assert.AreEqual("P_ON_TIME Время включения", root_v.Nodes[0].Nodes[0].Text);
                 Assert.AreEqual("P_FB      Обратная связь", root_v.Nodes[0].Nodes[1].Text);
                 Assert.AreEqual("R_AS_NUMBER", root_v.Nodes[1].Nodes[0].Text);
