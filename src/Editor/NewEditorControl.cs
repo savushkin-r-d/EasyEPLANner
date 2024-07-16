@@ -1734,6 +1734,63 @@ namespace Editor
             }
         }
 
+        private void reorderObjectsBtn_Click(object sender, EventArgs e)
+        {
+            if (!Editable)
+                return;
+
+            var dialogResult = MessageBox.Show(
+                "Переопределить глобальные номера объектов в соответствии с порядком объектов в редакторе?",
+                "Глобальные номера объектов",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialogResult is DialogResult.No)
+                return;
+
+            var globalObjectsList = TechObjectManager.GetInstance().TechObjects;
+
+            var orderedObjectsList = GetOrderedTechObjects(treeViewItemsList)
+                .Where(to => !(to is GenericTechObject)).ToList();
+
+            foreach (var obj in orderedObjectsList)
+            {
+                var requiredIdx = orderedObjectsList.IndexOf(obj);
+                var actualIdx = globalObjectsList.IndexOf(obj);
+                if (requiredIdx == actualIdx)
+                    continue;
+                
+                (globalObjectsList[requiredIdx], globalObjectsList[actualIdx]) =
+                    (globalObjectsList[actualIdx], globalObjectsList[requiredIdx]);
+                TechObjectManager.GetInstance()
+                    .ChangeAttachedObjectsAfterMove(actualIdx + 1, requiredIdx + 1);
+            }
+
+            RefreshTree();
+        }
+
+        private static List<TechObject.TechObject> GetOrderedTechObjects(List<ITreeViewItem> items)
+        {   
+            if (items is null)
+                return null;
+
+            var result = new List<TechObject.TechObject>();
+
+            foreach (var item in items.Except(result))
+            {
+                if (item is TechObject.TechObject techObject)
+                {
+                    result.Add(techObject);
+                    continue;
+                }
+
+                var orderedObjects = GetOrderedTechObjects(item.Items.ToList());
+                if (orderedObjects != null)
+                    result = result.Concat(orderedObjects).ToList();
+            }
+
+            return result;
+        }
+
         private void toolSettingItem_Click(object sender, EventArgs e)
         {
             var menuItem = sender as ToolStripMenuItem;

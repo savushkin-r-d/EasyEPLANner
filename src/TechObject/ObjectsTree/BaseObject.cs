@@ -374,11 +374,9 @@ namespace TechObject
         private void SwapTechObjects(TechObject techObject, int oldID, int newID)
         {
             int oldGlobalID = globalObjectsList.IndexOf(techObject);
-            int newGlobalID = globalObjectsList
-                .IndexOf(techObjects[newID]);
+            int newGlobalID = globalObjectsList.IndexOf(techObjects[newID]);
 
-            techObjectManager.CheckRestriction(
-                   oldGlobalID + 1, newGlobalID + 1);
+            techObjectManager.CheckRestriction(oldGlobalID + 1, newGlobalID + 1);
 
             // Работа со списком в дереве
             (techObjects[oldID], techObjects[newID]) = (techObjects[newID], techObjects[oldID]);
