@@ -57,9 +57,8 @@ namespace Editor
             editorTView.CellToolTipGetter =
                 delegate (OLVColumn column, object displayingObject)
                 {
-                    if (displayingObject is ITreeViewItem)
+                    if (displayingObject is ITreeViewItem obj)
                     {
-                        var obj = displayingObject as ITreeViewItem;
                         switch (column.Index)
                         {
                             case 0:
@@ -1771,7 +1770,7 @@ namespace Editor
         private static List<TechObject.TechObject> GetOrderedTechObjects(List<ITreeViewItem> items)
         {   
             if (items is null)
-                return null;
+                return new List<TechObject.TechObject>(); // empty
 
             var result = new List<TechObject.TechObject>();
 
@@ -1832,7 +1831,7 @@ namespace Editor
         {
             var items = GetActiveItems();
             var baseObject = items.FirstOrDefault()?.Parent as BaseObject;
-            if ((items?.TrueForAll(item => item is TechObject.TechObject && item.Parent == baseObject) ?? false) && baseObject != null)
+            if (items.TrueForAll(item => item is TechObject.TechObject && item.Parent == baseObject) && baseObject != null)
             {
                 var genericGroup = baseObject.CreateGenericGroup(items.Cast<TechObject.TechObject>().ToList());
                 RefreshTree();
