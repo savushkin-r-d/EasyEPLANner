@@ -791,10 +791,11 @@ namespace EasyEPlanner
                 dev.ObjectNumber, devTypeNode);
             Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
                 dev, deviceDescription);
-            bool isDevVisible = AddDevChannels(devNode, dev) ||
-               (displayParamsBtn.Checked && AddDevParametersAndProperties(devNode, dev));
-            
-            HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
+
+            bool isDevChannelsVisible = AddDevChannels(devNode, dev);
+            bool isDevParametersVisible = displayParamsBtn.Checked && AddDevParametersAndProperties(devNode, dev);
+
+            HideIncorrectDeviceTypeSubType(devNode, isDevChannelsVisible || isDevParametersVisible, countDev, 
                 dev);
         }
 
@@ -1647,7 +1648,7 @@ namespace EasyEPlanner
 
         public const string ParametersNodeName = "Параметры";
 
-        public const string RuntimeParametersNodeName = "Параметры времени выполнения";
+        public const string RuntimeParametersNodeName = "Рабочие параметры";
 
         public const string PropertiesNodeName = "Свойства";
     }
