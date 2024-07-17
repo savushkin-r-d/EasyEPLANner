@@ -599,9 +599,9 @@ namespace TechObjectTests
         }
 
         [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, "TANK")]
-        [TestCase(new int[] { 1, 2, 3 }, new int[] { 3 }, 3, "TANK")]
+        [TestCase(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 }, 3, "TANK")]
         public void ModifyDevNames_CheckGenericUpdating(int[] devIds,
-            int[] expectedDevIds, int newDevID, string techObjectName)
+            int[] expectedDevIds, int newObjID, string techObjectName)
         {
             EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
             typeof(Action).GetField("deviceManager",
@@ -612,7 +612,7 @@ namespace TechObjectTests
                 null, null);
             action.DevicesIndex.AddRange(devIds);
 
-            action.ModifyDevNames(newDevID, -1, techObjectName);
+            action.ModifyDevNames(newObjID, -1, techObjectName);
 
             CollectionAssert.AreEqual(expectedDevIds, action.DevicesIndex);
         }

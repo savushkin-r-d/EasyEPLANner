@@ -1142,44 +1142,45 @@ G_IOL_8 | **IO-Link** блок питания на 8 канала с автом�
 
 Список поддерживаемых изделий с областями ввода-вывода:
 
-Тип | Номер типа | Input (Word) | Output (Word)
--- | -- | -- | --
-V | AL.9615-4003-06 | 2 | 0.5 (_8 bytes_)
-V | AL.9615-4003-08 | 2 | 0.5 (_8 bytes_)
-V | AL.9615-4004-20 | 2 | 0.5 (_8 bytes_)
-V | DEF.SORIO-1SV | 2 | 0.5 (_8 bytes_)
-FQT | SMR12GGXFRKG/US-100 | 4 | 0 
-QT | IFM.LDL100 | 6 | 0
-QT | IFM.LDL200 | 6 | 0
-PT | IFM.PI2715 | 1 | 0
-PT | IFM.PI2794 | 1 | 0
-PT | IFM.PI2797 | 1 | 0
-PT и LT | IFM.PM1704 | 2 | 0
-PT | IFM.PM1705 | 2 | 0
-PT и LT | IFM.PM1707 | 2 | 0
-PT | IFM.PM1708 | 2 | 0
-PT | IFM.PM1709 | 2 | 0
-PT | IFM.IFM.PM1715 | 2 | 0
-PT | FES.8001446 | 1 | 0
-LT | IFM.LR2750 | 1 | 0
-TE | IFM.TA2502 | 1 | 0
-TE | IFM.TA2532 | 1 | 0
-TE | IFM.TA2535 | 1 | 0
-TE | IFM.TA2435 | 1 | 0
-TE | E&H.TM311-AAC0BH2BBB2A1 | 2 | 0
-LS | IFM.LMT100 | 1 | 0
-LS | IFM.LMT102 | 1 | 0
-LS | IFM.LMT104 | 1 | 0
-LS | IFM.LMT105 | 1 | 0
-LS | E&H.FTL33-GR7N2ABW5J | 1 | 0
-DEV_VTUG и Y | FES.VTUG-10-MSDR-B1Y-25V20-G18FD-DTFD-M7SFD-12K+M1SCVA | 0 | 2
-DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-12K+SCVA | 0 | 2
-DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-16K+SCVA | 0 | 2
-DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-8K+SCVA | 0 | 1
-DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FDL-DTFDL-M7SFD-4K+SCVA | 0 | 1
-F | PXC.2910411 | 4 | 1.5 (_12 bytes_)
-VC | BURKERT.8694 | 5 | 2.5 (_20 bytes_)
-HLA | PXC.1191993 | 0 | 1
+| Тип          | Номер типа                                             | Input (Bytes) | Output (Bytes) |
+| ------------ | ------------------------------------------------------ | ------------- | -------------- |
+| V            | AL.9615-4003-06                                        | 4             | 1              |
+| V            | AL.9615-4003-08                                        | 4             | 1              |
+| V            | AL.9615-4004-20                                        | 4             | 1              |
+| V            | DEF.SORIO-1SV                                          | 4             | 1              |
+| FQT          | SMR12GGXFRKG/US-100                                    | 8             | 0              |
+| QT           | IFM.LDL100                                             | 12            | 0              |
+| QT           | IFM.LDL200                                             | 12            | 0              |
+| PT           | IFM.PI2715                                             | 2             | 0              |
+| PT           | IFM.PI2794                                             | 2             | 0              |
+| PT           | IFM.PI2797                                             | 2             | 0              |
+| PT и LT      | IFM.PM1704                                             | 4             | 0              |
+| PT           | IFM.PM1705                                             | 4             | 0              |
+| PT и LT      | IFM.PM1707                                             | 4             | 0              |
+| PT           | IFM.PM1708                                             | 4             | 0              |
+| PT           | IFM.PM1709                                             | 4             | 0              |
+| PT           | IFM.IFM.PM1715                                         | 4             | 0              |
+| PT           | FES.8001446                                            | 2             | 0              |
+| LT           | IFM.LR2750                                             | 2             | 0              |
+| TE           | IFM.TA2502                                             | 2             | 0              |
+| TE           | IFM.TA2532                                             | 2             | 0              |
+| TE           | IFM.TA2535                                             | 2             | 0              |
+| TE           | IFM.TA2435                                             | 2             | 0              |
+| TE           | E&H.TM311-AAC0BH2BBB2A1                                | 4             | 0              |
+| LS           | IFM.LMT100                                             | 2             | 0              |
+| LS           | IFM.LMT102                                             | 2             | 0              |
+| LS           | IFM.LMT104                                             | 2             | 0              |
+| LS           | IFM.LMT105                                             | 2             | 0              |
+| LS           | E&H.FTL33-GR7N2ABW5J                                   | 2             | 0              |
+| DEV_VTUG и Y | FES.VTUG-10-MSDR-B1Y-25V20-G18FD-DTFD-M7SFD-12K+M1SCVA | 0             | 4              |
+| DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-12K+SCVA         | 0             | 4              |
+| DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-16K+SCVA         | 0             | 4              |
+| DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-8K+SCVA          | 0             | 2              |
+| DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FDL-DTFDL-M7SFD-4K+SCVA        | 0             | 2              |
+| F            | PXC.2910411                                            | 8             | 3              |
+| VC           | BURKERT.8694                                           | 10            | 5              |
+| HLA          | PXC.1191993                                            | 0             | 2              |
+| G            | TRIO3-PS/1AC/24DC/10/4C/IOL                            | 18            | 7              |
 
 Для **M_ATV** и **M_ATV_LINEAR** надо указывать изделие, которое содержит номер частотного преобразователя (_если не задано, то берется **360**. Дополнительно существует ещё **630**_).
 
