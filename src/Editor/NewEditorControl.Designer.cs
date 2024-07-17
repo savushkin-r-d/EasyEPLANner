@@ -59,6 +59,7 @@ namespace Editor
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.changeBasesObjBtn = new System.Windows.Forms.ToolStripButton();
             this.hideEmptyItemsBtn = new System.Windows.Forms.ToolStripButton();
+            this.reorderObjectsBtn = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -93,6 +94,7 @@ namespace Editor
             this.settingMenuItem_export = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_changeBaseObj = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_hideEmptyItems = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingMenuItem_reorderObjects = new System.Windows.Forms.ToolStripMenuItem();
             this.searchBoxTLP = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textBox_search = new System.Windows.Forms.TextBox();
@@ -137,7 +139,8 @@ namespace Editor
             this.exportButton,
             this.toolStripSeparator4,
             this.changeBasesObjBtn,
-            this.hideEmptyItemsBtn});
+            this.hideEmptyItemsBtn,
+            this.reorderObjectsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(586, 29);
@@ -408,6 +411,17 @@ namespace Editor
             this.hideEmptyItemsBtn.ToolTipText = "Скрыть пустые элементы";
             this.hideEmptyItemsBtn.CheckStateChanged += new System.EventHandler(this.hideEmptyItemsBtn_CheckStateChanged);
             // 
+            // reorderObjectsBtn
+            // 
+            this.reorderObjectsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.reorderObjectsBtn.Image = global::EasyEPlanner.Properties.Resources.reorder;
+            this.reorderObjectsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.reorderObjectsBtn.Name = "reorderObjectsBtn";
+            this.reorderObjectsBtn.Size = new System.Drawing.Size(24, 26);
+            this.reorderObjectsBtn.Text = "toolStripButton1";
+            this.reorderObjectsBtn.ToolTipText = "Переопределить глобальные номера объектов";
+            this.reorderObjectsBtn.Click += new System.EventHandler(this.reorderObjectsBtn_Click);
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -656,7 +670,8 @@ namespace Editor
             this.settingMenuItem_import,
             this.settingMenuItem_export,
             this.settingMenuItem_changeBaseObj,
-            this.settingMenuItem_hideEmptyItems});
+            this.settingMenuItem_hideEmptyItems,
+            this.settingMenuItem_reorderObjects});
             this.toolSettingDropDownButton.Image = global::EasyEPlanner.Properties.Resources.toolSettings;
             this.toolSettingDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolSettingDropDownButton.Name = "toolSettingDropDownButton";
@@ -672,7 +687,7 @@ namespace Editor
             this.settingMenuItem_expand.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_expand.Image = global::EasyEPlanner.Properties.Resources.expand;
             this.settingMenuItem_expand.Name = "settingMenuItem_expand";
-            this.settingMenuItem_expand.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_expand.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_expand.Tag = this.expandDropDownList;
             this.settingMenuItem_expand.Text = "Уровень развертки";
             this.settingMenuItem_expand.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -684,7 +699,7 @@ namespace Editor
             this.settingMenuItem_drawDev.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_drawDev.Image = global::EasyEPlanner.Properties.Resources.highlight;
             this.settingMenuItem_drawDev.Name = "settingMenuItem_drawDev";
-            this.settingMenuItem_drawDev.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_drawDev.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_drawDev.Tag = this.drawDev_toolStripButton;
             this.settingMenuItem_drawDev.Text = "Подсветка устройств";
             this.settingMenuItem_drawDev.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -696,7 +711,7 @@ namespace Editor
             this.settingMenuItem_edit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_edit.Image = global::EasyEPlanner.Properties.Resources.edit;
             this.settingMenuItem_edit.Name = "settingMenuItem_edit";
-            this.settingMenuItem_edit.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_edit.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_edit.Tag = this.edit_toolStripButton;
             this.settingMenuItem_edit.Text = "Режим редактирования";
             this.settingMenuItem_edit.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -708,7 +723,7 @@ namespace Editor
             this.settingMenuItem_refresh.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_refresh.Image = global::EasyEPlanner.Properties.Resources.refresh;
             this.settingMenuItem_refresh.Name = "settingMenuItem_refresh";
-            this.settingMenuItem_refresh.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_refresh.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_refresh.Tag = this.refresh_toolStripButton;
             this.settingMenuItem_refresh.Text = "Синхронизация и сохранение";
             this.settingMenuItem_refresh.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -720,7 +735,7 @@ namespace Editor
             this.settingMenuItem_insert.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_insert.Image = global::EasyEPlanner.Properties.Resources.create;
             this.settingMenuItem_insert.Name = "settingMenuItem_insert";
-            this.settingMenuItem_insert.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_insert.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_insert.Tag = this.insertButton;
             this.settingMenuItem_insert.Text = "Создать";
             this.settingMenuItem_insert.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -732,7 +747,7 @@ namespace Editor
             this.settingMenuItem_delete.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_delete.Image = global::EasyEPlanner.Properties.Resources.delete;
             this.settingMenuItem_delete.Name = "settingMenuItem_delete";
-            this.settingMenuItem_delete.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_delete.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_delete.Tag = this.deleteButton;
             this.settingMenuItem_delete.Text = "Удалить";
             this.settingMenuItem_delete.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -744,7 +759,7 @@ namespace Editor
             this.settingMenuItem_cut.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_cut.Image = global::EasyEPlanner.Properties.Resources.cut;
             this.settingMenuItem_cut.Name = "settingMenuItem_cut";
-            this.settingMenuItem_cut.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_cut.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_cut.Tag = this.cutButton;
             this.settingMenuItem_cut.Text = "Вырезать";
             this.settingMenuItem_cut.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -756,7 +771,7 @@ namespace Editor
             this.settingMenuItem_copy.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_copy.Image = global::EasyEPlanner.Properties.Resources.copy;
             this.settingMenuItem_copy.Name = "settingMenuItem_copy";
-            this.settingMenuItem_copy.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_copy.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_copy.Tag = this.copyButton;
             this.settingMenuItem_copy.Text = "Копировать";
             this.settingMenuItem_copy.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -768,7 +783,7 @@ namespace Editor
             this.settingMenuItem_paste.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_paste.Image = global::EasyEPlanner.Properties.Resources.paste;
             this.settingMenuItem_paste.Name = "settingMenuItem_paste";
-            this.settingMenuItem_paste.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_paste.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_paste.Tag = this.pasteButton;
             this.settingMenuItem_paste.Text = "Вставить";
             this.settingMenuItem_paste.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -780,7 +795,7 @@ namespace Editor
             this.settingMenuItem_replace.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_replace.Image = global::EasyEPlanner.Properties.Resources.replace;
             this.settingMenuItem_replace.Name = "settingMenuItem_replace";
-            this.settingMenuItem_replace.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_replace.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_replace.Tag = this.replaceButton;
             this.settingMenuItem_replace.Text = "Заменить";
             this.settingMenuItem_replace.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -792,7 +807,7 @@ namespace Editor
             this.settingMenuItem_moveUp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_moveUp.Image = global::EasyEPlanner.Properties.Resources.moveup;
             this.settingMenuItem_moveUp.Name = "settingMenuItem_moveUp";
-            this.settingMenuItem_moveUp.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_moveUp.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_moveUp.Tag = this.moveUpButton;
             this.settingMenuItem_moveUp.Text = "Переместить вверх";
             this.settingMenuItem_moveUp.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -804,7 +819,7 @@ namespace Editor
             this.settingMenuItem_moveDown.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_moveDown.Image = global::EasyEPlanner.Properties.Resources.movedown;
             this.settingMenuItem_moveDown.Name = "settingMenuItem_moveDown";
-            this.settingMenuItem_moveDown.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_moveDown.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_moveDown.Tag = this.moveDownButton;
             this.settingMenuItem_moveDown.Text = "Переместить вниз";
             this.settingMenuItem_moveDown.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -816,7 +831,7 @@ namespace Editor
             this.settingMenuItem_import.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_import.Image = global::EasyEPlanner.Properties.Resources.import;
             this.settingMenuItem_import.Name = "settingMenuItem_import";
-            this.settingMenuItem_import.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_import.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_import.Tag = this.importButton;
             this.settingMenuItem_import.Text = "Импорт объектов";
             this.settingMenuItem_import.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -828,7 +843,7 @@ namespace Editor
             this.settingMenuItem_export.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_export.Image = global::EasyEPlanner.Properties.Resources.export;
             this.settingMenuItem_export.Name = "settingMenuItem_export";
-            this.settingMenuItem_export.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_export.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_export.Tag = this.exportButton;
             this.settingMenuItem_export.Text = "Экспорт объектов";
             this.settingMenuItem_export.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -840,7 +855,7 @@ namespace Editor
             this.settingMenuItem_changeBaseObj.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_changeBaseObj.Image = global::EasyEPlanner.Properties.Resources.changeObj;
             this.settingMenuItem_changeBaseObj.Name = "settingMenuItem_changeBaseObj";
-            this.settingMenuItem_changeBaseObj.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_changeBaseObj.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_changeBaseObj.Tag = this.changeBasesObjBtn;
             this.settingMenuItem_changeBaseObj.Text = "Изменить базовый объект";
             this.settingMenuItem_changeBaseObj.Click += new System.EventHandler(this.toolSettingItem_Click);
@@ -852,10 +867,22 @@ namespace Editor
             this.settingMenuItem_hideEmptyItems.CheckState = System.Windows.Forms.CheckState.Checked;
             this.settingMenuItem_hideEmptyItems.Image = global::EasyEPlanner.Properties.Resources.hideEmptyItems;
             this.settingMenuItem_hideEmptyItems.Name = "settingMenuItem_hideEmptyItems";
-            this.settingMenuItem_hideEmptyItems.Size = new System.Drawing.Size(239, 22);
+            this.settingMenuItem_hideEmptyItems.Size = new System.Drawing.Size(281, 22);
             this.settingMenuItem_hideEmptyItems.Tag = this.hideEmptyItemsBtn;
             this.settingMenuItem_hideEmptyItems.Text = "Скрыть пустые элементы";
             this.settingMenuItem_hideEmptyItems.Click += new System.EventHandler(this.toolSettingItem_Click);
+            // 
+            // settingMenuItem_reorderObjects
+            // 
+            this.settingMenuItem_reorderObjects.Checked = true;
+            this.settingMenuItem_reorderObjects.CheckOnClick = true;
+            this.settingMenuItem_reorderObjects.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.settingMenuItem_reorderObjects.Image = global::EasyEPlanner.Properties.Resources.reorder;
+            this.settingMenuItem_reorderObjects.Name = "settingMenuItem_reorderObjects";
+            this.settingMenuItem_reorderObjects.Size = new System.Drawing.Size(281, 22);
+            this.settingMenuItem_reorderObjects.Tag = this.reorderObjectsBtn;
+            this.settingMenuItem_reorderObjects.Text = "Переопределить глобальные номера";
+            this.settingMenuItem_reorderObjects.Click += new System.EventHandler(this.toolSettingItem_Click);
             // 
             // searchBoxTLP
             // 
@@ -1068,5 +1095,7 @@ namespace Editor
         private ToolStripButton searchTSButton;
         private ToolStripSeparator toolStripSeparator7;
         private EditorControls.SearchIterator searchIterator;
+        private ToolStripButton reorderObjectsBtn;
+        private ToolStripMenuItem settingMenuItem_reorderObjects;
     }
     }

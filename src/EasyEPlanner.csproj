@@ -487,6 +487,7 @@
     <None Include="Resources\plus4.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\reorder.png" />
     <None Include="Resources\wholeword.png" />
     <None Include="Resources\regex.png" />
     <None Include="Resources\search.png" />
