@@ -1,4 +1,4 @@
-﻿namespace EplanDevice
+namespace EplanDevice
 {
     public partial class IODevice
     {
@@ -181,6 +181,22 @@
             /// Готовность.
             /// </summary>
             public const string READY = "READY";
+
+            /// <summary>
+            /// Суммарный ток.
+            /// </summary>
+            public const string SUM_CURRENTS = "SUM_CURRENTS";
+
+            /// <summary>
+            /// Напряжение.
+            /// </summary>
+            public const string VOLTAGE = "VOLTAGE";
+
+            /// <summary>
+            /// Превышение 90% нагрузки.
+            /// </summary>
+            public const string OUT_POWER_90 = "OUT_POWER_90";
+
         }
     }
 }

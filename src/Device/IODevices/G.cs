@@ -102,7 +102,9 @@ namespace EplanDevice
                                 {Tag.ST_CH, 4},
                                 {Tag.NOMINAL_CURRENT_CH, 4},
                                 {Tag.LOAD_CURRENT_CH, 4},
-                                {Tag.ERR_CH, 4},
+                                {Tag.SUM_CURRENTS, 1},
+                                {Tag.VOLTAGE, 1},
+                                {Tag.OUT_POWER_90, 1},
                             };
 
                         case DeviceSubType.G_IOL_8:
@@ -115,7 +117,9 @@ namespace EplanDevice
                                 {Tag.ST_CH, 8},
                                 {Tag.NOMINAL_CURRENT_CH, 8},
                                 {Tag.LOAD_CURRENT_CH, 8},
-                                {Tag.ERR_CH, 8},
+                                {Tag.SUM_CURRENTS, 1},
+                                {Tag.VOLTAGE, 1},
+                                {Tag.OUT_POWER_90, 1},
                             };
                     }
                     break;
