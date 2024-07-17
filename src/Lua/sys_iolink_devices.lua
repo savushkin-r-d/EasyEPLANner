@@ -54,6 +54,8 @@ local iolink_devices =
     { articleName = "BURKERT.8694", sizeIn = 5, sizeOut = 2.5},
     -- HLA
     { articleName = "PXC.1191993", sizeIn = 0, sizeOut = 1 },
+    -- G
+    { articleName = "TRIO3-PS/1AC/24DC/10/4C/IOL", sizeIn = 9, sizeOut = 3.5 },
 }
 
 return iolink_devices
