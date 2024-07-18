@@ -408,7 +408,8 @@ ProjectTestEnabled=True
 | Phoenix Contact | AXL F DI16/4 2F (2688022)        | DI          | 16 каналов                                     |
 | Phoenix Contact | AXL F DO16/3 2F (2688048)        | DO          | 16 каналов                                     |
 | Phoenix Contact | AXL F DI8/3 DO8/3 2H (2702071)   | DI/DO       | 8 каналов DI и 8 каналов DO                    |
-| Phoenix Contact | AXL F DI8/1 DO8/1 1H (2701916)   | DI/DO       | 2 канала AI и 2 канала DI                      |
+| Phoenix Contact | AXL F DI8/1 DO8/1 1H (2701916)   | DI/DO       | 8 каналов DI и 8 каналов DO                    |
+| Phoenix Contact | AXL F AI2 AO2 1H 0-10V (2702072) | AI/AO       | 2 канала AI и 2 канала DI                      |
 | Phoenix Contact | AXL F RS UNI 1H (2688666)        | AI/AO       | Коммуникационный модуль RS-232, RS-485, RS-422 |
 | Phoenix Contact | AXL F AI8 1F (2688064)           | AI          | 8 каналов                                      |
 | Phoenix Contact | AXL F SGI2 1H (2702911)          | AI          | Измерительный модуль тензодатчика              |
