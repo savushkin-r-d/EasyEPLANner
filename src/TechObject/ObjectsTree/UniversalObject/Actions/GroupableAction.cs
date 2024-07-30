@@ -130,14 +130,10 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            var devToDraw = new List<DrawInfo>();
-            foreach (int index in SubActions.SelectMany(sa => sa.DevicesIndex).Distinct())
-            {
-                devToDraw.Add(new DrawInfo(DrawStyle,
-                    deviceManager.GetDeviceByIndex(index)));
-            }
-
-            return devToDraw;
+            return SubActions.SelectMany(sa => sa.DevicesIndex)
+                .Distinct()
+                .Select(index => new DrawInfo(DrawStyle, deviceManager.GetDeviceByIndex(index)))
+                .ToList();
         }
 
         private bool IdenticalActions(GroupableAction first, GroupableAction second)
