@@ -128,6 +128,18 @@ namespace TechObject
             }
         }
 
+        override public List<DrawInfo> GetObjectToDrawOnEplanPage()
+        {
+            var devToDraw = new List<DrawInfo>();
+            foreach (int index in SubActions.SelectMany(sa => sa.DevicesIndex).Distinct())
+            {
+                devToDraw.Add(new DrawInfo(DrawStyle,
+                    deviceManager.GetDeviceByIndex(index)));
+            }
+
+            return devToDraw;
+        }
+
         private bool IdenticalActions(GroupableAction first, GroupableAction second)
         {
             return first != null && second != null
