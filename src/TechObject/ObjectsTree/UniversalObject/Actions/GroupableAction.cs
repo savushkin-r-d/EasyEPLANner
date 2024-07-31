@@ -34,6 +34,19 @@ namespace TechObject
             }
         }
 
+        public override void ModifyDevNames(IDevModifyOptions modifyOptions)
+        {
+            //Parameters.ForEach(p => 
+            //{
+            //    if (p is ActionParameter actionParameter)
+            //    {
+            //        actionParameter.ModifyDevName(modifyOptions);
+            //    }
+            //});
+
+            subActions.ForEach(sa => sa.ModifyDevNames(modifyOptions));
+        }
+
         #region Синхронизация устройств в объекте.
         /// <summary>
         /// Синхронизация индексов устройств.

@@ -133,26 +133,9 @@ namespace TechObject
             return clone;
         }
 
-        public void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
-            string techObjectName)
+        public void ModifyDevNames(IDevModifyOptions modifyOptions)
         {
-            foreach (State stpsMngr in stepsMngr)
-            {
-                stpsMngr.ModifyDevNames(newTechObjectN, oldTechObjectN,
-                    techObjectName);
-            }
-        }
-
-        public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName, 
-            int oldTechObjectNumber)
-        {
-            foreach (State stpsMngr in stepsMngr)
-            {
-                stpsMngr.ModifyDevNames(newTechObjectName,
-                    newTechObjectNumber, oldTechObjectName, 
-                    oldTechObjectNumber);
-            }
+            stepsMngr.ForEach(state => state.ModifyDevNames(modifyOptions));
         }
 
         /// <summary>

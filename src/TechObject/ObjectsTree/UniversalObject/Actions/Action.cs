@@ -11,6 +11,7 @@ using Aga.Controls.Tree;
 using BrightIdeasSoftware;
 using EasyEPlanner;
 using Editor;
+using EplanDevice;
 using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
@@ -95,6 +96,8 @@ namespace TechObject
 
         void ModifyDevNames(string newTechObjectName, int newTechObjectNumber,
             string oldTechObjectName, int oldTechObjNumber);
+
+        void ModifyDevNames(IDevModifyOptions modifyOptions);
 
         List<DrawInfo> GetObjectToDrawOnEplanPage();
 
@@ -301,6 +304,8 @@ namespace TechObject
             if (objNum <= 0 || techObjectName != objName)
                 return string.Empty;
 
+            //deviceManager.GetModifiedDevice
+
             //Для устройств в пределах объекта меняем номер объекта.
             if (objNum == newID && oldID != -1)
             { // 1 -> 2 - COAG2V1 --> COAG1V1
@@ -312,6 +317,25 @@ namespace TechObject
             }
 
             return string.Empty;
+        }
+
+        public virtual void ModifyDevNames(IDevModifyOptions modifyOptions)
+        {
+            //if (modifyOptions.OldTechObjectNumber != 0)
+            deviceIndex = ModifyDevName(deviceIndex, modifyOptions);
+            genericDeviceIndex = ModifyDevName(genericDeviceIndex, modifyOptions, true);
+            
+            deviceIndex = IndexesExclude(deviceIndex, genericDeviceIndex);
+        }
+
+        private List<int> ModifyDevName(List<int> DevsIdx, IDevModifyOptions modifyOptions, bool removeUndefined = false)
+        {
+            return DevsIdx.Select(deviceManager.GetDeviceByIndex)
+                .Select(dev => deviceManager.GetModifiedDevice(dev, modifyOptions))
+                .Select((dev, index) => (dev is null && !removeUndefined) ? deviceManager.GetDeviceByIndex(DevsIdx[index]) : dev)
+                .OfType<IDevice>()
+                .Select(deviceManager.GetDeviceIndex)
+                .ToList();
         }
 
         public virtual string SaveAsLuaTable(string prefix)

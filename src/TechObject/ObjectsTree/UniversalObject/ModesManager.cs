@@ -34,23 +34,9 @@ namespace TechObject
             return clone;
         }
 
-        public void ModifyDevNames(int oldTechObjectN)
+        public void ModifyDevNames(IDevModifyOptions modifyOptions)
         {
-            foreach (Mode mode in modes)
-            {
-                mode.ModifyDevNames(owner.TechNumber, oldTechObjectN,
-                    owner.NameEplan);
-            }
-        }
-
-        public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber)
-        {
-            foreach (Mode mode in modes)
-            {
-                mode.ModifyDevNames(newTechObjectName, newTechObjectNumber,
-                    owner.NameEplan, owner.TechNumber);
-            }
+            modes.ForEach(mode => mode.ModifyDevNames(modifyOptions));
         }
 
         /// <summary>
@@ -431,13 +417,11 @@ namespace TechObject
                 int copyObjTechObjNumber = copyMode.Owner.Owner.TechNumber;
                 if (modeTechObjName == copyObjTechObjName)
                 {
-                    newMode.ModifyDevNames(owner.TechNumber, -1,
-                        owner.NameEplan);
+                    newMode.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
                 }
                 else
                 {
-                    newMode.ModifyDevNames(modeTechObjName, modeTechObjNumber,
-                        copyObjTechObjName, copyObjTechObjNumber);
+                    newMode.ModifyDevNames(new DevModifyOptions(Owner, copyObjTechObjName, Owner.TechNumber));
                 }
 
                 ChangeRestrictionModeOwner(newMode);
@@ -476,13 +460,11 @@ namespace TechObject
                 int objMobeTechObjectNumber = objMode.Owner.Owner.TechNumber;
                 if (owner.NameEplan == objModeTechObjectName)
                 {
-                    newMode.ModifyDevNames(owner.TechNumber, -1,
-                        owner.NameEplan);
+                    newMode.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
                 }
                 else
                 {
-                    newMode.ModifyDevNames(owner.NameEplan, owner.TechNumber,
-                        objModeTechObjectName, objMobeTechObjectNumber);
+                    newMode.ModifyDevNames(new DevModifyOptions(Owner, objModeTechObjectName, Owner.TechNumber));
                 }
 
                 ChangeRestrictionModeOwner(newMode);
