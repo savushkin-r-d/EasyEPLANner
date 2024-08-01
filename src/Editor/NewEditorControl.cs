@@ -545,6 +545,12 @@ namespace Editor
                 cancelChanges = false;
 
                 DisableNeededObjects(treeViewItemsList.ToArray());
+
+                SysLogger.WriteLog(this,
+                    $"{nameof(ShowDlg)}():",
+                    $"-{nameof(windowName)} = {windowName}",
+                    $"-{nameof(wndWmCommand)} = {wndWmCommand}",
+                    $"-{nameof(wndEditVisiblePtr)} = {wndEditVisiblePtr}");
             }
         }
 
