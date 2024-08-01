@@ -1167,10 +1167,9 @@ namespace EplanDevice
         {
             if (ModifyMixproof(device, options) is IDevice mixproof)
             {
-                return mixproof.Description == CommonConst.Cap ? null : mixproof;
+                return mixproof.Description == CommonConst.Cap ? null : mixproof; 
+                // null - удаляем привязку устройства
             }
-
-            IDevice res = null;
 
             if (options.NumberModified &&
                 options.OldTechObjectNumber != 0 &&  // Не модифицировать устройства в типовых объектах
@@ -1183,21 +1182,21 @@ namespace EplanDevice
                     // Изменяем номер объекта в устройстве в соответствии с изменениями объекта или для типовых объектов:
                     // ( 1 -> 2 )          :  OBJ[1]V1 -> OBJ[2]V1
                     // ( -1 -> 1, 2,... )  :  OBJ[x]V1 -> OBJ[1]V1, OBJ[2]V1, ... - для типовых объектов 
-                    res = GetDeviceByEplanName($"{device.ObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
+                    return GetDeviceByEplanName($"{device.ObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
                 } 
                 else if (device.ObjectNumber == options.NewTechObjectNumber)
                 {
                     // Инверсионное изменение номера объекта: когда устройство имеет номер объекта равный новому номеру объекта
                     // ( 1 -> 2 )  :  OBJ[2]V1 -> OBJ[1]V1
-                    res = GetDeviceByEplanName($"{device.ObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
+                    return GetDeviceByEplanName($"{device.ObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
                 }
             }
             else if (options.NameModified && device.ObjectName == options.OldTechObjectName)
             {
-                res = GetDeviceByEplanName($"{options.NewTechObjectName}{device.ObjectNumber}{device.DeviceDesignation}");
+                return GetDeviceByEplanName($"{options.NewTechObjectName}{device.ObjectNumber}{device.DeviceDesignation}");
             }
 
-            return res?.Description == CommonConst.Cap ? null : res;
+            return device;
         }
 
         /// <summary>

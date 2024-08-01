@@ -453,9 +453,9 @@ namespace TechObject
             return clone;
         }
 
-        public void ModifyDevNames(IDevModifyOptions modifyOptions)
+        public void ModifyDevNames(IDevModifyOptions options)
         {
-            actions.ForEach(action => action.ModifyDevNames(modifyOptions));
+            actions.ForEach(action => action.ModifyDevNames(options));
         }
 
         /// <summary>

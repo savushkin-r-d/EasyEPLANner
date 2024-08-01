@@ -99,9 +99,9 @@ namespace TechObject
             return clone;
         }
 
-        public void ModifyDevNames(IDevModifyOptions modifyOptions)
+        public void ModifyDevNames(IDevModifyOptions options)
         {
-            steps.ForEach(step => step.ModifyDevNames(modifyOptions));
+            steps.ForEach(step => step.ModifyDevNames(options));
         }
 
         /// <summary>

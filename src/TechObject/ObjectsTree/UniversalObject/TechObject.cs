@@ -533,6 +533,7 @@ namespace TechObject
         public void ModifyDevNames(string oldTechObjectName, int? oldTechObjectNumber)
         {
             modes.ModifyDevNames(new DevModifyOptions(this, oldTechObjectName ?? NameEplan, oldTechObjectNumber ?? TechNumber));
+            equipment.ModifyDevNames();
         }
 
         /// <summary>
@@ -956,7 +957,7 @@ namespace TechObject
                         }
                     }
                 }
-                equipment.ModifyDevNames(NameEplan, TechNumber);
+                equipment.ModifyDevNames();
 
                 equipment.AddParent(this);
                 return equipment;

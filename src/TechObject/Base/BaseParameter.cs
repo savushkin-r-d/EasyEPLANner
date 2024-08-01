@@ -544,26 +544,28 @@ namespace TechObject
             }
         }
 
-        public void ModifyDevNames(int newID, int oldID,
-            string objName)
+        public virtual void ModifyDevNames(IDevModifyOptions options)
         {
             if (!OnlyDevicesInParameter)
                 return;
 
+            var devNames = Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var devices = Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList()
-                .Select(devname => deviceManager.GetDeviceByEplanName(devname));
-
-            var notObjectDevices = devices.Where(dev => dev.Description == CommonConst.Cap || dev.ObjectName != objName || dev.ObjectNumber <= 0);
-            var devicesForModify = devices.Except(notObjectDevices);
-
-            var newValues = devicesForModify
-                .Select(dev => 
+            var newValues = devNames
+                .Select(deviceManager.GetDeviceByEplanName)
+                .Select(dev => deviceManager.GetModifiedDevice(dev, options))
+                .Select((dev, index) =>
                 {
-                    var modified = deviceManager.GetDeviceByEplanName($"{objName}{(oldID == -1 || oldID == dev.ObjectNumber ? newID : oldID)}{dev.DeviceDesignation}");
-                    return modified.Description == CommonConst.Cap ? dev : modified;
+                    // Если устройство не определено,
+                    // то оставляем не модифицированный вариант
+                    if (dev?.Description == CommonConst.Cap)
+                        return deviceManager.GetDeviceByEplanName(devNames[index]);
+
+                    // Оставляем устройство не измененным (MB null)
+                    return dev;
                 })
-                .Concat(notObjectDevices).Select(dev => dev.Name);
+                .OfType<IDevice>()
+                .Select(dev => dev.Name);
 
             SetNewValue(string.Join(" ", newValues));
         }

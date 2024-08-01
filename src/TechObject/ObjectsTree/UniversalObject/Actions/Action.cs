@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using EasyEPlanner;
 using Editor;
 using EplanDevice;
+using StaticHelper;
 using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
@@ -91,13 +92,7 @@ namespace TechObject
         /// <returns>Описание действия в клетке Excel</returns>
         string SaveAsExcel();
 
-        void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
-            string techObjectName);
-
-        void ModifyDevNames(string newTechObjectName, int newTechObjectNumber,
-            string oldTechObjectName, int oldTechObjNumber);
-
-        void ModifyDevNames(IDevModifyOptions modifyOptions);
+        void ModifyDevNames(IDevModifyOptions options);
 
         List<DrawInfo> GetObjectToDrawOnEplanPage();
 
@@ -219,122 +214,31 @@ namespace TechObject
             return clone;
         }
 
-        virtual public void ModifyDevNames(int newTechObjectN,
-            int oldTechObjectN, string techObjectName)
+        public virtual void ModifyDevNames(IDevModifyOptions options)
         {
-            if (oldTechObjectN != 0)
-                deviceIndex = ModifyDevNamesChangeTechNumbers(newTechObjectN,
-                    oldTechObjectN, techObjectName, deviceIndex);
-            genericDeviceIndex = ModifyDevNamesChangeTechNumbers(newTechObjectN,
-                oldTechObjectN, techObjectName, genericDeviceIndex, true);
-            deviceIndex = IndexesExclude(deviceIndex, genericDeviceIndex);
-        }
-
-        virtual public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName,
-            int oldTechObjNumber)
-        {
-            List<int> tmpIndex = new List<int>();
-            foreach (int index in deviceIndex)
-            {
-                tmpIndex.Add(index);
-            }
-
-            foreach (int index in deviceIndex)
-            {
-                var newDevName = string.Empty;
-                EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
-                int objNum = newTechObjectNumber;
-                string objName = device.ObjectName;
-
-                if (objName == oldTechObjectName &&
-                    device.ObjectNumber == oldTechObjNumber)
-                {
-                    newDevName = newTechObjectName + objNum +
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                }
-
-                if (newDevName != string.Empty)
-                {
-                    int indexOfDeletingElement = tmpIndex.IndexOf(index);
-                    tmpIndex.Remove(index);
-                    int tmpDevInd = deviceManager.GetDeviceIndex(newDevName);
-                    if (tmpDevInd >= 0)
-                    {
-                        tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
-                    }
-                }
-            }
-
-            deviceIndex = tmpIndex;
-        }
-
-        private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
-            int oldTechObjectN, string techObjectName, List<int> devs, bool isGeneric = false)
-        {
-            List<int> tmpDevs = new List<int>();
-            tmpDevs.AddRange(devs);
-
-            foreach (int dev in devs)
-            {
-                var newDevName = ModifyDevNameChangeTechNumber(techObjectName, dev, newTechObjectN, oldTechObjectN);
-
-                if (string.IsNullOrEmpty(newDevName))
-                    continue;
-
-                int devIndex = tmpDevs.IndexOf(dev);
-                int tmpDev = deviceManager.GetDeviceIndex(newDevName);
-
-                if (tmpDev >= 0)
-                    tmpDevs[devIndex] = tmpDev;
-                else if (isGeneric)
-                    tmpDevs.RemoveAt(devIndex);
-            }
-
-            return tmpDevs;
-        }
-
-        private string ModifyDevNameChangeTechNumber(string techObjectName, int index, int newID, int oldID)
-        {
-            var newDevName = string.Empty;
-            EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
-            int objNum = device.ObjectNumber;
-            string objName = device.ObjectName;
-
-            if (objNum <= 0 || techObjectName != objName)
-                return string.Empty;
-
-            //deviceManager.GetModifiedDevice
-
-            //Для устройств в пределах объекта меняем номер объекта.
-            if (objNum == newID && oldID != -1)
-            { // 1 -> 2 - COAG2V1 --> COAG1V1
-                return $"{objName}{oldID}{device.DeviceDesignation}";
-            }
-            if (oldID == -1 || oldID == objNum)
-            { // COAG1V1 --> COAG(new_id)V1; COAGxV1 -> COAG1V1, COAG2V1 ...
-                return $"{objName}{newID}{device.DeviceDesignation}";
-            }
-
-            return string.Empty;
-        }
-
-        public virtual void ModifyDevNames(IDevModifyOptions modifyOptions)
-        {
-            //if (modifyOptions.OldTechObjectNumber != 0)
-            deviceIndex = ModifyDevName(deviceIndex, modifyOptions);
-            genericDeviceIndex = ModifyDevName(genericDeviceIndex, modifyOptions, true);
+            deviceIndex = ModifyDevName(deviceIndex, options);
+            genericDeviceIndex = ModifyDevName(genericDeviceIndex, options, true);
             
             deviceIndex = IndexesExclude(deviceIndex, genericDeviceIndex);
         }
 
-        private List<int> ModifyDevName(List<int> DevsIdx, IDevModifyOptions modifyOptions, bool removeUndefined = false)
+        private List<int> ModifyDevName(List<int> DevsIdx, IDevModifyOptions options, bool removeUndefined = false)
         {
-            return DevsIdx.Select(deviceManager.GetDeviceByIndex)
-                .Select(dev => deviceManager.GetModifiedDevice(dev, modifyOptions))
-                .Select((dev, index) => (dev is null && !removeUndefined) ? deviceManager.GetDeviceByIndex(DevsIdx[index]) : dev)
-                .OfType<IDevice>()
-                .Select(deviceManager.GetDeviceIndex)
+            return DevsIdx
+                .Select(deviceManager.GetDeviceByIndex)                       //=> устройства по индексу
+                .Select(dev => deviceManager.GetModifiedDevice(dev, options)) //=> модифицированный вариант устройства
+                .Select((dev, index) =>
+                {
+                    // Если устройство не определено,
+                    // то удаляем или оставляем не модифицированный вариант
+                    if (dev?.Description == CommonConst.Cap)                                            
+                        return removeUndefined? null : deviceManager.GetDeviceByIndex(DevsIdx[index]); 
+
+                    // Оставляем устройство не измененным (MB null)
+                    return dev;
+                })
+                .OfType<IDevice>() // исключаем нулевые (удаленные) объекты
+                .Select(deviceManager.GetDeviceIndex) //=> индексы устройств
                 .ToList();
         }
 
@@ -479,11 +383,11 @@ namespace TechObject
         public virtual void CreateGenericByTechObjects(IEnumerable<IAction> actions)
         {
             var refTechObject = actions.First().Owner.Owner.Owner.Owner.Owner;
-            actions.Skip(1).ToList().ForEach(action 
-                => action.ModifyDevNames(refTechObject.TechNumber,
-                    action.Owner.Owner.Owner.Owner.Owner.TechNumber,
-                    refTechObject.NameEplan));
-
+            actions.Skip(1).ToList().ForEach(action
+                => action.ModifyDevNames(new DevModifyOptions(refTechObject,
+                refTechObject.NameEplan,
+                action.Owner.Owner.Owner.Owner.Owner.TechNumber
+                    )));
             deviceIndex = actions.Skip(1).Aggregate(new HashSet<int>(actions.First().DevicesIndex),
                 (h, e) => { h.IntersectWith(e.DevicesIndex); return h; }).ToList();
         }

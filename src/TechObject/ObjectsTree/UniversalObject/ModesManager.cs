@@ -34,9 +34,9 @@ namespace TechObject
             return clone;
         }
 
-        public void ModifyDevNames(IDevModifyOptions modifyOptions)
+        public void ModifyDevNames(IDevModifyOptions options)
         {
-            modes.ForEach(mode => mode.ModifyDevNames(modifyOptions));
+            modes.ForEach(mode => mode.ModifyDevNames(options));
         }
 
         /// <summary>

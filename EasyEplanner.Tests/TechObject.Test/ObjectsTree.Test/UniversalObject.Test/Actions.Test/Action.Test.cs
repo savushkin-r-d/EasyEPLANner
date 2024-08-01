@@ -551,71 +551,71 @@ namespace TechObjectTests
             };
         }
 
-        [TestCase(new int[] { 1, 2, 4, 5, 6 },
-            new int[] { 3, 4, 5, 6 }, "KOAG", "1", "TANK", "1")]
-        [TestCase(new int[] { 1, 2, 3, 4 },
-            new int[] { 5, 6, 3, 4 }, "TANK", "2", "TANK", "1")]
-        [TestCase(new int[] { 1, 2, 3, 4 },
-            new int[] { 1, 2, 5 }, "TANK", "2", "KOAG", "1")]
-        public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
-            string newTechObjectName, int newTechObjectNumber,
-            string oldTechObjectName, int oldTechObjNumber)
-        {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
-            typeof(Action).GetField("deviceManager",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                .SetValue(null, deviceManager);
+        //[TestCase(new int[] { 1, 2, 4, 5, 6 },
+        //    new int[] { 3, 4, 5, 6 }, "KOAG", "1", "TANK", "1")]
+        //[TestCase(new int[] { 1, 2, 3, 4 },
+        //    new int[] { 5, 6, 3, 4 }, "TANK", "2", "TANK", "1")]
+        //[TestCase(new int[] { 1, 2, 3, 4 },
+        //    new int[] { 1, 2, 5 }, "TANK", "2", "KOAG", "1")]
+        //public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
+        //    string newTechObjectName, int newTechObjectNumber,
+        //    string oldTechObjectName, int oldTechObjNumber)
+        //{
+        //    EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+        //    typeof(Action).GetField("deviceManager",
+        //        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+        //        .SetValue(null, deviceManager);
 
-            var action = new Action(string.Empty, null, string.Empty, null,
-                null, null);
-            action.DevicesIndex.AddRange(devIds);
+        //    var action = new Action(string.Empty, null, string.Empty, null,
+        //        null, null);
+        //    action.DevicesIndex.AddRange(devIds);
 
-            action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
-                oldTechObjectName, oldTechObjNumber);
+        //    action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
+        //        oldTechObjectName, oldTechObjNumber);
 
-            Assert.AreEqual(expectedDevIds, action.DevicesIndex);
-        }
+        //    Assert.AreEqual(expectedDevIds, action.DevicesIndex);
+        //}
 
-        [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, 1, "TANK")]
-        [TestCase(new int[] { 5, 4, 6, 3 }, new int[] { 1, 4, 2, 3 }, 2, 1, "TANK")]
-        [TestCase(new int[] { 1, 2, 3, 4, 8 }, new int[] { 5, 6, 3, 4, 7 }, 2, -1, "TANK")]
-        [TestCase(new int[] { 8 }, new int[] { 8 }, 2, 1, "TANK")]
-        public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
-            int newTechObjectN, int oldTechObjectN, string techObjectName)
-        {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
-            typeof(Action).GetField("deviceManager",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                .SetValue(null, deviceManager);
+        //[TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, 1, "TANK")]
+        //[TestCase(new int[] { 5, 4, 6, 3 }, new int[] { 1, 4, 2, 3 }, 2, 1, "TANK")]
+        //[TestCase(new int[] { 1, 2, 3, 4, 8 }, new int[] { 5, 6, 3, 4, 7 }, 2, -1, "TANK")]
+        //[TestCase(new int[] { 8 }, new int[] { 8 }, 2, 1, "TANK")]
+        //public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
+        //    int newTechObjectN, int oldTechObjectN, string techObjectName)
+        //{
+        //    EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+        //    typeof(Action).GetField("deviceManager",
+        //        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+        //        .SetValue(null, deviceManager);
 
-            var action = new Action(string.Empty, null, string.Empty, null,
-                null, null);
-            action.DevicesIndex.AddRange(devIds);
+        //    var action = new Action(string.Empty, null, string.Empty, null,
+        //        null, null);
+        //    action.DevicesIndex.AddRange(devIds);
 
-            action.ModifyDevNames(newTechObjectN, oldTechObjectN,
-                techObjectName);
+        //    action.ModifyDevNames(newTechObjectN, oldTechObjectN,
+        //        techObjectName);
 
-            Assert.AreEqual(expectedDevIds, action.DevicesIndex);
-        }
+        //    Assert.AreEqual(expectedDevIds, action.DevicesIndex);
+        //}
 
-        [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, "TANK")]
-        [TestCase(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 }, 3, "TANK")]
-        public void ModifyDevNames_CheckGenericUpdating(int[] devIds,
-            int[] expectedDevIds, int newObjID, string techObjectName)
-        {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
-            typeof(Action).GetField("deviceManager",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                .SetValue(null, deviceManager);
+        //[TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, "TANK")]
+        //[TestCase(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 }, 3, "TANK")]
+        //public void ModifyDevNames_CheckGenericUpdating(int[] devIds,
+        //    int[] expectedDevIds, int newObjID, string techObjectName)
+        //{
+        //    EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+        //    typeof(Action).GetField("deviceManager",
+        //        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+        //        .SetValue(null, deviceManager);
 
-            var action = new Action(string.Empty, null, string.Empty, null,
-                null, null);
-            action.DevicesIndex.AddRange(devIds);
+        //    var action = new Action(string.Empty, null, string.Empty, null,
+        //        null, null);
+        //    action.DevicesIndex.AddRange(devIds);
 
-            action.ModifyDevNames(newObjID, -1, techObjectName);
+        //    action.ModifyDevNames(newObjID, -1, techObjectName);
 
-            CollectionAssert.AreEqual(expectedDevIds, action.DevicesIndex);
-        }
+        //    CollectionAssert.AreEqual(expectedDevIds, action.DevicesIndex);
+        //}
 
         [TestCase(new int[] { 1, 3, 5, 7, 9 })]
         [TestCase(new int[0])]

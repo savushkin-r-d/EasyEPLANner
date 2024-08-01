@@ -133,9 +133,10 @@ namespace TechObject
             return clone;
         }
 
-        public void ModifyDevNames(IDevModifyOptions modifyOptions)
+        public void ModifyDevNames(IDevModifyOptions options)
         {
-            stepsMngr.ForEach(state => state.ModifyDevNames(modifyOptions));
+            BaseOperation.Properties.ForEach(p => p.ModifyDevNames(options));
+            stepsMngr.ForEach(state => state.ModifyDevNames(options));
         }
 
         /// <summary>
