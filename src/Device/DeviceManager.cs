@@ -80,14 +80,14 @@ namespace EplanDevice
         /// Получить модифицированное устройство
         /// </summary>
         /// <param name="device">Исходное устройство для модификации</param>
-        /// <param name="modifyOptions">Опции модификации</param>
+        /// <param name="options">Опции модификации</param>
         /// <returns>
         ///     IDevice             - модифицированное устройство <br/>
         ///     IDevice EQ device   - исходное устройство без модификации <br/>
         ///     .DEscription == CAP - неопределенное устройство (в дальнейшем может быть как и удалено из привязки, так и заменено на исходное) <br/>
         ///     null                - удаление устройства из привязки <br/>
         /// </returns>
-        IDevice GetModifiedDevice(IDevice device, IDevModifyOptions modifyOptions);
+        IDevice GetModifiedDevice(IDevice device, IDevModifyOptions options);
     }
 
     /// <summary>

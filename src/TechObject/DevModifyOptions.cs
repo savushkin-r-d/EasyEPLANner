@@ -57,9 +57,9 @@ namespace TechObject
     /// </summary>
     public class DevModifyOptions : IDevModifyOptions
     {
-        private TechObject techObject;
-        private string oldTechObjectName;
-        private int oldTechObjectNumber;
+        private readonly TechObject techObject;
+        private readonly string oldTechObjectName;
+        private readonly int oldTechObjectNumber;
 
         /// <param name="techObject">Модифицируемый тех.объект</param>
         /// <param name="oldTechObjectName">Старое ОУ теъ.объекта</param>
