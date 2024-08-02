@@ -92,6 +92,10 @@ namespace TechObject
         /// <returns>Описание действия в клетке Excel</returns>
         string SaveAsExcel();
 
+        /// <summary>
+        /// Модифицировать название устройств в соответствие объекту
+        /// </summary>
+        /// <param name="options">Опции модификации устройств</param>
         void ModifyDevNames(IDevModifyOptions options);
 
         List<DrawInfo> GetObjectToDrawOnEplanPage();

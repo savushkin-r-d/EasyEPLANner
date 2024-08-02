@@ -69,11 +69,11 @@ namespace TechObject
             var modified = deviceManager.GetModifiedDevice(
                 deviceManager.GetDeviceByEplanName(Value),
                 options);
-         
-            if (modified?.Description != CommonConst.Cap)
-            {
-                SetNewValue(modified.Name);
-            }
+
+            if (modified is null || modified.Description == CommonConst.Cap)
+                return;
+
+            SetNewValue(modified.Name);
         }
 
         public override string Value
