@@ -1159,8 +1159,8 @@ namespace EplanDevice
                 var match = mixproofRegex.Match(device.Name);
                 if (match.Success)
                 {
-                    var mixproofP = match.Groups[1].Value;
-                    return GetDeviceByEplanName($"{mixproofP}{options.NewTechObjectNumber}");
+                    var mixproofPart = match.Groups[1].Value;
+                    return GetDeviceByEplanName($"{mixproofPart}{options.NewTechObjectNumber}");
                 }
                 else return device;
             }
