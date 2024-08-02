@@ -238,19 +238,19 @@ namespace Tests.EplanDevices
             bool isCap)
         {
             var manager = DeviceManager.GetInstance();
-            var optionsMock = new Mock<IDevModifyOptions>();
 
-            optionsMock.Setup(o => o.IsUnit).Returns(true);
-            optionsMock.Setup(o => o.NameModified).Returns(oldObjName != newObjName);
-            optionsMock.Setup(o => o.NumberModified).Returns(oldTechNumber != newTechNumber);
-            optionsMock.Setup(o => o.OldTechObjectName).Returns(oldObjName);
-            optionsMock.Setup(o => o.OldTechObjectNumber).Returns(oldTechNumber);
-            optionsMock.Setup(o => o.NewTechObjectName).Returns(newObjName);
-            optionsMock.Setup(o => o.NewTechObjectNumber).Returns(newTechNumber);
+            var options = Mock.Of<IDevModifyOptions>(o =>
+                o.IsUnit == true &&
+                o.NameModified == (oldObjName != newObjName) &&
+                o.NumberModified == (oldTechNumber != newTechNumber) &&
+                o.OldTechObjectName == oldObjName &&
+                o.OldTechObjectNumber == oldTechNumber &&
+                o.NewTechObjectName == newObjName &&
+                o.NewTechObjectNumber == newTechNumber);
 
             var modified = manager.GetModifiedDevice(
                 manager.GetDeviceByEplanName(modify),
-                optionsMock.Object);
+                options);
 
             Assert.Multiple(() => 
             {

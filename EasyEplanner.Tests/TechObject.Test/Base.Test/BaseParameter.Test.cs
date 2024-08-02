@@ -439,17 +439,41 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expected, res);
         }
 
+        [TestCase("NORM1DEV2", "NORM", 2, "NORM2DEV2")]
+        [TestCase("NORM1DEV2", "OTHER", 1, "OTHER1DEV2")]
+        public void ModifyDevNames(
+            string source,
+            string newName, int newNumber,
+            string expected)
+        {
+            var parameter = new ActiveParameter("LuaName", "Name");
+            parameter.SetNewValue(source);
+
+            var options = Mock.Of<IDevModifyOptions>(o => 
+                o.NewTechObjectName == newName &&
+                o.NewTechObjectNumber == newNumber);
+
+            parameter.ModifyDevNames(options);
+
+            Assert.AreEqual(expected, parameter.Value);
+        }
+
         private EplanDevice.IDeviceManager GetMoqForSetValuesAndDisplayTextTest()
         {
             string stubDev1Name = "STUB1DEV1";
             string stubDev2Name = "STUB1DEV2";
-            string normDev1Name = "NORM1DEV1";
-            string normDev2Name = "NORM1DEV2";
+            string norm_1_dev_1_name = "NORM1DEV1";
+            string norm_1_dev_2_name = "NORM1DEV2";
+            string norm_2_dev_2_name = "NORM2DEV2";
+            string other_1_dev_2_name = "OTHER1DEV2";
 
-            int normDev1Index = 1;
+
+            int norm_1_dev_1_index = 1;
             int stubDev1Index = 2;
-            int normDev2Index = 3;
+            int norm_1_dev_2_index = 3;
             int stubDev2Index = 4;
+            int norm_2_dev_2_index = 5;
+            int other_1_dev_2_index = 6;
 
             var stubDevice1 = Mock.Of<EplanDevice.IDevice>(
                 dev => dev.Name == stubDev1Name &&
@@ -458,29 +482,45 @@ namespace EasyEplanner.Tests
                 dev => dev.Name == stubDev2Name &&
                 dev.Description == StaticHelper.CommonConst.Cap);
 
-            var okDevice1 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == normDev1Name &&
+            var norm_1_dev_1 = Mock.Of<EplanDevice.IDevice>(
+                dev => dev.Name == norm_1_dev_1_name &&
                 dev.Description == "Description 1");
-            var okDevice2 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == normDev2Name &&
+            var norm_1_dev_2 = Mock.Of<EplanDevice.IDevice>(
+                dev => dev.Name == norm_1_dev_2_name &&
                 dev.Description == "Description 2");
+
+            var norm_2_dev_2 = Mock.Of<EplanDevice.IDevice>(
+                dev => dev.Name == norm_2_dev_2_name &&
+                dev.Description == "Description");
+
+            var other_1_dev_2 = Mock.Of<EplanDevice.IDevice>(
+                dev => dev.Name == other_1_dev_2_name &&
+                dev.Description == "Description");
 
             var deviceManagerMock = Mock.Of<EplanDevice.IDeviceManager>(
                 d => d.GetDeviceByEplanName(stubDev1Name) == stubDevice1 &&
                 d.GetDeviceByEplanName(It.IsAny<string>()) == stubDevice1 &&
                 d.GetDeviceByEplanName(stubDev2Name) == stubDevice2 &&
-                d.GetDeviceByEplanName(normDev1Name) == okDevice1 &&
-                d.GetDeviceByEplanName(normDev2Name) == okDevice2 &&
+                d.GetDeviceByEplanName(norm_1_dev_1_name) == norm_1_dev_1 &&
+                d.GetDeviceByEplanName(norm_1_dev_2_name) == norm_1_dev_2 &&
+                d.GetDeviceByEplanName(norm_2_dev_2_name) == norm_2_dev_2 &&
+                d.GetDeviceByEplanName(other_1_dev_2_name) == other_1_dev_2 &&
                 d.GetDeviceByIndex(It.IsAny<int>()) == stubDevice1 &&
-                d.GetDeviceByIndex(normDev1Index) == okDevice1 &&
-                d.GetDeviceByIndex(normDev2Index) == okDevice2 &&
+                d.GetDeviceByIndex(norm_1_dev_1_index) == norm_1_dev_1 &&
+                d.GetDeviceByIndex(norm_1_dev_2_index) == norm_1_dev_2 &&
                 d.GetDeviceByIndex(stubDev1Index) == stubDevice1 &&
                 d.GetDeviceByIndex(stubDev2Index) == stubDevice2 &&
+                d.GetDeviceByIndex(norm_2_dev_2_index) == norm_2_dev_2 &&
+                d.GetDeviceByIndex(other_1_dev_2_index) == other_1_dev_2 &&
                 d.GetDeviceIndex(It.IsAny<string>()) == -1 &&
-                d.GetDeviceIndex(normDev1Name) == normDev1Index &&
-                d.GetDeviceIndex(normDev2Name) == normDev2Index &&
+                d.GetDeviceIndex(norm_1_dev_1_name) == norm_1_dev_1_index &&
+                d.GetDeviceIndex(norm_1_dev_2_name) == norm_1_dev_2_index &&
                 d.GetDeviceIndex(stubDev1Name) == stubDev1Index &&
-                d.GetDeviceIndex(stubDev2Name) == stubDev2Index);
+                d.GetDeviceIndex(stubDev2Name) == stubDev2Index &&
+                d.GetDeviceIndex(norm_2_dev_2_name) == norm_2_dev_2_index &&
+                d.GetDeviceIndex(other_1_dev_2_name) == other_1_dev_2_index &&
+                d.GetModifiedDevice(norm_1_dev_2, It.Is<IDevModifyOptions>(o => o.NewTechObjectNumber == 2)) == norm_2_dev_2 &&
+                d.GetModifiedDevice(norm_1_dev_2, It.Is<IDevModifyOptions>(o => o.NewTechObjectName == "OTHER")) == other_1_dev_2);
 
             return deviceManagerMock;
         }
