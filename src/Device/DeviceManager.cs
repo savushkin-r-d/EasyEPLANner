@@ -1137,7 +1137,8 @@ namespace EplanDevice
 
         private IDevice ModifyMixproof(IDevice device, IDevModifyOptions options)
         {
-            var mixproofRegex = new Regex($@"(.+V\d*)(?:{options.OldTechObjectNumber})");
+            var mixproofRegex = new Regex($@"(.+V\d*)(?:{options.OldTechObjectNumber})",
+                RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
 
             if (options.NumberModified &&
                 options.IsUnit &&
