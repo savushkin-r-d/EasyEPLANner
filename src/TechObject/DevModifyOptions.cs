@@ -11,8 +11,6 @@ namespace TechObject
     {
         bool IsUnit { get; }
 
-        bool IsGeneric { get; }
-
         bool NumberModified { get; }
 
         bool NameModified { get; }
@@ -42,8 +40,6 @@ namespace TechObject
 
 
         public bool NumberModified => OldTechObjectNumber != NewTechObjectNumber;
-
-        public bool IsGeneric => techObject is GenericTechObject;
 
         public bool NameModified => OldTechObjectName != NewTechObjectName;
 

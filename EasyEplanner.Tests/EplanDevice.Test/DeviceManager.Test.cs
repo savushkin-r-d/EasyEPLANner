@@ -1,6 +1,10 @@
 ﻿using EplanDevice;
+using Moq;
 using NUnit.Framework;
+using StaticHelper;
 using System;
+using System.Windows.Forms;
+using TechObject;
 
 namespace Tests.EplanDevices
 {
@@ -46,6 +50,28 @@ namespace Tests.EplanDevices
             var C_THLD = new C("OBJ1C2", "+OBJ1-C2", string.Empty, 2, "OBJ", 1);
             C_THLD.SetSubType("C_THLD");
             devManager.Devices.Add(C_THLD);
+
+
+            // .GetModifiedDevice()
+            var mixproof_1 = new V("NOOBJ1V111", "+NOOBJ1-V111", "", 111, "NOOBJ", 1, "");
+            mixproof_1.SetSubType("V_AS_MIXPROOF");
+            devManager.Devices.Add(mixproof_1);
+
+            var mixproof_2 = new V("NOOBJ1V112", "+NOOBJ1-V112", "", 112, "NOOBJ", 1, "");
+            mixproof_2.SetSubType("V_AS_MIXPROOF");
+            devManager.Devices.Add(mixproof_2);
+
+            var dev_1 = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+            devManager.Devices.Add(dev_1);
+
+            var dev_2 = new V("OBJ2V1", "+OBJ2-V1", "", 1, "OBJ", 2, "");
+            devManager.Devices.Add(dev_2);
+
+            var dev_3 = new V("OTHER1V1", "+OTHER1-V1", "", 1, "OTHER", 1, "");
+            devManager.Devices.Add(dev_3);
+
+            var dev_4 = new V("OTHER2V1", "+OTHER2-V1", "", 1, "OTHER", 2, "");
+            devManager.Devices.Add(dev_4);
         }
 
         [TestCase("+LINE1-V2", false)]
@@ -203,5 +229,56 @@ namespace Tests.EplanDevices
             Assert.AreEqual(string.Empty, res);
         }
 
+
+        [TestCaseSource(nameof(GetModifiedDevice_TestCaseSource))]
+        public void GetModifiedDevice(
+            string oldObjName, int oldTechNumber,
+            string newObjName, int newTechNumber,
+            string modify, string expectedModified,
+            bool isCap)
+        {
+            var manager = DeviceManager.GetInstance();
+            var optionsMock = new Mock<IDevModifyOptions>();
+
+            optionsMock.Setup(o => o.IsUnit).Returns(true);
+            optionsMock.Setup(o => o.NameModified).Returns(oldObjName != newObjName);
+            optionsMock.Setup(o => o.NumberModified).Returns(oldTechNumber != newTechNumber);
+            optionsMock.Setup(o => o.OldTechObjectName).Returns(oldObjName);
+            optionsMock.Setup(o => o.OldTechObjectNumber).Returns(oldTechNumber);
+            optionsMock.Setup(o => o.NewTechObjectName).Returns(newObjName);
+            optionsMock.Setup(o => o.NewTechObjectNumber).Returns(newTechNumber);
+
+            var modified = manager.GetModifiedDevice(
+                manager.GetDeviceByEplanName(modify),
+                optionsMock.Object);
+
+            Assert.Multiple(() => 
+            {
+                Assert.AreEqual(expectedModified, modified?.Name);
+                Assert.AreEqual(isCap, modified?.Description == CommonConst.Cap);
+            });
+        }
+
+        private static readonly object[] GetModifiedDevice_TestCaseSource = new object[]
+        {
+            new object[] { "OBJ", 11, "OBJ", 12, "NOOBJ1V111", "NOOBJ1V112", false },
+            new object[] { "OBJ", 11, "OBJ", 13, "NOOBJ1V111", null, false  },
+            new object[] { "OBJ", 11, "OBJECT", 11, "NOOBJ1V111", "NOOBJ1V111", false },
+            new object[] { "OBJ", 12, "OBJ", 11, "NOOBJ1V111", "NOOBJ1V111", false },
+
+            new object[] { "OBJ", 1, "OBJ", 2, "OBJ1V1", "OBJ2V1", false },
+            new object[] { "OBJ", 2, "OBJ", 3, "OBJ2V1", "OBJ3V1", true },
+            new object[] { "OBJ", 1, "OBJ", 2, "OBJ2V1", "OBJ1V1", false },
+            new object[] { "OBJ", 3, "OBJ", 2, "OBJ1V1", "OBJ1V1", false },
+
+            new object[] { "OBJ", 1, "OTHER", 1, "OBJ1V1", "OTHER1V1", false },
+            new object[] { "OBJ", 1, "OTHER", 1, "OTHER1V1", "OTHER1V1", false },
+
+            new object[] { "OBJ", -1, "OBJ", 1, "OBJ2V1", "OBJ1V1", false },
+            new object[] { "OBJ", -1, "OBJ", 2, "OBJ2V1", "OBJ2V1", false },
+            new object[] { "OBJ", -1, "OBJ", 3, "OBJ2V1", "OBJ3V1", true },
+
+            new object[] { "OTHER", 1, "OTHER", 1, "OTHER1V1", "OTHER1V1", false },
+        };
     }
 }

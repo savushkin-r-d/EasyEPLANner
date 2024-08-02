@@ -1137,7 +1137,7 @@ namespace EplanDevice
             var mixproofRegex = new Regex($@"(.+V\d*)(?:{options.OldTechObjectNumber})");
 
             if (options.NumberModified &&
-            options.IsUnit &&
+                options.IsUnit &&
                 options.OldTechObjectName != device.ObjectName &&
                 (device as IIODevice)?.AllowedType(DeviceType.V) is true &&
                 (device as IIODevice)?.AllowedSubtype(
@@ -1158,6 +1158,7 @@ namespace EplanDevice
                     var mixproofP = match.Groups[1].Value;
                     return GetDeviceByEplanName($"{mixproofP}{options.NewTechObjectNumber}");
                 }
+                else return device;
             }
 
             return null;
@@ -1167,8 +1168,7 @@ namespace EplanDevice
         {
             if (ModifyMixproof(device, options) is IDevice mixproof)
             {
-                return mixproof.Description == CommonConst.Cap ? null : mixproof; 
-                // null - удаляем привязку устройства
+                return mixproof.Description == CommonConst.Cap ? null : mixproof; // null - удаляем привязку устройства
             }
 
             if (options.NumberModified &&
