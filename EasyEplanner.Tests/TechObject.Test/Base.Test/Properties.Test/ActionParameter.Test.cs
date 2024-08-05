@@ -68,46 +68,5 @@ namespace TechObjectTests
                 Assert.IsNull(actionParameter.Parameter);
             });
         }
-
-        [Test]
-        public void ModifyDevName()
-        {
-            string OBJ = nameof(OBJ);
-
-            var deviceManagerMock = new Mock<IDeviceManager>();
-            var dev1 = new V($"{OBJ}1V1", $"+{OBJ}1-V1", "", 1, OBJ, 1, "");
-            var dev2 = new V($"{OBJ}2V1", $"+{OBJ}2-V1", "", 1, OBJ, 2, "");
-
-            deviceManagerMock.Setup(m => m.GetDeviceByEplanName($"{OBJ}1V1")).Returns(dev1);
-            deviceManagerMock.Setup(m => m.GetDeviceByEplanName($"{OBJ}2V1")).Returns(dev2);
-
-            deviceManagerMock.Setup(m => m.GetDeviceIndex($"{OBJ}1V1")).Returns(0);
-            deviceManagerMock.Setup(m => m.GetDeviceIndex($"{OBJ}2V1")).Returns(1);
-
-            deviceManagerMock.Setup(m => m.GetDeviceByIndex(0)).Returns(dev1);
-            deviceManagerMock.Setup(m => m.GetDeviceByIndex(1)).Returns(dev2);
-
-            var actionParameter = new ActionParameter("action_parameter", "параметр");
-            
-            typeof(BaseParameter).GetField("deviceManager",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                .SetValue(null, deviceManagerMock.Object);
-
-            Assert.Multiple(() =>
-            {
-                actionParameter.SetNewValue($"{OBJ}1V1");
-                actionParameter.ModifyDevName(1, 2, OBJ);
-                Assert.AreEqual($"{OBJ}2V1",actionParameter.Value);
-
-
-                actionParameter.SetNewValue($"{OBJ}1V1");
-                actionParameter.ModifyDevName(2, -1, OBJ);
-                Assert.AreEqual($"{OBJ}2V1", actionParameter.Value);
-            });
-
-            typeof(BaseParameter).GetField("deviceManager",
-               System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-               .SetValue(null, DeviceManager.GetInstance());
-        }
     }
 }

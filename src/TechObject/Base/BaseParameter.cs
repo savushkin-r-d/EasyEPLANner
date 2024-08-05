@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using EasyEPlanner;
 using EplanDevice;
+using StaticHelper;
 
 namespace TechObject
 {
@@ -540,6 +542,32 @@ namespace TechObject
             {
                 SetParameterValueType(Value);
             }
+        }
+
+        public virtual void ModifyDevNames(IDevModifyOptions options)
+        {
+            if (!OnlyDevicesInParameter)
+                return;
+
+            var devNames = Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var newValues = devNames
+                .Select(deviceManager.GetDeviceByEplanName)
+                .Select(dev => deviceManager.GetModifiedDevice(dev, options))
+                .Select((dev, index) =>
+                {
+                    // Если устройство не определено,
+                    // то оставляем не модифицированный вариант
+                    if (dev?.Description == CommonConst.Cap)
+                        return deviceManager.GetDeviceByEplanName(devNames[index]);
+
+                    // Оставляем устройство не измененным (MB null)
+                    return dev;
+                })
+                .OfType<IDevice>()
+                .Select(dev => dev.Name);
+
+            SetNewValue(string.Join(" ", newValues));
         }
 
         /// <summary>

@@ -7,6 +7,9 @@ using System.IO;
 using EasyEPlanner;
 using System.Text;
 using System.Security.Cryptography;
+using TechObject;
+using StaticHelper;
+using static System.Windows.Forms.Design.AxImporter;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -21,6 +24,8 @@ namespace EplanDevice
         /// <param name="devName">Имя устройства</param>
         /// <returns></returns>
         int GetDeviceIndex(string devName);
+
+        int GetDeviceIndex(IDevice dev);
 
         /// <summary>
         /// Возвращает устройство по его имени в Eplan
@@ -70,6 +75,19 @@ namespace EplanDevice
         /// <param name="devName">Имя устройства.</param>
         /// <returns>Устройство с заданными именем или заглушка.</returns>
         IODevice GetDevice(string devName);
+
+        /// <summary>
+        /// Получить модифицированное устройство
+        /// </summary>
+        /// <param name="device">Исходное устройство для модификации</param>
+        /// <param name="options">Опции модификации</param>
+        /// <returns>
+        ///     IDevice             - модифицированное устройство <br/>
+        ///     IDevice EQ device   - исходное устройство без модификации <br/>
+        ///     .DEscription == CAP - неопределенное устройство (в дальнейшем может быть как и удалено из привязки, так и заменено на исходное) <br/>
+        ///     null                - удаление устройства из привязки <br/>
+        /// </returns>
+        IDevice GetModifiedDevice(IDevice device, IDevModifyOptions options);
     }
 
     /// <summary>
@@ -309,6 +327,11 @@ namespace EplanDevice
             int resDevN = devices.IndexOf(devStub);
 
             return resDevN;
+        }
+
+        public int GetDeviceIndex(IDevice dev)
+        {
+            return devices.IndexOf(dev as IODevice);
         }
 
 
@@ -1110,6 +1133,74 @@ namespace EplanDevice
             }
 
             return isPID;
+        }
+
+        private IDevice ModifyMixproof(IDevice device, IDevModifyOptions options)
+        {
+            var mixproofRegex = new Regex($@"(.+V\d*)(?:{options.OldTechObjectNumber})",
+                RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
+
+            if (options.NumberModified &&
+                options.IsUnit &&
+                options.OldTechObjectName != device.ObjectName &&
+                (device as IIODevice)?.AllowedType(DeviceType.V) is true &&
+                (device as IIODevice)?.AllowedSubtype(
+                    DeviceSubType.V_DO1_DI2,
+                    DeviceSubType.V_DO2_DI2,
+                    DeviceSubType.V_DO2_DI2_BISTABLE,
+                    DeviceSubType.V_MIXPROOF,
+                    DeviceSubType.V_BOTTOM_MIXPROOF,
+                    DeviceSubType.V_IOLINK_MIXPROOF,
+                    DeviceSubType.V_AS_MIXPROOF,
+                    DeviceSubType.V_AS_DO1_DI2,
+                    DeviceSubType.V_IOLINK_DO1_DI2,
+                    DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3) is true)
+            { // Если клапан-mixproof привязан к Аппарату и имеет отличное от его ОУ
+                var match = mixproofRegex.Match(device.Name);
+                if (match.Success)
+                {
+                    var mixproofPart = match.Groups[1].Value;
+                    return GetDeviceByEplanName($"{mixproofPart}{options.NewTechObjectNumber}");
+                }
+                else return device;
+            }
+
+            return null;
+        }
+
+        public IDevice GetModifiedDevice(IDevice device, IDevModifyOptions options)
+        {
+            if (ModifyMixproof(device, options) is IDevice mixproof)
+            {
+                return mixproof.Description == CommonConst.Cap ? null : mixproof; // null - удаляем привязку устройства
+            }
+
+            if (options.NumberModified &&
+                options.OldTechObjectNumber != 0 &&  // Не модифицировать устройства в типовых объектах
+                device.Description != CommonConst.Cap &&
+                device.ObjectName == options.OldTechObjectName &&
+                device.ObjectNumber > 0)
+            {
+                if (options.OldTechObjectNumber == -1 || device.ObjectNumber == options.OldTechObjectNumber)
+                {
+                    // Изменяем номер объекта в устройстве в соответствии с изменениями объекта или для типовых объектов:
+                    // ( 1 -> 2 )          :  OBJ[1]V1 -> OBJ[2]V1
+                    // ( -1 -> 1, 2,... )  :  OBJ[x]V1 -> OBJ[1]V1, OBJ[2]V1, ... - для типовых объектов 
+                    return GetDeviceByEplanName($"{device.ObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
+                } 
+                else if (device.ObjectNumber == options.NewTechObjectNumber)
+                {
+                    // Инверсионное изменение номера объекта: когда устройство имеет номер объекта равный новому номеру объекта
+                    // ( 1 -> 2 )  :  OBJ[2]V1 -> OBJ[1]V1
+                    return GetDeviceByEplanName($"{device.ObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
+                }
+            }
+            else if (options.NameModified && device.ObjectName == options.OldTechObjectName)
+            {
+                return GetDeviceByEplanName($"{options.NewTechObjectName}{device.ObjectNumber}{device.DeviceDesignation}");
+            }
+
+            return device;
         }
 
         /// <summary>

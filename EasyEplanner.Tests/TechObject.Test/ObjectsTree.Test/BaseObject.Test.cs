@@ -489,7 +489,6 @@ namespace TechObjectTests
                 Assert.AreEqual(expT1Step.GetStepName(), steps[1].GetStepName());
                 CollectionAssert.AreEqual(new[] { "TANK1V1", "DO1" }, actionOnDevices.DevicesNames);
                 CollectionAssert.AreEqual(new[] { "TANK1V1" }, actionDelayOnDevices.SubActions[0].SubActions[0].DevicesNames);
-                CollectionAssert.AreEqual(new[] { "TANK1V1" }, actionDelayOnDevices.SubActions[0].SubActions[0].DevicesNames);
             });
         }
 
@@ -503,28 +502,31 @@ namespace TechObjectTests
             var TANK1V1 = new V("TANK1V1", "+TANK1-V1", "desc", 1, "TANK", 1, "");
             var TANK2V1 = new V("TANK2V1", "+TANK2-V1", "desc", 1, "TANK", 2, "");
 
-
+            deviceManagerMock.Setup(m => m.GetDeviceByEplanName(It.IsAny<string>())).Returns(capDevice);
             deviceManagerMock.Setup(m => m.GetDeviceByEplanName("LS1")).Returns(LS1);
             deviceManagerMock.Setup(m => m.GetDeviceByEplanName("TANK1V1")).Returns(TANK1V1);
             deviceManagerMock.Setup(m => m.GetDeviceByEplanName("TANK2V1")).Returns(TANK2V1);
             deviceManagerMock.Setup(m => m.GetDeviceByEplanName("DO1")).Returns(DO1);
-            deviceManagerMock.Setup(m => m.GetDeviceByEplanName(It.IsAny<string>())).Returns(capDevice);
-
-            deviceManagerMock.Setup(m => m.GetDevice("LS1")).Returns(LS1);
-            deviceManagerMock.Setup(m => m.GetDevice("TANK1V1")).Returns(TANK1V1);
-            deviceManagerMock.Setup(m => m.GetDevice("TANK2V1")).Returns(TANK2V1);
-            deviceManagerMock.Setup(m => m.GetDevice("DO1")).Returns(DO1);
 
             deviceManagerMock.Setup(m => m.GetDeviceIndex("LS1")).Returns(0);
             deviceManagerMock.Setup(m => m.GetDeviceIndex("TANK1V1")).Returns(1);
             deviceManagerMock.Setup(m => m.GetDeviceIndex("TANK2V1")).Returns(2);
             deviceManagerMock.Setup(m => m.GetDeviceIndex("DO1")).Returns(3);
 
+            deviceManagerMock.Setup(m => m.GetDeviceIndex(LS1)).Returns(0);
+            deviceManagerMock.Setup(m => m.GetDeviceIndex(TANK1V1)).Returns(1);
+            deviceManagerMock.Setup(m => m.GetDeviceIndex(TANK2V1)).Returns(2);
+            deviceManagerMock.Setup(m => m.GetDeviceIndex(DO1)).Returns(3);
+
             deviceManagerMock.Setup(m => m.GetDeviceByIndex(0)).Returns(LS1);
             deviceManagerMock.Setup(m => m.GetDeviceByIndex(1)).Returns(TANK1V1);
             deviceManagerMock.Setup(m => m.GetDeviceByIndex(2)).Returns(TANK2V1);
             deviceManagerMock.Setup(m => m.GetDeviceByIndex(3)).Returns(DO1);
 
+            deviceManagerMock.Setup(m => m.GetModifiedDevice(TANK1V1, It.IsAny<IDevModifyOptions>())).Returns(TANK1V1);
+            deviceManagerMock.Setup(m => m.GetModifiedDevice(TANK2V1, It.IsAny<IDevModifyOptions>())).Returns(TANK1V1);
+            deviceManagerMock.Setup(m => m.GetModifiedDevice(LS1, It.IsAny<IDevModifyOptions>())).Returns(LS1);
+            deviceManagerMock.Setup(m => m.GetModifiedDevice(DO1, It.IsAny<IDevModifyOptions>())).Returns(DO1);
 
             typeof(BaseParameter).GetField("deviceManager",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)

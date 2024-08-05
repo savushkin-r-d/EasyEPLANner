@@ -132,7 +132,7 @@ namespace TechObject
         private void UpdateModesManager(object sender)
         {
             InheritedTechObjects.ForEach(to => to.ModesManager.UpdateOnGenericTechObject(ModesManager));
-            InheritedTechObjects.ForEach(to => to.ModifyDevNames(-1));
+            InheritedTechObjects.ForEach(to => to.ModifyDevNames(null, -1));
         }
 
         /// <summary>
