@@ -1486,16 +1486,16 @@ ProjectTestEnabled=True
       * Модифицируемый объкта - **Аппарат**;
       * Имя устойства объекта не совпадат с ОУ тех.объекта;
       * Устройство имеет тип **MIXPROOF** или схожий, а именно:
-         + `V_DO1_DI2`
-         + `V_DO2_DI2`
-         + `V_DO2_DI2_BISTABLE`
-         + `V_MIXPROOF`
-         + `V_BOTTOM_MIXPROOF`
-         + `V_IOLINK_MIXPROOF`
-         + `V_AS_MIXPROOF`
-         + `V_AS_DO1_DI2`
-         + `V_IOLINK_DO1_DI2`
-         + `V_IOL_TERMINAL_MIXPROOF_DO3`
+          + `V_DO1_DI2`
+          + `V_DO2_DI2`
+          + `V_DO2_DI2_BISTABLE`
+          + `V_MIXPROOF`
+          + `V_BOTTOM_MIXPROOF`
+          + `V_IOLINK_MIXPROOF`
+          + `V_AS_MIXPROOF`
+          + `V_AS_DO1_DI2`
+          + `V_IOLINK_DO1_DI2`
+          + `V_IOL_TERMINAL_MIXPROOF_DO3`
     
     При этом модифицируется не номер объекта, а номер устройства (точнее, его часть свопадающая с номером тех.объекта), если такого устройства нет, оно удаляется из привязки:
       * (номер: 1 => 2) : `NO_UNIT1V[1]` => `NO_UNIT1V[2]` [*][modify]
