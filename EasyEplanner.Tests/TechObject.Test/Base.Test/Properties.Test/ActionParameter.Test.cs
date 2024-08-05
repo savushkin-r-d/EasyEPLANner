@@ -117,6 +117,7 @@ namespace TechObjectTests
             Assert.IsTrue(new ActionParameter("", "").IsDrawOnEplanPage);
         }
 
+        [Test]
         public void IsDrawToEplanPage_False() 
         {
             var actionParameter = new ActionParameter("ap", "ap");
@@ -132,13 +133,17 @@ namespace TechObjectTests
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(null, deviceManager);
 
-            actionParameter.SetNewValue("OBJ1V1");
-            var res = actionParameter.GetObjectToDrawOnEplanPage();
 
             Assert.Multiple(() =>
             {
+                actionParameter.SetNewValue("OBJ1V1");
+                var res = actionParameter.GetObjectToDrawOnEplanPage();
                 Assert.AreEqual(dev, res.FirstOrDefault().DrawingDevice);
                 Assert.AreEqual(DrawInfo.Style.GREEN_BOX, res.FirstOrDefault().DrawingStyle);
+
+                actionParameter.SetNewValue("");
+                var res = actionParameter.GetObjectToDrawOnEplanPage();
+                CollectionAssert.IsEmpty(res);
             });
 
             typeof(BaseParameter).GetField("deviceManager",
