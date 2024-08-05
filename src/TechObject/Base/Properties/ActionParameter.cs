@@ -58,7 +58,7 @@ namespace TechObject
             Parameter = null;
 
             // В случае привязки нескольких устройств (с ФСА) оставляем последнее 
-            newValue = newValue.Trim().Split(' ').Last(); 
+            newValue = newValue.Trim().Split(' ').LastOrDefault(); 
             newValue = string.IsNullOrEmpty(newValue) ? "-1" : newValue;
 
             return base.SetNewValue(newValue);
