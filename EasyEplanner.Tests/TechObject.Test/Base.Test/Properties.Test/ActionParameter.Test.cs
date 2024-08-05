@@ -142,7 +142,7 @@ namespace TechObjectTests
                 Assert.AreEqual(DrawInfo.Style.GREEN_BOX, res.FirstOrDefault().DrawingStyle);
 
                 actionParameter.SetNewValue("");
-                var res = actionParameter.GetObjectToDrawOnEplanPage();
+                res = actionParameter.GetObjectToDrawOnEplanPage();
                 CollectionAssert.IsEmpty(res);
             });
 
