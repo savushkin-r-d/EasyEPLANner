@@ -333,15 +333,9 @@ namespace Editor
             }
         }
 
-        public bool IsDrawOnEplanPage
-        {
-            get { return false; }
-        }
+        public virtual bool IsDrawOnEplanPage => false;
 
-        public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            return null;
-        }
+        public virtual List<DrawInfo> GetObjectToDrawOnEplanPage() => null;
 
         public virtual void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
             out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)
