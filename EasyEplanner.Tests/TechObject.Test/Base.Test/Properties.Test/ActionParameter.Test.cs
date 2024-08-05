@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Editor;
 using EplanDevice;
 using Moq;
 using NUnit.Framework;
@@ -108,6 +109,46 @@ namespace TechObjectTests
             typeof(BaseParameter).GetField("deviceManager",
                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                .SetValue(null, DeviceManager.GetInstance());
+        }
+
+        [Test]
+        public void IsDrawToEplanPage_True()
+        {
+            Assert.IsTrue(new ActionParameter("", "").IsDrawOnEplanPage);
+        }
+
+        [Test]
+        public void IsDrawToEplanPage_False() 
+        {
+            var actionParameter = new ActionParameter("ap", "ap");
+
+            var dev = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+
+            var deviceManager = Mock.Of<IDeviceManager>(m =>
+                m.GetDeviceByEplanName("OBJ1V1") == dev &&
+                m.GetDeviceIndex("OBJ1V1") == 1 &&
+                m.GetDeviceByIndex(1) == dev);
+
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
+
+            Assert.Multiple(() =>
+            {
+                actionParameter.SetNewValue("OBJ1V1");
+                var res = actionParameter.GetObjectToDrawOnEplanPage();
+                Assert.AreEqual(dev, res.FirstOrDefault().DrawingDevice);
+                Assert.AreEqual(DrawInfo.Style.GREEN_BOX, res.FirstOrDefault().DrawingStyle);
+
+                actionParameter.SetNewValue("");
+                res = actionParameter.GetObjectToDrawOnEplanPage();
+                CollectionAssert.IsEmpty(res);
+            });
+
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, DeviceManager.GetInstance());
         }
     }
 }

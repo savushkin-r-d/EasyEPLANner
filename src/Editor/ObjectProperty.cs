@@ -11,7 +11,7 @@ namespace Editor
     /// </summary>
     public class ObjectProperty : ITreeViewItem, IHelperItem
     {
-        public ImageIndexEnum ImageIndex { get; set; } = 
+        public ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 
         /// <param name="name">Имя свойства.</param>
@@ -108,7 +108,7 @@ namespace Editor
             {
                 if (value.ToString() == defaultValue.ToString())
                 {
-                    return new string[] { name, 
+                    return new string[] { name,
                         StaticHelper.CommonConst.StubForCells };
                 }
                 else
@@ -128,7 +128,7 @@ namespace Editor
                     provider.NumberDecimalSeparator = ".";
 
                     double v = (double)value;
-                    return new string[] { "", 
+                    return new string[] { "",
                         string.Format( provider, "{0:0.##}", v ) };
                 }
 
@@ -164,7 +164,7 @@ namespace Editor
 
         public virtual object Copy()
         {
-            if(IsCopyable)
+            if (IsCopyable)
             {
                 return this;
             }
@@ -333,15 +333,9 @@ namespace Editor
             }
         }
 
-        public bool IsDrawOnEplanPage
-        {
-            get { return false; }
-        }
+        public virtual bool IsDrawOnEplanPage => false;
 
-        public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            return null;
-        }
+        public virtual List<DrawInfo> GetObjectToDrawOnEplanPage() => new List<DrawInfo>() { };
 
         public virtual void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
             out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)

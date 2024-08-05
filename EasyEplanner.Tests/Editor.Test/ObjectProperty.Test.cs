@@ -259,9 +259,9 @@ namespace Tests.Editor
         }
 
         [Test]
-        public void GetObjectToDrawOnEplanPage_EmptyObject_ReturnsNull()
+        public void GetObjectToDrawOnEplanPage_EmptyObject_ReturnEmty()
         {
-            Assert.IsNull(GetEmptyProperty().GetObjectToDrawOnEplanPage());
+            CollectionAssert.IsEmpty(GetEmptyProperty().GetObjectToDrawOnEplanPage());
         }
 
         [Test]
