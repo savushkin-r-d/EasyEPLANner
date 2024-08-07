@@ -176,6 +176,7 @@
     <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
+    <Compile Include="ImportICPProject\ICPImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
     <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
@@ -466,6 +467,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_shared_initializer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_wago.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\main.ico" />
