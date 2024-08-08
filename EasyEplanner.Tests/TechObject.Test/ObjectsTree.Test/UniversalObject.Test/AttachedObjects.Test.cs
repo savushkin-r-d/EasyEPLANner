@@ -192,5 +192,44 @@ namespace TechObjectTests
                 Assert.IsTrue(attachedObj.IsInsertableCopy);
             });
         }
+
+        [Test]
+        public void CheckBinding()
+        {
+            var unit = new TechObject.TechObject("Unit", GetN => 1, 1, 1, "", -1, "", "", new BaseTechObject()
+            {
+                S88Level = 1
+            });
+
+            var boiler = new TechObject.TechObject("Boiler", GetN => 2, 1, 1, "", -1, "", "",
+                new BaseTechObject() { Name = "Бойлер", DenyBindingToUnit = true });
+            var line = new TechObject.TechObject("Line", GetN => 3, 1, 1, "", -1, "", "",
+                new BaseTechObject() { Name = "Линия", DenyBindingToUnit = false });
+
+            var techObjectManager = Mock.Of<ITechObjectManager>(m => 
+                m.GetTObject(2) == boiler &&
+                m.GetTObject(3) == line);
+
+            var techObjectManagerFiled = typeof(AttachedObjects).GetField("techObjectManager",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            techObjectManagerFiled.SetValue(null, techObjectManager);
+
+            Assert.Multiple(() =>
+            {
+                var attachedObj = new AttachedObjects("", unit, 
+                    Mock.Of<IAttachedObjectsStrategy>(s =>
+                        s.GetValidTechObjNums(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()) == new List<int>() { 2, 3 }));
+                Assert.AreEqual($"К аппарату [ {unit.Name} №{unit.TechNumber} ] нельзя привязывать базовые объекты типа: {boiler.BaseTechObject.Name}\n",
+                    attachedObj.CheckBindingToUnit());
+                
+                attachedObj = new AttachedObjects("", unit,
+                    Mock.Of<IAttachedObjectsStrategy>(s => 
+                    s.GetValidTechObjNums(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()) == new List<int>() { 3 }));
+                Assert.AreEqual("", attachedObj.CheckBindingToUnit());
+
+                attachedObj = new AttachedObjects("", boiler, new AttachedWithInitStrategy("", "", new List<BaseTechObjectManager.ObjectType>() { }));
+                Assert.AreEqual("", attachedObj.CheckBindingToUnit());
+            });
+        }
     }
 }

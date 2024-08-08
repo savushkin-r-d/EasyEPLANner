@@ -199,11 +199,12 @@ namespace TechObject
         /// <returns>Базовый объект в экземпляр LUA</returns>
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
-            string luaModuleName, string monitorName, bool deprecated)
+            string luaModuleName, string monitorName, bool deprecated,
+            bool denyBindingToUnit)
         {
             return baseTechObjectManager.AddBaseObject(name, eplanName,
                 s88Level, basicName, bindingName, isPID, luaModuleName,
-                monitorName, deprecated);
+                monitorName, deprecated, denyBindingToUnit);
         }
 
         public void AddPackage(string package)

@@ -25,6 +25,7 @@ namespace TechObject
             MonitorName = string.Empty;
             BaseProperties = new BaseProperties();
             Deprecated = false;
+            DenyBindingToUnit = false;
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -383,6 +384,8 @@ namespace TechObject
             cloned.MonitorName = MonitorName;
             cloned.BaseProperties = BaseProperties.Clone();
 
+            cloned.DenyBindingToUnit = DenyBindingToUnit;
+
             return cloned;
         }
 
@@ -483,6 +486,11 @@ namespace TechObject
         public BaseProperties BaseProperties { get; set; }
 
         public bool Deprecated { get; set; }
+
+        /// <summary>
+        /// Агрегату разрешена привязка к аппаратам
+        /// </summary>
+        public bool DenyBindingToUnit { get; set; }
 
         private List<BaseParameter> aggregateProperties;
         private List<AttachedObjects> objectGroups;

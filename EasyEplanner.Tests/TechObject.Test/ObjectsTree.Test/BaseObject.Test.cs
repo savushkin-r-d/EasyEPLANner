@@ -336,7 +336,7 @@ namespace TechObjectTests
         public void CreateNewGenericGroup()
         {
             BaseTechObjectManager.GetInstance().AddBaseObject("BaseTechObjectName", "BaseTechObjectName", 2,
-                "basicName", "bindingName", false, "luaModuleName", "monitorName", false);
+                "basicName", "bindingName", false, "luaModuleName", "monitorName", false, true);
 
             var techObjects = new List<TechObject.TechObject>();
             var genericTechObjects = new List<TechObject.GenericTechObject>();
@@ -375,7 +375,7 @@ namespace TechObjectTests
             SetupDeviceManagerMock();
 
             var baseTechObject = BaseTechObjectManager.GetInstance().AddBaseObject("BaseTechObjectName", "BaseTechObjectName", 2,
-                "basicName", "bindingName", false, "luaModuleName", "monitorName", false);
+                "basicName", "bindingName", false, "luaModuleName", "monitorName", false, true);
 
             var equipParameter = new EquipmentParameter("equip", "оборудование", "LS1");
 

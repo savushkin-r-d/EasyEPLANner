@@ -291,7 +291,7 @@ namespace TechObject
                 states = new Dictionary<string, List<BaseStep>>();
             }
 
-            techObject.AttachedObjects.Check();
+            techObject.AttachedObjects.CheckInit();
             SetItems();
 
             Properties.ForEach(prop => prop.ValueChanged += (sender) => OnValueChanged(sender));

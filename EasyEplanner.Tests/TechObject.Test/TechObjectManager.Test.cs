@@ -220,8 +220,8 @@ namespace TechObjectTests
         {
             var baseObject = new BaseObject("TANK", techObjectManager);
 
-            BaseTechObjectManager.GetInstance().AddBaseObject("TANK", "TANK", 2, "TANK", "TANK", false, "TANK", "TANK", false);
-            BaseTechObjectManager.GetInstance().AddBaseObject("USER", "USER", 3, "USER", "USER", false, "USER", "USER", false);
+            BaseTechObjectManager.GetInstance().AddBaseObject("TANK", "TANK", 2, "TANK", "TANK", false, "TANK", "TANK", false, true);
+            BaseTechObjectManager.GetInstance().AddBaseObject("USER", "USER", 3, "USER", "USER", false, "USER", "USER", false, true);
 
             var genericGroup = new GenericGroup(genericTank, baseObject, techObjectManager);
 

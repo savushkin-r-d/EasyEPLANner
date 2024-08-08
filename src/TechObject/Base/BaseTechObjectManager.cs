@@ -20,7 +20,8 @@ namespace TechObject
         /// <returns>Базовый объект</returns>
         BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
-            string luaModuleName, string monitorName, bool deprecated);
+            string luaModuleName, string monitorName, bool deprecated,
+            bool denyBindingToUnit);
 
         BaseTechObject GetTechObjectCopy(string name);
 
@@ -76,18 +77,22 @@ namespace TechObject
 
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
-            string luaModuleName, string monitorName, bool deprecated)
+            string luaModuleName, string monitorName, bool deprecated,
+            bool denyBindingToUnit)
         {
-            var obj = new BaseTechObject();
-            obj.Name = name;
-            obj.EplanName = eplanName;
-            obj.S88Level = s88Level;
-            obj.BasicName = basicName;
-            obj.BindingName = bindingName;
-            obj.IsPID = isPID;
-            obj.LuaModuleName = luaModuleName;
-            obj.MonitorName = monitorName;
-            obj.Deprecated = deprecated;
+            var obj = new BaseTechObject
+            {
+                Name = name,
+                EplanName = eplanName,
+                S88Level = s88Level,
+                BasicName = basicName,
+                BindingName = bindingName,
+                IsPID = isPID,
+                LuaModuleName = luaModuleName,
+                MonitorName = monitorName,
+                Deprecated = deprecated,
+                DenyBindingToUnit = denyBindingToUnit
+            };
 
             bool correctName = name != null && name.Trim() != string.Empty;
             bool correctEplanName = eplanName != null &&
