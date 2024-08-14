@@ -91,7 +91,8 @@ namespace Tests.TechObject
             {
                 manager.AddBaseObject(obj.Name, obj.EplanName, obj.S88Level,
                     obj.BasicName, obj.BindingName, obj.IsPID,
-                    obj.LuaModuleName, obj.MonitorName, obj.Deprecated);
+                    obj.LuaModuleName, obj.MonitorName, obj.Deprecated,
+                    obj.DenyBindingToUnit);
 
                 BaseTechObject addedObj = manager.Objects
                     .Where(x => x.Name == obj.Name ||
