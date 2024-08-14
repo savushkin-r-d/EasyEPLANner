@@ -290,7 +290,7 @@ namespace TechObject
         /// Проверить привязанные объекты на инициализацию и 
         /// инициализировать, если не инициализировано.
         /// </summary>
-        public string Check()
+        public string CheckInit()
         {
             var res = "";
             var objNum = TechObjectManager.GetInstance().GetTechObjectN(Owner);
@@ -310,6 +310,28 @@ namespace TechObject
             InitAttachedObjects(numbers);
             return res;
         }
+
+        /// <summary>
+        /// Проверка правильности привязки
+        /// </summary>
+        public string CheckBindingToUnit()
+        {
+            if (owner.BaseTechObject.S88Level != (int)BaseTechObjectManager.ObjectType.Unit)
+                return string.Empty;
+
+            var denyBindingBaseObjects = string.Join(", ",
+                    strategy.GetValidTechObjNums(Value, Owner.GlobalNum)
+                        .Select(objN => techObjectManager.GetTObject(objN).BaseTechObject)
+                        .Where(obj => obj.DenyBindingToUnit)
+                        .Select(obj => obj.Name)
+                        .Distinct());
+
+            if (string.IsNullOrEmpty(denyBindingBaseObjects))
+                return string.Empty;
+
+            return $"К аппарату [ {Owner.Name} №{Owner.TechNumber} ] нельзя привязывать базовые объекты типа: {denyBindingBaseObjects}\n";
+        }
+
 
         private string GenerateAttachedObjectsString(string attachedObjects)
         {
