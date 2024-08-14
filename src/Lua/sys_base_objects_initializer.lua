@@ -22,11 +22,12 @@ init_base_objects = function()
         local luaModuleName = value.luaModuleName or ""
         local monitorName = value.monitorName or "TankObj"
         local deprecated = value.deprecated or false
+        local denyBindingToUnit = value.denyBindingToUnit or false
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
             basicName, bindingName, isPid, luaModuleName, monitorName,
-            deprecated)
+            deprecated, denyBindingToUnit)
 
         -- Добавить группы танков
         local objectGroups = value.objectGroups or { }

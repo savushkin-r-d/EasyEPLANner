@@ -12,26 +12,12 @@ namespace TechObject
             subActions = new List<IAction>();
         }
 
-        override public void ModifyDevNames(int newTechObjectN,
-            int oldTechObjectN, string techObjectName)
+        public override void ModifyDevNames(IDevModifyOptions options)
         {
-            foreach (IAction subAction in subActions)
-            {
-                subAction.ModifyDevNames(newTechObjectN, oldTechObjectN,
-                    techObjectName);
-            }
-        }
+            Parameters?.OfType<ActionParameter>().ToList()
+                .ForEach(p => p.ModifyDevNames(options));
 
-        override public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName,
-            int oldTechObjectNumber)
-        {
-            foreach (IAction subAction in subActions)
-            {
-                subAction.ModifyDevNames(newTechObjectName,
-                    newTechObjectNumber, oldTechObjectName,
-                    oldTechObjectNumber);
-            }
+            subActions.ForEach(sa => sa.ModifyDevNames(options));
         }
 
         #region Синхронизация устройств в объекте.
@@ -126,6 +112,14 @@ namespace TechObject
                     }
                 }
             }
+        }
+
+        override public List<DrawInfo> GetObjectToDrawOnEplanPage()
+        {
+            return SubActions.SelectMany(sa => sa.DevicesIndex)
+                .Distinct()
+                .Select(index => new DrawInfo(DrawStyle, deviceManager.GetDeviceByIndex(index)))
+                .ToList();
         }
 
         private bool IdenticalActions(GroupableAction first, GroupableAction second)

@@ -70,23 +70,16 @@ namespace TechObject
             base.UpdateOnGenericTechObject(genericProperty);
         }
 
-        public void ModifyDevName(int newID, int oldID, string objName)
+        public override void ModifyDevNames(IDevModifyOptions options)
         {
-            var dev = deviceManager.GetDeviceByEplanName(Value);
+            var modified = deviceManager.GetModifiedDevice(
+                deviceManager.GetDeviceByEplanName(Value),
+                options);
 
-            if (dev.Description == CommonConst.Cap ||
-                dev.ObjectName != objName ||
-                dev.ObjectNumber <= 0) 
+            if (modified is null || modified.Description == CommonConst.Cap)
                 return;
 
-            if (dev.ObjectNumber == newID && oldID != -1)
-            {
-                SetNewValue($"{objName}{oldID}{dev.DeviceDesignation}");
-            }
-            if (oldID == -1 || oldID == dev.ObjectNumber)
-            { 
-               SetNewValue($"{objName}{newID}{dev.DeviceDesignation}");
-            }
+            SetNewValue(modified.Name);
         }
 
         public override string Value

@@ -4,6 +4,7 @@ using System.Linq;
 using Editor;
 using Eplan.EplApi.Base;
 using EplanDevice;
+using StaticHelper;
 
 namespace TechObject
 {
@@ -123,25 +124,31 @@ namespace TechObject
             return res;
         }
 
-        public void ModifyDevNames(string newTechObjName, int techNumber)
+
+        /// <summary>
+        /// Модификация названий устройств в соответствие тех.объекту
+        /// </summary>
+        /// <remarks>
+        /// Так как в поле "Оборудование" привязывается устройства только данного объекта, <br/>
+        /// то нужно устройств заменить только объект на новый.
+        /// </remarks>
+        /// <param name="techObjName">Название тех.объекта</param>
+        /// <param name="techNumber">Тех.номер объекта</param>
+        public void ModifyDevNames(string techObjName, int techNumber)
         {
-            var properties = items.Select(x => x as BaseParameter).ToArray();
-            foreach (var property in properties)
-            {
-                var oldDevsNames = property.Value.Split(' ');
-                var devices = oldDevsNames
-                    .Select(devName => deviceManager.GetDevice(devName));
-
-                var newDevicesNames = devices
-                    .Where(device => device.Description != StaticHelper.CommonConst.Cap)
-                    .Select(device => $"{newTechObjName}{techNumber}{device.DeviceType}{device.DeviceNumber}")
-                    .Where(newDevName => deviceManager.GetDevice(newDevName).Description != StaticHelper.CommonConst.Cap);
-
-                if (newDevicesNames.Any())
+            items.OfType<BaseParameter>().ToList()
+                .ForEach(property =>
                 {
-                    property.SetNewValue(string.Join(" ", newDevicesNames));
-                }
-            }
+                    var newValues = property.Value.Split(' ')
+                        .Select(deviceManager.GetDeviceByEplanName)
+                        .Select(dev => $"{techObjName}{techNumber}{dev.DeviceDesignation}")
+                        .Where(name => deviceManager.GetDeviceByEplanName(name).Description != CommonConst.Cap);
+
+                    if (newValues.Any())
+                    {
+                        property.SetNewValue(string.Join(" ", newValues));
+                    }
+                });
         }
 
         public void ModifyDevNames()
@@ -340,7 +347,7 @@ namespace TechObject
             if (objectsNotNull)
             {
                 property.SetNewValue(copiedObject.Value);
-                ModifyDevNames(owner.NameEplan, owner.TechNumber);
+                ModifyDevNames();
 
                 property.AddParent(this);
                 return property;
