@@ -821,7 +821,7 @@ namespace TechObject
 
         IDeviceProcessingStrategy deviceProcessingStrategy;
         
-        private static EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
+        protected static readonly EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
             .GetInstance();
     }
 
