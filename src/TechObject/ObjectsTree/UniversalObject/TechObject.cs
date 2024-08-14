@@ -42,10 +42,13 @@ namespace TechObject
                     StaticHelper.CommonConst.RusAsEngPattern,
                     StaticHelper.CommonConst.RusAsEngEvaluator);
 
-                owner.ModifyDevNames(newValue);
+                var oldValue = Value.ToString();
+
                 base.SetNewValue(newValue);
                 owner.CompareEplanNames();
 
+                owner.ModifyDevNames(oldValue, null);
+                
                 return true;
             }
 
@@ -89,7 +92,7 @@ namespace TechObject
                     bool res = base.SetNewValue(newValue);
                     if (res)
                     {
-                        techObject.ModifyDevNames(oldNumber);
+                        techObject.ModifyDevNames(null, oldNumber);
                     }
                     return true;
                 }
@@ -375,7 +378,8 @@ namespace TechObject
             clone.systemParams = systemParams.Clone();
 
             clone.modes = modes.Clone(clone);
-            clone.modes.ModifyDevNames(TechNumber);
+            clone.modes.ModifyDevNames(new DevModifyOptions(clone, clone.NameEplan, TechNumber));
+
             clone.modes.ModifyRestrictObj(oldGlobalNum, newGlobalNum);
 
             clone.equipment = equipment.Clone(clone);
@@ -526,16 +530,10 @@ namespace TechObject
             return null;
         }
 
-        public void ModifyDevNames(int oldNumber)
+        public void ModifyDevNames(string oldTechObjectName, int? oldTechObjectNumber)
         {
-            modes.ModifyDevNames(oldNumber);
+            modes.ModifyDevNames(new DevModifyOptions(this, oldTechObjectName ?? NameEplan, oldTechObjectNumber ?? TechNumber));
             equipment.ModifyDevNames();
-        }
-
-        public void ModifyDevNames(string newTechObjectName)
-        {
-            modes.ModifyDevNames(newTechObjectName, this.TechNumber);
-            equipment.ModifyDevNames(newTechObjectName, this.TechNumber);
         }
 
         /// <summary>
@@ -960,7 +958,7 @@ namespace TechObject
                         }
                     }
                 }
-                equipment.ModifyDevNames(NameEplan, TechNumber);
+                equipment.ModifyDevNames();
 
                 equipment.AddParent(this);
                 return equipment;
