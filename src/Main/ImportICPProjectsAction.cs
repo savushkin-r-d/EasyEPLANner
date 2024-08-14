@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.ImportICPProject;
+﻿using EasyEPlanner.ProjectImport;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.EObjects;
@@ -43,7 +43,7 @@ namespace EasyEPlanner
                     return true; 
                 }
 
-                var importer = new ICPImporter(currentProject, openFileDialog.FileName);
+                var importer = new ProjectImport.ProjectImporter(currentProject, openFileDialog.FileName);
                 importer.Import();
             }
             catch (Exception ex)

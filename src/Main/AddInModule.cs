@@ -71,9 +71,9 @@ namespace EasyEPlanner
                 false, false);
 
             menuID = oMenu.AddMenuItem(
-                "Импорт ICP-CON проектов",
+                "Импорт ICP-CON проекта",
                 "ImportICPProjects",
-                "Импорт ICP-CON проектов", menuID, 1,
+                "Импорт ICP-CON проекта", menuID, 1,
                 false, false);
 
             menuID = oMenu.AddMenuItem(

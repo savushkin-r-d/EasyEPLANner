@@ -19,10 +19,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace EasyEPlanner.ImportICPProject
+namespace EasyEPlanner.ProjectImport
 {
     [ExcludeFromCodeCoverage]
-    public class ICPImporter
+    public class ProjectImporter
     {
         /// <summary>
         /// Lua state
@@ -35,11 +35,16 @@ namespace EasyEPlanner.ImportICPProject
         private int currentNodeWidth;
 
         /// <summary>
+        /// Текущий импортируемый узел - каплер
+        /// </summary>
+        private bool currentNodeIsCoupler;
+
+        /// <summary>
         /// Путь каталога к макросам
         /// </summary>
         private string macrosPath = "";
 
-        #region EPLAN
+        #region EPLAN - переменные
         /// <summary>
         /// Текущий проект
         /// </summary>
@@ -76,8 +81,7 @@ namespace EasyEPlanner.ImportICPProject
         private readonly SymbolLibrary BMK;
         #endregion
 
-
-        #region constants
+        #region Константы
         /// <summary>
         /// Lua-файл обработчик
         /// </summary>
@@ -160,8 +164,7 @@ namespace EasyEPlanner.ImportICPProject
         private static readonly int WOGO_DEFAULT_NODE_N = 352;
         #endregion
 
-
-        public ICPImporter(Project project, string WAGOFileName)
+        public ProjectImporter(Project project, string WAGOFileName)
         {
             this.project = project;
             SPECIAL = new SymbolLibrary(project, "SPECIAL");
@@ -216,19 +219,21 @@ namespace EasyEPlanner.ImportICPProject
             int nodeN;
             switch (nodeType)
             {
-                // case 0: // 750-315 - RS-485               - UNDEFINDE MACROS
-                // case 1: // 750-815 - RS-485 (Programmable - UNDEFINDE MACROS
-
+                case 0: // 750-315 - RS-485               - UNDEFINDE MACROS
                 case 2: // 750-341 - Ethernet coupler 
                     nodeN = TYPE_2_NODE_N;
+                    currentNodeIsCoupler = true;
                     break;
 
+                case 1: // 750-815 - RS-485 (Programmable - UNDEFINDE MACROS
                 case 3: // 750-841 - Ethernet (Programmable)
                     nodeN = TYPE_3_NODE_N;
+                    currentNodeIsCoupler = false;
                     break;
 
                 default:
                     nodeN = WOGO_DEFAULT_NODE_N;
+                    currentNodeIsCoupler = false;
                     break;
             }
 
@@ -304,8 +309,8 @@ namespace EasyEPlanner.ImportICPProject
                     PAGE_HEIGHT - Y_OFFSET - (module_index - 1) / MODULES_IN_LINE * (MODULES_LINE_OFFSET + MODULE_HEIGHT)),
                 Insert.MoveKind.Absolute);
 
-
-            var moduleNumber = node_index * 100 + module_index;
+            // Если узел - каплер, то нумерация модулей начинается с 0
+            var moduleNumber = node_index * 100 + module_index - (currentNodeIsCoupler ? 1 : 0);
             foreach (var module in objects.OfType<PLC>())
             {
                 nameService.SetVisibleNameAndAdjustFullName(

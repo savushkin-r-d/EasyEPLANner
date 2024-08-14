@@ -258,6 +258,10 @@ namespace EasyEPlanner
             return "";
         }
 
+        /// <summary>
+        /// Путь к Eplan-макросам модулей ввода-вывода
+        /// </summary>
+        [ExcludeFromCodeCoverage]
         public string GetWagoMacrosPath()
         {
             try

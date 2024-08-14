@@ -176,7 +176,7 @@
     <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
-    <Compile Include="ImportICPProject\ICPImporter.cs" />
+    <Compile Include="ProjectImport\ProjectImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
     <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
