@@ -770,7 +770,8 @@ namespace TechObject
             else
             {
                 errors += Equipment.Check();
-                errors += attachedObjects.Check();
+                errors += attachedObjects.CheckInit();
+                errors += attachedObjects.CheckBindingToUnit();
             }
 
             return errors;
