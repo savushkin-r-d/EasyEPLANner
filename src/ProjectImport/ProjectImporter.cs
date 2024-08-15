@@ -241,11 +241,10 @@ namespace EasyEPlanner.ProjectImport
                 Insert.MoveKind.Absolute);
 
 
-            var node = macroObjects?.OfType<PLC>()?.FirstOrDefault();
+            var node = macroObjects?.OfType<PLC>().FirstOrDefault();
             if (node != null)
             {
                 var nodeNumber = nodeIndex * 100;
-                var nameService = new NameService();
 
                 currentNodeWidth = node.Properties.RECTANGLE_WIDTH;
                 try
@@ -318,7 +317,7 @@ namespace EasyEPlanner.ProjectImport
                     PAGE_HEIGHT - Y_OFFSET - (moduleIndex - 1) / MODULES_IN_LINE * (MODULES_LINE_OFFSET + MODULE_HEIGHT)),
                 Insert.MoveKind.Absolute);
 
-            var module = objects?.OfType<PLC>()?.FirstOrDefault();
+            var module = objects?.OfType<PLC>().FirstOrDefault();
             if (module != null)
             {
                 // Если узел - каплер, то нумерация модулей начинается с 0
