@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -69,16 +70,6 @@ namespace EasyEPlanner.ProjectImport
         /// Объект для изменения имени функции
         /// </summary>
         private readonly NameService nameService = new NameService();
-
-        /// <summary>
-        /// Страница символов SPECIAL
-        /// </summary>
-        private readonly SymbolLibrary SPECIAL;
-
-        /// <summary>
-        /// Страница символов BMK
-        /// </summary>
-        private readonly SymbolLibrary BMK;
         #endregion
 
         #region Константы
@@ -167,8 +158,6 @@ namespace EasyEPlanner.ProjectImport
         public ProjectImporter(Project project, string WAGOFileName)
         {
             this.project = project;
-            SPECIAL = new SymbolLibrary(project, "SPECIAL");
-            BMK = new SymbolLibrary(project, "Bmk");
 
             lua = new Lua();
 
@@ -182,7 +171,9 @@ namespace EasyEPlanner.ProjectImport
             lua.DoFile(WAGOFileName);   
         }
 
-
+        /// <summary>
+        /// Функция импорта - запускает скрипт LUA
+        /// </summary>
         public void Import()
         {
             macrosPath = ProjectManager.GetInstance().GetWagoMacrosPath();
@@ -205,10 +196,15 @@ namespace EasyEPlanner.ProjectImport
             Logs.EnableButtons();
         }
 
-
-        public bool ImportNode(int nodeType, int nodeAddress, string IP)
+        /// <summary>
+        /// Импортировать узел (добавляет Макрос на ФСА)
+        /// </summary>
+        /// <param name="nodeType">Тип узла в wprg4.exe</param>
+        /// <param name="nodeIndex">Порядковый номер узла</param>
+        /// <param name="IP">IP-адрес узла</param>
+        public bool ImportNode(int nodeType, int nodeIndex, string IP)
         {   
-            pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = $"{CAB_NAME}{nodeAddress}";
+            pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = $"{CAB_NAME}{nodeIndex}";
 
             currentPage = new Page();
 
@@ -245,9 +241,10 @@ namespace EasyEPlanner.ProjectImport
                 Insert.MoveKind.Absolute);
 
 
-            var nodeNumber = nodeAddress * 100;
-            foreach (var node in macroObjects?.OfType<PLC>())
+            var node = macroObjects?.OfType<PLC>()?.FirstOrDefault();
+            if (node != null)
             {
+                var nodeNumber = nodeIndex * 100;
                 var nameService = new NameService();
 
                 currentNodeWidth = node.Properties.RECTANGLE_WIDTH;
@@ -268,15 +265,21 @@ namespace EasyEPlanner.ProjectImport
                         FUNC_CODE = "A",
                         FUNC_COUNTER = nodeNumber,
                     }, $"-A{nodeNumber}");
+
+                Logs.AddMessage($"\n\n");
+                Logs.AddMessage($"Импортирован узел -A{nodeNumber} [ 750-{nodeN} ]. Модули:\n");
+
+                return true;
             }
 
-            Logs.AddMessage($"\n\n");
-            Logs.AddMessage($"Импортирован узел -A{nodeNumber} [ 750-{nodeN} ]. Модули:\n");
-            
-            return true;
+            return false;
         }
 
-
+        /// <summary>
+        /// Открыть макрос WAGO по номеру модуля
+        /// </summary>
+        /// <param name="number">Идентификатор модуля</param>
+        /// <returns>Макрос</returns>
         private WindowMacro OpenMacro(int number)
         {
             try
@@ -297,7 +300,13 @@ namespace EasyEPlanner.ProjectImport
             return new WindowMacro();
         }
 
-        public bool ImportModule(int moduleN, int node_index, int module_index)
+        /// <summary>
+        /// Импортировать модуль (добавляет макрос на ФСА)
+        /// </summary>
+        /// <param name="moduleN">Идентификатор модуля</param>
+        /// <param name="nodeIndex">Порядковый номер узла</param>
+        /// <param name="moduleIndex">Порядковый номер модуля в шине</param>
+        public bool ImportModule(int moduleN, int nodeIndex, int moduleIndex)
         {
             var macro = OpenMacro(moduleN);
 
@@ -305,14 +314,16 @@ namespace EasyEPlanner.ProjectImport
                 Insert.WindowMacro(macro,
                 OVERVIEW, MACRO_VARIANT_E, currentPage,
                 new PointD(
-                    X_OFFSET + currentNodeWidth + (module_index - 1) % MODULES_IN_LINE * MODULE_WIDTH,
-                    PAGE_HEIGHT - Y_OFFSET - (module_index - 1) / MODULES_IN_LINE * (MODULES_LINE_OFFSET + MODULE_HEIGHT)),
+                    X_OFFSET + currentNodeWidth + (moduleIndex - 1) % MODULES_IN_LINE * MODULE_WIDTH,
+                    PAGE_HEIGHT - Y_OFFSET - (moduleIndex - 1) / MODULES_IN_LINE * (MODULES_LINE_OFFSET + MODULE_HEIGHT)),
                 Insert.MoveKind.Absolute);
 
-            // Если узел - каплер, то нумерация модулей начинается с 0
-            var moduleNumber = node_index * 100 + module_index - (currentNodeIsCoupler ? 1 : 0);
-            foreach (var module in objects.OfType<PLC>())
+            var module = objects?.OfType<PLC>()?.FirstOrDefault();
+            if (module != null)
             {
+                // Если узел - каплер, то нумерация модулей начинается с 0
+                var moduleNumber = nodeIndex * 100 + moduleIndex - (currentNodeIsCoupler ? 1 : 0);
+
                 nameService.SetVisibleNameAndAdjustFullName(
                     currentPage, module,
                     new FunctionPropertyList()
@@ -320,12 +331,15 @@ namespace EasyEPlanner.ProjectImport
                         FUNC_CODE = "A",
                         FUNC_COUNTER = moduleNumber,
                     }, $"-A{moduleNumber}");
+
+                var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
+
+                Logs.AddMessage($"\t-A{moduleNumber} [ {moduleInfo.Name} ] {(isStub ? "Неопределенный модуль" : moduleInfo.Description)};\n");
+                
+                return true;
             }
 
-            var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
-
-            Logs.AddMessage($"       -A{moduleNumber} [ {moduleInfo.Name} ] { (isStub ? "Неопределенный модуль" : moduleInfo.Description)};\n");
-            return true;
+            return false;
         }
     }
 }

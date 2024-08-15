@@ -15,9 +15,9 @@ using System.Windows.Forms;
 namespace EasyEPlanner
 {
     [ExcludeFromCodeCoverage]
-    public class ImportICPProjectsAction : IEplAction
+    public class ImportIcpProjectsAction : IEplAction
     {
-        ~ImportICPProjectsAction() { }
+        ~ImportIcpProjectsAction() { }
 
         public bool Execute(ActionCallingContext oActionCallingContext)
         {
@@ -43,7 +43,7 @@ namespace EasyEPlanner
                     return true; 
                 }
 
-                var importer = new ProjectImport.ProjectImporter(currentProject, openFileDialog.FileName);
+                var importer = new ProjectImporter(currentProject, openFileDialog.FileName);
                 importer.Import();
             }
             catch (Exception ex)
@@ -56,7 +56,7 @@ namespace EasyEPlanner
 
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
-            Name = "ImportICPProjects";
+            Name = "ImportIcpProjects";
             Ordinal = 30;
 
             return true;
