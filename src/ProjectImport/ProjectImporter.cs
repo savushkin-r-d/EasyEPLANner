@@ -36,11 +36,6 @@ namespace EasyEPlanner.ProjectImport
         private int currentNodeWidth;
 
         /// <summary>
-        /// Текущий импортируемый узел - каплер
-        /// </summary>
-        private bool currentNodeIsCoupler;
-
-        /// <summary>
         /// Путь каталога к макросам
         /// </summary>
         private string macrosPath = "";
@@ -218,18 +213,15 @@ namespace EasyEPlanner.ProjectImport
                 case 0: // 750-315 - RS-485               - UNDEFINDE MACROS
                 case 2: // 750-341 - Ethernet coupler 
                     nodeN = TYPE_2_NODE_N;
-                    currentNodeIsCoupler = true;
                     break;
 
                 case 1: // 750-815 - RS-485 (Programmable - UNDEFINDE MACROS
                 case 3: // 750-841 - Ethernet (Programmable)
                     nodeN = TYPE_3_NODE_N;
-                    currentNodeIsCoupler = false;
                     break;
 
                 default:
                     nodeN = WOGO_DEFAULT_NODE_N;
-                    currentNodeIsCoupler = false;
                     break;
             }
 
@@ -320,8 +312,7 @@ namespace EasyEPlanner.ProjectImport
             var module = objects?.OfType<PLC>().FirstOrDefault();
             if (module != null)
             {
-                // Если узел - каплер, то нумерация модулей начинается с 0
-                var moduleNumber = nodeIndex * 100 + moduleIndex - (currentNodeIsCoupler ? 1 : 0);
+                var moduleNumber = nodeIndex * 100 + moduleIndex;
 
                 nameService.SetVisibleNameAndAdjustFullName(
                     currentPage, module,
