@@ -7,6 +7,7 @@ using Eplan.EplApi.HEServices;
 using Eplan.EplApi.HEServices.Exceptions;
 using IO;
 using LuaInterface;
+using PInvoke;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -163,7 +165,14 @@ namespace EasyEPlanner.ProjectImport
                 typeof(Logs).GetMethod(nameof(Logs.SetProgress)));
 
             lua.DoString(script);
-            lua.DoFile(WAGOFileName);   
+
+            var mainWago = new StreamReader(WAGOFileName, EncodingDetector.DetectFileEncoding(WAGOFileName), true).ReadToEnd();
+            // Fix main.wago.plua '}'
+            mainWago = Regex.Replace(mainWago, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},");
+            // Remove unnecessary module
+            mainWago = Regex.Replace(mainWago, "require 'sys_wago'", "");
+
+            lua.DoString(mainWago);   
         }
 
         /// <summary>
