@@ -168,9 +168,9 @@ namespace EasyEPlanner.ProjectImport
 
             var mainWago = new StreamReader(WAGOFileName, EncodingDetector.DetectFileEncoding(WAGOFileName), true).ReadToEnd();
             // Fix main.wago.plua '}'
-            mainWago = Regex.Replace(mainWago, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},");
+            mainWago = Regex.Replace(mainWago, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
             // Remove unnecessary module
-            mainWago = Regex.Replace(mainWago, "require 'sys_wago'", "");
+            mainWago = Regex.Replace(mainWago, "require 'sys_wago'", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
             lua.DoString(mainWago);   
         }
