@@ -91,14 +91,34 @@ namespace EasyEPlanner.ProjectImport
         private const string PLC_BUS = "Шина ПЛК";
 
         /// <summary>
-        /// Тип страницы для вставки макроса
+        /// Тип страницы для вставки макроса "Обзор"
+        /// </summary>
+        private static readonly DocumentTypeManager.DocumentType OVERVIEW_DOC = DocumentTypeManager.DocumentType.Overview;
+
+        /// <summary>
+        /// Тип представления макроса "Обзор"
         /// </summary>
         private static readonly WindowMacro.Enums.RepresentationType OVERVIEW = WindowMacro.Enums.RepresentationType.Overview;
+
+        /// <summary>
+        /// Тип страницы "Многополосная схема соединения"
+        /// </summary>
+        private static readonly DocumentTypeManager.DocumentType CIRCUIT_DOC = DocumentTypeManager.DocumentType.Circuit;
+
+        /// <summary>
+        /// Тип представления макроса "Многополосный"
+        /// </summary>
+        private static readonly WindowMacro.Enums.RepresentationType MULTILINE = WindowMacro.Enums.RepresentationType.MultiLine;
 
         /// <summary>
         /// Вариант Е макроса - модуль на Overview
         /// </summary>
         private static readonly int MACRO_VARIANT_E = 4;
+
+        /// <summary>
+        /// Вариант A макроса - клеммы на ...
+        /// </summary>
+        private static readonly int MACRO_VARIANT_A = 0;
 
         /// <summary>
         /// Начальный отступ слева страницы для вставки узла и модулей (мм)
@@ -212,7 +232,7 @@ namespace EasyEPlanner.ProjectImport
 
             currentPage = new Page();
 
-            currentPage.Create(project, DocumentTypeManager.DocumentType.Overview, pageProperties);
+            currentPage.Create(project, OVERVIEW_DOC, pageProperties);
             currentPage.LockObject();
             currentPage.Properties.PAGE_NOMINATIOMN = PLC_BUS;
 
@@ -309,9 +329,9 @@ namespace EasyEPlanner.ProjectImport
         public bool ImportModule(int moduleN, int nodeIndex, int moduleIndex)
         {
             var macro = OpenMacro(moduleN);
+            var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
 
-            StorableObject[] objects =
-                Insert.WindowMacro(macro,
+            var objects = Insert.WindowMacro(macro,
                 OVERVIEW, MACRO_VARIANT_E, currentPage,
                 new PointD(
                     X_OFFSET + currentNodeWidth + (moduleIndex - 1) % MODULES_IN_LINE * MODULE_WIDTH,
@@ -331,10 +351,46 @@ namespace EasyEPlanner.ProjectImport
                         FUNC_COUNTER = moduleNumber,
                     }, $"-A{moduleNumber}");
 
-                var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
+                if (moduleN != 600) // exclude end module
+                    CreatePageWithModuleBinding(macro, moduleInfo, moduleNumber);
 
                 Logs.AddMessage($"\t-A{moduleNumber} [ {moduleInfo.Name} ] {(isStub ? "Неопределенный модуль" : moduleInfo.Description)};\n");
                 
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool CreatePageWithModuleBinding(WindowMacro macro, IOModuleInfo moduleInfo, int moduleNumber)
+        {
+            var page = new Page();
+
+            page.Create(project, CIRCUIT_DOC, pageProperties);
+            page.LockObject();
+            page.Properties.PAGE_NOMINATIOMN = $"{moduleInfo.TypeName}. {moduleInfo.Number}";
+
+            // Rename Number of page (Перенос страницы Шины ПЛК в конец)
+            var name = currentPage.Properties.PAGE_NAME;
+            page.Properties.PAGE_NAME = name;
+            currentPage.Properties.PAGE_NAME = name + 1;
+
+            var objects = Insert.WindowMacro(macro,
+               MULTILINE, MACRO_VARIANT_A, page,
+               new PointD(X_OFFSET, PAGE_HEIGHT - Y_OFFSET),
+               Insert.MoveKind.Absolute);
+
+            var moduleClamp = objects?.OfType<PLC>().FirstOrDefault();
+            if (moduleClamp != null)
+            {
+                nameService.SetVisibleNameAndAdjustFullName(
+                    currentPage, moduleClamp,
+                    new FunctionPropertyList()
+                    {
+                        FUNC_CODE = "A",
+                        FUNC_COUNTER = moduleNumber,
+                    }, $"-A{moduleNumber}");
+
                 return true;
             }
 
