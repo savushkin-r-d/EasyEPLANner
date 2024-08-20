@@ -1,4 +1,5 @@
 ﻿using Editor;
+using EplanDevice;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,11 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             Parameter = null;
+
+            // В случае привязки нескольких устройств (с ФСА) оставляем последнее 
+            newValue = newValue.Trim().Split(' ').LastOrDefault(); 
+            newValue = string.IsNullOrEmpty(newValue) ? "-1" : newValue;
+
             return base.SetNewValue(newValue);
         }
 
@@ -107,6 +113,19 @@ namespace TechObject
         /// Для установки параметра использовать только номер параметра
         /// </summary>
         public bool OnlyParameterNumber { get; private set; }
+
+        public override bool IsDrawOnEplanPage => true;
+
+        public override List<DrawInfo> GetObjectToDrawOnEplanPage()
+        {
+            if (deviceManager.GetDeviceByEplanName(Value) is IDevice dev &&
+                dev.Description != CommonConst.Cap)
+            {
+                return new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev) };
+            }
+
+            return new List<DrawInfo>() { };
+        }
 
         public override string[] DisplayText
         {

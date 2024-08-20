@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Editor;
 using EplanDevice;
 using Moq;
 using NUnit.Framework;
@@ -67,6 +68,79 @@ namespace TechObjectTests
                 Assert.AreEqual("10", actionParameter.EditText[1]);
                 Assert.IsNull(actionParameter.Parameter);
             });
+        }
+
+        [Test]
+        public void ModifyDevName()
+        {
+            string OBJ = nameof(OBJ);
+
+            var dev1 = new V($"{OBJ}1V1", $"+{OBJ}1-V1", "", 1, OBJ, 1, "");
+            var dev2 = new V($"{OBJ}2V1", $"+{OBJ}2-V1", "", 1, OBJ, 2, "");
+
+            var deviceManager = Mock.Of<IDeviceManager>(m =>
+                m.GetDeviceByEplanName($"{OBJ}1V1") == dev1 &&
+                m.GetDeviceByEplanName($"{OBJ}2V1") == dev2 &&
+                m.GetDeviceIndex($"{OBJ}1V1") == 0 &&
+                m.GetDeviceIndex($"{OBJ}2V1") == 1 &&
+                m.GetDeviceByIndex(0) == dev1 &&
+                m.GetDeviceByIndex(1) == dev2 &&
+                m.GetModifiedDevice(dev1, It.IsAny<IDevModifyOptions>()) == dev2);
+
+            var actionParameter = new ActionParameter("action_parameter", "параметр");
+            
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
+            actionParameter.SetNewValue($"{OBJ}1V1");
+            actionParameter.ModifyDevNames(null); // modify by deviceManager(Mock).GetModifiedDevice()
+
+            Assert.AreEqual($"{OBJ}2V1", actionParameter.Value);
+
+            typeof(BaseParameter).GetField("deviceManager",
+               System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+               .SetValue(null, DeviceManager.GetInstance());
+        }
+
+        [Test]
+        public void IsDrawToEplanPage_True()
+        {
+            Assert.IsTrue(new ActionParameter("", "").IsDrawOnEplanPage);
+        }
+
+        [Test]
+        public void IsDrawToEplanPage_False() 
+        {
+            var actionParameter = new ActionParameter("ap", "ap");
+
+            var dev = new V("OBJ1V1", "+OBJ1-V1", "", 1, "OBJ", 1, "");
+
+            var deviceManager = Mock.Of<IDeviceManager>(m =>
+                m.GetDeviceByEplanName("OBJ1V1") == dev &&
+                m.GetDeviceIndex("OBJ1V1") == 1 &&
+                m.GetDeviceByIndex(1) == dev);
+
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
+
+            Assert.Multiple(() =>
+            {
+                actionParameter.SetNewValue("OBJ1V1");
+                var res = actionParameter.GetObjectToDrawOnEplanPage();
+                Assert.AreEqual(dev, res.FirstOrDefault().DrawingDevice);
+                Assert.AreEqual(DrawInfo.Style.GREEN_BOX, res.FirstOrDefault().DrawingStyle);
+
+                actionParameter.SetNewValue("");
+                res = actionParameter.GetObjectToDrawOnEplanPage();
+                CollectionAssert.IsEmpty(res);
+            });
+
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, DeviceManager.GetInstance());
         }
     }
 }
