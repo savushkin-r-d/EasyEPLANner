@@ -470,7 +470,7 @@
     <None Include="Lua\sys_shared_initializer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_wago_modules.lua">
+    <None Include="Lua\sys_wago_modules_importer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\main.ico" />
