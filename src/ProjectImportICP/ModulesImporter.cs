@@ -22,10 +22,54 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace EasyEPlanner.ProjectImport
+namespace EasyEPlanner.ProjectImportICP
 {
+    public interface IModulesImporter
+    {
+        /// <summary>
+        /// Функция импорта - запускает скрипт LUA
+        /// </summary>
+        void Import();
+
+        /// <summary>
+        /// [[ LuaMember ]] вызывается из Lua
+        /// 
+        /// Импортировать узел (добавляет Макрос на ФСА)
+        /// </summary>
+        /// <param name="nodeType">Тип узла в wprg4.exe</param>
+        /// <param name="nodeIndex">Порядковый номер узла</param>
+        /// <param name="IP">IP-адрес узла</param>
+        bool ImportNode(int nodeType, int nodeIndex, string IP);
+
+        /// <summary>
+        /// [[ LuaMember ]] вызывается из Lua
+        /// 
+        /// Импортировать модуль (добавляет макрос на ФСА)
+        /// </summary>
+        /// <param name="moduleN">Идентификатор модуля</param>
+        /// <param name="nodeIndex">Порядковый номер узла</param>
+        /// <param name="moduleIndex">Порядковый номер модуля в шине</param>
+        bool ImportModule(int moduleN, int nodeIndex, int moduleIndex);
+        
+        /// <summary>
+        /// Создать страницу с клеммами модуля ввода-вывода
+        /// </summary>
+        /// <param name="macro">Макрос модуля</param>
+        /// <param name="moduleInfo">Информация о модуле</param>
+        /// <param name="moduleNumber">Номер модуля ввода вывода в EPLAN (-A101)</param>
+        /// <returns>Список функций клемм модуля</returns>
+        List<Terminal> CreatePageWithModuleClamps(WindowMacro macro, IOModuleInfo moduleInfo, int moduleNumber);
+
+        /// <summary>
+        /// Описание импортированных модулей ввода-вывода
+        /// [#узел](список модулей)
+        /// </summary>
+        Dictionary<int, List<ImportModule>> ImportModules { get; }
+    }
+
+
     [ExcludeFromCodeCoverage]
-    public class ProjectImporter
+    public class ModulesImporter : IModulesImporter
     {
         /// <summary>
         /// Lua state
@@ -73,7 +117,7 @@ namespace EasyEPlanner.ProjectImport
         /// <summary>
         /// Lua-файл обработчик
         /// </summary>
-        private static readonly string LUA_FILE_HANDLER = "sys_wago.lua";
+        private static readonly string LUA_FILE_HANDLER = "sys_wago_modules_importer.lua";
 
         /// <summary>
         /// Название корневой страницы
@@ -172,7 +216,7 @@ namespace EasyEPlanner.ProjectImport
         private static readonly int WOGO_DEFAULT_NODE_N = 352;
         #endregion
 
-        public ProjectImporter(Project project, string WAGOFileName)
+        public ModulesImporter(Project project, string data)
         {
             this.project = project;
 
@@ -185,19 +229,10 @@ namespace EasyEPlanner.ProjectImport
                 typeof(Logs).GetMethod(nameof(Logs.SetProgress)));
 
             lua.DoString(script);
-
-            var mainWago = new StreamReader(WAGOFileName, EncodingDetector.DetectFileEncoding(WAGOFileName), true).ReadToEnd();
-            // Fix main.wago.plua '}'
-            mainWago = Regex.Replace(mainWago, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
-            // Remove unnecessary module
-            mainWago = Regex.Replace(mainWago, "require 'sys_wago'", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
-
-            lua.DoString(mainWago);   
+            lua.DoString(data);   
         }
 
-        /// <summary>
-        /// Функция импорта - запускает скрипт LUA
-        /// </summary>
+
         public void Import()
         {
             macrosPath = ProjectManager.GetInstance().GetWagoMacrosPath();
@@ -220,12 +255,10 @@ namespace EasyEPlanner.ProjectImport
             Logs.EnableButtons();
         }
 
-        /// <summary>
-        /// Импортировать узел (добавляет Макрос на ФСА)
-        /// </summary>
-        /// <param name="nodeType">Тип узла в wprg4.exe</param>
-        /// <param name="nodeIndex">Порядковый номер узла</param>
-        /// <param name="IP">IP-адрес узла</param>
+
+        public Dictionary<int, List<ImportModule>> ImportModules { get; private set; } = new Dictionary<int, List<ImportModule>>();
+
+
         public bool ImportNode(int nodeType, int nodeIndex, string IP)
         {   
             pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = $"{CAB_NAME}{nodeIndex}";
@@ -286,6 +319,8 @@ namespace EasyEPlanner.ProjectImport
                         FUNC_COUNTER = nodeNumber,
                     }, $"-A{nodeNumber}");
 
+                ImportModules[nodeIndex] = new List<ImportModule>();
+
                 Logs.AddMessage($"\n\n");
                 Logs.AddMessage($"Импортирован узел -A{nodeNumber} [ 750-{nodeN} ]. Модули:\n");
 
@@ -320,12 +355,7 @@ namespace EasyEPlanner.ProjectImport
             return new WindowMacro();
         }
 
-        /// <summary>
-        /// Импортировать модуль (добавляет макрос на ФСА)
-        /// </summary>
-        /// <param name="moduleN">Идентификатор модуля</param>
-        /// <param name="nodeIndex">Порядковый номер узла</param>
-        /// <param name="moduleIndex">Порядковый номер модуля в шине</param>
+
         public bool ImportModule(int moduleN, int nodeIndex, int moduleIndex)
         {
             var macro = OpenMacro(moduleN);
@@ -352,7 +382,10 @@ namespace EasyEPlanner.ProjectImport
                     }, $"-A{moduleNumber}");
 
                 if (moduleN != 600) // exclude end module
-                    CreatePageWithModuleBinding(macro, moduleInfo, moduleNumber);
+                {
+                    var clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
+                    ImportModules[nodeIndex].Add(new ImportModule(module, clamps, moduleInfo));
+                }
 
                 Logs.AddMessage($"\t-A{moduleNumber} [ {moduleInfo.Name} ] {(isStub ? "Неопределенный модуль" : moduleInfo.Description)};\n");
                 
@@ -362,7 +395,8 @@ namespace EasyEPlanner.ProjectImport
             return false;
         }
 
-        public bool CreatePageWithModuleBinding(WindowMacro macro, IOModuleInfo moduleInfo, int moduleNumber)
+
+        public List<Terminal> CreatePageWithModuleClamps(WindowMacro macro, IOModuleInfo moduleInfo, int moduleNumber)
         {
             var page = new Page();
 
@@ -380,21 +414,35 @@ namespace EasyEPlanner.ProjectImport
                new PointD(X_OFFSET, PAGE_HEIGHT - Y_OFFSET),
                Insert.MoveKind.Absolute);
 
-            var moduleClamp = objects?.OfType<PLC>().FirstOrDefault();
-            if (moduleClamp != null)
+            var module = objects?.OfType<PLC>().FirstOrDefault();
+            if (module != null)
             {
-                nameService.SetVisibleNameAndAdjustFullName(
-                    currentPage, moduleClamp,
-                    new FunctionPropertyList()
-                    {
-                        FUNC_CODE = "A",
-                        FUNC_COUNTER = moduleNumber,
-                    }, $"-A{moduleNumber}");
+                var moduleNameProperties = new FunctionPropertyList()
+                {
+                    FUNC_CODE = "A",
+                    FUNC_COUNTER = moduleNumber,
+                };
 
-                return true;
+                nameService.SetVisibleNameAndAdjustFullName(currentPage, module, moduleNameProperties, $"-A{moduleNumber}");
+
+                try
+                {
+                    module.Properties.FUNC_MAINFUNCTION = false;
+                }
+                catch
+                {
+                    Logs.AddMessage($"\tНе удалось отключить \"Главную функцию\" на клеммах модуля -A{moduleNumber}. Проверьте данное свойство вручную.\n"); 
+                }
+
+
+                var clamps = objects?.OfType<Terminal>().ToList();
+
+                clamps.ForEach(c => nameService.SetVisibleNameAndAdjustFullName(currentPage, c, moduleNameProperties, $"-A{moduleNumber}"));
+
+                return clamps;
             }
 
-            return false;
+            return Enumerable.Empty<Terminal>().ToList();
         }
     }
 }

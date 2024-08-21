@@ -1,6 +1,5 @@
-﻿function Import(importer)
-    import_nodes(importer)
-
+﻿function Import(modulesImporter)
+    import_nodes_and_modules(modulesImporter)
     Progress(100);
     return 0;
 end

@@ -1,23 +1,25 @@
-﻿using EasyEPlanner.ProjectImport;
+﻿using EasyEPlanner.ProjectImportICP;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.EObjects;
 using Eplan.EplApi.DataModel.MasterData;
+using LuaInterface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
     [ExcludeFromCodeCoverage]
-    public class ImportIcpProjectsAction : IEplAction
+    public class ImportIcpWagoModulesAction : IEplAction
     {
-        ~ImportIcpProjectsAction() { }
+        ~ImportIcpWagoModulesAction() { }
 
         public bool Execute(ActionCallingContext oActionCallingContext)
         {
@@ -34,6 +36,7 @@ namespace EasyEPlanner
 
                 var openFileDialog = new OpenFileDialog
                 {
+                    Title = "Открытие main.wago.plua",
                     Filter = "main.wago.plua|main.wago.plua",
                     Multiselect = false
                 };
@@ -43,8 +46,14 @@ namespace EasyEPlanner
                     return true; 
                 }
 
-                var importer = new ProjectImporter(currentProject, openFileDialog.FileName);
-                importer.Import();
+                var data = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true).ReadToEnd();
+                // Fix main.wago.plua '}'
+                data = Regex.Replace(data, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
+                // Remove unnecessary lua-module
+                data = Regex.Replace(data, "require 'sys_wago'", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+                var modulesImporter = new ModulesImporter(currentProject, data);
+                modulesImporter.Import();
             }
             catch (Exception ex)
             {
@@ -56,7 +65,7 @@ namespace EasyEPlanner
 
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
-            Name = "ImportIcpProjects";
+            Name = "ImportIcpWagoModules";
             Ordinal = 30;
 
             return true;
