@@ -71,6 +71,12 @@ namespace EasyEPlanner
                 false, false);
 
             menuID = oMenu.AddMenuItem(
+                "Импорт устройств ICP-CON проекта",
+                "ImportIcpWagoDevices",
+                "Импорт устройств ICP-CON проекта", menuID, 1,
+                false, false);
+
+            menuID = oMenu.AddMenuItem(
                 "Обновления", nameof(OpenUpdater),
                 "", menuID, 1, true, false);
 

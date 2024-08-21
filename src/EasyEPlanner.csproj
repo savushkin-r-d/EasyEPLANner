@@ -114,6 +114,8 @@
     <Compile Include="ColumnNode.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
+    <Compile Include="Main\ImportIcpWagoDevicesAction.cs" />
+    <Compile Include="ProjectImportICP\DevicesImporter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IIOChannel.cs" />
     <Compile Include="Device\IIODevice.cs" />
@@ -176,6 +178,7 @@
     <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
+    <Compile Include="ProjectImportICP\ImportDevice.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
     <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
@@ -465,6 +468,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_shared_initializer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_wago_device_importer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\main.ico" />
