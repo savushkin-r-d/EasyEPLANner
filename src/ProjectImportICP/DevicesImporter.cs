@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -146,6 +147,11 @@ namespace EasyEPlanner.ProjectImportICP
         /// Количество устройств в строке
         /// </summary>
         private static readonly int DEVICES_IN_ROW = 10;
+
+        /// <summary>
+        /// Количество устройств в строке
+        /// </summary>
+        private static readonly int DEVICES_IN_COLUMN = 7;
 
         /// <summary>
         /// Смещение по X полного названия устройства из проекта ICP-CON
@@ -335,13 +341,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="signals">Список сигналов</param>
         private void GenerateSignalsPage(List<ImportDevice> signals)
         {
-            var page = new Page();
-
-            pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = string.Empty;
-
-            page.Create(project, DocumentTypeManager.DocumentType.ProcessAndInstrumentationDiagram, pageProperties);
-            page.LockObject();
-            page.Properties.PAGE_NOMINATIOMN = SIGNALS_PAGE_NAME;
+            var page = CreatePage(SIGNALS_PAGE_NAME);
 
             var X = X_START;
             var Y = Y_START;
@@ -385,6 +385,7 @@ namespace EasyEPlanner.ProjectImportICP
 
                 Y -= SIGNAL_Y_OFFSET;
 
+                // Проверка количества сигналов в колонке
                 if (Y == Y_START - SIGNAL_Y_OFFSET * SIGNALS_IN_COLUMN)
                 {
                     X += SIGNAL_X_OFFSET;
@@ -401,14 +402,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="objectName">Название объекта</param>
         private void GenerateDevicesPage(List<ImportDevice> devices, string objectName)
         {
-            var page = new Page();
-
-            pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = objectName;
-
-            page.Create(project, DocumentTypeManager.DocumentType.ProcessAndInstrumentationDiagram, pageProperties);
-            page.LockObject();
-            page.Properties.PAGE_NOMINATIOMN = $"{DEVICES_PAGE_NAME} {objectName}".Trim();
-
+            var page = CreatePage(DEVICES_PAGE_NAME, objectName);
 
             var X = X_START;
             var Y = Y_START;
@@ -446,12 +440,44 @@ namespace EasyEPlanner.ProjectImportICP
 
 
                 X += DEVICE_OFFSET;
+                
+                // Проверка на количество устройств в ряду
                 if (X == X_START + DEVICE_OFFSET * DEVICES_IN_ROW)
                 {
                     X = X_START;
                     Y -= DEVICE_OFFSET;
                 }
+
+                // Проверка на количество устройств в колонке
+                if (Y == Y_START - DEVICE_OFFSET * DEVICES_IN_COLUMN)
+                {
+                    X = X_START;
+                    Y = Y_START;
+
+                    // Create new page
+                    page = CreatePage(DEVICES_PAGE_NAME, objectName);
+                }
             }
+        }
+
+        
+        /// <summary>
+        /// Создать новую страницу
+        /// </summary>
+        /// <param name="name">Название</param>
+        /// <param name="location">Локация</param>
+        /// <returns></returns>
+        private Page CreatePage(string name, string location = "")
+        {
+            var page = new Page();
+
+            pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = location;
+
+            page.Create(project, DocumentTypeManager.DocumentType.ProcessAndInstrumentationDiagram, pageProperties);
+            page.LockObject();
+            page.Properties.PAGE_NOMINATIOMN = $"{name} {location}".Trim();
+
+            return page;
         }
     }
 }
