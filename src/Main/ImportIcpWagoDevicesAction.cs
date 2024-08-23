@@ -54,9 +54,11 @@ namespace EasyEPlanner.Main
 
                 // read main.wago.plua file data
                 var wagoData = new StreamReader(openWagoFileDialog.FileName, EncodingDetector.DetectFileEncoding(openWagoFileDialog.FileName), true).ReadToEnd();
-                // Fix main.wago.plua '}'
-                wagoData = Regex.Replace(wagoData, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
-                // Remove unnecessary lua-module
+
+                // Fix main.wago.plua file: add "," to table before "group_dev_ex"
+                wagoData = Regex.Replace(wagoData, @"}(?=(\r|\n|\r\n)\t*group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+                // Remove unnecessary lua-module 'sys_wago'
                 wagoData = Regex.Replace(wagoData, "require 'sys_wago'", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
                 // read *.ds4 file data
