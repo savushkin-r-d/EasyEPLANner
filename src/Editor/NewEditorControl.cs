@@ -571,7 +571,7 @@ namespace Editor
         /// <summary>
         /// Обработка изменений при редактировании.
         /// </summary>
-        private void HiglihtItems()
+        private void HighlightItems()
         {
             ProjectManager.GetInstance().RemoveHighLighting();
 
@@ -780,7 +780,7 @@ namespace Editor
                         editorTView.RefreshObject(item.Parent);
                     }
 
-                    HiglihtItems();
+                    HighlightItems();
                 }
             }
         }
@@ -836,7 +836,7 @@ namespace Editor
                 RefreshTree();
             }
 
-            HiglihtItems();
+            HighlightItems();
         }
 
         /// <summary>
@@ -862,7 +862,7 @@ namespace Editor
                         itemsHasMarkToCut = true;
                     }
 
-                    HiglihtItems();
+                    HighlightItems();
                     RefreshTree();
                     DisableNeededObjects(newItem.Parent.Items);
                 }
@@ -902,7 +902,7 @@ namespace Editor
                         RefreshTree();
                         DisableNeededObjects(treeViewItemsList.ToArray());
                     }
-                    HiglihtItems();
+                    HighlightItems();
                 }
             }
         }
@@ -928,7 +928,7 @@ namespace Editor
             if (isMove)
             {
                 editorTView.RefreshObjects(parent.Items);
-                HiglihtItems();
+                HighlightItems();
             }
 
             editorTView.SelectObjects(items);
@@ -955,7 +955,7 @@ namespace Editor
             if (isMove)
             {
                 editorTView.RefreshObjects(parent.Items);
-                HiglihtItems();
+                HighlightItems();
             }
             
             editorTView.SelectObjects(items);
@@ -1045,7 +1045,7 @@ namespace Editor
                 noOnChange = true;
                 editorTView.RefreshObject(item);
                 noOnChange = false;
-                HiglihtItems();
+                HighlightItems();
             }
         }
 
@@ -1066,7 +1066,7 @@ namespace Editor
                 editorTView.RefreshObject(item.Parent);
                 DisableNeededObjects(item.Parent.Items);
                 noOnChange = false;
-                HiglihtItems();
+                HighlightItems();
             }
         }
 
@@ -1524,7 +1524,6 @@ namespace Editor
                 {
                     DisableNeededObjects(item.Parent.Items);
                 }
-                HiglihtItems();
             }
 
             e.Cancel = true;
@@ -1569,11 +1568,13 @@ namespace Editor
                 ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
             }
 
-            HiglihtItems();
-
             editorTView.EndUpdate();
             editorTView.Focus();
+
+            HighlightItems();
         }
+
+
 
         /// <summary>
         /// Изменение ширины колонки и пересчет ширины другой колонки
