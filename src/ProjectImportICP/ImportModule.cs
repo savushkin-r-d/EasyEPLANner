@@ -32,7 +32,7 @@ namespace EasyEPlanner.ProjectImportICP
     [ExcludeFromCodeCoverage]
     public class ImportModule : IImportModule
     {
-        public ImportModule(PLC function, List<Terminal> clamps, IOModuleInfo moduleInfo)
+        public ImportModule(List<Terminal> clamps, IOModuleInfo moduleInfo)
         {
             foreach (var clamp in clamps)
             {
@@ -58,7 +58,6 @@ namespace EasyEPlanner.ProjectImportICP
                 }
             }
 
-            this.function = function;
             ModuleInfo = moduleInfo;
 
             addressSpace["AO"] = ModuleInfo.AOCount;
@@ -68,8 +67,6 @@ namespace EasyEPlanner.ProjectImportICP
         }
 
         private readonly Dictionary<string, int> addressSpace = new Dictionary<string, int>();
-
-        private readonly PLC function;
 
         private readonly Dictionary<int, Terminal> clamps = new Dictionary<int, Terminal>();
 
