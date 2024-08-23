@@ -135,12 +135,15 @@ namespace EasyEPlanner
 
         public override void OnStop()
         {
+
+            IsFinish = true;
             base.OnStop();
         }
 
         public void Stop()
         {
             IsFinish = true;
+            base.OnStop();
         }
 
         public bool IsFinish { get; set; } = false;

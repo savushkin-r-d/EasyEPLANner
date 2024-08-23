@@ -573,25 +573,19 @@ namespace Editor
         /// </summary>
         private void HiglihtItems()
         {
-            var drawInfoList = new List<DrawInfo>();
+            ProjectManager.GetInstance().RemoveHighLighting();
 
-            if (drawDev_toolStripButton.Checked)
-            {
-                //Отображение (подсветка) участвующих в режиме устройств на карте
-                //Eplan'a.
-                foreach (var itemDraw in GetActiveItems())
-                {
-                    if (drawDev_toolStripButton.Checked is false)
-                        continue;
+            if (drawDev_toolStripButton.Checked is false)
+                return;
 
-                    ProjectManager.GetInstance().RemoveHighLighting();
-                    if (itemDraw.IsDrawOnEplanPage)
-                        drawInfoList.AddRange(itemDraw.GetObjectToDrawOnEplanPage());
-                }
+            //Отображение (подсветка) участвующих в режиме устройств на карте
+            //Eplan'a.
+            var drawInfoList = GetActiveItems()
+                .Where(i => i.IsDrawOnEplanPage)
+                .SelectMany(i => i.GetObjectToDrawOnEplanPage())
+                .ToList();
 
-                ProjectManager.GetInstance().RemoveHighLighting();
-                ProjectManager.GetInstance().SetHighLighting(drawInfoList);
-            }
+            ProjectManager.GetInstance().SetHighlighting(drawInfoList);
         }
 
         /// <summary>
@@ -1095,7 +1089,7 @@ namespace Editor
                 {
                     if (item.IsDrawOnEplanPage)
                     {
-                        ProjectManager.GetInstance().SetHighLighting(
+                        ProjectManager.GetInstance().SetHighlighting(
                             item.GetObjectToDrawOnEplanPage());
                     }
                 }
@@ -1552,7 +1546,7 @@ namespace Editor
             // Активировать режим редактирования при выборе IAction: 
             // Раньше активировался только при изменении страницы в EPLAN
             if (item is IAction && Editable)
-                EProjectManager.GetInstance().StartEditModesWithDelay();
+                EProjectManager.GetInstance().StartEditModes();
 
             DFrm.CheckShown();
             if (edit_toolStripButton.Checked && DFrm.GetInstance().IsVisible() == true)
