@@ -49,7 +49,7 @@ namespace EasyEPlanner
                 var data = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true).ReadToEnd();
 
                 // Fix main.wago.plua file: add "," to table before "group_dev_ex"
-                data = Regex.Replace(data, @"}(?=(\r|\n|\r\n)\t+group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
+                data = Regex.Replace(data, @"}(?=(\r|\n|\r\n)\t*group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
                 
                 // Remove unnecessary lua-module 'sys_wago'
                 data = Regex.Replace(data, "require 'sys_wago'", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
