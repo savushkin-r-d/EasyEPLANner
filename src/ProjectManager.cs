@@ -521,6 +521,7 @@ namespace EasyEPlanner
         /// Отключить подсветку устройств
         /// </summary>
         /// <param name="isClosingProject">Флаг закрытия проекта</param>
+        [ExcludeFromCodeCoverage]
         public void RemoveHighLighting(bool isClosingProject = false)
         {
             foreach (var drawedObject in highlightedObjects.OfType<Eplan.EplApi.DataModel.Graphics.GraphicalPlacement>())
@@ -540,6 +541,7 @@ namespace EasyEPlanner
         /// Подсветка из нового редактора
         /// </summary>
         /// <param name="objectsToDraw"></param>
+        [ExcludeFromCodeCoverage]
         public void SetHighlighting(List<Editor.DrawInfo> objectsToDraw)
         {
             foreach (Editor.DrawInfo drawObj in objectsToDraw.Where(o => o.DrawingStyle != Editor.DrawInfo.Style.NO_DRAW ))
