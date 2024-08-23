@@ -295,7 +295,7 @@ namespace EasyEPlanner.ProjectImportICP
                 Insert.MoveKind.Absolute);
 
 
-            var node = macroObjects?.OfType<PLC>().FirstOrDefault();
+            var node = macroObjects.OfType<PLC>().FirstOrDefault();
             if (node != null)
             {
                 var nodeNumber = nodeIndex * 100;
@@ -368,7 +368,7 @@ namespace EasyEPlanner.ProjectImportICP
                     PAGE_HEIGHT - Y_OFFSET - (moduleIndex - 1) / MODULES_IN_LINE * (MODULES_LINE_OFFSET + MODULE_HEIGHT)),
                 Insert.MoveKind.Absolute);
 
-            var module = objects?.OfType<PLC>().FirstOrDefault();
+            var module = objects.OfType<PLC>().FirstOrDefault();
             if (module != null)
             {
                 var moduleNumber = nodeIndex * 100 + moduleIndex;
