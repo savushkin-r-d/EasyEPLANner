@@ -60,7 +60,7 @@ namespace EasyEPlanner
         {
             if (selectInteractionWhileEditModes != null)
             {
-                selectInteractionWhileEditModes.Stop();
+                selectInteractionWhileEditModes.OnStop();
                 selectInteractionWhileEditModes = null;
             }
 

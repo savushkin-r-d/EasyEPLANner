@@ -142,13 +142,6 @@ namespace EasyEPlanner
             base.OnStop();
         }
 
-        [ExcludeFromCodeCoverage]
-        public void Stop()
-        {
-            IsFinish = true;
-            base.OnStop();
-        }
-
         public bool IsFinish { get; set; } = false;
     }
 }
