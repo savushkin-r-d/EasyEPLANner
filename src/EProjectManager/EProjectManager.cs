@@ -56,6 +56,7 @@ namespace EasyEPlanner
             EnabledEditMode = true;
         }
 
+        [ExcludeFromCodeCoverage]
         public void StopEditModes()
         {
             if (selectInteractionWhileEditModes != null)
