@@ -571,27 +571,21 @@ namespace Editor
         /// <summary>
         /// Обработка изменений при редактировании.
         /// </summary>
-        private void HiglihtItems()
+        private void HighlightItems()
         {
-            var drawInfoList = new List<DrawInfo>();
+            ProjectManager.GetInstance().RemoveHighLighting();
 
-            if (drawDev_toolStripButton.Checked)
-            {
-                //Отображение (подсветка) участвующих в режиме устройств на карте
-                //Eplan'a.
-                foreach (var itemDraw in GetActiveItems())
-                {
-                    if (drawDev_toolStripButton.Checked is false)
-                        continue;
+            if (drawDev_toolStripButton.Checked is false)
+                return;
 
-                    ProjectManager.GetInstance().RemoveHighLighting();
-                    if (itemDraw.IsDrawOnEplanPage)
-                        drawInfoList.AddRange(itemDraw.GetObjectToDrawOnEplanPage());
-                }
+            //Отображение (подсветка) участвующих в режиме устройств на карте
+            //Eplan'a.
+            var drawInfoList = GetActiveItems()
+                .Where(i => i.IsDrawOnEplanPage)
+                .SelectMany(i => i.GetObjectToDrawOnEplanPage())
+                .ToList();
 
-                ProjectManager.GetInstance().RemoveHighLighting();
-                ProjectManager.GetInstance().SetHighLighting(drawInfoList);
-            }
+            ProjectManager.GetInstance().SetHighlighting(drawInfoList);
         }
 
         /// <summary>
@@ -786,7 +780,7 @@ namespace Editor
                         editorTView.RefreshObject(item.Parent);
                     }
 
-                    HiglihtItems();
+                    HighlightItems();
                 }
             }
         }
@@ -842,7 +836,7 @@ namespace Editor
                 RefreshTree();
             }
 
-            HiglihtItems();
+            HighlightItems();
         }
 
         /// <summary>
@@ -868,7 +862,7 @@ namespace Editor
                         itemsHasMarkToCut = true;
                     }
 
-                    HiglihtItems();
+                    HighlightItems();
                     RefreshTree();
                     DisableNeededObjects(newItem.Parent.Items);
                 }
@@ -908,7 +902,7 @@ namespace Editor
                         RefreshTree();
                         DisableNeededObjects(treeViewItemsList.ToArray());
                     }
-                    HiglihtItems();
+                    HighlightItems();
                 }
             }
         }
@@ -934,7 +928,7 @@ namespace Editor
             if (isMove)
             {
                 editorTView.RefreshObjects(parent.Items);
-                HiglihtItems();
+                HighlightItems();
             }
 
             editorTView.SelectObjects(items);
@@ -961,7 +955,7 @@ namespace Editor
             if (isMove)
             {
                 editorTView.RefreshObjects(parent.Items);
-                HiglihtItems();
+                HighlightItems();
             }
             
             editorTView.SelectObjects(items);
@@ -1051,7 +1045,7 @@ namespace Editor
                 noOnChange = true;
                 editorTView.RefreshObject(item);
                 noOnChange = false;
-                HiglihtItems();
+                HighlightItems();
             }
         }
 
@@ -1072,7 +1066,7 @@ namespace Editor
                 editorTView.RefreshObject(item.Parent);
                 DisableNeededObjects(item.Parent.Items);
                 noOnChange = false;
-                HiglihtItems();
+                HighlightItems();
             }
         }
 
@@ -1095,7 +1089,7 @@ namespace Editor
                 {
                     if (item.IsDrawOnEplanPage)
                     {
-                        ProjectManager.GetInstance().SetHighLighting(
+                        ProjectManager.GetInstance().SetHighlighting(
                             item.GetObjectToDrawOnEplanPage());
                     }
                 }
@@ -1530,7 +1524,6 @@ namespace Editor
                 {
                     DisableNeededObjects(item.Parent.Items);
                 }
-                HiglihtItems();
             }
 
             e.Cancel = true;
@@ -1552,7 +1545,7 @@ namespace Editor
             // Активировать режим редактирования при выборе IAction: 
             // Раньше активировался только при изменении страницы в EPLAN
             if (item is IAction && Editable)
-                EProjectManager.GetInstance().StartEditModesWithDelay();
+                EProjectManager.GetInstance().StartEditModes();
 
             DFrm.CheckShown();
             if (edit_toolStripButton.Checked && DFrm.GetInstance().IsVisible() == true)
@@ -1575,11 +1568,13 @@ namespace Editor
                 ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
             }
 
-            HiglihtItems();
-
             editorTView.EndUpdate();
             editorTView.Focus();
+
+            HighlightItems();
         }
+
+
 
         /// <summary>
         /// Изменение ширины колонки и пересчет ширины другой колонки

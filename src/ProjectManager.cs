@@ -521,12 +521,11 @@ namespace EasyEPlanner
         /// Отключить подсветку устройств
         /// </summary>
         /// <param name="isClosingProject">Флаг закрытия проекта</param>
+        [ExcludeFromCodeCoverage]
         public void RemoveHighLighting(bool isClosingProject = false)
         {
-            foreach (object obj in highlightedObjects)
+            foreach (var drawedObject in highlightedObjects.OfType<Eplan.EplApi.DataModel.Graphics.GraphicalPlacement>())
             {
-                var drawedObject = obj as Eplan.EplApi.DataModel.Graphics
-                    .GraphicalPlacement;
                 if (isClosingProject)
                 {
                     drawedObject.SmartLock();
@@ -537,38 +536,16 @@ namespace EasyEPlanner
             highlightedObjects.Clear();
         }
 
-        /// <summary>
-        /// Установка подсветки устройств
-        /// </summary>
-        /// <param name="objectsToDraw">Устройства для подсветки</param>
-        public void SetHighLighting(object objectsToDraw)
-        {
-            if (objectsToDraw == null)
-            {
-                return;
-            }
-
-            if(objectsToDraw is List<Editor.DrawInfo> drawInfoNew)
-            {
-                SetHighlighting(drawInfoNew);
-            }
-        }
 
         /// <summary>
         /// Подсветка из нового редактора
         /// </summary>
         /// <param name="objectsToDraw"></param>
-        private void SetHighlighting(List<Editor.DrawInfo> objectsToDraw)
+        [ExcludeFromCodeCoverage]
+        public void SetHighlighting(List<Editor.DrawInfo> objectsToDraw)
         {
-            foreach (Editor.DrawInfo drawObj in objectsToDraw)
+            foreach (Editor.DrawInfo drawObj in objectsToDraw.Where(o => o.DrawingStyle != Editor.DrawInfo.Style.NO_DRAW ))
             {
-                Editor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
-
-                if (howToDraw == Editor.DrawInfo.Style.NO_DRAW)
-                {
-                    continue;
-                }
-
                 Eplan.EplApi.DataModel.Function objectFunction =
                     (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
 
@@ -580,7 +557,8 @@ namespace EasyEPlanner
                 Eplan.EplApi.Base.PointD[] points = objectFunction
                     .GetBoundingBox();
                 short colour = 0;
-                switch (howToDraw)
+
+                switch (drawObj.DrawingStyle)
                 {
                     case Editor.DrawInfo.Style.GREEN_BOX:
                         SetGreenBoxHighlight(ref colour, objectFunction,
