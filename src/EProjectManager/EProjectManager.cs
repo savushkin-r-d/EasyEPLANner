@@ -2,6 +2,7 @@ using System;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -25,9 +26,18 @@ namespace EasyEPlanner
             actMnr = new ActionManager();
         }
 
+        [ExcludeFromCodeCoverage]
         public void StartEditModesWithDelay(int ms = 1)
         {
             System.Threading.Thread.Sleep(ms);
+            StartEditModes();
+        }
+
+        [ExcludeFromCodeCoverage]
+        public void StartEditModes()
+        {
+            if (selectInteractionWhileEditModes?.IsFinish is false)
+                return;
 
             string strAction = "XGedStartInteractionAction";
             if (startInteractionAction == null)
@@ -46,11 +56,12 @@ namespace EasyEPlanner
             EnabledEditMode = true;
         }
 
+        [ExcludeFromCodeCoverage]
         public void StopEditModes()
         {
             if (selectInteractionWhileEditModes != null)
             {
-                selectInteractionWhileEditModes.Stop();
+                selectInteractionWhileEditModes.OnStop();
                 selectInteractionWhileEditModes = null;
             }
 
