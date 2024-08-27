@@ -1,10 +1,34 @@
-﻿function Import(modulesImporter)
+﻿function Import(importer)
     Progress(0);
-    ImportDevices(modulesImporter)
+    CheckTanks(importer)
+    ImportDevices(importer)
     Progress(100);
     return 0;
 end
 
+
+--- Импорт танков проекта. Используется для идентификации устройств по танкам
+---@param importer any
+function CheckTanks (importer)
+    if init_tech_objects_modes == nil then
+        return
+    end
+
+    local objects = init_tech_objects_modes();
+
+    if objects == nil then
+        return
+    end
+
+    for id, object in pairs(objects) do
+       if object.base_tech_object == 'tank' then
+        importer:AddTank(object.n)
+       end 
+    end
+end
+
+--- Функция обработчик для импорта устройств проекта
+---@param importer any
 function ImportDevices(importer)
     if devices == nil then
         return
@@ -44,6 +68,9 @@ function ImportDevices(importer)
 end
 
 
+--- Типы устройств.
+---  - [index] - тип в старом проекте
+---  - = "TYPE" - текущее название типа
 DeviceTypes = {
     [0] = "V",      -- Клапан.                      <=  DT_V,    - Клапан.   
     [1] = "M",      -- Мотор.                       <=  DT_N,    - Насос.
@@ -61,6 +88,7 @@ DeviceTypes = {
     [13] = 'AI'     -- Аналоговый входной сигнал.   <=  DT_AI    - Аналоговый вход.
 }
 
+--- Подтипы клапанов. Некоторых подтипов в текущем проекте нет.
 ValveSubTypes = {
     [0] = '',
 

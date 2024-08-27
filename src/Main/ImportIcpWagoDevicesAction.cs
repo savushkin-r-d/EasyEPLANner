@@ -39,32 +39,19 @@ namespace EasyEPlanner.Main
                     Multiselect = false
                 };
 
-                var openIcpProjectFileDialog = new OpenFileDialog
-                {
-                    Title = "Открытие файла проекта ds4",
-                    Filter = ".ds4|*.ds4",
-                    Multiselect = false
-                };
-
-                if (openWagoFileDialog.ShowDialog() == DialogResult.Cancel ||
-                    openIcpProjectFileDialog.ShowDialog() == DialogResult.Cancel)
+                if (openWagoFileDialog.ShowDialog() == DialogResult.Cancel)
                 {
                     return true;
                 }
 
-                // read main.wago.plua file data
-                var wagoData = new StreamReader(openWagoFileDialog.FileName, EncodingDetector.DetectFileEncoding(openWagoFileDialog.FileName), true).ReadToEnd();
+                var wagoData = "";
+                using (var reader = new StreamReader(openWagoFileDialog.FileName, EncodingDetector.DetectFileEncoding(openWagoFileDialog.FileName), true))
+                {
+                    // read main.wago.plua file data
+                    wagoData = reader.ReadToEnd();
+                }
 
-                // Fix main.wago.plua file: add "," to table before "group_dev_ex"
-                wagoData = Regex.Replace(wagoData, @"}(?=(\r|\n|\r\n)\t*group_dev_ex)", "},", RegexOptions.None, TimeSpan.FromMilliseconds(100));
-
-                // Remove unnecessary lua-module 'sys_wago'
-                wagoData = Regex.Replace(wagoData, "require 'sys_wago'", "", RegexOptions.None, TimeSpan.FromMilliseconds(100));
-
-                // read *.ds4 file data
-                var icpProjectData = new StreamReader(openIcpProjectFileDialog.FileName, EncodingDetector.DetectFileEncoding(openIcpProjectFileDialog.FileName), true).ReadToEnd();
-
-                var devicesImporter = new DevicesImporter(currentProject, wagoData, icpProjectData);
+                var devicesImporter = new DevicesImporter(currentProject, wagoData);
                 devicesImporter.Import();
             }
             catch (Exception ex)

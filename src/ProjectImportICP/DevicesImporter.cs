@@ -28,6 +28,14 @@ namespace EasyEPlanner.ProjectImportICP
         /// <summary>
         /// [[ LuaMember ]] - вызывается из Lua
         /// 
+        /// Добавить номер танка используемый в проекте
+        /// </summary>
+        /// <param name="tech_number">Тех.номер танка</param>
+        void AddTank(int tech_number);
+
+        /// <summary>
+        /// [[ LuaMember ]] - вызывается из Lua
+        /// 
         /// Импортировать устройство ввода-вывода
         /// </summary>
         /// <remarks>
@@ -92,26 +100,6 @@ namespace EasyEPlanner.ProjectImportICP
         /// Отступ между сигналами по горизонтали
         /// </summary>
         private static readonly int SIGNAL_X_OFFSET = 60;
-
-        /// <summary>
-        /// Вариант символа сигнала <|
-        /// </summary>
-        private static readonly int SIGNAL_DI = 0;
-
-        /// <summary>
-        /// Вариант символа сигнала |>
-        /// </summary>
-        private static readonly int SIGNAL_DO = 2;
-
-        /// <summary>
-        /// Вариант символа заглушки сигнала <|--*
-        /// </summary>
-        private static readonly int SIGNAL_STUB_DI = 5;
-
-        /// <summary>
-        /// Вариант символа заглушки сигнала *--|>
-        /// </summary>
-        private static readonly int SIGNAL_STUB_DO = 7;
 
         /// <summary>
         /// Ширина сигнала
@@ -187,19 +175,29 @@ namespace EasyEPlanner.ProjectImportICP
         private readonly PagePropertyList pageProperties = new PagePropertyList();
 
         /// <summary>
-        /// Символ сигнала
+        /// Символ сигнала DI <|
         /// </summary>
-        private readonly Symbol signalSymbol;
+        private readonly SymbolVariant signal_DI;
+
+        /// <summary>
+        /// Символ сигнала DO |>
+        /// </summary>
+        private readonly SymbolVariant signal_DO;
 
         /// <summary>
         /// Символ устройства
         /// </summary>
-        private readonly Symbol deviceSymbol;
+        private readonly SymbolVariant deviceSymbol;
 
         /// <summary>
-        /// Символ заглушки сигнала
+        /// Символ заглушки сигнала DI -*
         /// </summary>
-        private readonly Symbol stubSignalSymbol;
+        private readonly SymbolVariant stubSignal_DI;
+
+        /// <summary>
+        /// Символ заглушки сигнала DO *-
+        /// </summary>
+        private readonly SymbolVariant stubSignal_DO;
 
         /// <summary>
         /// Объект для изменения имени функции
@@ -218,14 +216,18 @@ namespace EasyEPlanner.ProjectImportICP
         private readonly List<int> tanks = new List<int>();
 
 
-        public DevicesImporter(Project project, string wagoData, string icpProjectData)
+        public DevicesImporter(Project project, string wagoData)
         {
             this.project = project;
 
             try
             {
-                signalSymbol = new Symbol(new SymbolLibrary(project, "Bmk"), "AUS_01");
-                deviceSymbol = new Symbol(new SymbolLibrary(project, "Bmk"), "ED_01");
+                // <|
+                signal_DI = new SymbolVariant(new Symbol(new SymbolLibrary(project, "Bmk"), "AUS_01"), 0);
+                // |>
+                signal_DO = new SymbolVariant(new Symbol(new SymbolLibrary(project, "Bmk"), "AUS_01"), 2);
+
+                deviceSymbol = new SymbolVariant(new Symbol(new SymbolLibrary(project, "Bmk"), "ED_01"), 0);
             }
             catch
             {
@@ -234,7 +236,10 @@ namespace EasyEPlanner.ProjectImportICP
 
             try
             {
-                stubSignalSymbol = new Symbol(new SymbolLibrary(project, "SPECIAL"), "DCPPNG");
+                // <|--*
+                stubSignal_DI = new SymbolVariant(new Symbol(new SymbolLibrary(project, "SPECIAL"), "DCPPNG"), 5);
+                // *--|>
+                stubSignal_DO = new SymbolVariant(new Symbol(new SymbolLibrary(project, "SPECIAL"), "DCPPNG"), 7);
             }
             catch
             {
@@ -253,15 +258,6 @@ namespace EasyEPlanner.ProjectImportICP
 
             lua.DoString(script);
             lua.DoString(wagoData);
-
-            // Получение информации о танках проекта
-            foreach (Match match in Regex.Matches(icpProjectData, @"Tank[\W\w]+?(\d*) - номер объекта", RegexOptions.Multiline, TimeSpan.FromMilliseconds(100)))
-            {
-                if (match.Success && int.TryParse(match.Groups[1].Value, out var tank))
-                {
-                    tanks.Add(tank);
-                }
-            }
         }
 
         public void Import()
@@ -278,6 +274,8 @@ namespace EasyEPlanner.ProjectImportICP
             Logs.EnableButtons();
         }
 
+
+        public void AddTank(int tech_number) => tanks.Add(tech_number);
 
         public List<ImportDevice> ImportDevices { get; private set; } = new List<ImportDevice>();
 
@@ -348,10 +346,8 @@ namespace EasyEPlanner.ProjectImportICP
 
             foreach (var device in signals)
             {
-                var symbolVariant = new SymbolVariant(signalSymbol, device.Type == "DI" ? SIGNAL_DI : SIGNAL_DO);
                 var function = new Function();
-
-                function.Create(page, symbolVariant);
+                function.Create(page, device.Type == "DI" ? signal_DI : signal_DO);
                 function.LockObject();
 
                 nameService.SetVisibleNameAndAdjustFullName(page, function,
@@ -367,10 +363,8 @@ namespace EasyEPlanner.ProjectImportICP
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
                 // Заглушка для соединителя сигналов *---|>  <|---*
-                var symbolVariantStub = new SymbolVariant(stubSignalSymbol, device.Type == "DI" ? SIGNAL_STUB_DI : SIGNAL_STUB_DO);
                 var functionStub = new Function();
-
-                functionStub.Create(page, symbolVariantStub);
+                functionStub.Create(page, device.Type == "DI" ? stubSignal_DI : stubSignal_DO);
                 functionStub.LockObject();
 
                 functionStub.Properties.FUNC_MAINFUNCTION = false;
@@ -409,10 +403,9 @@ namespace EasyEPlanner.ProjectImportICP
 
             foreach (var device in devices)
             {
-                var symbolVariant = new SymbolVariant(deviceSymbol, 0);
                 var function = new Function();
 
-                function.Create(page, symbolVariant);
+                function.Create(page, deviceSymbol);
                 function.LockObject();
 
                 nameService.SetVisibleNameAndAdjustFullName(page, function,
