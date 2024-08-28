@@ -46,7 +46,12 @@ namespace EasyEPlanner
                     return true; 
                 }
 
-                var data = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true).ReadToEnd();
+                var data = "";
+                using (var reader = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true))
+                {
+                    // read main.wago.plua file data
+                    data = reader.ReadToEnd();
+                }
 
                 var modulesImporter = new ModulesImporter(currentProject, data);
                 modulesImporter.Import();
