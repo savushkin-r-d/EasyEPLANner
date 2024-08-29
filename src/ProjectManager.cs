@@ -14,6 +14,7 @@ using System.Text;
 using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 using StaticHelper;
 using System.Diagnostics.CodeAnalysis;
+using PInvoke;
 
 namespace EasyEPlanner
 {
@@ -254,6 +255,37 @@ namespace EasyEPlanner
                     "путь к каталогу с проектами, где хранятся Lua файлы!",
                     "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            return "";
+        }
+
+        /// <summary>
+        /// Путь к Eplan-макросам модулей ввода-вывода
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        public string GetWagoMacrosPath()
+        {
+            try
+            {
+                string path = Path.Combine(OriginalAssemblyPath, StaticHelper.CommonConst.ConfigFileName);
+
+                PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
+                if (File.Exists(path))
+                {
+                    var cyrillic = Encoding.GetEncoding("Windows-1251");
+
+                    return cyrillic.GetString(
+                        Encoding.Convert(
+                            Encoding.GetEncoding("UTF-8"),
+                            cyrillic,
+                            cyrillic.GetBytes(iniFile.ReadString("path", "wago_macros_path", ""))));
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Файл конфигурации не найден", "Внимание",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             return "";
         }
 
