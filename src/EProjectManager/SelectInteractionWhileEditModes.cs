@@ -1,6 +1,7 @@
 ﻿using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.Graphics;
 using Eplan.EplApi.EServices.Ged;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -133,14 +134,12 @@ namespace EasyEPlanner
 
         private delegate void DelegateWithParameters(int param1);
 
+        [ExcludeFromCodeCoverage]
         public override void OnStop()
         {
-            base.OnStop();
-        }
 
-        public void Stop()
-        {
             IsFinish = true;
+            base.OnStop();
         }
 
         public bool IsFinish { get; set; } = false;

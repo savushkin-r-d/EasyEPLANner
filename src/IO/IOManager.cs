@@ -313,7 +313,10 @@ namespace IO
             if (!File.Exists(pathToFile))
                 NoFileErrorShow(templateName, pathToFile);
 
-            object[] result = lua.DoFile(pathToFile);
+            object[] result = lua.DoString(
+                new StreamReader(pathToFile, EncodingDetector.DetectFileEncoding(pathToFile), true)
+                    .ReadToEnd());
+
             if (result == null)
                 return;
 

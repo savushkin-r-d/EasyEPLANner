@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -179,6 +179,8 @@
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
     <Compile Include="ProjectImportICP\ImportDevice.cs" />
+    <Compile Include="ProjectImportICP\ImportModule.cs" />
+    <Compile Include="ProjectImportICP\ModulesImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
     <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
@@ -219,6 +221,7 @@
     <Compile Include="IO\IIOModule.cs" />
     <Compile Include="IO\IIONode.cs" />
     <Compile Include="IO\IOModuleInfo.cs" />
+    <Compile Include="Main\ImportIcpWagoModulesAction.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -471,6 +474,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_wago_device_importer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_wago_modules_importer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\main.ico" />
