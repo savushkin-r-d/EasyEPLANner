@@ -1120,7 +1120,7 @@ ProjectTestEnabled=True
             <td> <b> P_out_max           <td> Максимальное выходное значение – 100% <tr> 
             <td> <b> P_out_min           <td> Минимальное выходное значние – 0% <tr>
             <td> <b> P_is_reverse        <td> Выход обратного действия – 0 (false) <tr>
-            <td> <b> P_is_zero_start     <td> Выход прямого действия – 1 (true)
+            <td> <b> P_is_zero_start     <td> Нулевое стартовое значение – 1 (true)
         <tr> <td rowspan = 2> <b> 
         C_THLD<br>(пороговый регулятор)
             <td> <b> P_is_reverse <td> Выход обратного действия (1 - true, 0 - false). Задает вектор изменения измеряемой величины. <tr> 
