@@ -121,7 +121,7 @@ namespace EplanDevice
             public static readonly Parameter P_is_reverse = new Parameter("P_is_reverse", "Выход обратного действия 100-0", UnitFormat.Boolean);
 
             /// <summary> Нулевое стартовое значение, 0 - false, 1 - true. </summary>
-            public static readonly Parameter P_is_zero_start = new Parameter("P_is_zero_start", "Выход прямого действия 0-100", UnitFormat.Boolean);
+            public static readonly Parameter P_is_zero_start = new Parameter("P_is_zero_start", "Нулевое стартовое значение", UnitFormat.Boolean);
 
             /// <summary> Диаметр вала, м. </summary>
             public static readonly Parameter P_SHAFT_DIAMETER = new Parameter("P_SHAFT_DIAMETER", "Диаметр вала", UnitFormat.Meters);
