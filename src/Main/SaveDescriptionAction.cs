@@ -49,6 +49,7 @@ namespace EasyEPlanner
                         silentMode);
 
                     new SVGStatisticsSaver().Save(path);
+                    new MarkdownReporter().Save(path);
                 }
             }
             catch (Exception ex)
