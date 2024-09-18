@@ -384,51 +384,62 @@ namespace TechObject
 
         override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var step = child as Step;
-            var copy = copyObject as Step;
-            bool objectsNotNull = step != null && copy != null;
-            if (objectsNotNull)
+            var targetStep = child as Step;
+            var copiedStep = copyObject as Step;
+
+            if (targetStep is null || copiedStep is null)
+                return null;
+            
+            if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 &&
+                !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
+                !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
+                steps.Except(new List<Step>() { targetStep }).Any(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
+                return null;
+
+            Step newStep = copiedStep.Clone(GetStepN);
+            if (!targetStep.BaseObjectsList.Contains(newStep.GetBaseStepName()))
             {
-                Step newStep = copy.Clone(GetStepN);
-                if (!step.BaseObjectsList.Contains(newStep.GetBaseStepName()))
-                {
-                    bool editBaseStep = true;
-                    newStep.SetNewValue(string.Empty, editBaseStep);
-                }
-
-                int index = steps.IndexOf(step);
-                steps.Remove(step);
-                steps.Insert(index, newStep);
-                bool isModeStep = index == 0;
-                if (isModeStep)
-                {
-                    modeStep = newStep;
-                }
-
-                newStep.Owner = this;
-               
-                index = steps.IndexOf(newStep);
-
-                newStep.AddParent(this);
-                return newStep;
+                bool editBaseStep = true;
+                newStep.SetNewValue(string.Empty, editBaseStep);
             }
 
-            return null;
+            int index = steps.IndexOf(targetStep);
+            steps.Remove(targetStep);
+            steps.Insert(index, newStep);
+            bool isModeStep = index == 0;
+            if (isModeStep)
+            {
+                modeStep = newStep;
+            }
+
+            newStep.Owner = this;
+            
+            index = steps.IndexOf(newStep);
+
+            newStep.AddParent(this);
+            return newStep;
         }
 
         public override ITreeViewItem InsertCopy(object copyObject)
         {
-            var copy = copyObject as Step;
-            if(copy != null)
-            {
-                var newStep = copy.Clone(GetStepN);
-                steps.Add(newStep);
-                newStep.AddParent(this);
-                newStep.Owner = this;
-                return newStep;
-            }
+            var copiedStep = copyObject as Step;
 
-            return null;
+            if (copiedStep is null)
+                return null;
+           
+            if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 && 
+                !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
+                !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
+                steps.Any(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
+                return null;
+
+            var newStep = copiedStep.Clone(GetStepN);
+
+            steps.Add(newStep);
+            newStep.AddParent(this);
+            newStep.Owner = this;
+            
+            return newStep;
         }
 
         override public bool IsCopyable
