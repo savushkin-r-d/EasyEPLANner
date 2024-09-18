@@ -393,7 +393,7 @@ namespace TechObject
             if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 &&
                 !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
                 !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
-                steps.Except(new List<Step>() { targetStep }).Any(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
+                steps.Except(new List<Step>() { targetStep }).ToList().Exists(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
                 return null;
 
             Step newStep = copiedStep.Clone(GetStepN);
@@ -430,7 +430,7 @@ namespace TechObject
             if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 && 
                 !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
                 !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
-                steps.Any(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
+                steps.Exists(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
                 return null;
 
             var newStep = copiedStep.Clone(GetStepN);

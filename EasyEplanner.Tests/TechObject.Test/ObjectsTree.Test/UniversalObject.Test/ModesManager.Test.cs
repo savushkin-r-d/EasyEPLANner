@@ -1,6 +1,8 @@
 ﻿using Editor;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using System.Collections.Generic;
 
 
 namespace TechObject.Tests
@@ -99,6 +101,75 @@ namespace TechObject.Tests
                 Assert.AreSame(mode2, modesManager.MoveDown(mode2));
                 Assert.IsNull(modesManager.MoveDown(mode2));
                 Assert.IsNull(modesManager.MoveDown(0));
+            });
+        }
+
+
+        [Test]
+        public void InsertCopyAndReplace()
+        {
+            var baseTechObject = new BaseTechObject()
+            {
+            };
+
+            baseTechObject.AddBaseOperation("operation_1", "операция_1", 0);
+            baseTechObject.AddBaseOperation("operation_2", "операция_2", 0);
+
+            var techObject = new TechObject("", getN => 1, 1, 2, "", -1, "", "", baseTechObject);
+
+            var modesManager = new ModesManager(techObject);
+
+            var copied_operation_1 = new Mode("Операция_1", getN => 1, modesManager,
+                new BaseOperation("операция_1", "operation_1", new List<BaseParameter>() { }, new Dictionary<string, List<BaseStep>>() { }));
+            var copied_operation_2 = new Mode("Операция_2", getN => 1, modesManager,
+                new BaseOperation("операция_2", "operation_2", new List<BaseParameter>() { }, new Dictionary<string, List<BaseStep>>() { }));
+            var copied_operation_3 = new Mode("Операция_3", getN => 1, modesManager,
+               new BaseOperation("операция_3", "operation_3", new List<BaseParameter>() { }, new Dictionary<string, List<BaseStep>>() { }));
+            var copied_operation_no_base = new Mode("Операция", getN => 1, modesManager, new BaseOperation(null));
+
+            Assert.Multiple(() =>
+            {
+                // Вставка базовой операции 1
+                var insertedOperation_1 = modesManager.InsertCopy(copied_operation_1) as Mode;
+                Assert.IsNotNull(insertedOperation_1);
+                Assert.AreNotSame(copied_operation_1, insertedOperation_1);
+                Assert.AreEqual(copied_operation_1.BaseOperation.LuaName, insertedOperation_1.BaseOperation.LuaName);
+
+                // Повторная вставка базовой операции 1 (canceled)
+                var insertedOperation_null = modesManager.InsertCopy(copied_operation_1) as Mode;
+                Assert.IsNull(insertedOperation_null);
+
+                // Вставка несуществующей базовой операции 3 (canceled)
+                insertedOperation_null = modesManager.InsertCopy(copied_operation_3) as Mode;
+                Assert.IsNull(insertedOperation_null);
+
+                // no operation
+                insertedOperation_null = modesManager.InsertCopy(null) as Mode;
+                Assert.IsNull(insertedOperation_null);
+
+                // Вставка операции без базовой операции
+                var insertedOperation_no_base = modesManager.InsertCopy(copied_operation_no_base) as Mode;
+                Assert.IsNotNull(insertedOperation_no_base);
+                Assert.AreNotSame(copied_operation_no_base, insertedOperation_no_base);
+                Assert.AreEqual(copied_operation_no_base.BaseOperation.LuaName, insertedOperation_no_base.BaseOperation.LuaName);
+
+                // Замена предыдущей операции на базовую операцию 2
+                var replacedOperation_2 = modesManager.Replace(insertedOperation_no_base, copied_operation_2) as Mode;
+                Assert.IsNotNull(insertedOperation_1);
+                Assert.AreNotSame(copied_operation_2, replacedOperation_2);
+                Assert.AreEqual(copied_operation_2.BaseOperation.LuaName, replacedOperation_2.BaseOperation.LuaName);
+
+                // Замена предыдущей операции на базовую операцию 1 (canceled)
+                var replacedOperation_null = modesManager.Replace(replacedOperation_2, copied_operation_1) as Mode;
+                Assert.IsNull(replacedOperation_null);
+
+                // Замена предыдущей операции на несуществующую базовую операцию 3 (canceled)
+                replacedOperation_null = modesManager.Replace(replacedOperation_2, copied_operation_3) as Mode;
+                Assert.IsNull(replacedOperation_null);
+
+                // no operation
+                replacedOperation_null = modesManager.Replace(null, null) as Mode;
+                Assert.IsNull(replacedOperation_null);
             });
         }
     }

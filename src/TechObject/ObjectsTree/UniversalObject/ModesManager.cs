@@ -405,7 +405,7 @@ namespace TechObject
             if (owner.BaseTechObject.BaseOperationsList.Count > 0 &&
                 !Owner.BaseTechObject.BaseOperationsList.Contains(copiedOperation.BaseOperation.Name) ||
                 !string.IsNullOrEmpty(copiedOperation.BaseOperation?.LuaName) &&
-                modes.Except(new List<Mode>() { targetOperation }).Any(o => o.BaseOperation.LuaName == copiedOperation.BaseOperation.LuaName))
+                modes.Except(new List<Mode>() { targetOperation }).ToList().Exists(o => o.BaseOperation.LuaName == copiedOperation.BaseOperation.LuaName))
                 return null;
 
             Mode newMode = copiedOperation.Clone(GetModeN, this, copiedOperation.Name);
@@ -422,7 +422,6 @@ namespace TechObject
             string modeTechObjName = Owner.NameEplan;
             int modeTechObjNumber = Owner.TechNumber;
             string copyObjTechObjName = copiedOperation.Owner.Owner.NameEplan;
-            int copyObjTechObjNumber = copiedOperation.Owner.Owner.TechNumber;
             if (modeTechObjName == copyObjTechObjName)
             {
                 newMode.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
@@ -463,7 +462,7 @@ namespace TechObject
             if (owner.BaseTechObject.BaseOperationsList.Count > 0 &&
                 !Owner.BaseTechObject.BaseOperationsList.Contains(copiedOperation.BaseOperation.Name) ||
                 !string.IsNullOrEmpty(copiedOperation.BaseOperation?.LuaName) &&
-                modes.Any(o => o.BaseOperation.LuaName == copiedOperation.BaseOperation.LuaName))
+                modes.Exists(o => o.BaseOperation.LuaName == copiedOperation.BaseOperation.LuaName))
                 return null;
 
             Mode newOperation = copiedOperation.Clone(GetModeN, this);
