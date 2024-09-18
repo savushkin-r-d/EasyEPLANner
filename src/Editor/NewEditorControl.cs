@@ -1391,12 +1391,33 @@ namespace Editor
             IsCellEditing = true;
             ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
 
+            var comboBoxItems = item.BaseObjectsList;
+            
+            if (item is Mode selectedOperation)
+            {
+                comboBoxItems = comboBoxItems
+                    .Except(from operation in selectedOperation.Owner.Modes
+                            where operation.BaseOperation.Name != string.Empty
+                            select operation.BaseOperation.Name)
+                    .ToList();
+            }
+
+            if (item is Step selectedStep)
+            {
+                comboBoxItems = comboBoxItems
+                    .Except(from step in selectedStep.Owner.Steps
+                            where step.GetBaseStepName() != string.Empty
+                            select step.GetBaseStepName())
+                    .ToList();
+            }
+
+
             if (item == null ||
                 !item.IsEditable ||
                 item.EditablePart[e.Column.Index] != e.Column.Index ||
                 (e.Column.Index == 1 &&
                 item.ContainsBaseObject &&
-                item.BaseObjectsList.Count == 0))
+                comboBoxItems.Count == 0))
             {
                 IsCellEditing = false;
                 e.Cancel = true;
@@ -1408,7 +1429,7 @@ namespace Editor
             if (e.Column.Index == 1 &&
                 (item.ContainsBaseObject || item.IsBoolParameter))
             {
-                InitComboBoxCellEditor(item.BaseObjectsList);
+                InitComboBoxCellEditor(comboBoxItems);
                 comboBoxCellEditor.Text = e.Value.ToString();
                 comboBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = comboBoxCellEditor;
