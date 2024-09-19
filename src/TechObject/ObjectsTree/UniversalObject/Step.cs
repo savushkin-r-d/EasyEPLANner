@@ -890,14 +890,14 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override List<string> BaseObjectsList
+        public override IEnumerable<string> BaseObjectsList
         {
             get => Owner.Owner.BaseOperation
                 .GetStateStepsNames(Owner.Type)
                 .Except(from step in Owner.Steps
                         where step.GetBaseStepName() != string.Empty
                         select step.GetBaseStepName())
-                .ToList();
+                ;
         }
 
         public override bool ContainsBaseObject

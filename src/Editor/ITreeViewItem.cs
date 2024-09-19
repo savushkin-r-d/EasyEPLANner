@@ -267,7 +267,7 @@ namespace Editor
         /// <summary>
         /// Список базовых объектов/операций/шагов объекта.
         /// </summary>
-        List<string> BaseObjectsList { get; }
+        IEnumerable<string> BaseObjectsList { get; }
 
         /// <summary>
         /// Отключено или нет свойство

@@ -377,7 +377,7 @@ namespace Editor
             }
         }
 
-        public virtual List<string> BaseObjectsList
+        public virtual IEnumerable<string> BaseObjectsList
         {
             get
             {

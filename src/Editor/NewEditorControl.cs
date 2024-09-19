@@ -157,7 +157,7 @@ namespace Editor
         /// <summary>
         /// Инициализация ComboBox редактора
         /// </summary>
-        private void InitComboBoxCellEditor(List<string> data)
+        private void InitComboBoxCellEditor(IEnumerable<string> data)
         {
             comboBoxCellEditor = new ComboBox();
             comboBoxCellEditor.Items.AddRange(data.ToArray());
@@ -1391,12 +1391,13 @@ namespace Editor
             IsCellEditing = true;
             ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
 
+
             if (item == null ||
                 !item.IsEditable ||
                 item.EditablePart[e.Column.Index] != e.Column.Index ||
                 (e.Column.Index == 1 &&
                 item.ContainsBaseObject &&
-                item.BaseObjectsList.Count == 0))
+                item.BaseObjectsList.Count() == 0))
             {
                 IsCellEditing = false;
                 e.Cancel = true;
