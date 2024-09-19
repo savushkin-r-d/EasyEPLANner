@@ -156,12 +156,14 @@ namespace EasyEplanner.Tests
                 Assert.AreNotSame(copied_step_1, insertedStep_1);
                 Assert.AreEqual(copied_step_1.GetBaseStepLuaName(), insertedStep_1.GetBaseStepLuaName());
 
-                // Повторная вставка базового шага 1 (canceled)
-                var insertedStep_null = state.InsertCopy(copied_step_1) as Step;
-                Assert.IsNull(insertedStep_null);
+                // Повторная вставка базового шага 1
+                insertedStep_1 = state.InsertCopy(copied_step_1) as Step;
+                Assert.IsNotNull(insertedStep_1);
+                Assert.AreNotSame(copied_step_1, insertedStep_1);
+                Assert.AreEqual(string.Empty, insertedStep_1.GetBaseStepLuaName());
 
                 // no step
-                insertedStep_null = state.InsertCopy(null) as Step;
+                var insertedStep_null = state.InsertCopy(null) as Step;
                 Assert.IsNull(insertedStep_null);
 
                 // Вставка не базового шага
@@ -176,12 +178,14 @@ namespace EasyEplanner.Tests
                 Assert.AreNotSame(copied_step_2, replacedStep_2);
                 Assert.AreEqual(copied_step_2.GetBaseStepLuaName(), replacedStep_2.GetBaseStepLuaName());
 
-                // Замена предыдущего шага на уже имеющийся шаг 1 (canceled)
-                var replacedStep_null = state.Replace(replacedStep_2, copied_step_1) as Step;
-                Assert.IsNull(replacedStep_null);
+                // Замена предыдущего шага на уже имеющийся шаг 1
+                var replacedStep_1 = state.Replace(replacedStep_2, copied_step_1) as Step;
+                Assert.IsNotNull(replacedStep_1);
+                Assert.AreNotSame(copied_step_1, replacedStep_1);
+                Assert.AreEqual(string.Empty, replacedStep_1.GetBaseStepLuaName());
 
                 // no step
-                replacedStep_null = state.Replace(null, null) as Step;
+                var replacedStep_null = state.Replace(null, null) as Step;
                 Assert.IsNull(replacedStep_null);
             });
         }

@@ -135,16 +135,20 @@ namespace TechObject.Tests
                 Assert.AreNotSame(copied_operation_1, insertedOperation_1);
                 Assert.AreEqual(copied_operation_1.BaseOperation.LuaName, insertedOperation_1.BaseOperation.LuaName);
 
-                // Повторная вставка базовой операции 1 (canceled)
-                var insertedOperation_null = modesManager.InsertCopy(copied_operation_1) as Mode;
-                Assert.IsNull(insertedOperation_null);
+                // Повторная вставка базовой операции 1
+                insertedOperation_1 = modesManager.InsertCopy(copied_operation_1) as Mode;
+                Assert.IsNotNull(insertedOperation_1);
+                Assert.AreNotSame(copied_operation_1, insertedOperation_1);
+                Assert.AreEqual(string.Empty, insertedOperation_1.BaseOperation.LuaName);
 
-                // Вставка несуществующей базовой операции 3 (canceled)
-                insertedOperation_null = modesManager.InsertCopy(copied_operation_3) as Mode;
-                Assert.IsNull(insertedOperation_null);
+                // Вставка несуществующей базовой операции 3
+                var insertedOperation_3 = modesManager.InsertCopy(copied_operation_3) as Mode;
+                Assert.IsNotNull(insertedOperation_3);
+                Assert.AreNotSame(copied_operation_3, insertedOperation_3);
+                Assert.AreEqual(string.Empty, insertedOperation_3.BaseOperation.LuaName);
 
                 // no operation
-                insertedOperation_null = modesManager.InsertCopy(null) as Mode;
+                var insertedOperation_null = modesManager.InsertCopy(null) as Mode;
                 Assert.IsNull(insertedOperation_null);
 
                 // Вставка операции без базовой операции
@@ -155,20 +159,24 @@ namespace TechObject.Tests
 
                 // Замена предыдущей операции на базовую операцию 2
                 var replacedOperation_2 = modesManager.Replace(insertedOperation_no_base, copied_operation_2) as Mode;
-                Assert.IsNotNull(insertedOperation_1);
+                Assert.IsNotNull(replacedOperation_2);
                 Assert.AreNotSame(copied_operation_2, replacedOperation_2);
                 Assert.AreEqual(copied_operation_2.BaseOperation.LuaName, replacedOperation_2.BaseOperation.LuaName);
 
-                // Замена предыдущей операции на базовую операцию 1 (canceled)
-                var replacedOperation_null = modesManager.Replace(replacedOperation_2, copied_operation_1) as Mode;
-                Assert.IsNull(replacedOperation_null);
+                // Замена предыдущей операции на базовую операцию 1
+                var replacedOperation_1 = modesManager.Replace(replacedOperation_2, copied_operation_1) as Mode;
+                Assert.IsNotNull(replacedOperation_1);
+                Assert.AreNotSame(copied_operation_1, replacedOperation_1);
+                Assert.AreEqual(string.Empty, replacedOperation_1.BaseOperation.LuaName);
 
-                // Замена предыдущей операции на несуществующую базовую операцию 3 (canceled)
-                replacedOperation_null = modesManager.Replace(replacedOperation_2, copied_operation_3) as Mode;
-                Assert.IsNull(replacedOperation_null);
+                // Замена предыдущей операции на несуществующую базовую операцию 3
+                var replacedOperation_3 = modesManager.Replace(replacedOperation_1, copied_operation_3) as Mode;
+                Assert.IsNotNull(replacedOperation_3);
+                Assert.AreNotSame(copied_operation_3, replacedOperation_3);
+                Assert.AreEqual(string.Empty, replacedOperation_3.BaseOperation.LuaName);
 
                 // no operation
-                replacedOperation_null = modesManager.Replace(null, null) as Mode;
+                var replacedOperation_null = modesManager.Replace(null, null) as Mode;
                 Assert.IsNull(replacedOperation_null);
             });
         }

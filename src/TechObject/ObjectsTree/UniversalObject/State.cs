@@ -71,7 +71,7 @@ namespace TechObject
             }
         }
 
-        public State Clone(string name = "")
+        public State Clone(Mode newOwner, string name = "")
         {
             State clone = (State)MemberwiseClone();
             clone.Type = Type;
@@ -81,17 +81,18 @@ namespace TechObject
                 clone.name = name;
             }
 
+            clone.owner = newOwner;
             clone.steps = new List<Step>();
 
             if (modeStep != null)
             {
-                clone.modeStep = modeStep.Clone(clone.GetStepN);
+                clone.modeStep = modeStep.Clone(clone, clone.GetStepN);
                 clone.steps.Add(clone.modeStep);
             }
 
             for (int idx = 1; idx < steps.Count; idx++)
             {
-                clone.steps.Add(steps[idx].Clone(clone.GetStepN));
+                clone.steps.Add(steps[idx].Clone(clone, clone.GetStepN));
             }
 
             clone.Steps.ForEach(step => step.ValueChanged += (sender) => clone.OnValueChanged(sender));
@@ -389,18 +390,17 @@ namespace TechObject
 
             if (targetStep is null || copiedStep is null)
                 return null;
-            
+
+
+            Step newStep = copiedStep.Clone(this, GetStepN);
+
             if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 &&
                 !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
                 !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
                 steps.Except(new List<Step>() { targetStep }).ToList().Exists(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
-                return null;
-
-            Step newStep = copiedStep.Clone(GetStepN);
-            if (!targetStep.BaseObjectsList.Contains(newStep.GetBaseStepName()))
             {
-                bool editBaseStep = true;
-                newStep.SetNewValue(string.Empty, editBaseStep);
+                // reset base object
+                newStep.SetNewValue(string.Empty, true);   
             }
 
             int index = steps.IndexOf(targetStep);
@@ -426,14 +426,17 @@ namespace TechObject
 
             if (copiedStep is null)
                 return null;
-           
+
+            var newStep = copiedStep.Clone(this, GetStepN);
+
             if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 && 
                 !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
                 !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
                 steps.Exists(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
-                return null;
-
-            var newStep = copiedStep.Clone(GetStepN);
+            {
+                // reset base object
+                newStep.SetNewValue(string.Empty, true);
+            }
 
             steps.Add(newStep);
             newStep.AddParent(this);
@@ -668,6 +671,6 @@ namespace TechObject
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
-        private readonly Mode owner;///< Владелец элемента
+        private Mode owner;///< Владелец элемента
     }
 }
