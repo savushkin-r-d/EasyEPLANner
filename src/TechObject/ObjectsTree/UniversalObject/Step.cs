@@ -892,14 +892,12 @@ namespace TechObject
 
         public override List<string> BaseObjectsList
         {
-            get
-            {
-                State state = Owner;
-                Mode mode = state.Owner;
-                List<string> stepsNames = mode.BaseOperation
-                    .GetStateStepsNames(state.Type);
-                return stepsNames;
-            }
+            get => Owner.Owner.BaseOperation
+                .GetStateStepsNames(Owner.Type)
+                .Except(from step in Owner.Steps
+                        where step.GetBaseStepName() != string.Empty
+                        select step.GetBaseStepName())
+                .ToList();
         }
 
         public override bool ContainsBaseObject
