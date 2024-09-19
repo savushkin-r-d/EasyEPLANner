@@ -1397,7 +1397,7 @@ namespace Editor
                 item.EditablePart[e.Column.Index] != e.Column.Index ||
                 (e.Column.Index == 1 &&
                 item.ContainsBaseObject &&
-                item.BaseObjectsList.Count() == 0))
+                !item.BaseObjectsList.Any()))
             {
                 IsCellEditing = false;
                 e.Cancel = true;
