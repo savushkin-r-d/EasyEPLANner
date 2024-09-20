@@ -384,7 +384,7 @@ namespace EasyEPlanner.ProjectImportICP
                 if (moduleN != 600) // exclude end module
                 {
                     var clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
-                    ImportModules[nodeIndex].Add(new ImportModule(clamps, moduleInfo));
+                    ImportModules[nodeIndex].Add(new ImportModule(clamps, moduleInfo, module));
                 }
 
                 Logs.AddMessage($"\t-A{moduleNumber} [ {moduleInfo.Name} ] {(isStub ? "Неопределенный модуль" : moduleInfo.Description)};\n");
