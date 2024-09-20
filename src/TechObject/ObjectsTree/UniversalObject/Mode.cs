@@ -119,7 +119,7 @@ namespace TechObject
             clone.stepsMngr = new List<State>();
             for (int idx = 0; idx < stepsMngr.Count; idx++)
             {
-                clone.stepsMngr.Add(stepsMngr[idx].Clone());
+                clone.stepsMngr.Add(stepsMngr[idx].Clone(clone));
             }
 
             clone.operPar = operPar.Clone(clone);
@@ -545,7 +545,7 @@ namespace TechObject
             bool statesNotNull = selectedState != null && copiedState != null;
             if (statesNotNull)
             {
-                State newState = copiedState.Clone();
+                State newState = copiedState.Clone(this);
                 if (newState.Name != selectedState.Name)
                 {
                     newState.Name = selectedState.Name;
