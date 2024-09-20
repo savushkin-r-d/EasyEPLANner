@@ -638,16 +638,12 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override List<string> BaseObjectsList
+        public override IEnumerable<string> BaseObjectsList
         {
-            get
-            {
-                ModesManager modesManager = Owner;
-                TechObject techObject = modesManager.Owner;
-                BaseTechObject baseTechObject = techObject.BaseTechObject;
-                List<string> baseModesList = baseTechObject.BaseOperationsList;
-                return baseModesList;
-            }
+            get => Owner.Owner.BaseTechObject.BaseOperationsList
+                .Except(from operation in Owner.Modes
+                        where operation.BaseOperation.Name != string.Empty
+                        select operation.BaseOperation.Name);
         }
 
         public override bool ContainsBaseObject
