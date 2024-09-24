@@ -1,4 +1,5 @@
-﻿using IO;
+﻿using EasyEPlanner;
+using IO;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -155,6 +156,7 @@ namespace EplanDevice
             var articles = DeviceManager.GetInstance().IOLinkSizes;
             if (articles.ContainsKey(articleName) == false)
             {
+                Logs.AddMessage($"Неизвестный артикул '{articleName}' IO-Link устройства {Name};\n");
                 return;
             }
 
