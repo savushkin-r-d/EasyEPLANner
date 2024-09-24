@@ -17,9 +17,9 @@ using System.Windows.Forms;
 namespace EasyEPlanner
 {
     [ExcludeFromCodeCoverage]
-    public class ImportIcpWagoModulesAction : IEplAction
+    public class ImportIcpWagoProjectAction : IEplAction
     {
-        ~ImportIcpWagoModulesAction() { }
+        ~ImportIcpWagoProjectAction() { }
 
         public bool Execute(ActionCallingContext oActionCallingContext)
         {
@@ -43,7 +43,7 @@ namespace EasyEPlanner
 
                 if (openFileDialog.ShowDialog() == DialogResult.Cancel)
                 {
-                    return true; 
+                    return true;
                 }
 
                 var data = "";
@@ -55,6 +55,11 @@ namespace EasyEPlanner
 
                 var modulesImporter = new ModulesImporter(currentProject, data);
                 modulesImporter.Import();
+
+                var devicesImporter = new DevicesImporter(currentProject, data);
+                devicesImporter.Import();
+
+                new BindingImporter(modulesImporter.ImportModules, devicesImporter.ImportDevices).Bind();
             }
             catch (Exception ex)
             {
@@ -66,7 +71,7 @@ namespace EasyEPlanner
 
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
-            Name = "ImportIcpWagoModules";
+            Name = "ImportIcpWagoProject";
             Ordinal = 30;
 
             return true;
