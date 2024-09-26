@@ -176,7 +176,14 @@
     <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
+    <Compile Include="FileSavers\Markdown\TextBuilder.cs" />
+    <Compile Include="FileSavers\Markdown\MarkdownDevice.cs" />
+    <Compile Include="FileSavers\Markdown\MarkdownDeviceManager.cs" />
+    <Compile Include="FileSavers\Markdown\MarkdownIOManager.cs" />
+    <Compile Include="FileSavers\Markdown\MarkdownModule.cs" />
     <Compile Include="FileSavers\Markdown\MarkdownReporter.cs" />
+    <Compile Include="FileSavers\Markdown\MarkdownTechObject.cs" />
+    <Compile Include="FileSavers\Markdown\MarkdownTechObjectManager.cs" />
     <Compile Include="ProjectImportICP\ImportModule.cs" />
     <Compile Include="ProjectImportICP\ModulesImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
