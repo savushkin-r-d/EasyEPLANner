@@ -95,14 +95,22 @@ namespace EasyEPlanner.FileSavers.Markdown
         {
             string clampBind = bind?
                 .SelectMany(b => (b.channels?.Select(c => $"{b.device.Name}: {c.Name} {c.Comment}") ?? new List<string>() { b.device.Name })
-                    .Select(s => new StringBuilder()
-                        .Append($"<a href=#device_{b.device.Name}>{s}</a>")
-                        .Append($"{(b.device.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_AS_NUMBER, out var r_as_n) ? $" (AS-{r_as_n})" : "")}")
-                        .ToString()))
+                    .Select(s => $"<a href=#device_{b.device.Name}>{s}</a>{ValveParameter(b.device)}"))
                 .Aggregate((a, b) => $"{a} <br> {b}")
                 ?? "-";
 
             return new TextBuilder(string.Format("<tr> <td> {0} <td> {1}", clamp, clampBind));
+        }
+
+        public string ValveParameter(IODevice device)
+        {
+            if (device.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_AS_NUMBER, out var r_as_n))
+                return $" (AS-{r_as_n})"; 
+
+            if (device.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_VTUG_NUMBER, out var r_vtug_n))
+                return $" (Y-{r_vtug_n})";
+
+            return string.Empty;
         }
     }
 }

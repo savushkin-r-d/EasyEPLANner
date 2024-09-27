@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using TechObject;
@@ -66,13 +67,16 @@ namespace EasyEPlanner.FileSavers.Markdown
     /// </summary>
     public class MarkdownTechObject : IMarkdownTechObject
     {
+        private readonly ITechObjectManager techObjectManager;
+
         /// <summary>
         /// Адаптируемый технологический объект
         /// </summary>
         private readonly TechObject.TechObject techObject;
 
-        public MarkdownTechObject(TechObject.TechObject techObject) 
+        public MarkdownTechObject(ITechObjectManager techObjectManager, TechObject.TechObject techObject) 
         {
+            this.techObjectManager = techObjectManager;
             this.techObject = techObject;
         }
 
@@ -89,8 +93,29 @@ namespace EasyEPlanner.FileSavers.Markdown
                 $"        <b>Тип:</b> {techObject.TechType} <br>",
                 $"        <b>ОУ:</b> {techObject.NameEplan} <br>",
                 $"        <b>Имя в monitor:</b> {techObject.NameBC} <br>",
+                Aggregates().WithOffset("    "),
                 Operations().WithOffset("    "),
+                Parameters().WithOffset("    "),
+                Equipment().WithOffset("    "),
+                SystemParameters().WithOffset("    "),
                 $"</table>");
+        }
+
+        public ITextBuilder Aggregates()
+        {
+            if (!techObject.AttachedObjects.GetValueIndexes().Any())
+                return new TextBuilder();
+
+
+            return new TextBuilder().Lines(
+                $"<tr> <td>",
+                $"<details> <summary> <b>Привязанные агрегаты:</b> </summary>",
+                $"<ul>",
+                from aggregateIndex in techObject.AttachedObjects.GetValueIndexes()
+                select techObjectManager.GetTObject(aggregateIndex) into aggregate
+                select $"    <li> <a href=#tech_object_{aggregate.GlobalNum}>{aggregate.Name} №{aggregate.TechNumber} (#{aggregate.GlobalNum})</a>",
+                $"</ul>"
+                );
         }
 
         public ITextBuilder Operations()
@@ -107,6 +132,80 @@ namespace EasyEPlanner.FileSavers.Markdown
                 $"</table>");
         }
 
+        public ITextBuilder Parameters()
+        {
+            var parametersManager = techObject.GetParamsManager();
+
+            if ((parametersManager.Float is null || parametersManager.Float.Items.Count() == 0) &&
+                (parametersManager.FloatRuntime is null || parametersManager.FloatRuntime.Items.Count() == 0))
+                return new TextBuilder();
+
+            return new TextBuilder().Lines(
+                $"<tr> <td>",
+                $"<details> <summary> <b>Параметры:</b> </summary>",
+                $"<table>",
+                $"    <tr> <th> № <th> Название <th> Значение",
+                Params(parametersManager.Float).WithOffset("    "),
+                Params(parametersManager.FloatRuntime).WithOffset("    "),
+                $"</table>"
+                );
+        }
+
+        public ITextBuilder SystemParameters()
+        {
+            if (techObject.SystemParams is null || techObject.SystemParams.Count == 0)
+                return new TextBuilder();
+
+            return new TextBuilder().Lines(
+                $"<tr> <td>",
+                $"<details> <summary> <b>Системные параметры:</b> </summary>",
+                $"<table>",
+                $"    <tr> <th> № <th> Название <th> Значение",
+                from parameter in techObject.SystemParams.Parameters
+                select $"    <tr> <td> {techObject.SystemParams.GetIdx(parameter)} <td> <b>{parameter.LuaName}</b> <br> <i>{parameter.Name}</i> <td> {parameter.Value.Value} {parameter.Meter}",
+                $"</table>");
+        }
+        
+        public ITextBuilder Equipment()
+        {
+            if (techObject.Equipment.Items.Count() == 0)
+                return new TextBuilder();
+
+
+            return new TextBuilder().Lines(
+                $"<tr> <td>",
+                $"<details> <summary> <b>Оборудование:</b> </summary>",
+                $"<table>",
+                from equip in techObject.Equipment.Items.OfType<BaseParameter>()
+                select $"    <tr> <td> {equip.Name} <td> {equip.Value}",
+                $"</table>");
+        }
+
+        public ITextBuilder BaseProperties()
+        {
+            if (techObject.BaseProperties.Count == 0)
+                return new TextBuilder();
+
+            return new TextBuilder().Lines(
+                $"<tr> <td>",
+                $"<details> <summary> <b>Доп. свойства:</b> </summary>",
+                $"<table>",
+                from equip in techObject.BaseProperties. Items.OfType<BaseParameter>()
+                select $"    <tr> <td> {equip.Name} <td> {equip.Value}",
+                $"</table>");
+        }
+
+        public ITextBuilder Params(Params parameters)
+        {
+            if (parameters is null || parameters.Items.Count() == 0)
+                return new TextBuilder();
+
+            return new TextBuilder().Lines(
+                $"<tr> <td colspan=3> {parameters.Name}:",
+                from parameter in parameters.Items.OfType<Param>()
+                select $"<tr> <td> {parameter.GetParameterNumber} <td> <b>{parameter.GetNameLua()}</b> <br> <i>{parameter.GetName()}</i> <td> {parameter.GetValue()} {parameter.GetMeter()}");
+        }
+
         private bool ActionIsEmpty(IAction action)
         {
             if (action is GroupableAction)
@@ -119,15 +218,14 @@ namespace EasyEPlanner.FileSavers.Markdown
         public ITextBuilder Operation(Mode mode)
         {
             return new TextBuilder().Lines(
-                $"<tr> <td> {mode.Owner.Modes.IndexOf(mode)} <td> {mode.Name} <td> {mode.BaseOperation?.Name ?? ""}",
+                $"<tr> <td> {mode.GetModeNumber()} <td> {mode.Name} <td> {mode.BaseOperation?.Name ?? ""}",
                 from state in mode.States
                 where state.Steps.Count > 0 && !state.Steps.TrueForAll(s => s.actions.TrueForAll(a => ActionIsEmpty(a)))
                 select new TextBuilder().Lines(
                     $"<tr> <td> <td colspan=2> <details> <summary>{state.Name}</summary>",
                     $"    <ul>",
                     Steps(state).WithOffset("        "),
-                    $"    </ul>")
-                );
+                    $"    </ul>"));
         }
 
         public ITextBuilder Steps(State state)

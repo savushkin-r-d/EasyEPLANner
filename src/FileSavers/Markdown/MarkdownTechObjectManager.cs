@@ -70,7 +70,7 @@ namespace EasyEPlanner.FileSavers.Markdown
                     BaseObject: baseObjectGroup.Key,
                     TechObjects: (
                         from techObject in baseObjectGroup
-                        select new MarkdownTechObject(techObject) as IMarkdownTechObject)
+                        select new MarkdownTechObject(techObjectManager, techObject) as IMarkdownTechObject)
                         .ToList()))
                 .ToList();
         }

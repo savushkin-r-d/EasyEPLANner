@@ -27,5 +27,10 @@ namespace StaticHelper
                 return 0;
             }
         }
+
+        public static string ToString(long ip)
+        {
+            return $"{(ip & 0xF000) >> 24}.{(ip & 0xF00) >> 16}.{(ip & 0xF0) >> 8}.{ip & 0xF}";
+        }
     }
 }
