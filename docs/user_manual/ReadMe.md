@@ -1198,6 +1198,8 @@ ProjectTestEnabled=True
 | V            | AL.9615-4003-08                                        | 4             | 1              |
 | V            | AL.9615-4004-20                                        | 4             | 1              |
 | V            | DEF.SORIO-1SV                                          | 4             | 1              |
+| V            | GEA.TA15P8IAJ                                          | 4             | 1              |
+| V            | GEA.TA15L8IAJ                                          | 4             | 1              |
 | FQT          | SMR12GGXFRKG/US-100                                    | 8             | 0              |
 | QT           | IFM.LDL100                                             | 12            | 0              |
 | QT           | IFM.LDL200                                             | 12            | 0              |
