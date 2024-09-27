@@ -208,5 +208,31 @@ namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjectTest
             mode.UpdateOnGenericTechObject(null);
             Assert.IsTrue(stateUpdateMethodCalled);
         }
+
+        [Test]
+        public void GetBaseObjectList()
+        {
+
+            var baseTechObject = new BaseTechObject()
+            {
+                Name = "base_tech_object",
+            };
+            baseTechObject.AddBaseOperation("operation_1", "операция 1", 0);
+            baseTechObject.AddBaseOperation("operation_2", "операция 2", 0);
+            baseTechObject.AddBaseOperation("operation_3", "операция 3", 0);
+
+            var techObject = new TechObject.TechObject("", getN => 1, 1, 1, "", -1, "", "", baseTechObject);
+            var modesManager = new ModesManager(techObject);
+
+            var mode = modesManager.AddMode("", "");
+
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(new List<string>() { "", "операция 1", "операция 2", "операция 3" }, mode.BaseObjectsList);
+                
+                modesManager.AddMode("операция 2", "operation_2");
+                CollectionAssert.AreEqual(new List<string>() { "", "операция 1", "операция 3" }, mode.BaseObjectsList);
+            });
+        }
     }
 }

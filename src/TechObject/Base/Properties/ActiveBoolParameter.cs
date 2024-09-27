@@ -89,7 +89,7 @@ namespace TechObject
             }
         }
 
-        public override List<string> BaseObjectsList
+        public override IEnumerable<string> BaseObjectsList
         {
             get
             {
