@@ -38,7 +38,7 @@ function ImportDevices(importer)
         local importDevice = importer:ImportDevice(
             DeviceTypes[device.dtype],
             device.number,
-            ValveSubTypes[device.subtype],
+            ValveSubTypes[device.subtype] or DeviceTypes[device.dtype],
             device.descr)
 
         -- Сигналы AO
@@ -90,7 +90,7 @@ DeviceTypes = {
 
 --- Подтипы клапанов. Некоторых подтипов в текущем проекте нет.
 ValveSubTypes = {
-    [0] = '',
+    [0] = nil,
 
     [1] = 'V_DO1',           -- DST_V_1DO,           1       -- Клапан с одним каналом управления.
     [2] = 'V_DO2',           -- DST_V_2DO,           2       -- Клапан с двумя каналами управления.

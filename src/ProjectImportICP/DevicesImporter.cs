@@ -358,7 +358,7 @@ namespace EasyEPlanner.ProjectImportICP
                     }, $"-{device.Type}{device.Number}");
 
 
-                new ApiHelper().SetSupplementaryFieldValue(function, 1, device.Subtype);
+                new ApiHelper().SetSupplementaryFieldValue(function, 2, device.Subtype);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
@@ -415,7 +415,7 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                new ApiHelper().SetSupplementaryFieldValue(function, 1, device.Subtype);
+                new ApiHelper().SetSupplementaryFieldValue(function, 2, device.Subtype);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
