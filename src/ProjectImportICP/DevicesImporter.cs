@@ -359,7 +359,7 @@ namespace EasyEPlanner.ProjectImportICP
                     }, $"-{device.Type}{device.Number}");
 
                 var apiHelper = new ApiHelper();
-                apiHelper.SetSupplementaryFieldValue(function, 1, device.Subtype);
+                apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
                 apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
@@ -418,7 +418,7 @@ namespace EasyEPlanner.ProjectImportICP
                     }, $"-{device.Type}{device.Number}");
 
                 var apiHelper = new ApiHelper();
-                apiHelper.SetSupplementaryFieldValue(function, 1, device.Subtype);
+                apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
                 apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
