@@ -77,8 +77,6 @@ namespace EasyEPlanner.ProjectImportICP
             var oldChannelsTags = ParseChannelsBase(oldChannelDB);
             var newChannelsTags = ParseChannelsBase(newChannelDB);
 
-            var apiHelper = new ApiHelper();
-
             var tags = LeftJoinNewTagsWithOldTags(
                 GetNewTagsValueAndState(newChannelsTags),
                 oldChannelsTags, devices);
@@ -92,7 +90,8 @@ namespace EasyEPlanner.ProjectImportICP
                 .Where(t => t.NewID != null && t.OldID != null)
                 .ToDictionary(j => j.NewID, j => j.OldID);
 
-            var replaceRegex = new Regex($@"(?<=<channels:id>){string.Join("|", IdToReplaced.Keys)}(?=<\/channels:id>)");
+            var replaceRegex = new Regex($@"(?<=<channels:id>){string.Join("|", IdToReplaced.Keys)}(?=<\/channels:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
             return replaceRegex.Replace(newChannelDB, m => IdToReplaced[m.Value]);
         }
@@ -107,8 +106,8 @@ namespace EasyEPlanner.ProjectImportICP
             return from xml in newChannelsID
                    select new Tag
                    {
-                       Name = xml.description.Split('.').First(),
-                       Property = xml.description.Split('.').Last(),
+                       Name = xml.description.Split('.')[0],
+                       Property = xml.description.Split('.')[1],
                        NewID = xml.id
                    } into tag
                    where tag.Property == "V" || tag.Property == "ST"
@@ -147,17 +146,21 @@ namespace EasyEPlanner.ProjectImportICP
         /// Получить список тегов (description(название тега) - ID) из текста базы каналов
         /// </summary>
         /// <param name="channelBaseData">Текст базы каналов</param>
-        public IEnumerable<(string description, string id)> ParseChannelsBase(string channelBaseData)
+        public static IEnumerable<(string description, string id)> ParseChannelsBase(string channelBaseData)
         {
             var result = new List<(string, string)>();
 
-            var regex = new Regex(@"<channels:channel>(?:[\s\S]*?)<channels:id>(?<id>\d*?)<\/channels:id>(?:[\s\S]*?)<channels:descr>(?<descr>[\s\S]*?)\s?(?::|<\/)(?:[\s\S]*?)<\/channels:channel>");
+            var regex = new Regex(
+                @"<channels:channel>(?:[\s\S]*?)<channels:id>(?<id>\d*?)<\/channels:id>(?:[\s\S]*?)<channels:descr>(?<descr>[\s\S]*?)\s?(?::|<\/)(?:[\s\S]*?)<\/channels:channel>",
+                RegexOptions.None,
+                TimeSpan.FromMilliseconds(100));
 
             var matches = regex.Matches(channelBaseData);
 
             foreach (Match match in matches)
             {
-                if (!match.Success) continue;
+                if (!match.Success) 
+                    continue;
 
                  result.Add((match.Groups["descr"].Value, match.Groups["id"].Value));
             }
