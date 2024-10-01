@@ -47,7 +47,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="subtype">Подтип</param>
         /// <param name="description">Описание</param>
         /// <returns>Описание импортированного устройства: описание дополняется в Lua</returns>
-        IImportDevice ImportDevice(string type, int number, string subtype, string description);
+        IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description);
 
         /// <summary>
         /// [[ LuaMember ]] - вызывается из Lua
@@ -280,11 +280,12 @@ namespace EasyEPlanner.ProjectImportICP
         public List<ImportDevice> ImportDevices { get; private set; } = new List<ImportDevice>();
 
 
-        public IImportDevice ImportDevice(string type, int number, string subtype, string description)
+        public IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description)
         {
             var dev = new ImportDevice()
             {
                 Type = type,
+                WagoType = wagoType,
                 FullNumber = number,
                 Number = number,
                 Subtype = subtype,
@@ -357,8 +358,9 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-
-                new ApiHelper().SetSupplementaryFieldValue(function, 1, device.Subtype);
+                var apiHelper = new ApiHelper();
+                apiHelper.SetSupplementaryFieldValue(function, 1, device.Subtype);
+                apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
@@ -415,13 +417,15 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                new ApiHelper().SetSupplementaryFieldValue(function, 1, device.Subtype);
+                var apiHelper = new ApiHelper();
+                apiHelper.SetSupplementaryFieldValue(function, 1, device.Subtype);
+                apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
                 // Add signature of full wago name
                 var fullName = new Text();
-                fullName.Create(page, $"{device.Type}{device.FullNumber}", TEXT_HEIGHT);
+                fullName.Create(page, $"{device.WagoType}{device.FullNumber}", TEXT_HEIGHT);
                 fullName.LockObject();
                 fullName.Location = new PointD(X + DEVICE_FULL_WAGO_NAME_X_OFFSET, Y + DEVICE_FULL_WAGO_NAME_Y_OFFSET);
 

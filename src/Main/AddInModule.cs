@@ -72,9 +72,15 @@ namespace EasyEPlanner
 
             menuID = oMenu.AddMenuItem(
                 "Импорт ICP-CON проекта",
-                "ImportIcpWagoProject",
+                nameof(ImportIcpWagoProject),
                 "Импорт ICP-CON проекта", menuID, 1,
-                false, false);
+                true, false);
+
+            menuID = oMenu.AddMenuItem(
+                "Модифицировать базу каналов по старому образцу",
+                nameof(ModifyIcpChbase),
+                "Модифицировать базу каналов по старому образцу", menuID, 1,
+                false, true);
 
             menuID = oMenu.AddMenuItem(
                 "Обновления", nameof(OpenUpdater),

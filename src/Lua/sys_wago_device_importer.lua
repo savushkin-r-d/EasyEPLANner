@@ -37,6 +37,7 @@ function ImportDevices(importer)
     for _, device in ipairs(devices) do
         local importDevice = importer:ImportDevice(
             DeviceTypes[device.dtype],
+            WagoDeviceTypes[device.dtype],
             device.number,
             ValveSubTypes[device.subtype],
             device.descr)
@@ -86,6 +87,23 @@ DeviceTypes = {
     [11] = 'DO',    -- Дискретный выходной сигнал.  <=  DT_UPR,  - Канал управления.
     [12] = 'QT',    -- Концентрация.                <=  DT_QE,   - Концентрация.
     [13] = 'AI'     -- Аналоговый входной сигнал.   <=  DT_AI    - Аналоговый вход.
+}
+
+WagoDeviceTypes = {
+    [0] = "V",    -- Клапан.     
+    [1] = "N",    -- Насос.  
+    [2] = 'M',    -- Мешалка.  
+    [3] = 'LS',   -- Уровень (есть/нет).  
+    [4] = 'TE',   -- Температура.  
+    [5] = 'FE',   -- Расход (значение).  
+    [6] = 'FS',   -- Расход (есть/нет).  
+    [7] = 'CTR',  -- Счетчик.  
+    [8] = 'AO',   -- Аналоговый выход.  
+    [9] = 'LE',   -- Уровень (значение).  
+    [10] = 'FB',  -- Обратная связь.  
+    [11] = 'UPR', -- Канал управления.   
+    [12] = 'QE',  -- Концентрация.  
+    [13] = 'AI'   -- Аналоговый вход.  
 }
 
 --- Подтипы клапанов. Некоторых подтипов в текущем проекте нет.
