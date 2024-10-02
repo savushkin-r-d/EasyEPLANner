@@ -43,7 +43,12 @@
             /// </summary>
             public const string R_ID_LOWER_SEAT = "R_ID_LOWER_SEAT";
 
-
+            /// <summary>
+            /// Смещение адресного пространства для клапанов 
+            /// <see cref="DeviceSubType.V_IOLINK_MIXPROOF"/>, <see cref="DeviceSubType.V_IOLINK_DO1_DI2"/>
+            /// привязанных к модулю WAGO.750-657
+            /// </summary>
+            public const string R_EXTRA_OFFSET = nameof(R_EXTRA_OFFSET);
         }
     }
 }
