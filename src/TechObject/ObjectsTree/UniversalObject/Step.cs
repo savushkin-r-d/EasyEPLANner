@@ -896,7 +896,7 @@ namespace TechObject
             get => Owner.Owner.BaseOperation
                 .GetStateStepsNames(Owner.Type)
                 .Except(from step in Owner.Steps
-                        where step.GetBaseStepName() != string.Empty
+                        where step.GetBaseStepName() != string.Empty && step != this
                         select step.GetBaseStepName())
                 ;
         }
