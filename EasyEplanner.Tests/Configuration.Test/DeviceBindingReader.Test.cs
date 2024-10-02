@@ -179,7 +179,7 @@ namespace EasyEplannerTests.ConfigurationTest
             {
                 DeviceBindingReader.CheckAndSetExtraOffset(module, valve, 1);
                 Assert.IsTrue(valve.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_EXTRA_OFFSET, out var extraOffset));
-                Assert.AreEqual(null, extraOffset);
+                Assert.AreEqual(0, extraOffset);
 
                 DeviceBindingReader.CheckAndSetExtraOffset(module, valve, 3);
                 valve.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_EXTRA_OFFSET, out extraOffset);

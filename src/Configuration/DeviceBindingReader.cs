@@ -607,8 +607,7 @@ namespace EasyEPlanner
                 !device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_EXTRA_OFFSET)) 
                 return;
 
-            if (logicalPort - 1 > 0)
-                device.RuntimeParameters[IODevice.RuntimeParameter.R_EXTRA_OFFSET] = -(logicalPort - 1);
+            device.RuntimeParameters[IODevice.RuntimeParameter.R_EXTRA_OFFSET] = -(logicalPort - 1);
         }
 
         /// <summary>
