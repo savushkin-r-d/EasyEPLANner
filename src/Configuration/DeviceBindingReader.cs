@@ -601,14 +601,14 @@ namespace EasyEPlanner
         /// <param name="module">Модуль</param>
         /// <param name="device">Устройство</param>
         /// <param name="logicalPort">Логический номер клеммы (сигнальной)</param>
-        public void CheckAndSetExtraOffset(IIOModule module, IODevice device, int logicalPort)
+        public static void CheckAndSetExtraOffset(IIOModule module, IODevice device, int logicalPort)
         {
             if (module.Info.Number != 657 || // 750-657 - IO-Link Master
                 !device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_EXTRA_OFFSET)) 
                 return;
 
-            if (logicalPort > 0)
-                device.RuntimeParameters[IODevice.RuntimeParameter.R_EXTRA_OFFSET] = -logicalPort;
+            if (logicalPort - 1 > 0)
+                device.RuntimeParameters[IODevice.RuntimeParameter.R_EXTRA_OFFSET] = -(logicalPort - 1);
         }
 
         /// <summary>
