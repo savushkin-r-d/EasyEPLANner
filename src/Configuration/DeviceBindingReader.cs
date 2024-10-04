@@ -604,7 +604,7 @@ namespace EasyEPlanner
         public static void CheckAndSetExtraOffset(IIOModule module, IODevice device, int logicalPort)
         {
             if (module.Info.Number != 657 || // 750-657 - IO-Link Master
-                !device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_EXTRA_OFFSET)) 
+                !device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_EXTRA_OFFSET))
                 return;
 
             device.RuntimeParameters[IODevice.RuntimeParameter.R_EXTRA_OFFSET] = -(logicalPort - 1);
