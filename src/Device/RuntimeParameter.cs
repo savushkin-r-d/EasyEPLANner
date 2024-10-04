@@ -54,7 +54,7 @@ namespace EplanDevice
             /// <see cref="DeviceSubType.V_IOLINK_MIXPROOF"/>, <see cref="DeviceSubType.V_IOLINK_DO1_DI2"/>
             /// привязанных к модулю WAGO.750-657
             /// </summary>
-            public static RuntimeParameter R_EXTRA_OFFSET = new RuntimeParameter(nameof(R_EXTRA_OFFSET), true);
+            public static readonly RuntimeParameter R_EXTRA_OFFSET = new RuntimeParameter(nameof(R_EXTRA_OFFSET), true);
 
 
             private RuntimeParameter(string name, bool auto = false)
