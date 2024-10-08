@@ -104,5 +104,14 @@ namespace ICPImportTests
             new object[] { new V("LINE15V1", "", "", 1, "LINE", 15, ""),  "" },
             new object[] { new M("TANK32M1", "", "", 1, "TANK", 32, ""),  "" },
         };
+
+        [Test]
+        public void CheckChbaseSameID_NoAssert()
+        {
+            ChannelBaseTransformer.CheckChbaseID(
+                "<channels:id>1</channels:id>" +
+                "<channels:id>2</channels:id>" +
+                "<channels:id>2</channels:id>");
+        }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace EasyEPlanner.ProjectImportICP
     /// <summary>
     /// Диалог для модификации базы каналов
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class ModifyChannelsDBDialog : Form
     {
         private readonly string projectName;
@@ -30,7 +32,7 @@ namespace EasyEPlanner.ProjectImportICP
         }
 
 
-        private class BoolComboBox
+        private sealed class BoolComboBox
         {
             public bool Value { get; set; }
             public string Display { get; set; }
@@ -151,7 +153,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <summary>
         /// Прочитать файл базы каналов
         /// </summary>
-        private string ReadFile(string path)
+        private static string ReadFile(string path)
         {
             using (var reader = new StreamReader(path, EncodingDetector.DetectFileEncoding(path), true))
                return reader.ReadToEnd();
