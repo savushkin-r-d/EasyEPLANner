@@ -77,10 +77,10 @@ namespace EasyEPlanner
                 true, false);
 
             menuID = oMenu.AddMenuItem(
-                "Модифицировать базу каналов по старому образцу",
+                "Модифицировать базу каналов",
                 nameof(ModifyIcpChbase),
-                "Модифицировать базу каналов по старому образцу", menuID, 1,
-                false, true);
+                "Модифицировать базу каналов", menuID, 1,
+                false, false);
 
             menuID = oMenu.AddMenuItem(
                 "Обновления", nameof(OpenUpdater),

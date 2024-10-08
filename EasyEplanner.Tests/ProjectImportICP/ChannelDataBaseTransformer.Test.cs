@@ -75,7 +75,7 @@ namespace ICPImportTests
         [Test]
         public void Template()
         {
-            var res = new ChannelBaseTransformer().TransformID(
+            var res = new ChannelBaseTransformer().ModifyID(
                 newChannelDataBase,
                 oldChannelDataBase,
                 new List<(string newName, string oldName)>()

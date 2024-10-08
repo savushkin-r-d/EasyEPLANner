@@ -72,7 +72,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="newChannelDB">Текст новой базы каналов</param>
         /// <param name="oldChannelDB">Текст старой базы каналов</param>
         /// <param name="devices">Список новых и старых названий устройств</param>
-        public string TransformID(string newChannelDB, string oldChannelDB, IEnumerable<(string devName, string wagoName)> devices)
+        public string ModifyID(string newChannelDB, string oldChannelDB, IEnumerable<(string devName, string wagoName)> devices)
         {
             var oldChannelsTags = ParseChannelsBase(oldChannelDB);
             var newChannelsTags = ParseChannelsBase(newChannelDB);
@@ -83,7 +83,7 @@ namespace EasyEPlanner.ProjectImportICP
 
             foreach (var tag in tags.Where(t => t.NewID is null || t.OldID is null))
             {
-                Logs.AddMessage($"Устройства {tag.Name} ({tag.WagoName}) не найдено в базе каналов\n");
+                Logs.AddMessage($"Тег устройства {tag.Name} ({tag.WagoName}) не найден в базе каналов\n");
             }
 
             var IdToReplaced = tags
@@ -168,5 +168,23 @@ namespace EasyEPlanner.ProjectImportICP
             return result;
         }
 
+
+        public static void CheckChbaseID(string chbase)
+        {
+            var regex = new Regex(@"<channels:id>(?<id>\d*?)</channels:id>",
+                RegexOptions.None,
+                TimeSpan.FromMilliseconds(100));
+
+            var set = new HashSet<string>();
+
+            foreach (Match match in regex.Matches(chbase))
+            {
+                var id = match.Groups["id"].Value;
+                if (!set.Add(id))
+                {
+                    Logs.AddMessage($"Ошибка: канал с ID:{id} уже существует\n");
+                }
+            }
+        }
     }
 }
