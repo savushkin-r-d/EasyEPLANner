@@ -25,5 +25,15 @@ namespace EasyEplannerTests.StaticHelperTest
         {
             Assert.AreEqual(expectedIPLong, IPConverter.ConvertIPStrToLong(IPStr));
         }
+
+
+        [TestCase("0.0.0.1", 1)]
+        [TestCase("1.1.1.1", 16843009)]
+        [TestCase("10.0.162.230", 167813862)]
+        [TestCase("10.100.162.240", 174367472)]
+        public void ConvertLongToIPString(string expectedIPStr, long IP)
+        {
+            Assert.AreEqual(expectedIPStr, IPConverter.ToString(IP));
+        }
     }
 }
