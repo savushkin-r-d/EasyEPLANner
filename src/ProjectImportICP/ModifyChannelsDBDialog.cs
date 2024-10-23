@@ -50,7 +50,7 @@ namespace EasyEPlanner.ProjectImportICP
             CombineTagCmbBx.DataSource = YN;
             CombineTagCmbBx.DisplayMember = nameof(BoolComboBox.Display);
             CombineTagCmbBx.ValueMember = nameof(BoolComboBox.Value);
-            CombineTagCmbBx.SelectedValue = false;
+            CombineTagCmbBx.SelectedValue = true;
 
             var Formats = new List<BoolComboBox>()
             {
@@ -118,10 +118,23 @@ namespace EasyEPlanner.ProjectImportICP
 
             Logs.Clear();
             Logs.Show();
+            
+            // Получение индекса драйвера старой базы каналов
+            var srcDriverID = ChannelBaseTransformer.GetDriverID(srcChbase);
+
+            // Смещение индексов новой базы каналов, для записи старых индексов для избежания повторов
+            dstChbase = ChannelBaseTransformer.ShiftID(dstChbase);
+
+            // Выключение всех тегов базы каналов, нужные будут включены
+            dstChbase = ChannelBaseTransformer.DisableAllChannels(dstChbase);
 
             // Модификация базы каналов
-            var modifiedDstChbase = new ChannelBaseTransformer().ModifyID(dstChbase, srcChbase, GetDevicesNames());
+            var modifiedDstChbase = ChannelBaseTransformer.ModifyID(dstChbase, srcChbase, GetDevicesNames());
 
+            // Изменение ID драйвера и всех каналов
+            modifiedDstChbase = ChannelBaseTransformer.ModifyDriverID(modifiedDstChbase, srcDriverID);
+
+            // Проверка совпадения индексов
             ChannelBaseTransformer.CheckChbaseID(modifiedDstChbase);
 
             // Смена названия файла для сохранения, если такой уже существует

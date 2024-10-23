@@ -70,7 +70,7 @@
             this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.MainTableLayoutPanel.Size = new System.Drawing.Size(294, 190);
+            this.MainTableLayoutPanel.Size = new System.Drawing.Size(294, 180);
             this.MainTableLayoutPanel.TabIndex = 0;
             // 
             // label3
@@ -185,7 +185,7 @@
             // 
             // ModifyBttn
             // 
-            this.ModifyBttn.Location = new System.Drawing.Point(103, 196);
+            this.ModifyBttn.Location = new System.Drawing.Point(96, 186);
             this.ModifyBttn.Name = "ModifyBttn";
             this.ModifyBttn.Size = new System.Drawing.Size(110, 23);
             this.ModifyBttn.TabIndex = 1;
@@ -195,7 +195,7 @@
             // 
             // CancelBttn
             // 
-            this.CancelBttn.Location = new System.Drawing.Point(219, 196);
+            this.CancelBttn.Location = new System.Drawing.Point(212, 186);
             this.CancelBttn.Name = "CancelBttn";
             this.CancelBttn.Size = new System.Drawing.Size(70, 23);
             this.CancelBttn.TabIndex = 2;
@@ -207,7 +207,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(294, 231);
+            this.ClientSize = new System.Drawing.Size(294, 221);
             this.Controls.Add(this.CancelBttn);
             this.Controls.Add(this.ModifyBttn);
             this.Controls.Add(this.MainTableLayoutPanel);

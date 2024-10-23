@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ICPImportTests
@@ -15,58 +16,71 @@ namespace ICPImportTests
         private readonly string oldChannelDataBase =
             "<channels:channel>\n" +
             "    <channels:id>1</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>V3201 : descr</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>2</channels:id>\n" +
+            "    <channels:enabled>-1</channels:enabled>\n" +
             "    <channels:descr>V3202 : descr</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>3</channels:id>\n" +
+            "    <channels:enabled>-1</channels:enabled>\n" +
             "    <channels:descr>V3203 : descr</channels:descr>\n" +
             "</channels:channel>\n";
 
         private readonly string newChannelDataBase =
             "<channels:channel>\n" +
             "    <channels:id>10</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V1.V</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>11</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V1.ST</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>12</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V2.V</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>13</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V2.ST</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
-            "    <channels:id>15</channels:id>\n" +
+            "    <channels:id>14</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V3.ST</channels:descr>\n" +
             "</channels:channel>\n";
 
         private readonly string ExpectedChannelDataBase =
             "<channels:channel>\n" +
             "    <channels:id>1</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V1.V</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>11</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V1.ST</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>2</channels:id>\n" +
+            "    <channels:enabled>-1</channels:enabled>\n" +
             "    <channels:descr>TANK32V2.V</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>13</channels:id>\n" +
+            "    <channels:enabled>0</channels:enabled>\n" +
             "    <channels:descr>TANK32V2.ST</channels:descr>\n" +
             "</channels:channel>\n" +
             "<channels:channel>\n" +
             "    <channels:id>3</channels:id>\n" +
+            "    <channels:enabled>-1</channels:enabled>\n" +
             "    <channels:descr>TANK32V3.ST</channels:descr>\n" +
             "</channels:channel>\n";
 
@@ -75,7 +89,7 @@ namespace ICPImportTests
         [Test]
         public void Template()
         {
-            var res = new ChannelBaseTransformer().ModifyID(
+            var  res = ChannelBaseTransformer.ModifyID(
                 newChannelDataBase,
                 oldChannelDataBase,
                 new List<(string newName, string oldName)>()
@@ -113,5 +127,38 @@ namespace ICPImportTests
                 "<channels:id>2</channels:id>" +
                 "<channels:id>2</channels:id>");
         }
+
+        [Test]
+        public void DisableAllChannels()
+        {
+            Assert.AreEqual("<channels:enabled>0</channels:enabled><channels:enabled>0</channels:enabled><channels:enabled>0</channels:enabled>",
+                ChannelBaseTransformer.DisableAllChannels("<channels:enabled>-1</channels:enabled><channels:enabled>-1</channels:enabled><channels:enabled>0</channels:enabled>"));
+        }
+
+        [Test]
+        public void ShiftID()
+        {
+            Assert.AreEqual("<channels:id>9</channels:id><channels:id>10</channels:id>",
+                ChannelBaseTransformer.ShiftID("<channels:id>1</channels:id><channels:id>2</channels:id>", 0b1000));
+        }
+
+        [Test]
+        public void ModifyDriverID()
+        {
+            Assert.AreEqual($"<driver:id>{0x22}</driver:id><channels:id>{0x22010001}</channels:id><channels:id>{0x22010002}</channels:id>",
+                ChannelBaseTransformer.ModifyDriverID($"<driver:id>{0x01}</driver:id><channels:id>{0x01010001}</channels:id><channels:id>{0x01010002}</channels:id>", 0x22));
+        }
+
+        [Test]
+        public void GetDeriverID()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(1, ChannelBaseTransformer.GetDriverID(""));
+                Assert.AreEqual(22, ChannelBaseTransformer.GetDriverID("<driver:id>22</driver:id>"));
+            });
+            
+        }
     }
+
 }

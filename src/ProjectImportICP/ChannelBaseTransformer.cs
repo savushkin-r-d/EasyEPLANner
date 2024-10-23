@@ -1,6 +1,7 @@
 ﻿using EplanDevice;
 using StaticHelper;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -29,6 +30,8 @@ namespace EasyEPlanner.ProjectImportICP
             public string OldID { get; set; }
 
             public string NewID { get; set; }
+
+            public string Enabled { get; set; }
         }
 
         private static readonly Dictionary<DeviceType, string> WagoTypes = new Dictionary<DeviceType, string>
@@ -72,7 +75,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="newChannelDB">Текст новой базы каналов</param>
         /// <param name="oldChannelDB">Текст старой базы каналов</param>
         /// <param name="devices">Список новых и старых названий устройств</param>
-        public string ModifyID(string newChannelDB, string oldChannelDB, IEnumerable<(string devName, string wagoName)> devices)
+        public static string ModifyID(string newChannelDB, string oldChannelDB, IEnumerable<(string devName, string wagoName)> devices)
         {
             var oldChannelsTags = ParseChannelsBase(oldChannelDB);
             var newChannelsTags = ParseChannelsBase(newChannelDB);
@@ -90,10 +93,21 @@ namespace EasyEPlanner.ProjectImportICP
                 .Where(t => t.NewID != null && t.OldID != null)
                 .ToDictionary(j => j.NewID, j => j.OldID);
 
-            var replaceRegex = new Regex($@"(?<=<channels:id>){string.Join("|", IdToReplaced.Keys)}(?=<\/channels:id>)",
-                RegexOptions.None, TimeSpan.FromMilliseconds(100));
+            var IdEnable = tags
+                .Where(t => t.NewID != null && t.OldID != null)
+                .ToDictionary(j => j.NewID, j => j.Enabled);
 
-            return replaceRegex.Replace(newChannelDB, m => IdToReplaced[m.Value]);
+
+            var replaceRegex = new Regex($@"(?<=<channels:id>){string.Join("|", IdToReplaced.Keys)}(?=<\/channels:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(10000));
+
+            var replaceEnableRegex = new Regex($@"(?<=<channels:id>(?<id>{string.Join("|", IdEnable.Keys)})<\/channels:id>[\d\w\s</>:]*<channels:enabled>)0",
+                RegexOptions.None, TimeSpan.FromMilliseconds(10000));
+
+            // enable used tags
+            var chbaseWithEnabled = replaceEnableRegex.Replace(newChannelDB, m => IdEnable[m.Groups["id"].Value]);
+
+            return replaceRegex.Replace(chbaseWithEnabled, m => IdToReplaced[m.Value]);
         }
 
 
@@ -101,7 +115,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// Фильтрация новых тегов из базы каналов ( выборка тегов .V или .ST )
         /// </summary>
         /// <param name="newChannelsID">Теги новой базы каналов</param>
-        IEnumerable<Tag> GetNewTagsValueAndState(IEnumerable<(string description, string id)> newChannelsID)
+        private static IEnumerable<Tag> GetNewTagsValueAndState(IEnumerable<(string description, string id, string enabled)> newChannelsID)
         {
             return from xml in newChannelsID
                    select new Tag
@@ -121,9 +135,9 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="tags">Новые теги</param>
         /// <param name="oldChannelsTags">Старые теги</param>
         /// <param name="devices">Новые и старые названия устройств</param>
-        IEnumerable<Tag> LeftJoinNewTagsWithOldTags(
+        private static IEnumerable<Tag> LeftJoinNewTagsWithOldTags(
             IEnumerable<Tag> tags,
-            IEnumerable<(string description, string id)> oldChannelsTags,
+            IEnumerable<(string description, string id, string enabled)> oldChannelsTags,
             IEnumerable<(string devName, string wagoName)> devices)
         {
             return from dev in devices
@@ -137,7 +151,8 @@ namespace EasyEPlanner.ProjectImportICP
                        Name = newTag.dev.devName,
                        WagoName = newTag.dev.wagoName,
                        OldID = nullableOldTag.id,
-                       NewID = newTag.newID
+                       NewID = newTag.newID,
+                       Enabled = nullableOldTag.enabled,
                    };
         }
 
@@ -146,12 +161,12 @@ namespace EasyEPlanner.ProjectImportICP
         /// Получить список тегов (description(название тега) - ID) из текста базы каналов
         /// </summary>
         /// <param name="channelBaseData">Текст базы каналов</param>
-        public static IEnumerable<(string description, string id)> ParseChannelsBase(string channelBaseData)
+        public static IEnumerable<(string description, string id, string enabled)> ParseChannelsBase(string channelBaseData)
         {
-            var result = new List<(string, string)>();
+            var result = new List<(string, string, string)>();
 
             var regex = new Regex(
-                @"<channels:channel>(?:[\s\S]*?)<channels:id>(?<id>\d*?)<\/channels:id>(?:[\s\S]*?)<channels:descr>(?<descr>[\s\S]*?)\s?(?::|<\/)(?:[\s\S]*?)<\/channels:channel>",
+                @"<channels:channel>(?:[\s\S]*?)<channels:id>(?<id>\d*?)<\/channels:id>(?:[\s\S]*?)<channels:enabled>(?<enabled>-?\d*?)</channels:enabled>(?:[\s\S]*?)<channels:descr>(?<descr>[\s\S]*?)\s?(?::|<\/)(?:[\s\S]*?)<\/channels:channel>",
                 RegexOptions.None,
                 TimeSpan.FromMilliseconds(100));
 
@@ -162,18 +177,70 @@ namespace EasyEPlanner.ProjectImportICP
                 if (!match.Success) 
                     continue;
 
-                 result.Add((match.Groups["descr"].Value, match.Groups["id"].Value));
+                 result.Add((match.Groups["descr"].Value, match.Groups["id"].Value, match.Groups["enabled"].Value));
             }
 
             return result;
         }
 
 
-        public static void CheckChbaseID(string chbase)
+        /// <summary>
+        /// Выключить все теги
+        /// </summary>
+        public static string DisableAllChannels(string chbase)
         {
-            var regex = new Regex(@"<channels:id>(?<id>\d*?)</channels:id>",
+            var regex = new Regex(@"(?<=<channels:enabled>)(?:-?\d*?)(?=<\/channels:enabled>)",
                 RegexOptions.None,
                 TimeSpan.FromMilliseconds(100));
+
+            return regex.Replace(chbase, "0");
+        }
+
+        /// <summary>
+        /// Сместить все ID устройств
+        /// </summary>
+        /// <param name="chbase">База каналов</param>
+        /// <param name="bit_offset">Смещение, по-умолчанию 0x8000</param>
+        public static string ShiftID(string chbase, int bit_offset = 0b1000_0000_0000_0000)
+        {
+            var replaceChannelIdRegex = new Regex(@"(?<=<channels:id>)\d*?(?=<\/channels:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(1000));
+
+            return replaceChannelIdRegex.Replace(chbase,
+                m => $"{int.Parse(m.Value) | bit_offset}");
+        }
+
+        /// <summary>
+        /// Изменить индекс драйвера (также изменяются и ID драйвера всех каналов)
+        /// </summary>
+        /// <param name="chbase">база каналов</param>
+        /// <param name="driverID">Новый индекс драйвера</param>
+        public static string ModifyDriverID(string chbase, int driverID)
+        {
+            var replaceDriverIdRegex = new Regex(@"(?<=<driver:id>)\d*?(?=<\/driver:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(1000));
+
+            chbase = replaceDriverIdRegex.Replace(chbase, driverID.ToString());
+
+            var replaceChannelIdRegex = new Regex(@"(?<=<channels:id>)\d*?(?=<\/channels:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(1000));
+
+
+            var channelIdDriverPref = driverID << 24;
+
+            return replaceChannelIdRegex.Replace(chbase,
+                m => $"{int.Parse(m.Value) & 0x00FFFFFF | channelIdDriverPref}");
+        }
+
+
+        /// <summary>
+        /// Проверка индексов базы каналов на повторения
+        /// </summary>
+        public static void CheckChbaseID(string chbase)
+        {
+            var regex = new Regex(@"<channels:id>(?<id>\d*?)<\/channels:id>",
+                RegexOptions.None,
+                TimeSpan.FromMilliseconds(1000));
 
             var set = new HashSet<string>();
 
@@ -185,6 +252,24 @@ namespace EasyEPlanner.ProjectImportICP
                     Logs.AddMessage($"Ошибка: канал с ID:{id} уже существует\n");
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Получить индекс драйвера
+        /// </summary>
+        /// <param name="chbase">База каналов</param>
+        /// <returns>ID драйвера (1 - если не распознан)</returns>
+        public static int GetDriverID(string chbase)
+        {
+            var getDriverRegex = new Regex(@"(?<=<driver:id>)\d*(?=</driver:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+            var matchDriverID = getDriverRegex.Match(chbase);
+            if (matchDriverID.Success)
+                return int.Parse(matchDriverID.Value);
+
+            return 1;
         }
     }
 }
