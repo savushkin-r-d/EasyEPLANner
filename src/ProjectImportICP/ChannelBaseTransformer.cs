@@ -97,15 +97,14 @@ namespace EasyEPlanner.ProjectImportICP
                 .Where(t => t.NewID != null && t.OldID != null)
                 .ToDictionary(j => j.NewID, j => j.Enabled);
 
-
-            var replaceRegex = new Regex($@"(?<=<channels:id>){string.Join("|", IdToReplaced.Keys)}(?=<\/channels:id>)",
-                RegexOptions.None, TimeSpan.FromMilliseconds(10000));
-
             var replaceEnableRegex = new Regex($@"(?<=<channels:id>(?<id>{string.Join("|", IdEnable.Keys)})<\/channels:id>[\d\w\s</>:]*<channels:enabled>)0",
                 RegexOptions.None, TimeSpan.FromMilliseconds(10000));
 
             // enable used tags
             var chbaseWithEnabled = replaceEnableRegex.Replace(newChannelDB, m => IdEnable[m.Groups["id"].Value]);
+
+            var replaceRegex = new Regex($@"(?<=<channels:id>){string.Join("|", IdToReplaced.Keys)}(?=<\/channels:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(10000));
 
             return replaceRegex.Replace(chbaseWithEnabled, m => IdToReplaced[m.Value]);
         }

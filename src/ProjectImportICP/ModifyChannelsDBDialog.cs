@@ -137,11 +137,7 @@ namespace EasyEPlanner.ProjectImportICP
             // Проверка совпадения индексов
             ChannelBaseTransformer.CheckChbaseID(modifiedDstChbase);
 
-            // Смена названия файла для сохранения, если такой уже существует
-            var dstSavePath = needExport? 
-                dstPath : Path.Combine(Path.GetDirectoryName(dstPath), Path.GetFileNameWithoutExtension(dstPath) + "_reindex.cdbx");
-
-            using (var writer = new StreamWriter(dstSavePath, false, Encoding.UTF8))
+            using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))
                 writer.Write(modifiedDstChbase);
 
             Logs.SetProgress(100);
