@@ -83,9 +83,14 @@ namespace EasyEPlanner.ProjectImportICP
         {
             var tags = GetNewTagsValueAndState(ParseChannelsBase(newChannelDB));
 
+            foreach (var dev in devices.Where(d => d.wagoName == string.Empty || d.devName == string.Empty || tags.All(t => t.Name != d.devName)))
+            {
+                Logs.AddMessage($"Тег устройства {dev.devName} ({dev.wagoName}) не найден в базе каналов\n");
+            }
+
             var namesToReplaced = devices
                 .Where(d => d.wagoName != string.Empty && d.devName != string.Empty && tags.Any(t => t.Name == d.devName))
-                .ToDictionary(j => j.wagoName, j => tags.FirstOrDefault(t => t.Name == j.devName).Descr);
+                .ToDictionary(j => j.wagoName, j => tags.First(t => t.Name == j.devName).Descr);
 
             var replaceRegex = new Regex($@"(?<=<channels:descr>)(?<wago_name>{string.Join("|", namesToReplaced.Keys)}) :[\w\W]*?(?=<\/channels:descr>)",
                 RegexOptions.None, TimeSpan.FromMilliseconds(10000));

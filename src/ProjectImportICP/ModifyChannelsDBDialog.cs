@@ -141,13 +141,19 @@ namespace EasyEPlanner.ProjectImportICP
             // Disable all channels except devices
             foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
             {
-                if (int.Parse(node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:sid").InnerText) != 0)
+                if (int.Parse(node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:sid")?.InnerText ?? "0") != 0)
                 {
-                    node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:enabled").InnerText = "0";
-                    
-                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels").ChildNodes)
+                    if (node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:enabled") is XmlNode subtypeEnabled)
                     {
-                        channelsNode.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "channels:enabled").InnerText = "0";
+                        subtypeEnabled.InnerText = "0";
+                    }
+                    
+                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels")?.ChildNodes)
+                    {
+                        if (channelsNode.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "channels:enabled") is XmlNode enabled)
+                        {
+                            enabled.InnerText = "0";
+                        }
                     }
                 }
             }

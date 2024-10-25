@@ -171,6 +171,22 @@ namespace ICPImportTests
             Assert.AreEqual($"<subtypes:sid>5</subtypes:sid><channels:id>{0x01050001}</channels:id>",
                 ChannelBaseTransformer.ShiftSubtypeID($"<subtypes:sid>2</subtypes:sid><channels:id>{0x01020001}</channels:id>", 3));
         }
-    }
 
+        [Test]
+        public void ModifyDescription()
+        {
+            Assert.AreEqual($"<channels:descr>TANK32LS1.ST</channels:descr>",
+                ChannelBaseTransformer.ModifyDescription(
+                    $"<channels:descr>LS3201 : описание</channels:descr>",
+                    "<channels:channel>\n" +
+                    "    <channels:id>10</channels:id>\n" +
+                    "    <channels:enabled>0</channels:enabled>\n" +
+                    "    <channels:descr>TANK32LS1.ST</channels:descr>\n" +
+                    "</channels:channel>\n",
+                    new List<(string, string)>
+                    {
+                        ("TANK32LS1", "LS3201")
+                    }));
+        }
+    }
 }
