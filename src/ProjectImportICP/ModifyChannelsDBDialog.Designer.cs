@@ -113,7 +113,6 @@
             this.DstChbasePathTextBox.Size = new System.Drawing.Size(181, 20);
             this.DstChbasePathTextBox.TabIndex = 1;
             this.DstChbasePathTextBox.Text = "P:\\Monitor\\chbase\\";
-            this.DstChbasePathTextBox.TextChanged += new System.EventHandler(this.DstChbasePathTextBox_TextChanged);
             // 
             // SrcChbasePathBttn
             // 

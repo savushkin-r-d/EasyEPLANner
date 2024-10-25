@@ -27,6 +27,8 @@ namespace EasyEPlanner.ProjectImportICP
 
             public string Property { get; set; }
 
+            public string Descr { get; set; }
+
             public string OldID { get; set; }
 
             public string NewID { get; set; }
@@ -68,6 +70,30 @@ namespace EasyEPlanner.ProjectImportICP
             Logs.AddMessage($"Старое название тега для устройства {device.Name} не указано, сигнатура устройства не распознана\n");
             return "";
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newChannelDB"></param>
+        /// <param name="oldChannelDB"></param>
+        /// <param name="devices"></param>
+        /// <returns></returns>
+        public static string ModifyDescription(string oldChannelDB, string newChannelDB, IEnumerable<(string devName, string wagoName)> devices)
+        {
+            var tags = GetNewTagsValueAndState(ParseChannelsBase(newChannelDB));
+
+            var namesToReplaced = devices
+                .Where(d => d.wagoName != string.Empty && d.devName != string.Empty && tags.Any(t => t.Name == d.devName))
+                .ToDictionary(j => j.wagoName, j => tags.FirstOrDefault(t => t.Name == j.devName).Descr);
+
+            var replaceRegex = new Regex($@"(?<=<channels:descr>)(?<wago_name>{string.Join("|", namesToReplaced.Keys)}) :[\w\W]*?(?=<\/channels:descr>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(10000));
+
+
+            return replaceRegex.Replace(oldChannelDB, m => namesToReplaced[m.Groups["wago_name"].Value]);
+        }
+
 
         /// <summary>
         /// Изменить ID новой базы каналов на старые ID тегов
@@ -121,6 +147,7 @@ namespace EasyEPlanner.ProjectImportICP
                    {
                        Name = xml.description.Split('.')[0],
                        Property = xml.description.Split('.')[1],
+                       Descr = xml.description,
                        NewID = xml.id
                    } into tag
                    where tag.Property == "V" || tag.Property == "ST"
@@ -186,9 +213,9 @@ namespace EasyEPlanner.ProjectImportICP
         /// <summary>
         /// Выключить все теги
         /// </summary>
-        public static string DisableAllChannels(string chbase)
+        public static string DisableAllSubtypesChannels(string chbase)
         {
-            var regex = new Regex(@"(?<=<channels:enabled>)(?:-?\d*?)(?=<\/channels:enabled>)",
+            var regex = new Regex(@"(?<=<(channels|subtypes):enabled>)(?:-?\d*?)(?=<\/(channels|subtypes):enabled>)",
                 RegexOptions.None,
                 TimeSpan.FromMilliseconds(100));
 
@@ -208,6 +235,27 @@ namespace EasyEPlanner.ProjectImportICP
             return replaceChannelIdRegex.Replace(chbase,
                 m => $"{int.Parse(m.Value) | bit_offset}");
         }
+
+
+        /// <summary>
+        /// Сместить типы в базе каналов
+        /// </summary>
+        /// <param name="chbase">База каналов</param>
+        /// <param name="offset">Смещение</param>
+        public static string ShiftSubtypeID(string chbase, int offset)
+        {
+            var replaceTypeSidRegex = new Regex(@"(?<=<subtypes:sid>)\d*?(?=<\/subtypes:sid>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(1000));
+
+            var replaceIDRegex = new Regex(@"(?<=<channels:id>)\d*?(?=<\/channels:id>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(1000));
+
+            var idOffset = offset << 16;
+
+            chbase = replaceTypeSidRegex.Replace(chbase, m => $"{int.Parse(m.Value) + offset}");
+            return replaceIDRegex.Replace(chbase, m => $"{int.Parse(m.Value) + idOffset}");
+        }
+
 
         /// <summary>
         /// Изменить индекс драйвера (также изменяются и ID драйвера всех каналов)
@@ -270,5 +318,28 @@ namespace EasyEPlanner.ProjectImportICP
 
             return 1;
         }
+
+
+        /// <summary>
+        /// Получение первого свободного ID базы каналов
+        /// </summary>
+        /// <param name="chbase">Базаф каналов</param>
+        public static int GetFreeSubtypeID(string chbase)
+        {
+            var getSubtypeIDRegex = new Regex(@"(?<=<subtypes:sid>)\d*(?=</subtypes:sid>)",
+                RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+            var matches = getSubtypeIDRegex.Matches(chbase);
+
+            int res = -1;
+            foreach (Match match in matches)
+            {
+                res = Math.Max(res, int.Parse(match.Value));
+            }
+
+            return res + 1;
+        }
+
+
     }
 }

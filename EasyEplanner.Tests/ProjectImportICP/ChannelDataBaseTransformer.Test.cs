@@ -132,7 +132,7 @@ namespace ICPImportTests
         public void DisableAllChannels()
         {
             Assert.AreEqual("<channels:enabled>0</channels:enabled><channels:enabled>0</channels:enabled><channels:enabled>0</channels:enabled>",
-                ChannelBaseTransformer.DisableAllChannels("<channels:enabled>-1</channels:enabled><channels:enabled>-1</channels:enabled><channels:enabled>0</channels:enabled>"));
+                ChannelBaseTransformer.DisableAllSubtypesChannels("<channels:enabled>-1</channels:enabled><channels:enabled>-1</channels:enabled><channels:enabled>0</channels:enabled>"));
         }
 
         [Test]
@@ -157,7 +157,19 @@ namespace ICPImportTests
                 Assert.AreEqual(1, ChannelBaseTransformer.GetDriverID(""));
                 Assert.AreEqual(22, ChannelBaseTransformer.GetDriverID("<driver:id>22</driver:id>"));
             });
-            
+        }
+
+        [Test]
+        public void GetFreeSubtypeID()
+        {
+            Assert.AreEqual(5, ChannelBaseTransformer.GetFreeSubtypeID("<subtypes:sid>1</subtypes:sid><subtypes:sid>3</subtypes:sid><subtypes:sid>4</subtypes:sid>"));
+        }
+
+        [Test]
+        public void ShiftSubtypeID()
+        {
+            Assert.AreEqual($"<subtypes:sid>5</subtypes:sid><channels:id>{0x01050001}</channels:id>",
+                ChannelBaseTransformer.ShiftSubtypeID($"<subtypes:sid>2</subtypes:sid><channels:id>{0x01020001}</channels:id>", 3));
         }
     }
 

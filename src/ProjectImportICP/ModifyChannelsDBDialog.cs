@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace EasyEPlanner.ProjectImportICP
 {
@@ -103,14 +104,10 @@ namespace EasyEPlanner.ProjectImportICP
             var srcPath = SrcChbasePathTextBox.Text;
             var dstPath = DstChbasePathTextBox.Text;
 
-            var needExport = !File.Exists(dstPath);
-
             if (!File.Exists(srcPath))
                 return;
-
-            // Экспорт новой базы каналов, если ее не существует
-            if (needExport)
-                ExportChbase(dstPath);
+            
+            ExportChbase(dstPath);
 
             // Чтение баз каналов
             var srcChbase = ReadFile(srcPath);
@@ -118,27 +115,51 @@ namespace EasyEPlanner.ProjectImportICP
 
             Logs.Clear();
             Logs.Show();
-            
+
+            // Модификация названий устройств старой базы каналов
+            var modifiedSrcChbase = ChannelBaseTransformer.ModifyDescription(srcChbase, dstChbase, GetDevicesNames());
+
             // Получение индекса драйвера старой базы каналов
             var srcDriverID = ChannelBaseTransformer.GetDriverID(srcChbase);
 
-            // Смещение индексов новой базы каналов, для записи старых индексов для избежания повторов
-            dstChbase = ChannelBaseTransformer.ShiftID(dstChbase);
-
-            // Выключение всех тегов базы каналов, нужные будут включены
-            dstChbase = ChannelBaseTransformer.DisableAllChannels(dstChbase);
-
-            // Модификация базы каналов
-            var modifiedDstChbase = ChannelBaseTransformer.ModifyID(dstChbase, srcChbase, GetDevicesNames());
+            // Смещение типов новой базы каналов для вставки старой
+            var modifiedDstChbase = ChannelBaseTransformer.ShiftSubtypeID(dstChbase, ChannelBaseTransformer.GetFreeSubtypeID(srcChbase));
 
             // Изменение ID драйвера и всех каналов
             modifiedDstChbase = ChannelBaseTransformer.ModifyDriverID(modifiedDstChbase, srcDriverID);
 
-            // Проверка совпадения индексов
-            ChannelBaseTransformer.CheckChbaseID(modifiedDstChbase);
+            // Выключение всех тегов базы каналов
+            modifiedDstChbase = ChannelBaseTransformer.DisableAllSubtypesChannels(modifiedDstChbase);
+               
+            var srcXmlDoc = new XmlDocument();
+            srcXmlDoc.LoadXml(modifiedSrcChbase);
+            
+            var dstXmlDoc = new XmlDocument();
+            dstXmlDoc.LoadXml(modifiedDstChbase);
+
+           
+            // Disable all channels except devices
+            foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
+            {
+                if (int.Parse(node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:sid").InnerText) != 0)
+                {
+                    node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:enabled").InnerText = "0";
+                    
+                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels").ChildNodes)
+                    {
+                        channelsNode.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "channels:enabled").InnerText = "0";
+                    }
+                }
+            }
+
+            var subtypesNode = dstXmlDoc.GetElementsByTagName("driver:subtypes")[0];
+            foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
+            {
+                subtypesNode.InsertBefore(dstXmlDoc.ImportNode(node, true), subtypesNode.FirstChild);
+            }
 
             using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))
-                writer.Write(modifiedDstChbase);
+                dstXmlDoc.Save(writer);
 
             Logs.SetProgress(100);
             Logs.EnableButtons();
@@ -188,14 +209,6 @@ namespace EasyEPlanner.ProjectImportICP
                 return (d.Name, wagoName);
             });
             return deviceNames;
-        }
-
-        private void DstChbasePathTextBox_TextChanged(object sender, EventArgs e)
-        {
-            var fileExists = File.Exists(DstChbasePathTextBox.Text);
-
-            CombineTagCmbBx.Enabled = !fileExists;
-            FormatTagCmbBx.Enabled = !fileExists;
         }
 
         private void CancelBttn_Click(object sender, EventArgs e) => Close();
