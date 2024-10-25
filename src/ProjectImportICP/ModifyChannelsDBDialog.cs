@@ -148,7 +148,7 @@ namespace EasyEPlanner.ProjectImportICP
                         subtypeEnabled.InnerText = "0";
                     }
                     
-                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels")?.ChildNodes)
+                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels")?.ChildNodes ?? (XmlNodeList)Enumerable.Empty<XmlNode>())
                     {
                         if (channelsNode.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "channels:enabled") is XmlNode enabled)
                         {
