@@ -437,8 +437,6 @@ namespace EasyEPlanner.ProjectImportICP
 
                 var clamps = objects.OfType<Terminal>().ToList();
 
-                clamps.ForEach(c => nameService.SetVisibleNameAndAdjustFullName(currentPage, c, moduleNameProperties, $""));
-
                 return clamps;
             }
 
