@@ -28,6 +28,12 @@ namespace EasyEPlanner
             t.Start(dataForSave);
         }
 
+        public void AwaitSaveAsCDBX(string projectName, bool combineTag = false, bool useNewNames = false, bool rewrite = false)
+        {
+            SaveAsXML(projectName, rewrite, combineTag, useNewNames);
+        }
+
+
         /// <summary>
         /// Экспорт базы каналов, поток.
         /// </summary>

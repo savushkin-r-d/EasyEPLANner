@@ -16,6 +16,11 @@ namespace EasyEPlanner.ProjectImportICP
         /// Тип устройства
         /// </summary>
         string Type { get; set; }
+
+        /// <summary>
+        /// Тип устройства в WAGO
+        /// </summary>
+        string WagoType { get; set; }
     
         /// <summary>
         /// Подтип устройства
@@ -64,6 +69,8 @@ namespace EasyEPlanner.ProjectImportICP
     public class ImportDevice : IImportDevice
     {
         public string Type { get; set; }
+
+        public string WagoType {  get; set; }
 
         public string Subtype { get; set; }
 
