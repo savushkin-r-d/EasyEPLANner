@@ -244,8 +244,8 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void Import()
         {
-            importMacrosPath = ProjectManager.GetInstance().GetWagoImportMacrosPath();
-            macrosPath = ProjectManager.GetInstance().GetWagoMacrosPath();
+            importMacrosPath = ProjectManager.GetInstance().GetWagoMacrosPath("wago_import_macros_path");
+            macrosPath = ProjectManager.GetInstance().GetWagoMacrosPath("wago_macros_path");
 
             if (string.IsNullOrEmpty(macrosPath) || !Directory.Exists(macrosPath))
             {

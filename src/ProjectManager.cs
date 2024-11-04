@@ -259,42 +259,10 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Путь к отредактированным Eplan-макросам модулей ввода-вывода для импорта
-        /// </summary>
-        /// <returns></returns>
-        [ExcludeFromCodeCoverage]
-        public string GetWagoImportMacrosPath()
-        {
-            try
-            {
-                string path = Path.Combine(OriginalAssemblyPath, StaticHelper.CommonConst.ConfigFileName);
-
-                PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
-                if (File.Exists(path))
-                {
-                    var cyrillic = Encoding.GetEncoding("Windows-1251");
-
-                    return cyrillic.GetString(
-                        Encoding.Convert(
-                            Encoding.GetEncoding("UTF-8"),
-                            cyrillic,
-                            cyrillic.GetBytes(iniFile.ReadString("path", "wago_import_macros_path", ""))));
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Файл конфигурации не найден", "Внимание",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            return "";
-        }
-
-        /// <summary>
         /// Путь к Eplan-макросам модулей ввода-вывода
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public string GetWagoMacrosPath()
+        public string GetWagoMacrosPath(string key)
         {
             try
             {
@@ -309,7 +277,7 @@ namespace EasyEPlanner
                         Encoding.Convert(
                             Encoding.GetEncoding("UTF-8"),
                             cyrillic,
-                            cyrillic.GetBytes(iniFile.ReadString("path", "wago_macros_path", ""))));
+                            cyrillic.GetBytes(iniFile.ReadString("path", key, ""))));
                 }
             }
             catch
