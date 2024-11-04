@@ -30,6 +30,7 @@ local iolink_devices =
     { articleName = "IFM.PM1709", sizeIn = 2, sizeOut = 0 },
     { articleName = "IFM.PM1715", sizeIn = 2, sizeOut = 0 },
     { articleName = "FES.8001446", sizeIn = 1, sizeOut = 0 },
+    { articleName = "IFM.PM1706", sizeIn = 2, sizeOut = 0 }, -- PT&LT
     -- LT
     { articleName = "IFM.LR2750", sizeIn = 1, sizeOut = 0 },
     -- TE
