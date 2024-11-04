@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -50,7 +51,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="nodeIndex">Порядковый номер узла</param>
         /// <param name="moduleIndex">Порядковый номер модуля в шине</param>
         bool ImportModule(int moduleN, int nodeIndex, int moduleIndex);
-        
+
         /// <summary>
         /// Создать страницу с клеммами модуля ввода-вывода
         /// </summary>
@@ -80,6 +81,14 @@ namespace EasyEPlanner.ProjectImportICP
         /// Ширина текущего импортируемого узла
         /// </summary>
         private int currentNodeWidth;
+
+        /// <summary>
+        /// Путь к каталогу с макросами, отредактированными для импорта
+        /// </summary>
+        /// <remarks>
+        /// Поиск макроса проводится сначала по этому каталогу а после по <see cref="macrosPath"/>, если макрос не найден
+        /// </remarks>
+        private string importMacrosPath = "";
 
         /// <summary>
         /// Путь каталога к макросам
@@ -229,13 +238,15 @@ namespace EasyEPlanner.ProjectImportICP
                 typeof(Logs).GetMethod(nameof(Logs.SetProgress)));
 
             lua.DoString(script);
-            lua.DoString(data);   
+            lua.DoString(data);
         }
 
 
         public void Import()
         {
+            importMacrosPath = ProjectManager.GetInstance().GetWagoImportMacrosPath();
             macrosPath = ProjectManager.GetInstance().GetWagoMacrosPath();
+
             if (string.IsNullOrEmpty(macrosPath) || !Directory.Exists(macrosPath))
             {
                 MessageBox.Show("Не найден путь каталога с макросами, пожалуйста, установите в файле configuration.ini" +
@@ -244,15 +255,10 @@ namespace EasyEPlanner.ProjectImportICP
                 return;
             }
 
-            Logs.Clear();
-            Logs.Show();
-
             pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_PLANT] = ROOT_NAME;
 
             // call Import() function in lua
             lua.GetFunction("Import").Call(this);
-            
-            Logs.EnableButtons();
         }
 
 
@@ -260,7 +266,7 @@ namespace EasyEPlanner.ProjectImportICP
 
 
         public bool ImportNode(int nodeType, int nodeIndex, string IP)
-        {   
+        {
             pageProperties[Eplan.EplApi.DataModel.Properties.Page.DESIGNATION_LOCATION] = $"{CAB_NAME}{nodeIndex}";
 
             currentPage = new Page();
@@ -339,8 +345,18 @@ namespace EasyEPlanner.ProjectImportICP
         {
             try
             {
+                var macrosFilePath = Path.Combine(importMacrosPath, $@"750-{number / 100 * 100}\WAGO.750-{number}.ema");
+                if (string.IsNullOrEmpty(importMacrosPath) || !Directory.Exists(importMacrosPath))
+                {
+                    macrosFilePath = Path.Combine(macrosPath, $@"750-{number / 100 * 100}\WAGO.750-{number}.ema");
+                }
+
+                if (!File.Exists(macrosFilePath))
+                    return new WindowMacro();
+
                 var macro = new WindowMacro();
-                macro.Open(Path.Combine(macrosPath, $@"750-{number / 100 * 100}\WAGO.750-{number}.ema"), project, OVERVIEW, MACRO_VARIANT_E);
+                macro.Open(macrosFilePath, project, OVERVIEW, MACRO_VARIANT_E);
+
                 return macro;
             }
             catch
@@ -358,9 +374,32 @@ namespace EasyEPlanner.ProjectImportICP
 
         public bool ImportModule(int moduleN, int nodeIndex, int moduleIndex)
         {
+            var moduleNumber = nodeIndex * 100 + moduleIndex;
             var macro = OpenMacro(moduleN);
             var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
 
+            List<Terminal> clamps = null;
+            if (moduleN != 600) // exclude end module
+            {
+                clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
+            }
+
+            var module = CreateModuleOnBus(macro, moduleIndex, moduleNumber, moduleInfo, isStub);
+
+            if (module is null)
+                return false;
+
+            if (clamps != null)
+            {
+                ImportModules[nodeIndex].Add(new ImportModule(clamps, moduleInfo, module));
+            }
+
+            return true;
+        }
+
+
+        public PLC CreateModuleOnBus(WindowMacro macro, int moduleIndex, int moduleNumber, IOModuleInfo moduleInfo, bool isStub)
+        {
             var objects = Insert.WindowMacro(macro,
                 OVERVIEW, MACRO_VARIANT_E, currentPage,
                 new PointD(
@@ -371,8 +410,6 @@ namespace EasyEPlanner.ProjectImportICP
             var module = objects.OfType<PLC>().FirstOrDefault();
             if (module != null)
             {
-                var moduleNumber = nodeIndex * 100 + moduleIndex;
-
                 nameService.SetVisibleNameAndAdjustFullName(
                     currentPage, module,
                     new FunctionPropertyList()
@@ -381,20 +418,11 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = moduleNumber,
                     }, $"-A{moduleNumber}");
 
-                if (moduleN != 600) // exclude end module
-                {
-                    var clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
-                    ImportModules[nodeIndex].Add(new ImportModule(clamps, moduleInfo, module));
-                }
-
                 Logs.AddMessage($"\t-A{moduleNumber} [ {moduleInfo.Name} ] {(isStub ? "Неопределенный модуль" : moduleInfo.Description)};\n");
-                
-                return true;
             }
-
-            return false;
+            
+            return module;
         }
-
 
         public List<Terminal> CreatePageWithModuleClamps(WindowMacro macro, IOModuleInfo moduleInfo, int moduleNumber)
         {
@@ -408,36 +436,25 @@ namespace EasyEPlanner.ProjectImportICP
             var name = currentPage.Properties.PAGE_NAME;
             page.Properties.PAGE_NAME = name;
             currentPage.Properties.PAGE_NAME = name + 1;
-
+    
             var objects = Insert.WindowMacro(macro,
                MULTILINE, MACRO_VARIANT_A, page,
                new PointD(X_OFFSET, PAGE_HEIGHT - Y_OFFSET),
-               Insert.MoveKind.Absolute);
+               Insert.MoveKind.Absolute,
+               WindowMacro.Enums.NumerationMode.Number);
 
             var module = objects.OfType<PLC>().FirstOrDefault();
             if (module != null)
             {
-                var moduleNameProperties = new FunctionPropertyList()
-                {
-                    FUNC_CODE = "A",
-                    FUNC_COUNTER = moduleNumber,
-                };
+                module.LockObject();
+                module.Properties.FUNC_MAINFUNCTION = false;
 
-                nameService.SetVisibleNameAndAdjustFullName(currentPage, module, moduleNameProperties, $"-A{moduleNumber}");
-
-                try
+                if (module.VisibleName != $"-A{moduleNumber}")
                 {
-                    module.Properties.FUNC_MAINFUNCTION = false;
-                }
-                catch
-                {
-                    Logs.AddMessage($"\tНе удалось отключить \"Главную функцию\" на клеммах модуля -A{moduleNumber}. Проверьте данное свойство вручную.\n"); 
+                    Logs.AddMessage($"\tНе удалось проиндексировать модуль -A{moduleNumber} на странице \"{page.Properties.PAGE_NAME} {moduleInfo.TypeName}. {moduleInfo.Number}\".\n");
                 }
 
-
-                var clamps = objects.OfType<Terminal>().ToList();
-
-                return clamps;
+                return objects.OfType<Terminal>().ToList();
             }
 
             return Enumerable.Empty<Terminal>().ToList();

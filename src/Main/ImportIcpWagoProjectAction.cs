@@ -53,11 +53,16 @@ namespace EasyEPlanner
                     data = reader.ReadToEnd();
                 }
 
+                Logs.Clear();
+                Logs.Show();
+
                 var modulesImporter = new ModulesImporter(currentProject, data);
                 modulesImporter.Import();
 
                 var devicesImporter = new DevicesImporter(currentProject, data);
                 devicesImporter.Import();
+
+                Logs.EnableButtons();
 
                 new BindingImporter(modulesImporter.ImportModules, devicesImporter.ImportDevices).Bind();
             }
