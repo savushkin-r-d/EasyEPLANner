@@ -262,7 +262,7 @@ namespace EasyEPlanner
         /// Путь к Eplan-макросам модулей ввода-вывода
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public string GetWagoMacrosPath()
+        public string GetWagoMacrosPath(string key)
         {
             try
             {
@@ -277,7 +277,7 @@ namespace EasyEPlanner
                         Encoding.Convert(
                             Encoding.GetEncoding("UTF-8"),
                             cyrillic,
-                            cyrillic.GetBytes(iniFile.ReadString("path", "wago_macros_path", ""))));
+                            cyrillic.GetBytes(iniFile.ReadString("path", key, ""))));
                 }
             }
             catch
