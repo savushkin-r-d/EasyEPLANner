@@ -262,16 +262,11 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void Import()
         {
-            Logs.Clear();
-            Logs.Show();
-
             Logs.AddMessage("\n\n");
             Logs.AddMessage("Импорт устройств:\n");
 
             // call Import() function in lua
             lua.GetFunction("Import").Call(this);
-
-            Logs.EnableButtons();
         }
 
 

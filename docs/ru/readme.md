@@ -10,7 +10,7 @@
 
 [EPLAN API Help](https://www.eplan.help/en-us/Infoportal/Content/api/2023/index.html) — описание и примеры использования API EPLAN.
 
-Примеры по автоматизации EPLAN Electric P8 на языке программирования C# можной найти у
+Примеры по автоматизации EPLAN Electric P8 на языке программирования C# можно найти у
 [Suplanus](https://github.com/Suplanus).
 
 ### EasyEPLANner
