@@ -1242,6 +1242,7 @@ ProjectTestEnabled=True
 | PT           | IFM.PM1709                                             | 4             | 0              |
 | PT           | IFM.IFM.PM1715                                         | 4             | 0              |
 | PT           | FES.8001446                                            | 2             | 0              |
+| PT и LT      | IFM.PM1706                                             | 2             | 0              |
 | LT           | IFM.LR2750                                             | 2             | 0              |
 | TE           | IFM.TA2502                                             | 2             | 0              |
 | TE           | IFM.TA2532                                             | 2             | 0              |
