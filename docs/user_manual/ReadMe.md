@@ -1065,6 +1065,16 @@ ProjectTestEnabled=True
         TE
             <td> <b> P_C0  <td> Сдвиг нуля <tr> 
             <td> <b> P_ERR <td> Аварийное значение температуры
+        <tr> <td rowspan = 2> <b> 
+        TE_IOLINK
+            <td> <b> P_C0  <td> Сдвиг нуля <tr> 
+            <td> <b> P_ERR <td> Аварийное значение температуры
+        <tr> <td rowspan = 4> <b> 
+        TE_ANALOG
+            <td> <b> P_C0  <td> Сдвиг нуля <tr> 
+            <td> <b> P_ERR <td> Аварийное значение температуры <tr>
+            <td> <b> P_MIN_V <td> Минимальное значение <tr>
+            <td> <b> P_MAX_V <td> Максимальное значение
         <tr> <td> <b> 
         М (кроме M_ATV_LINEAR)
             <td> <b> P_ON_TIME <td> Время включения, <i>мс</i>
