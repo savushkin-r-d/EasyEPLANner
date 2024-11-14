@@ -219,7 +219,7 @@ namespace EasyEPlanner.ProjectImportICP
                 .Where(g => g.Count() > 1)
                 .ToList();
 
-            if (duplicates.Count() > 0)
+            if (duplicates.Any())
             {
                 duplicates.ForEach(g => Logs.AddMessage($"Тег {g.Key} дублируется в устройствах {string.Join(", ", g.Select(names => names.Name))}.\n"));
                 return Enumerable.Empty<(string Name, string WagoName)>();
