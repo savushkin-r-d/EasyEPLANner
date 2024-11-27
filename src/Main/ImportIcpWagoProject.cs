@@ -53,8 +53,10 @@ namespace EasyEPlanner
                     data = reader.ReadToEnd();
                 }
 
-                Logs.Clear();
                 Logs.Show();
+                Logs.DisableButtons();
+                Logs.Clear();
+                Logs.SetProgress(0);                
 
                 var modulesImporter = new ModulesImporter(currentProject, data);
                 modulesImporter.Import();
@@ -62,9 +64,11 @@ namespace EasyEPlanner
                 var devicesImporter = new DevicesImporter(currentProject, data);
                 devicesImporter.Import();
 
-                Logs.EnableButtons();
-
                 new BindingImporter(modulesImporter.ImportModules, devicesImporter.ImportDevices).Bind();
+
+                Logs.EnableButtons();
+                Logs.ShowLastLine();
+                Logs.SetProgress(100);
             }
             catch (Exception ex)
             {
