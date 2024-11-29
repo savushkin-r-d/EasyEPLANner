@@ -1,4 +1,5 @@
 ﻿using EplanDevice;
+using Spire.Xls.Core.Spreadsheet.ConditionalFormatting;
 using StaticHelper;
 using System;
 using System.CodeDom;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace EasyEPlanner.ProjectImportICP
 {
@@ -99,6 +101,19 @@ namespace EasyEPlanner.ProjectImportICP
             return replaceRegex.Replace(oldChannelDB, m => namesToReplaced[m.Groups["wago_name"].Value]);
         }
 
+
+        public static void ModifyDescription(XmlDocument dstXmlDoc, XmlDocument resXmlDoc, IEnumerable<(string devName, string wagoName)> devices)
+        {
+            XmlNamespaceManager nsMngr = new XmlNamespaceManager(dstXmlDoc.NameTable);
+            nsMngr.AddNamespace("driver", "driver");
+
+
+
+            //foreach (var subtype in dstXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
+            //{
+
+            //}
+        }
 
         /// <summary>
         /// Изменить ID новой базы каналов на старые ID тегов

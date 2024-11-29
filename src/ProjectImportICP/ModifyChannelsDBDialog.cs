@@ -1,4 +1,4 @@
-﻿using Eplan.EplApi.DataModel.Graphics;
+using Eplan.EplApi.DataModel.Graphics;
 using Eplan.EplApi.HEServices;
 using EplanDevice;
 using StaticHelper;
@@ -10,10 +10,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using static Eplan.EplApi.DataModel.E3D.BasePointMate.Enums;
 
 namespace EasyEPlanner.ProjectImportICP
 {
@@ -107,63 +110,105 @@ namespace EasyEPlanner.ProjectImportICP
             if (!File.Exists(srcPath))
                 return;
             
+            Logs.Show();
+            Logs.Clear();
             ExportChbase(dstPath);
 
             // Чтение баз каналов
             var srcChbase = ReadFile(srcPath);
             var dstChbase = ReadFile(dstPath);
 
-            Logs.Clear();
-            Logs.Show();
-
-            // Модификация названий устройств старой базы каналов
-            var modifiedSrcChbase = ChannelBaseTransformer.ModifyDescription(srcChbase, dstChbase, GetDevicesNames());
-
-            // Получение индекса драйвера старой базы каналов
-            var srcDriverID = ChannelBaseTransformer.GetDriverID(srcChbase);
-
-            // Смещение типов новой базы каналов для вставки старой
-            var modifiedDstChbase = ChannelBaseTransformer.ShiftSubtypeID(dstChbase, ChannelBaseTransformer.GetFreeSubtypeID(srcChbase));
-
-            // Изменение ID драйвера и всех каналов
-            modifiedDstChbase = ChannelBaseTransformer.ModifyDriverID(modifiedDstChbase, srcDriverID);
-
-            // Выключение всех тегов базы каналов
-            modifiedDstChbase = ChannelBaseTransformer.DisableAllSubtypesChannels(modifiedDstChbase);
-               
             var srcXmlDoc = new XmlDocument();
-            srcXmlDoc.LoadXml(modifiedSrcChbase);
-            
-            var dstXmlDoc = new XmlDocument();
-            dstXmlDoc.LoadXml(modifiedDstChbase);
+            srcXmlDoc.LoadXml(srcChbase);
 
-           
-            // Disable all channels except devices
-            foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
+            var dstXmlDoc = new XmlDocument();
+            dstXmlDoc.LoadXml(dstChbase);
+
+            XmlNamespaceManager nsMngr = new XmlNamespaceManager(dstXmlDoc.NameTable);
+            nsMngr.AddNamespace("driver", "http://brestmilk.by/driver/");
+            nsMngr.AddNamespace("subtypes", "http://brestmilk.by/subtypes/");
+            nsMngr.AddNamespace("channels", "http://brestmilk.by/channels/");
+
+
+            XmlNode dstRoot = dstXmlDoc.DocumentElement;
+            XmlNode srcRoot = srcXmlDoc.DocumentElement;
+
+            // Замена названий старых каналов на новые 
+            var namingMap = GetDevicesNames();
+            foreach (var replacingName in namingMap)
             {
-                if (int.Parse(node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:sid")?.InnerText ?? "0") != 0)
+                if (replacingName.WagoName is null)
                 {
-                    if (node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:enabled") is XmlNode subtypeEnabled)
-                    {
-                        subtypeEnabled.InnerText = "0";
-                    }
-                    
-                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels")?.ChildNodes ?? (XmlNodeList)Enumerable.Empty<XmlNode>())
-                    {
-                        if (channelsNode.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "channels:enabled") is XmlNode enabled)
-                        {
-                            enabled.InnerText = "0";
-                        }
-                    }
+                   Logs.AddMessage($"{replacingName.Name}: wago name is null\n");
+
+                    continue;
+                }
+
+                var replacingNode = srcRoot.SelectSingleNode($"//channels:channel[contains(channels:descr, '{replacingName.WagoName}')]", nsMngr);
+
+                if (replacingNode is null)
+                {
+                    Logs.AddMessage($"Канал {replacingName.WagoName} не найден в исходной базе каналов.\n");
+                    continue;
+                }
+
+                var dev = DeviceManager.GetInstance().GetDevice(replacingName.Name);
+
+                if (dev.DeviceSubType is DeviceSubType.NONE)
+                {
+                    Logs.AddMessage($"У устройства {replacingName.Name} не задан подтип.\n");
+                    continue;
+                }
+
+                var ST = dev.GetDeviceProperties(dev.DeviceType, dev.DeviceSubType).ContainsKey(IODevice.Tag.ST);
+                replacingNode.SelectSingleNode("./channels:descr/text()", nsMngr).Value = $"{replacingName.Name}.{(ST ? IODevice.Tag.ST : IODevice.Tag.V)}";
+            }
+
+            // Получаем ID старой базы каналов
+            var _srcDriverID = int.Parse(srcRoot.SelectSingleNode("//driver:id/text()", nsMngr).Value);
+
+            // Получаем первый свободный подтип в старой базе каналов
+            var  srcFirstFreeSubtypeID = 1 + srcRoot.SelectNodes("//subtypes:sid/text()", nsMngr).OfType<XmlNode>().Max(n => int.Parse(n.Value));
+
+            // Смещение индексов подтипов и каналов новой базы каналов
+            dstRoot.SelectSingleNode("//driver:id", nsMngr).InnerText = _srcDriverID.ToString();
+            var channelDriverIdOctet = _srcDriverID << 24; // 0x[driver id]000000
+            foreach (XmlNode subtype in dstRoot.SelectNodes("//subtypes:subtype", nsMngr))
+            {
+                var subtypeIdNode = subtype.SelectSingleNode("./subtypes:sid/text()", nsMngr);
+                var subtypeId = int.Parse(subtypeIdNode.Value) + srcFirstFreeSubtypeID;
+
+                subtypeIdNode.Value = subtypeId.ToString();
+
+                var channelSubtypeOctet = subtypeId << 16; // 0x00[channel subtype id]0000
+                foreach (XmlNode channel in subtype.SelectNodes("./subtypes:channels/channels:channel", nsMngr))
+                {
+                    var channelIdNode = channel.SelectSingleNode("./channels:id/text()", nsMngr);
+
+                    channelIdNode.Value = (int.Parse(channelIdNode.Value) & 0x0000FFFF | channelDriverIdOctet | channelSubtypeOctet).ToString();
                 }
             }
 
-            var subtypesNode = dstXmlDoc.GetElementsByTagName("driver:subtypes")[0];
-            foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
+            // Выключение всех каналов в новой базе каналов
+            foreach (XmlNode enabled in dstRoot.SelectNodes("//subtypes:enabled/text()", nsMngr))
             {
-                subtypesNode.InsertBefore(dstXmlDoc.ImportNode(node, true), subtypesNode.FirstChild);
+                enabled.Value = "0"; // disabled
             }
 
+            // Выключение всех подтипов в старой базе каналов кроме устройств
+            foreach (XmlNode enabled in srcRoot.SelectNodes("//subtypes:enabled[../subtypes:sid!='0']/text()", nsMngr))
+            {
+                enabled.Value = "0"; // disabled
+            }
+
+            // Вставка старой базы каналов в новую
+            var dstSubtypes = dstRoot.SelectSingleNode("//driver:subtypes", nsMngr);
+            foreach (XmlNode srcSubtype in srcRoot.SelectNodes("//subtypes:subtype", nsMngr).OfType<XmlNode>().Reverse())
+            {
+                dstSubtypes.PrependChild(dstXmlDoc.ImportNode(srcSubtype, true));
+            }
+
+            // Сохранение новой базы каналов
             using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))
                 dstXmlDoc.Save(writer);
 
