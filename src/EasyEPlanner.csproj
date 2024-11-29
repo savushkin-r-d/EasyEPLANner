@@ -114,8 +114,10 @@
     <Compile Include="ColumnNode.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
-    <Compile Include="Main\ImportIcpWagoProjectAction.cs" />
+    <Compile Include="Main\ImportIcpWagoProject.cs" />
+    <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
+    <Compile Include="ProjectImportICP\ChannelBaseTransformer.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IIOChannel.cs" />
@@ -181,6 +183,12 @@
     <Compile Include="Extensions\ApiExtensions.cs" />
     <Compile Include="ProjectImportICP\ImportDevice.cs" />
     <Compile Include="ProjectImportICP\ImportModule.cs" />
+    <Compile Include="ProjectImportICP\ModifyChannelsDBDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectImportICP\ModifyChannelsDBDialog.Designer.cs">
+      <DependentUpon>ModifyChannelsDBDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectImportICP\ModulesImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
@@ -437,6 +445,9 @@
     <EmbeddedResource Include="ModeFrm.resx">
       <DependentUpon>ModeFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectImportICP\ModifyChannelsDBDialog.resx">
+      <DependentUpon>ModifyChannelsDBDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

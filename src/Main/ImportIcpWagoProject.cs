@@ -17,9 +17,9 @@ using System.Windows.Forms;
 namespace EasyEPlanner
 {
     [ExcludeFromCodeCoverage]
-    public class ImportIcpWagoProjectAction : IEplAction
+    public class ImportIcpWagoProject : IEplAction
     {
-        ~ImportIcpWagoProjectAction() { }
+        ~ImportIcpWagoProject() { }
 
         public bool Execute(ActionCallingContext oActionCallingContext)
         {
@@ -76,7 +76,7 @@ namespace EasyEPlanner
 
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
-            Name = "ImportIcpWagoProject";
+            Name = nameof(ImportIcpWagoProject);
             Ordinal = 30;
 
             return true;
