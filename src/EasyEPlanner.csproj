@@ -117,7 +117,6 @@
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
-    <Compile Include="ProjectImportICP\ChannelBaseTransformer.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IIOChannel.cs" />
