@@ -147,7 +147,7 @@ namespace EasyEPlanner.ProjectImportICP
             // Вставка старой базы каналов в новую
             dstRoot.InsertSubtypes(srcRoot);
 
-            dstRoot.CompareDevicesChannelsWith(srcCloneRoot);
+            dstRoot.CompareDeviceChannelsWith(srcCloneRoot);
 
             // Сохранение новой базы каналов
             using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))

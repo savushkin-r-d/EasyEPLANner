@@ -95,5 +95,20 @@ namespace EasyEplanner.Tests.ProjectImportICP.Test
 
             Assert.AreEqual(expectedXmlDoc.InnerXml, xmlDoc.InnerXml);
         }
+
+        [Test]
+        public void CompareDeviceChannelsWith()
+        {
+            var srcXmlDoc = new XmlDocument();
+            var dstXmlDoc = new XmlDocument();
+
+            srcXmlDoc.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ProjectImportICP.Test", "TestData", "Compare.src.xml"));
+            dstXmlDoc.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ProjectImportICP.Test", "TestData", "Compare.dst.xml"));
+
+            var srcRoot = srcXmlDoc.DocumentElement;
+            var dstRoot = dstXmlDoc.DocumentElement;
+
+            dstRoot.CompareDeviceChannelsWith(srcRoot);
+        }
     }
 }

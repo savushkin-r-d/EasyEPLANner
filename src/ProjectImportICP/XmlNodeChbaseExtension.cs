@@ -124,7 +124,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// </summary>
         /// <param name="dstRoot">Новая база каналов</param>
         /// <param name="srcRoot">Старая база каналов</param>
-        public static void CompareDevicesChannelsWith(this XmlNode dstRoot, XmlNode srcRoot)
+        public static void CompareDeviceChannelsWith(this XmlNode dstRoot, XmlNode srcRoot)
         {
             Logs.AddMessage("\n\nМодификация тегов устройств:\n");
 
@@ -138,8 +138,8 @@ namespace EasyEPlanner.ProjectImportICP
                 var enabled = int.Parse(newChannels[i].SelectSingleNode("./channels:enabled/text()", dstRoot.ChbaseNameSpace()).Value) != 0;
 
                 if (tag.Value != newTag.Value)
-                    Logs.AddMessage($"{(enabled ? ">" : "- ")} {tag.Value.Split(':').First().Trim()} => {newTag.Value};\n");
-                else Logs.AddMessage($"{(enabled ? ">" : "- ")} {tag.Value.Split(':').First().Trim()};\n");
+                    Logs.AddMessage($"{(enabled ? ">" : "- ")} {tag.Value.Split(':')[0].Trim()} => {newTag.Value};\n");
+                else Logs.AddMessage($"{(enabled ? ">" : "- ")} {tag.Value.Split(':')[0].Trim()};\n");
             }
         }
     }
