@@ -105,10 +105,19 @@ namespace EasyEplanner.Tests.ProjectImportICP.Test
             srcXmlDoc.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ProjectImportICP.Test", "TestData", "Compare.src.xml"));
             dstXmlDoc.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ProjectImportICP.Test", "TestData", "Compare.dst.xml"));
 
+            var srcClone = srcXmlDoc.Clone();
+            var dstClone = dstXmlDoc.Clone();
+
             var srcRoot = srcXmlDoc.DocumentElement;
             var dstRoot = dstXmlDoc.DocumentElement;
 
             dstRoot.CompareDeviceChannelsWith(srcRoot);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(srcClone.InnerXml, srcXmlDoc.InnerXml);
+                Assert.AreEqual(dstClone.InnerXml, dstXmlDoc.InnerXml);
+            });
         }
     }
 }
