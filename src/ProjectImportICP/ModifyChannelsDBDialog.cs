@@ -124,33 +124,30 @@ namespace EasyEPlanner.ProjectImportICP
             var dstXmlDoc = new XmlDocument();
             dstXmlDoc.LoadXml(dstChbase);
 
-            XmlNamespaceManager nsMngr = new XmlNamespaceManager(dstXmlDoc.NameTable);
-            nsMngr.AddNamespace("driver", "http://brestmilk.by/driver/");
-            nsMngr.AddNamespace("subtypes", "http://brestmilk.by/subtypes/");
-            nsMngr.AddNamespace("channels", "http://brestmilk.by/channels/");
-
-
             XmlNode srcRoot = srcXmlDoc.DocumentElement;
             XmlNode dstRoot = dstXmlDoc.DocumentElement;
             XmlNode srcCloneRoot = srcRoot.Clone();
 
             // Замена названий старых каналов на новые 
-            UpdateSrcDeviceTags(srcRoot, nsMngr);
+            srcRoot.UpdateDeviceTags(GetDevicesNames(), DeviceManager.GetInstance());
+
+
 
             // Смещение индексов подтипов и каналов новой базы каналов
-            ShiftDstSubtypesAndChannels(srcRoot, dstRoot, nsMngr);
+            var srcDriverID = int.Parse(srcRoot.SelectSingleNode("//driver:id/text()", srcRoot.ChbaseNameSpace()).Value);
+            var srcFirstFreeSubtypeID = 1 + srcRoot.SelectNodes("//subtypes:sid/text()", srcRoot.ChbaseNameSpace()).OfType<XmlNode>().Max(n => int.Parse(n.Value));
+            dstRoot.ShiftIds(srcDriverID, srcFirstFreeSubtypeID);
 
             // Выключение всех подтипов в новой базе каналов
-            DisableTags(dstRoot, "//subtypes:enabled/text()", nsMngr);
+            dstRoot.DisableTags("//subtypes:enabled/text()");
 
             // Выключение всех подтипов в старой базе каналов кроме устройств
-            DisableTags(srcRoot, "//subtypes:enabled[../subtypes:sid!='0']/text()", nsMngr);
+            srcRoot.DisableTags("//subtypes:enabled[../subtypes:sid!='0']/text()");
 
             // Вставка старой базы каналов в новую
-            InsertSrcToDst(srcRoot, dstRoot, dstXmlDoc, nsMngr);
+            dstRoot.InsertSubtypes(srcRoot);
 
-            // 
-            CheckDevicesChannels(dstRoot, srcCloneRoot, nsMngr);
+            dstRoot.CompareDevicesChannelsWith(srcCloneRoot);
 
             // Сохранение новой базы каналов
             using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))
@@ -217,133 +214,6 @@ namespace EasyEPlanner.ProjectImportICP
             return deviceNames;
         }
 
-
-        /// <summary>
-        /// Обновить названия каналов устройств в старой (исходной) базе каналов
-        /// </summary>
-        /// <param name="srcRoot">Корневой узел исходной базы каналов</param>
-        private static void UpdateSrcDeviceTags(XmlNode srcRoot, XmlNamespaceManager nsMngr)
-        {
-            var namingMap = GetDevicesNames();
-            foreach (var replacingName in namingMap)
-            {
-                if (replacingName.WagoName is null)
-                {
-                    Logs.AddMessage($"{replacingName.Name}: wago name is null\n");
-
-                    continue;
-                }
-
-                var replacingNode = srcRoot.SelectSingleNode($"//channels:channel[contains(channels:descr, '{replacingName.WagoName}')]", nsMngr);
-
-                if (replacingNode is null)
-                {
-                    Logs.AddMessage($"Канал {replacingName.WagoName} указанный в устройстве {replacingName.Name} не найден в старой базе каналов.\n");
-                    continue;
-                }
-
-                var dev = DeviceManager.GetInstance().GetDevice(replacingName.Name);
-
-                if (dev.DeviceSubType is DeviceSubType.NONE)
-                {
-                    Logs.AddMessage($"У устройства {replacingName.Name} не задан подтип.\n");
-                    continue;
-                }
-
-                var ST = dev.GetDeviceProperties(dev.DeviceType, dev.DeviceSubType).ContainsKey(IODevice.Tag.ST);
-                replacingNode.SelectSingleNode("./channels:descr/text()", nsMngr).Value = $"{replacingName.Name}.{(ST ? IODevice.Tag.ST : IODevice.Tag.V)}";
-            }
-        }
-
-
-        /// <summary>
-        /// Смещение идентификаторов подтипов и каналов новой базы каналов на основе старой (исходной) базы каналов
-        /// </summary>
-        /// <param name="srcRoot">Корневой узел исходной базы каналов</param>
-        /// <param name="dstRoot">Корневой узел новой базы каналов</param>
-        private static void ShiftDstSubtypesAndChannels(XmlNode srcRoot, XmlNode dstRoot, XmlNamespaceManager nsMngr)
-        {
-            // Получаем ID старой базы каналов
-            var srcDriverID = int.Parse(srcRoot.SelectSingleNode("//driver:id/text()", nsMngr).Value);
-
-            // Получаем первый свободный подтип в старой базе каналов
-            var srcFirstFreeSubtypeID = 1 + srcRoot.SelectNodes("//subtypes:sid/text()", nsMngr).OfType<XmlNode>().Max(n => int.Parse(n.Value));
-
-            // Смещение индексов подтипов и каналов новой базы каналов
-            dstRoot.SelectSingleNode("//driver:id", nsMngr).InnerText = srcDriverID.ToString();
-            var channelDriverIdOctet = srcDriverID << 24; // 0x[driver id]000000
-            foreach (XmlNode subtype in dstRoot.SelectNodes("//subtypes:subtype", nsMngr))
-            {
-                var subtypeIdNode = subtype.SelectSingleNode("./subtypes:sid/text()", nsMngr);
-                var subtypeId = int.Parse(subtypeIdNode.Value) + srcFirstFreeSubtypeID;
-
-                subtypeIdNode.Value = subtypeId.ToString();
-
-                var channelSubtypeOctet = subtypeId << 16; // 0x00[channel subtype id]0000
-                foreach (XmlNode channel in subtype.SelectNodes("./subtypes:channels/channels:channel", nsMngr))
-                {
-                    var channelIdNode = channel.SelectSingleNode("./channels:id/text()", nsMngr);
-
-                    channelIdNode.Value = (int.Parse(channelIdNode.Value) & 0x0000FFFF | channelDriverIdOctet | channelSubtypeOctet).ToString();
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Вставка старой (исходной) базы каналов в новую
-        /// </summary>
-        /// <param name="srcRoot">Корневой узел исходной базы каналов</param>
-        /// <param name="dstRoot">Корневой узел новой базы каналов</param>
-        /// <param name="dstXmlDoc">Новая база каналов</param>
-        private static void InsertSrcToDst(XmlNode srcRoot, XmlNode dstRoot, XmlDocument dstXmlDoc, XmlNamespaceManager nsMngr)
-        {
-            var dstSubtypes = dstRoot.SelectSingleNode("//driver:subtypes", nsMngr);
-            foreach (XmlNode srcSubtype in srcRoot.SelectNodes("//subtypes:subtype", nsMngr).OfType<XmlNode>().Reverse())
-            {
-                dstSubtypes.PrependChild(dstXmlDoc.ImportNode(srcSubtype, true));
-            }
-        }
-
-        /// <summary>
-        /// Выключение (установка 0) в найденные узлы по selector
-        /// </summary>
-        /// <param name="root">Корневой узел базы каналов</param>
-        /// <param name="selector">XPath</param>
-        private static void DisableTags(XmlNode root, string selector, XmlNamespaceManager nsMngr)
-        {
-            foreach (XmlNode enabled in root.SelectNodes(selector, nsMngr))
-            {
-                enabled.Value = "0"; // disabled
-            }
-        }
-
-
-        /// <summary>
-        /// Лог изменений каналов устройств для новой базы каналов
-        /// </summary>
-        /// <param name="dstRoot">Новая база каналов</param>
-        /// <param name="srcCloneRoot">Старая база каналов</param>
-        private static void CheckDevicesChannels(XmlNode dstRoot, XmlNode srcCloneRoot, XmlNamespaceManager nsMngr)
-        {
-            Logs.AddMessage("\n\nМодификация тегов устройств:\n");
-
-            var newChannels = dstRoot.SelectNodes("//subtypes:subtype[./subtypes:sid='0']/subtypes:channels/channels:channel", nsMngr);
-            var channels = srcCloneRoot.SelectNodes("//subtypes:subtype[./subtypes:sid='0']/subtypes:channels/channels:channel", nsMngr);
-
-            for (var i = 0; i < channels.Count; ++i)
-            {
-                var newTag = newChannels[i].SelectSingleNode("./channels:descr/text()", nsMngr);
-                var tag = channels[i].SelectSingleNode("./channels:descr/text()", nsMngr);
-                var enabled = int.Parse(newChannels[i].SelectSingleNode("./channels:enabled/text()", nsMngr).Value) != 0;
-
-
-                if (tag.Value != newTag.Value)
-                    Logs.AddMessage($"{(enabled ? ">" : "- ")} {tag.Value.Split(':').First().Trim()} => {newTag.Value};\n");
-                else Logs.AddMessage($"{(enabled ? ">" : "- ")} {tag.Value.Split(':').First().Trim()};\n");
-            }
-
-        }
 
         private static readonly Dictionary<DeviceType, string> WagoTypes = new Dictionary<DeviceType, string>
         {
