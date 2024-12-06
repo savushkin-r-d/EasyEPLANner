@@ -1159,7 +1159,7 @@ ProjectTestEnabled=True
         <tr> <td rowspan = 2> <b> 
         C_THLD<br>(пороговый регулятор)
             <td> <b> P_is_reverse <td> Выход обратного действия (1 - true, 0 - false). Задает вектор изменения измеряемой величины. <tr> 
-            <td> <b> P_delta <td> Дельта срабатывания, % <tr>
+            <td> <b> P_delta <td> Дельта срабатывания. <tr>
         <tr> <td rowspan = 4> <b> 
         CAM
             <td> <b> P_READY_TIME <td> Предельное время отсутствия готовности к работе, с (для <i>CAM_DO1_DI2</i> и <i>CAM_DO1_DI3</i>)
