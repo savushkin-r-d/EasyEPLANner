@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<driver xmlns:driver="http://brestmilk.by/driver/">
+	<driver:driver>
+		<driver:subtypes xmlns:subtypes="http://brestmilk.by/subtypes/">
+			<subtypes:subtype>
+				<subtypes:enabled>-1</subtypes:enabled>
+			</subtypes:subtype>
+			<subtypes:subtype>
+				<subtypes:enabled>0</subtypes:enabled>
+			</subtypes:subtype>
+			<subtypes:subtype>
+				<subtypes:enabled>-1</subtypes:enabled>
+			</subtypes:subtype>
+		</driver:subtypes>
+	</driver:driver>
+</driver>
