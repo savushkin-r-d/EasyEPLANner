@@ -3,6 +3,7 @@ using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.Graphics;
 using Eplan.EplApi.DataModel.MasterData;
 using Eplan.EplApi.HEServices;
+using EplanDevice;
 using LuaInterface;
 using StaticHelper;
 using System;
@@ -287,6 +288,36 @@ namespace EasyEPlanner.ProjectImportICP
                 Description = description
             };
 
+            // Установка стандартных параметров для определенных типов устройств
+            switch (type)
+            {
+                case "DI":
+                    dev.Parameters.Add(IODevice.Parameter.P_DT, "0");
+                    break;
+
+                case "V":
+                case "M":
+                    dev.Parameters.Add(IODevice.Parameter.P_ON_TIME, "0");
+                    break;
+
+                case "TE":
+                case "LT":
+                    dev.Parameters.Add(IODevice.Parameter.P_C0, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_ERR, "0");
+                    break;
+
+                case "AO":
+                    dev.Parameters.Add(IODevice.Parameter.P_MIN_V, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_MAX_V, "0");
+                    break;
+
+                case "QT":
+                    dev.Parameters.Add(IODevice.Parameter.P_MIN_V, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_MAX_V, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_C0, "0");
+                    break;
+            }
+
             // Если в проекте есть подходящий номеру танк
             if (tanks.Contains(number / 100))
             {
@@ -356,6 +387,7 @@ namespace EasyEPlanner.ProjectImportICP
                 var apiHelper = new ApiHelper();
                 apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
                 apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+                apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
@@ -415,6 +447,7 @@ namespace EasyEPlanner.ProjectImportICP
                 var apiHelper = new ApiHelper();
                 apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
                 apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+                apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
