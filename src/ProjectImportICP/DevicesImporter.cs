@@ -356,6 +356,7 @@ namespace EasyEPlanner.ProjectImportICP
                 var apiHelper = new ApiHelper();
                 apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
                 apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+                apiHelper.SetSupplementaryFieldValue(function, 5, string.Join(", ", device.RuntimeParameters.Select(rp => $"{rp.Key}={rp.Value}")));
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
@@ -415,6 +416,7 @@ namespace EasyEPlanner.ProjectImportICP
                 var apiHelper = new ApiHelper();
                 apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
                 apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+                apiHelper.SetSupplementaryFieldValue(function, 5, string.Join(", ", device.RuntimeParameters.Select(rp => $"{rp.Key}={rp.Value}")));
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
