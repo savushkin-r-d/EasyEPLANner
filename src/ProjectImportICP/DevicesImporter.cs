@@ -384,10 +384,7 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                var apiHelper = new ApiHelper();
-                apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
-                apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
-                apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
+                SetSupplementaryFiels(device, function);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
@@ -444,10 +441,7 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                var apiHelper = new ApiHelper();
-                apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
-                apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
-                apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
+                SetSupplementaryFiels(device, function);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
@@ -485,7 +479,16 @@ namespace EasyEPlanner.ProjectImportICP
             }
         }
 
-        
+
+        private void SetSupplementaryFiels(ImportDevice device, Function function)
+        {
+            var apiHelper = new ApiHelper();
+            apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
+            apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+            apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
+        }
+
+
         /// <summary>
         /// Создать новую страницу
         /// </summary>
