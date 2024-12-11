@@ -117,7 +117,6 @@
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
-    <Compile Include="ProjectImportICP\ChannelBaseTransformer.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IIOChannel.cs" />
@@ -313,6 +312,7 @@
     <Compile Include="FileSavers\PrgLuaSaver.cs" />
     <Compile Include="Configuration\ProjectConfiguration.cs" />
     <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
+    <Compile Include="ProjectImportICP\XmlNodeChbaseExtension.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

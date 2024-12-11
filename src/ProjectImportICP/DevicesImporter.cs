@@ -486,6 +486,7 @@ namespace EasyEPlanner.ProjectImportICP
             apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
             apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
             apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
+            apiHelper.SetSupplementaryFieldValue(function, 5, string.Join(", ", device.RuntimeParameters.Select(rp => $"{rp.Key}={rp.Value}")));
 
             function.AddArticleReference(" ");
         }
