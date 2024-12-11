@@ -353,10 +353,7 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                var apiHelper = new ApiHelper();
-                apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
-                apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
-                function.Properties.FUNC_COMMENT = device.Description;
+                SetSupplementaryFiels(device, function); function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
                 // Заглушка для соединителя сигналов *---|>  <|---*
@@ -412,9 +409,7 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                var apiHelper = new ApiHelper();
-                apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
-                apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+                SetSupplementaryFiels(device, function);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
@@ -452,7 +447,15 @@ namespace EasyEPlanner.ProjectImportICP
             }
         }
 
-        
+        private static void SetSupplementaryFiels(ImportDevice device, Function function)
+        {
+            var apiHelper = new ApiHelper();
+            apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
+            apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+            apiHelper.SetSupplementaryFieldValue(function, 5, string.Join(", ", device.RuntimeParameters.Select(rp => $"{rp.Key}={rp.Value}")));
+        }
+
+
         /// <summary>
         /// Создать новую страницу
         /// </summary>
