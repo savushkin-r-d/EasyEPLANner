@@ -63,6 +63,10 @@ function ImportDevices(importer)
         end
     end
 
+    if (device.subtype == 9) then
+        importDevice:AddAsNumber(device.par[1], device.par[2])
+    end
+
     -- Запуск генерации страниц EPLAN на основе импортированных устройств
     importer:GenerateDevicesPages();
 end
