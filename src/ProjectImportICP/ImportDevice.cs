@@ -87,7 +87,7 @@ namespace EasyEPlanner.ProjectImportICP
 
         public List<(string type, int node, int offset, string comment)> Channels { get; set; } = new List<(string, int, int, string)>();
 
-        public List<int> Parameters { get; set; } = new List<int> { };
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
 
         public Dictionary<string, string> RuntimeParameters { get; set; } = new Dictionary<string, string>();
 
