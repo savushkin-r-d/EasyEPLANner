@@ -312,6 +312,10 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void GenerateDevicesPages()
         {
+            var s = new SetupDevicesNames();
+            s.Init(ImportDevices);
+            s.ShowDialog();
+
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
                 var devices = Object.ToList();
