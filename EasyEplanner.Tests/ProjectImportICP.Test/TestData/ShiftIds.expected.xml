@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<driver xmlns:driver="http://brestmilk.by/driver/">
+	<driver:driver>
+		<driver:id>37</driver:id>
+		<driver:subtypes xmlns:subtypes="http://brestmilk.by/subtypes/">
+			<subtypes:subtype>
+				<subtypes:sid>16</subtypes:sid>
+				<subtypes:channels xmlns:channels="http://brestmilk.by/channels/">
+					<channels:channel>
+						<channels:id>621805569</channels:id>
+						<channels:descr>TANK32V1.ST</channels:descr>
+					</channels:channel>
+					<channels:channel>
+						<channels:id>621805570</channels:id>
+						<channels:descr>TANK32V2.ST</channels:descr>
+					</channels:channel>
+				</subtypes:channels>
+			</subtypes:subtype>
+			<subtypes:subtype>
+				<subtypes:sid>17</subtypes:sid>
+				<subtypes:channels xmlns:channels="http://brestmilk.by/channels/">
+					<channels:channel>
+						<channels:id>621871105</channels:id>
+						<channels:descr>TANK32V1.ST</channels:descr>
+					</channels:channel>
+				</subtypes:channels>
+			</subtypes:subtype>
+		</driver:subtypes>
+	</driver:driver>
+</driver>

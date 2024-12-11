@@ -1,4 +1,4 @@
-﻿using Eplan.EplApi.DataModel.Graphics;
+using Eplan.EplApi.DataModel.Graphics;
 using Eplan.EplApi.HEServices;
 using EplanDevice;
 using StaticHelper;
@@ -10,10 +10,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using static Eplan.EplApi.DataModel.E3D.BasePointMate.Enums;
 
 namespace EasyEPlanner.ProjectImportICP
 {
@@ -107,6 +110,8 @@ namespace EasyEPlanner.ProjectImportICP
             if (!File.Exists(srcPath))
                 return;
             
+            Logs.Show();
+            Logs.Clear();
             ExportChbase(dstPath);
 
             // Чтение баз каналов
@@ -118,54 +123,35 @@ namespace EasyEPlanner.ProjectImportICP
             Logs.Clear();
             Logs.SetProgress(0);
 
-            // Модификация названий устройств старой базы каналов
-            var modifiedSrcChbase = ChannelBaseTransformer.ModifyDescription(srcChbase, dstChbase, GetDevicesNames());
-
-            // Получение индекса драйвера старой базы каналов
-            var srcDriverID = ChannelBaseTransformer.GetDriverID(srcChbase);
-
-            // Смещение типов новой базы каналов для вставки старой
-            var modifiedDstChbase = ChannelBaseTransformer.ShiftSubtypeID(dstChbase, ChannelBaseTransformer.GetFreeSubtypeID(srcChbase));
-
-            // Изменение ID драйвера и всех каналов
-            modifiedDstChbase = ChannelBaseTransformer.ModifyDriverID(modifiedDstChbase, srcDriverID);
-
-            // Выключение всех тегов базы каналов
-            modifiedDstChbase = ChannelBaseTransformer.DisableAllSubtypesChannels(modifiedDstChbase);
-               
-            var srcXmlDoc = new XmlDocument();
-            srcXmlDoc.LoadXml(modifiedSrcChbase);
-            
             var dstXmlDoc = new XmlDocument();
-            dstXmlDoc.LoadXml(modifiedDstChbase);
+            dstXmlDoc.LoadXml(dstChbase);
 
-           
-            // Disable all channels except devices
-            foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
-            {
-                if (int.Parse(node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:sid")?.InnerText ?? "0") != 0)
-                {
-                    if (node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:enabled") is XmlNode subtypeEnabled)
-                    {
-                        subtypeEnabled.InnerText = "0";
-                    }
-                    
-                    foreach (XmlNode channelsNode in node.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "subtypes:channels")?.ChildNodes ?? (XmlNodeList)Enumerable.Empty<XmlNode>())
-                    {
-                        if (channelsNode.ChildNodes.OfType<XmlNode>().FirstOrDefault(n => n.Name == "channels:enabled") is XmlNode enabled)
-                        {
-                            enabled.InnerText = "0";
-                        }
-                    }
-                }
-            }
+            XmlNode srcRoot = srcXmlDoc.DocumentElement;
+            XmlNode dstRoot = dstXmlDoc.DocumentElement;
+            XmlNode srcCloneRoot = srcRoot.Clone();
 
-            var subtypesNode = dstXmlDoc.GetElementsByTagName("driver:subtypes")[0];
-            foreach (XmlNode node in srcXmlDoc.GetElementsByTagName("driver:subtypes")[0].ChildNodes)
-            {
-                subtypesNode.InsertBefore(dstXmlDoc.ImportNode(node, true), subtypesNode.FirstChild);
-            }
+            // Замена названий старых каналов на новые 
+            srcRoot.UpdateDeviceTags(GetDevicesNames(), DeviceManager.GetInstance());
 
+
+
+            // Смещение индексов подтипов и каналов новой базы каналов
+            var srcDriverID = int.Parse(srcRoot.SelectSingleNode("//driver:id/text()", srcRoot.ChbaseNameSpace()).Value);
+            var srcFirstFreeSubtypeID = 1 + srcRoot.SelectNodes("//subtypes:sid/text()", srcRoot.ChbaseNameSpace()).OfType<XmlNode>().Max(n => int.Parse(n.Value));
+            dstRoot.ShiftIds(srcDriverID, srcFirstFreeSubtypeID);
+
+            // Выключение всех подтипов в новой базе каналов
+            dstRoot.DisableTags("//subtypes:enabled/text()");
+
+            // Выключение всех подтипов в старой базе каналов кроме устройств
+            srcRoot.DisableTags("//subtypes:enabled[../subtypes:sid!='0']/text()");
+
+            // Вставка старой базы каналов в новую
+            dstRoot.InsertSubtypes(srcRoot);
+
+            dstRoot.CompareDeviceChannelsWith(srcCloneRoot);
+
+            // Сохранение новой базы каналов
             using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))
                 dstXmlDoc.Save(writer);
 
@@ -210,7 +196,7 @@ namespace EasyEPlanner.ProjectImportICP
 
                 if (wagoName == string.Empty)
                 {
-                    wagoName = ChannelBaseTransformer.ToWagoDevice(d);
+                    wagoName = ToWagoDevice(d);
                     if (wagoName != string.Empty)
                         Logs.AddMessage($"Старое название тега для устройства {d.Name} не указано, используется название: {wagoName} \n");
                 }
@@ -229,6 +215,42 @@ namespace EasyEPlanner.ProjectImportICP
             }
 
             return deviceNames;
+        }
+
+
+        private static readonly Dictionary<DeviceType, string> WagoTypes = new Dictionary<DeviceType, string>
+        {
+            { DeviceType.V, "V" },
+            { DeviceType.LS, "LS"},
+            { DeviceType.TE, "TE"},
+            { DeviceType.FQT, "CTR"},
+            { DeviceType.FS, "FS" },
+            { DeviceType.AO, "AO"},
+            { DeviceType.LT, "LE"},
+            { DeviceType.DI, "FB"},
+            { DeviceType.DO, "UPR"},
+            { DeviceType.QT, "QE"},
+            { DeviceType.AI, "AI"},
+        };
+
+
+        /// <summary>
+        /// Получить старое название устройства
+        /// </summary>
+        /// <param name="device"></param>
+        public static string ToWagoDevice(IODevice device)
+        {
+            if (WagoTypes.TryGetValue(device.DeviceType, out var wagoType))
+            {
+                if (device.ObjectName == "TANK")
+                    return $"{wagoType}{device.ObjectNumber}{device.DeviceNumber:00}";
+
+                if (device.ObjectName.Length == 1)
+                    return $"{wagoType}{(device.ObjectName[0] - 'A') * 20 + 200 + device.ObjectNumber}{device.DeviceNumber:00}";
+            }
+
+            Logs.AddMessage($"Старое название тега для устройства {device.Name} не указано, сигнатура устройства не распознана\n");
+            return "";
         }
 
         private void CancelBttn_Click(object sender, EventArgs e) => Close();

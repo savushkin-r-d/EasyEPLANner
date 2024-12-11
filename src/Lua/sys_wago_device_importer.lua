@@ -61,7 +61,6 @@ function ImportDevices(importer)
         for channel_index, channel in ipairs(device.DI or {}) do
             importDevice:AddChannel("DI", channel.node, channel.offset, channel_index > 1 and channel_index or '')
         end
-
     end
 
     -- Запуск генерации страниц EPLAN на основе импортированных устройств
@@ -112,7 +111,7 @@ ValveSubTypes = {
 
     [1] = 'V_DO1',           -- DST_V_1DO,           1       -- Клапан с одним каналом управления.
     [2] = 'V_DO2',           -- DST_V_2DO,           2       -- Клапан с двумя каналами управления.
-    [3] = 'V_DO1_DI1',       -- DST_V_1DO_1DI,       (3/4)   -- Клапан с одним каналом управления и одной обратной связью.
+    [3] = 'V_DO1_DI1_FB_OFF',-- DST_V_1DO_1DI,       3       -- Клапан с одним каналом управления и одной обратной связью.
     [4] = 'V_DO1_DI2',       -- DST_V_1DO_2DI,       5       -- Клапан с одним каналом управления и двумя обратными связями.
     [5] = 'V_DO2_DI2',       -- DST_V_2DO_2DI,       6       -- Клапан с двумя каналами управления и двумя обратными связями.
     [6] = 'V_MIXPROOF',      -- DST_V_MIX,           7       -- Клапан микспруф.
