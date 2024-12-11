@@ -1,5 +1,6 @@
 ﻿using Aga.Controls.Tree;
 using EasyEPlanner.Extensions;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 using EplanDevice;
 using System;
 using System.Collections.Generic;
@@ -36,62 +37,76 @@ namespace EasyEPlanner.ProjectImportICP
 
             foreach (var device in devices)
             {
-                if (device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_AS_NUMBER) &&
-                    device.RuntimeParameters.ContainsKey("as_gateway"))
+                CheckAndBindAsInterface(device);
+                BindChannels(device);
+            }
+        }
+
+        /// <summary>
+        /// Настройка привязки каналов к клеммам модулей
+        /// </summary>
+        private void BindChannels(ImportDevice device)
+        {
+            foreach (var channel in device.Channels)
+            {
+                var node = modules[channel.node + 1];
+
+                var offset = channel.offset;
+
+                foreach (var module in node.Where(m => m.ModuleInfo.AddressSpaceType.ToString().Contains(channel.type) &&
+                    m.ModuleInfo.AddressSpaceType != IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI))
                 {
-                    // get all AS-Interface master
-                    var asMasters = modules.SelectMany(n => n.Value).Where(m => m.ModuleInfo.Number == 655);
+                    if (offset - module.AddressSpace(channel.type) >= 0)
+                    {
+                        offset -= module.AddressSpace(channel.type);
+                        continue;
+                    }
 
-                    var as_gateway = int.Parse(device.RuntimeParameters["as_gateway"]);
-                    var asMaster = asMasters.ElementAt(as_gateway - 1);
-
-                    if (asMaster.Clamps.TryGetValue(0, out var clamp))
+                    if (module.Clamps.TryGetValue(offset, out var clamp))
                     {
                         clamp.LockObject();
 
-                        if (clamp.Properties.FUNC_TEXT.IsEmpty)
-                        {
-                            clamp.Properties.FUNC_TEXT = $"+{device.Object}-{device.Type}{device.Number}";
-                        } else
-                        {
-                            clamp.Properties.FUNC_TEXT = $"{clamp.GetFunctionalText()}\r\n+{device.Object}-{device.Type}{device.Number}";
-                        }
+                        clamp.Properties.FUNC_TEXT = $"+{device.Object}-{device.Type}{device.Number}\r\n" +
+                            $"{device.Description}\r\n" +
+                            $"{channel.comment}";
+
+                        Logs.AddMessage($"\tКанал {device.Object}{device.Type}{device.Number}:{channel.type}{channel.comment}" +
+                            $" привязан к клемме {module.Function.VisibleName}:{clamp.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART}\n");
                     }
+                    else
+                        Logs.AddMessage($"\tНе удалось привязать канал {device.Object}{device.Type}{device.Number}:{channel.type}{channel.comment}\n");
+
+                    break;
                 }
+            }
+        }
 
+        
+        /// <summary>
+        /// Настройка привязки устройств к модулю AS-interface
+        /// </summary>
+        private void CheckAndBindAsInterface(ImportDevice device)
+        {
+            if (device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_AS_NUMBER) &&
+                    device.RuntimeParameters.ContainsKey("as_gateway"))
+            {
+                // get all AS-Interface master
+                var asMasters = modules.SelectMany(n => n.Value).Where(m => m.ModuleInfo.Number == 655);
 
-                foreach (var channel in device.Channels)
-                {
-                    var node = modules[channel.node + 1];
+                var as_gateway = int.Parse(device.RuntimeParameters["as_gateway"]);
+                var asMaster = asMasters.ElementAt(as_gateway - 1);
 
-                    var offset = channel.offset;
+                var clamp = asMaster.Clamps[0];
 
-                    foreach (var module in node.Where(m => m.ModuleInfo.AddressSpaceType.ToString().Contains(channel.type) &&
-                        m.ModuleInfo.AddressSpaceType != IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI))
-                    {
-                        if (offset - module.AddressSpace(channel.type) >= 0)
-                        {
-                            offset -= module.AddressSpace(channel.type);
-                            continue;
-                        }
+                clamp.LockObject();
 
-                        if (module.Clamps.TryGetValue(offset, out var clamp))
-                        {
-                            clamp.LockObject();
-
-                            clamp.Properties.FUNC_TEXT = $"+{device.Object}-{device.Type}{device.Number}\r\n" +
-                                $"{device.Description}\r\n" +
-                                $"{channel.comment}";
-
-                            Logs.AddMessage($"\tКанал {device.Object}{device.Type}{device.Number}:{channel.type}{channel.comment}" +
-                                $" привязан к клемме {module.Function.VisibleName}:{clamp.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART}\n");
-                        }
-                        else
-                            Logs.AddMessage($"\tНе удалось привязать канал {device.Object}{device.Type}{device.Number}:{channel.type}{channel.comment}\n");
-
-                        break;
-                    }
-                }
+                clamp.Properties.FUNC_TEXT = clamp.Properties.FUNC_TEXT.IsEmpty ?
+                $"+{device.Object}-{device.Type}{device.Number}" :
+                $"{clamp.GetFunctionalText()}\r\n+{device.Object}-{device.Type}{device.Number}";
+                
+                Logs.AddMessage($"\tУстройство {device.Object}{device.Type}{device.Number}" +
+                    $" привязано к клемме AS-i (${device.RuntimeParameters[IODevice.RuntimeParameter.R_AS_NUMBER]})" +
+                    $" {asMaster.Function.VisibleName}:{clamp.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART}\n");
             }
         }
     }

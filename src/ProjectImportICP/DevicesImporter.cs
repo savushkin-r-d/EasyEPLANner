@@ -447,7 +447,7 @@ namespace EasyEPlanner.ProjectImportICP
             }
         }
 
-        private void SetSupplementaryFiels(ImportDevice device, Function function)
+        private static void SetSupplementaryFiels(ImportDevice device, Function function)
         {
             var apiHelper = new ApiHelper();
             apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
