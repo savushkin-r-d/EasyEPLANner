@@ -61,6 +61,11 @@ function ImportDevices(importer)
         for channel_index, channel in ipairs(device.DI or {}) do
             importDevice:AddChannel("DI", channel.node, channel.offset, channel_index > 1 and channel_index or '')
         end
+
+        -- AS-interface
+        if (device.subtype == 9) then
+            importDevice:AddAsNumber(device.par[1], device.par[2])
+        end    
     end
 
     -- Запуск генерации страниц EPLAN на основе импортированных устройств
