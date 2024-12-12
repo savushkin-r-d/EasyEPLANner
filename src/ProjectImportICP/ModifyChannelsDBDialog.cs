@@ -118,6 +118,11 @@ namespace EasyEPlanner.ProjectImportICP
             var srcChbase = ReadFile(srcPath);
             var dstChbase = ReadFile(dstPath);
 
+            Logs.Show();
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
+
             var srcXmlDoc = new XmlDocument();
             srcXmlDoc.LoadXml(srcChbase);
 
@@ -153,8 +158,9 @@ namespace EasyEPlanner.ProjectImportICP
             using (var writer = new StreamWriter(dstPath, false, Encoding.UTF8))
                 dstXmlDoc.Save(writer);
 
-            Logs.SetProgress(100);
             Logs.EnableButtons();
+            Logs.ShowLastLine();
+            Logs.SetProgress(100);
 
             Close();
         }
