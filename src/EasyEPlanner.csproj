@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -312,6 +312,12 @@
     <Compile Include="FileSavers\PrgLuaSaver.cs" />
     <Compile Include="Configuration\ProjectConfiguration.cs" />
     <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
+    <Compile Include="ProjectImportICP\SetupDevicesNames.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectImportICP\SetupDevicesNames.Designer.cs">
+      <DependentUpon>SetupDevicesNames.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectImportICP\XmlNodeChbaseExtension.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -448,6 +454,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectImportICP\ModifyChannelsDBDialog.resx">
       <DependentUpon>ModifyChannelsDBDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectImportICP\SetupDevicesNames.resx">
+      <DependentUpon>SetupDevicesNames.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

@@ -435,8 +435,8 @@ namespace TechObject
 
             if (!IsMainStep)
             {
-                clone.timeParam = timeParam.Clone();
-                clone.maxDurationParam = maxDurationParam.Clone();
+                clone.timeParam = (timeParam as BaseParameter).Clone();
+                clone.maxDurationParam = (maxDurationParam as BaseParameter).Clone();
                 clone.nextStepN = nextStepN.Clone();
 
                 clone.items.Add(clone.timeParam);
