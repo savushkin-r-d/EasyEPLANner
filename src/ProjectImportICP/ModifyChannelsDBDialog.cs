@@ -123,6 +123,9 @@ namespace EasyEPlanner.ProjectImportICP
             Logs.Clear();
             Logs.SetProgress(0);
 
+            var srcXmlDoc = new XmlDocument();
+            srcXmlDoc.LoadXml(srcChbase);
+
             var dstXmlDoc = new XmlDocument();
             dstXmlDoc.LoadXml(dstChbase);
 
