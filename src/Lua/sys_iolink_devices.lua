@@ -61,7 +61,7 @@ local iolink_devices =
     { articleName = "PXC.1252696", sizeIn = 9, sizeOut = 3.5 },
     { articleName = "PXC.1252697", sizeIn = 9, sizeOut = 3.5 },
     { articleName = "PXC.1362791", sizeIn = 9, sizeOut = 3.5 },
-    { articleName = "PXC.1362791", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1362792", sizeIn = 9, sizeOut = 3.5 },
 }
 
 return iolink_devices
