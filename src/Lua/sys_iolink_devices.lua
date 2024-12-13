@@ -58,7 +58,10 @@ local iolink_devices =
     -- HLA
     { articleName = "PXC.1191993", sizeIn = 0, sizeOut = 1 },
     -- G
-    { articleName = "TRIO3-PS/1AC/24DC/10/4C/IOL", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1252696", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1252697", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1362791", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1362792", sizeIn = 9, sizeOut = 3.5 },
 }
 
 return iolink_devices
