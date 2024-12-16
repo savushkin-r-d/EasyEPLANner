@@ -30,24 +30,9 @@ namespace EasyEPlanner
                     return true;
                 }
 
-                var openFileDialog = new OpenFileDialog
-                {
-                    Title = "Открытие main.wago.plua",
-                    Filter = "main.wago.plua|main.wago.plua",
-                    Multiselect = false
-                };
-
-                if (openFileDialog.ShowDialog() == DialogResult.Cancel)
-                {
+                var data = ImportIcpWagoProject.GetMainWagoPluaData();
+                if (string.IsNullOrEmpty(data))
                     return true;
-                }
-
-                var data = "";
-                using (var reader = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true))
-                {
-                    // read main.wago.plua file data
-                    data = reader.ReadToEnd();
-                }
 
                 var devicesImporter = new DevicesImporter(currentProject, data, false);
                 devicesImporter.Import();
