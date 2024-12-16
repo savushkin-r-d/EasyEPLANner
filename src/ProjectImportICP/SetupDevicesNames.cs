@@ -6,8 +6,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -21,8 +23,6 @@ namespace EasyEPlanner.ProjectImportICP
         bool IsCellEditing;
 
         TextBox textBoxCellEditor;
-
-        List<ImportDevice> Devices;
 
         public SetupDevicesNames()
         {
@@ -70,15 +70,12 @@ namespace EasyEPlanner.ProjectImportICP
         {
             objectListView.BeginUpdate();
 
-            Devices = new List<ImportDevice>();
-            Devices.AddRange(devices);
-
-            objectListView.Objects = Devices;
+            objectListView.Objects = devices;
 
             objectListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             objectListView.Columns[0].Width = 70;
             objectListView.Columns[1].Width = 20;
-            objectListView.Columns[2].Width = 70;
+            objectListView.Columns[2].Width = 100;
             objectListView.Columns[2].TextAlign = HorizontalAlignment.Right;
             objectListView.Columns[3].Width = 70;
 
@@ -176,7 +173,7 @@ namespace EasyEPlanner.ProjectImportICP
             switch (e.Column.Index)
             {
                 case 2:
-                    device.Object = e.NewValue.ToString();
+                    device.Object = e.NewValue.ToString().ToUpper();
                     objectListView.Refresh();
                     break;
 
@@ -197,6 +194,56 @@ namespace EasyEPlanner.ProjectImportICP
 
             e.Cancel = true;
             objectListView.Unfreeze();
+        }
+
+        private void OkBttn_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void LoadRenameMapBttn_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = "Открыть файл карты переименования устройств",
+                Filter = "Текстовый файл|*.txt",
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            var data = "";
+            using (var reader = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true))
+            {
+                // read main.wago.plua file data
+                data = reader.ReadToEnd();
+            }
+
+            var matches = Regex.Matches(data, @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*");
+
+            foreach (Match match in matches)
+            {
+                if (!match.Success)
+                    continue;
+
+                var wagoType = match.Groups["wago_name"].Value;
+                var wagoNumber = int.Parse(match.Groups["wago_number"].Value);
+                var obj = match.Groups["object"].Value;
+                var number = int.Parse(match.Groups["number"].Value);
+
+                var dev = objectListView.Objects.OfType<ImportDevice>().FirstOrDefault(d => d.FullNumber == wagoNumber && d.WagoType == wagoType);
+
+                if (dev is null)
+                    continue;
+                
+                dev.Object = obj.ToUpper();
+                dev.Number = number;
+
+                objectListView.RefreshObject(dev);
+            }
         }
     }
 }

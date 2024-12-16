@@ -216,10 +216,15 @@ namespace EasyEPlanner.ProjectImportICP
         /// </summary>
         private readonly List<int> tanks = new List<int>();
 
+        /// <summary>
+        /// Генерировать страницы EPLAN с устройствами
+        /// </summary>
+        private bool generatePages;
 
-        public DevicesImporter(Project project, string wagoData)
+        public DevicesImporter(Project project, string wagoData, bool generatePages = true)
         {
             this.project = project;
+            this.generatePages = generatePages;
 
             try
             {
@@ -343,9 +348,12 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void GenerateDevicesPages()
         {
-            var s = new SetupDevicesNames();
-            s.Init(ImportDevices);
-            s.ShowDialog();
+            var setupRenaming = new SetupDevicesNames();
+            setupRenaming.Init(ImportDevices);
+            setupRenaming.ShowDialog();
+
+            if (generatePages is false)
+                return;
 
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
