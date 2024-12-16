@@ -346,7 +346,7 @@ namespace EasyEPlanner.ProjectImportICP
             try
             {
                 var macrosFilePath = Path.Combine(importMacrosPath, $@"750-{number / 100 * 100}\WAGO.750-{number}.ema");
-                if (string.IsNullOrEmpty(importMacrosPath) || !Directory.Exists(importMacrosPath))
+                if (!File.Exists(macrosFilePath))
                 {
                     macrosFilePath = Path.Combine(macrosPath, $@"750-{number / 100 * 100}\WAGO.750-{number}.ema");
                 }
@@ -355,7 +355,15 @@ namespace EasyEPlanner.ProjectImportICP
                     return new WindowMacro();
 
                 var macro = new WindowMacro();
-                macro.Open(macrosFilePath, project, OVERVIEW, MACRO_VARIANT_E);
+                
+                try
+                {
+                    macro.Open(macrosFilePath, project, MULTILINE, MACRO_VARIANT_A);
+                }
+                catch
+                {
+                    macro.Open(macrosFilePath, project, OVERVIEW, MACRO_VARIANT_E);
+                }
 
                 return macro;
             }
