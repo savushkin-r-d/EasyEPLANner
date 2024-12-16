@@ -219,7 +219,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <summary>
         /// Генерировать страницы EPLAN с устройствами
         /// </summary>
-        private bool generatePages;
+        private readonly bool generatePages;
 
         public DevicesImporter(Project project, string wagoData, bool generatePages = true)
         {
@@ -352,7 +352,7 @@ namespace EasyEPlanner.ProjectImportICP
             setupRenaming.Init(ImportDevices);
             setupRenaming.ShowDialog();
 
-            if (generatePages is false)
+            if (!generatePages)
                 return;
 
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
