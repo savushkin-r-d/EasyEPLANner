@@ -38,6 +38,7 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             advancedModel.Setup(obj => obj.ReceiverSignals).Returns(signals_2);
             advancedModel.Setup(obj => obj.SourceSignals).Returns(signals_error);
             advancedModel.Setup(obj => obj.ProjectName).Returns("adv_prj");
+            advancedModel.Setup(obj => obj.Loaded).Returns(true);
 
             var interprojectExchangeMock = new Mock<InterprojectExchange.InterprojectExchange>();
 
