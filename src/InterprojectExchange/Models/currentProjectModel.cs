@@ -214,6 +214,8 @@ namespace InterprojectExchange
             }
         }
 
+        public bool Loaded { get; set; }
+
         private Dictionary<string, DeviceSignalsInfo> sourceSignals;
         private Dictionary<string, DeviceSignalsInfo> receiverSignals;
         private Dictionary<string, PacInfo> pacDTOs;

@@ -148,10 +148,8 @@ namespace InterprojectExchange
             var err = new StringBuilder();
             var mainModel = MainModel;
 
-            foreach (var model in Models)
+            foreach (var model in Models.Where(m => m.Loaded && m != MainModel))
             {
-                if (model == MainModel) continue;
-
                 mainModel.SelectedAdvancedProject = model.ProjectName;
 
                 string receiverErr = mainModel.ReceiverSignals.CountCompare(model.SourceSignals);
