@@ -222,7 +222,10 @@ namespace EasyEPlanner.ProjectImportICP
                 data = reader.ReadToEnd();
             }
 
-            var matches = Regex.Matches(data, @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*");
+            var matches = Regex.Matches(data,
+                @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*",
+                RegexOptions.None, 
+                TimeSpan.FromMilliseconds(100));
 
             foreach (Match match in matches)
             {
