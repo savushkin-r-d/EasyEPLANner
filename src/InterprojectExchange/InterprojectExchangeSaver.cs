@@ -47,7 +47,7 @@ namespace InterprojectExchange
 
             IProjectModel mainModel = interprojectExchange.MainModel;
             bool invertSignals = false;
-            foreach (var altModel in alternativeModels)
+            foreach (var altModel in alternativeModels.Where(m => m.Loaded))
             {
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel
@@ -67,13 +67,10 @@ namespace InterprojectExchange
         /// </summary>
         private async Task WriteAdvancedProjectsAsync()
         {
-            string mainProjectName = interprojectExchange.MainProjectName;
-            foreach (var model in interprojectExchange.Models)
+            foreach (var model in interprojectExchange.Models
+                .Where(m => m.Loaded && m != interprojectExchange.MainModel))
             {
-                if (model.ProjectName != mainProjectName)
-                {
-                    await Task.Run(() => WriteAlternativeModel(model));
-                }
+                await Task.Run(() => WriteAlternativeModel(model));
             }
         }
 
