@@ -156,12 +156,14 @@ namespace InterprojectExchange
                 if (!string.IsNullOrEmpty(receiverErr))
                 {
                     err.Append($"remote_gateways: {model.ProjectName} - {receiverErr}\n");
+                    model.Loaded = false;
                 }
 
                 string sourceErr = mainModel.SourceSignals.CountCompare(model.ReceiverSignals);
                 if (!string.IsNullOrEmpty(sourceErr))
                 {
                     err.Append($"shared_devices: {model.ProjectName} - {sourceErr}\n");
+                    model.Loaded = false;
                 }
             }
 

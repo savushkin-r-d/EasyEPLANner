@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -75,19 +76,21 @@ namespace InterprojectExchange
             currProjNameTextBox.Text = currentProjectName;
 
             // Заполнение названий моделей в списке
+            advProjNameComboBox.Items.Add("");
             advProjNameComboBox.Items.AddRange(interprojectExchange
                 .LoadedAdvancedModelNames);
-            if(advProjNameComboBox.Items.Count > 0)
-            {
-                advProjNameComboBox.SelectedIndex = 0;
-            }
 
             LoadCurrentProjectDevices();
-            if (CheckBindingSignals())
+            CheckBindingSignals();
+
+            var adv = interprojectExchange.LoadedAdvancedModelNames
+                .FirstOrDefault(m => interprojectExchange.GetModel(m).Loaded);
+            if (advProjNameComboBox.Items.Count > 0)
             {
-                Close();
-                return;
+                advProjNameComboBox.SelectedIndex = string.IsNullOrEmpty(adv)? 
+                    0 : advProjNameComboBox.Items.IndexOf(adv);
             }
+
             interprojectExchange.MainModel.SelectedAdvancedProject =
                 interprojectExchange.SelectedModel?.ProjectName;
             ReloadListViewWithSignals();
@@ -120,14 +123,14 @@ namespace InterprojectExchange
         /// false - ошибки нет
         /// </returns>
         [ExcludeFromCodeCoverage]
-        private bool CheckBindingSignals()
+        private void CheckBindingSignals()
         {
             string err = interprojectExchange.CheckBindingSignals();
 
-            if (string.IsNullOrEmpty(err)) return false;
+            if (string.IsNullOrEmpty(err)) 
+                return;
 
-            ShowErrorMessage($"Несоответсвие количества каналов:\n{err}");
-            return true;
+            ShowErrorMessage($"Несоответствие количества каналов:\n{err}");
         }
 
         /// <summary>
@@ -958,6 +961,8 @@ namespace InterprojectExchange
             advProjNameComboBox.SelectedIndex = selectItem;
         }
 
+        private int prevSelectedIndex = 0;
+
         /// <summary>
         /// Событие изменение текста в списке с именами загруженных проектов
         /// </summary>
@@ -965,9 +970,17 @@ namespace InterprojectExchange
             EventArgs e)
         {
             int selectedIndex = advProjNameComboBox.SelectedIndex;
-            if (selectedIndex >= 0)
+
+            var model = interprojectExchange.GetModel(advProjNameComboBox.Items[selectedIndex].ToString());
+
+            if (selectedIndex >= 0 && model?.Loaded is true)
             {
                 LoadAdvProjData(advProjNameComboBox.Text);
+                prevSelectedIndex = selectedIndex;
+            }
+            else
+            {
+                advProjNameComboBox.SelectedIndex = prevSelectedIndex;
             }
         }
 
@@ -1006,7 +1019,7 @@ namespace InterprojectExchange
         /// </summary>
         private void ReloadListViewWithSignals()
         {
-            if(advProjNameComboBox.SelectedItem == null)
+            if(string.IsNullOrEmpty(advProjNameComboBox.SelectedText))
             {
                 return;
             }
@@ -1106,6 +1119,24 @@ namespace InterprojectExchange
         {
             interprojectExchange.Save();
             Close();
+        }
+
+        Font myFont = new Font("Arial", 8, FontStyle.Regular);
+
+        private void advProjNameComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            var model = interprojectExchange.GetModel(advProjNameComboBox.Items[e.Index].ToString());
+
+            if (model?.Loaded is false) //We are disabling item based on Index, you can have your logic here
+            {
+                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), myFont, Brushes.LightGray, e.Bounds);
+            }
+            else
+            {
+                e.DrawBackground();
+                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), myFont, Brushes.Black, e.Bounds);
+                e.DrawFocusRectangle();
+            }
         }
     }
 }
