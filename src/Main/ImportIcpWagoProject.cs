@@ -1,4 +1,5 @@
-﻿using EasyEPlanner.ProjectImportICP;
+﻿using BrightIdeasSoftware;
+using EasyEPlanner.ProjectImportICP;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.EObjects;
@@ -21,6 +22,31 @@ namespace EasyEPlanner
     {
         ~ImportIcpWagoProject() { }
 
+        public static string GetMainWagoPluaData()
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = "Открытие main.wago.plua",
+                Filter = "main.wago.plua|main.wago.plua",
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+            {
+                return string.Empty;
+            }
+
+            var data = "";
+            using (var reader = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true))
+            {
+                // read main.wago.plua file data
+                data = reader.ReadToEnd();
+            }
+
+            return data;
+        }
+
+
         public bool Execute(ActionCallingContext oActionCallingContext)
         {
             try
@@ -34,24 +60,9 @@ namespace EasyEPlanner
                     return true;
                 }
 
-                var openFileDialog = new OpenFileDialog
-                {
-                    Title = "Открытие main.wago.plua",
-                    Filter = "main.wago.plua|main.wago.plua",
-                    Multiselect = false
-                };
-
-                if (openFileDialog.ShowDialog() == DialogResult.Cancel)
-                {
+                var data = GetMainWagoPluaData();
+                if (string.IsNullOrEmpty(data))
                     return true;
-                }
-
-                var data = "";
-                using (var reader = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true))
-                {
-                    // read main.wago.plua file data
-                    data = reader.ReadToEnd();
-                }
 
                 Logs.Show();
                 Logs.DisableButtons();
