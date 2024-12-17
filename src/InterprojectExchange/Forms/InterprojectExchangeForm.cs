@@ -1028,11 +1028,8 @@ namespace InterprojectExchange
         /// </summary>
         private void ReloadListViewWithSignals()
         {
-            if(advProjNameComboBox.SelectedItem is null ||
-               string.IsNullOrEmpty(advProjNameComboBox.SelectedText))
-            {
+            if(string.IsNullOrEmpty(advProjNameComboBox.SelectedItem?.ToString()))
                 return;
-            }
 
             bindedSignalsList.Items.Clear();
 
