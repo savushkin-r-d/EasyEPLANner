@@ -14,6 +14,7 @@ namespace InterprojectExchange
     /// <summary>
     /// Форма межпроектного обмена сигналами
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class InterprojectExchangeForm : Form
     {
         public InterprojectExchangeForm()
@@ -132,7 +133,6 @@ namespace InterprojectExchange
         /// true - есть ошибка
         /// false - ошибки нет
         /// </returns>
-        [ExcludeFromCodeCoverage]
         private void CheckBindingSignals()
         {
             string err = interprojectExchange.CheckBindingSignals();
@@ -975,7 +975,6 @@ namespace InterprojectExchange
         /// <summary>
         /// Событие изменение текста в списке с именами загруженных проектов
         /// </summary>
-        [ExcludeFromCodeCoverage]
         private void advProjNameComboBox_SelectedItemChanged(object sender, 
             EventArgs e)
         {
@@ -1137,7 +1136,6 @@ namespace InterprojectExchange
         /// Проект загружен    - обычный шрифт <br/>
         /// Проект не загружен - серый текст
         /// </summary>
-        [ExcludeFromCodeCoverage]
         private void advProjNameComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[e.Index].ToString());

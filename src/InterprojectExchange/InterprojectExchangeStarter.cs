@@ -253,7 +253,7 @@ namespace InterprojectExchange
             }
             else
             {
-                form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
+                form?.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
                 return false;
             }
