@@ -48,6 +48,16 @@ namespace InterprojectExchange
         private List<ListViewItem> advProjItems;
 
         /// <summary>
+        /// Индекс предыдущего выбранного проекта в <see cref="advProjNameComboBox"/>
+        /// </summary>
+        private int prevSelectedIndex = 0;
+
+        /// <summary>
+        /// Шрифт для <see cref="advProjNameComboBox"/>
+        /// </summary>
+        private static readonly Font advCmbBxFont = new Font("Arial", 8, FontStyle.Regular);
+
+        /// <summary>
         /// Событие после закрытия формы
         /// </summary>
         private void InterprojectExchangeForm_FormClosed(object sender,
@@ -83,12 +93,12 @@ namespace InterprojectExchange
             LoadCurrentProjectDevices();
             CheckBindingSignals();
 
-            var adv = interprojectExchange.LoadedAdvancedModelNames
+            var frstLoadedPrj = interprojectExchange.LoadedAdvancedModelNames
                 .FirstOrDefault(m => interprojectExchange.GetModel(m).Loaded);
             if (advProjNameComboBox.Items.Count > 0)
             {
-                advProjNameComboBox.SelectedIndex = string.IsNullOrEmpty(adv)? 
-                    0 : advProjNameComboBox.Items.IndexOf(adv);
+                advProjNameComboBox.SelectedIndex = string.IsNullOrEmpty(frstLoadedPrj)? 
+                    0 : advProjNameComboBox.Items.IndexOf(frstLoadedPrj);
             }
 
             interprojectExchange.MainModel.SelectedAdvancedProject =
@@ -961,11 +971,11 @@ namespace InterprojectExchange
             advProjNameComboBox.SelectedIndex = selectItem;
         }
 
-        private int prevSelectedIndex = 0;
 
         /// <summary>
         /// Событие изменение текста в списке с именами загруженных проектов
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void advProjNameComboBox_SelectedItemChanged(object sender, 
             EventArgs e)
         {
@@ -1019,7 +1029,8 @@ namespace InterprojectExchange
         /// </summary>
         private void ReloadListViewWithSignals()
         {
-            if(string.IsNullOrEmpty(advProjNameComboBox.SelectedText))
+            if(advProjNameComboBox.SelectedItem is null ||
+               string.IsNullOrEmpty(advProjNameComboBox.SelectedText))
             {
                 return;
             }
@@ -1121,20 +1132,24 @@ namespace InterprojectExchange
             Close();
         }
 
-        Font myFont = new Font("Arial", 8, FontStyle.Regular);
-
+        /// <summary>
+        /// Стиль элементов в <see cref="advProjNameComboBox"/>: <br/>
+        /// Проект загружен    - обычный шрифт <br/>
+        /// Проект не загружен - серый текст
+        /// </summary>
+        [ExcludeFromCodeCoverage]
         private void advProjNameComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[e.Index].ToString());
 
             if (model?.Loaded is false) //We are disabling item based on Index, you can have your logic here
             {
-                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), myFont, Brushes.LightGray, e.Bounds);
+                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), advCmbBxFont, Brushes.LightGray, e.Bounds);
             }
             else
             {
                 e.DrawBackground();
-                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), myFont, Brushes.Black, e.Bounds);
+                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), advCmbBxFont, Brushes.Black, e.Bounds);
                 e.DrawFocusRectangle();
             }
         }
