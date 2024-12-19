@@ -109,6 +109,10 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             interprojectExchange.AddModel(altModel);
 
             Assert.AreSame(mainModel, interprojectExchange.MainModel);
+
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("interprojectExchange", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, null);
         }
 
         [Test]
@@ -133,6 +137,10 @@ namespace EasyEplannerTests.InterprojectExchangeTest
                 Mock.Get(mainModel).VerifySet(m => m.Selected = false);
                 Mock.Get(mainModel).VerifySet(m => m.SelectedAdvancedProject = altModel.ProjectName);
             });
+
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("interprojectExchange", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, null);
         }
     }
 }

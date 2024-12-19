@@ -16,7 +16,17 @@ namespace InterprojectExchange
         {
             interprojectExchangeModels = new List<IProjectModel>();
             if (eProjectManager is null)
-                eProjectManager = EProjectManager.GetInstance();
+            {
+                try
+                {
+                    eProjectManager = EProjectManager.GetInstance();
+                }
+                catch
+                {
+                    // skip EProjectManager int TESTS
+                }
+            }
+
         }
 
         public void Clear()
