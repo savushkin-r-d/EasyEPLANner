@@ -18,6 +18,11 @@ namespace InterprojectExchange
         bool Selected { get; set; }
 
         /// <summary>
+        /// Загружен ли проект (файл main.io.lua)
+        /// </summary>
+        bool Loaded { get; set; }
+
+        /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
         DeviceSignalsInfo SourceSignals { get; }

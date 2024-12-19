@@ -187,7 +187,7 @@ namespace InterprojectExchange
                     InitLuaInstance();
                     LoadScripts();
                     model.Selected = true;
-                    LoadMainIOData(pathToProject, alternativeProject);
+                    model.Loaded = LoadMainIOData(pathToProject, alternativeProject);
                     GenerateSharedDevices(alternativeProject);
                     LoadAdvancedProjectSharedLuaData(pathToProject,
                         alternativeProject);
@@ -235,7 +235,7 @@ namespace InterprojectExchange
         /// <param name="pathToProjectsDir">Путь к папке с проектами</param>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        private void LoadMainIOData(string pathToProjectsDir, 
+        private bool LoadMainIOData(string pathToProjectsDir, 
             string projName)
         {
             string pathToIOFile = Path.Combine(pathToProjectsDir, projName,
@@ -249,11 +249,13 @@ namespace InterprojectExchange
                 lua.DoString(ioInfo);
                 // Функция из Lua
                 lua.DoString($"init_io_file('{projName}')");
+                return true;
             }
             else
             {
-                form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
+                form?.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
+                return false;
             }
         }
 
@@ -358,7 +360,7 @@ namespace InterprojectExchange
         /// <returns>Ошибки</returns>
         private string SetIPFromMainModel(string projName)
         {
-            CurrentProjectModel mainModel = interprojectExchange.MainModel;
+            var mainModel = interprojectExchange.MainModel;
             string alreadySelectedProject = mainModel.SelectedAdvancedProject;
             mainModel.SelectedAdvancedProject = interprojectExchange
                 .MainProjectName;
@@ -436,7 +438,7 @@ namespace InterprojectExchange
         const string devicesAndPLCInitializer = "sys_interproject_io.lua";
 
         private InterprojectExchangeForm form;
-        private InterprojectExchange interprojectExchange;
+        private readonly IInterprojectExchange interprojectExchange;
         private InterprojectExchangeSaver interprojectExchangeSaver;
 
         Lua lua;

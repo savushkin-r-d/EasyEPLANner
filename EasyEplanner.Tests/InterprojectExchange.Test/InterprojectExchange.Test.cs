@@ -38,6 +38,7 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             advancedModel.Setup(obj => obj.ReceiverSignals).Returns(signals_2);
             advancedModel.Setup(obj => obj.SourceSignals).Returns(signals_error);
             advancedModel.Setup(obj => obj.ProjectName).Returns("adv_prj");
+            advancedModel.Setup(obj => obj.Loaded).Returns(true);
 
             var interprojectExchangeMock = new Mock<InterprojectExchange.InterprojectExchange>();
 
@@ -92,5 +93,54 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             }
         };
 
+
+        [Test]
+        public void GetMainModel()
+        {
+            var mainModel = Mock.Of<ICurrentProjectModel>(m => m.ProjectName == "T1-MAIN_PROJECT");
+            var altModel = Mock.Of<IProjectModel>(m => m.ProjectName == "T1-ALT_PROJECT");
+
+            typeof(InterprojectExchange.InterprojectExchange).GetField("eProjectManager", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, Mock.Of<IEProjectManager>(m => m.GetModifyingCurrentProjectName() == "T1-MAIN_PROJECT"));
+
+            var interprojectExchange = InterprojectExchange.InterprojectExchange.GetInstance();
+
+            interprojectExchange.AddModel(mainModel);
+            interprojectExchange.AddModel(altModel);
+
+            Assert.AreSame(mainModel, interprojectExchange.MainModel);
+
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("interprojectExchange", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, null);
+        }
+
+        [Test]
+        public void SelectModel()
+        {
+            var mainModel = Mock.Of<ICurrentProjectModel>(m => m.ProjectName == "T1-MAIN_PROJECT");
+            var altModel = Mock.Of<IProjectModel>(m => m.ProjectName == "T1-ALT_PROJECT");
+
+            typeof(InterprojectExchange.InterprojectExchange).GetField("eProjectManager", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, Mock.Of<IEProjectManager>(m => m.GetModifyingCurrentProjectName() == "T1-MAIN_PROJECT"));
+
+            var interprojectExchange = InterprojectExchange.InterprojectExchange.GetInstance();
+
+            interprojectExchange.AddModel(mainModel);
+            interprojectExchange.AddModel(altModel);
+
+            interprojectExchange.SelectModel(altModel);
+
+            Assert.Multiple(() =>
+            {
+                Mock.Get(altModel).VerifySet(m => m.Selected = true);
+                Mock.Get(mainModel).VerifySet(m => m.Selected = false);
+                Mock.Get(mainModel).VerifySet(m => m.SelectedAdvancedProject = altModel.ProjectName);
+            });
+
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("interprojectExchange", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, null);
+        }
     }
 }

@@ -174,6 +174,8 @@ namespace InterprojectExchange
             }
         }
 
+        public bool Loaded { get; set; }
+
         private DeviceSignalsInfo sourceSignals;
         private DeviceSignalsInfo receiverSignals;
         private PacInfo pacDTO;
