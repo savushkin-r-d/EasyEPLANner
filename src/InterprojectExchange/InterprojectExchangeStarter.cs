@@ -360,7 +360,7 @@ namespace InterprojectExchange
         /// <returns>Ошибки</returns>
         private string SetIPFromMainModel(string projName)
         {
-            CurrentProjectModel mainModel = interprojectExchange.MainModel;
+            var mainModel = interprojectExchange.MainModel;
             string alreadySelectedProject = mainModel.SelectedAdvancedProject;
             mainModel.SelectedAdvancedProject = interprojectExchange
                 .MainProjectName;
@@ -438,7 +438,7 @@ namespace InterprojectExchange
         const string devicesAndPLCInitializer = "sys_interproject_io.lua";
 
         private InterprojectExchangeForm form;
-        private InterprojectExchange interprojectExchange;
+        private IInterprojectExchange interprojectExchange;
         private InterprojectExchangeSaver interprojectExchangeSaver;
 
         Lua lua;

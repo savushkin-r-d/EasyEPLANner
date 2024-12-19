@@ -16,7 +16,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Межконтроллерный обмен
         /// </summary>
-        private InterprojectExchange interprojectExchange;
+        private IInterprojectExchange interprojectExchange;
 
         /// <summary>
         /// PAC-инфо о проектах, сигналы которым отправляются из главного
@@ -41,7 +41,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Главная модель проекта.
         /// </summary>
-        private CurrentProjectModel mainModel;
+        private ICurrentProjectModel mainModel;
 
         /// <summary>
         /// Пустая ли таблица сигналов, которые отправляются из главного

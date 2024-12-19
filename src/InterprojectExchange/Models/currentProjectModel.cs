@@ -5,7 +5,7 @@ namespace InterprojectExchange
     /// <summary>
     /// Модель межпроектного обмена текущего проекта.
     /// </summary>
-    public class CurrentProjectModel : InterprojectExchangeModel, IProjectModel
+    public class CurrentProjectModel : InterprojectExchangeModel, IProjectModel, ICurrentProjectModel
     {
         public CurrentProjectModel()
         {
@@ -22,19 +22,19 @@ namespace InterprojectExchange
         /// <param name="signalType">Тип сигнала</param>
         /// <param name="receiveMode">Режим получения сигналов</param>
         /// <param name="projName">Имя проекта, связываемый</param>
-        public void AddSignal(string name, string signalType, 
+        public void AddSignal(string name, string signalType,
             bool receiveMode, string projName)
         {
-            if(!receiverSignals.ContainsKey(projName))
+            if (!receiverSignals.ContainsKey(projName))
             {
                 receiverSignals.Add(projName, new DeviceSignalsInfo());
             }
-            if(!sourceSignals.ContainsKey(projName))
+            if (!sourceSignals.ContainsKey(projName))
             {
                 sourceSignals.Add(projName, new DeviceSignalsInfo());
             }
 
-            switch(signalType)
+            switch (signalType)
             {
                 case "AI":
                     if (receiveMode)
@@ -98,7 +98,7 @@ namespace InterprojectExchange
         /// <param name="pacName">Имя контроллера</param>
         public void AddPLCData(string IP, string pacName)
         {
-            if(ProjectName == null)
+            if (ProjectName == null)
             {
                 ProjectName = pacName;
             }
@@ -121,7 +121,7 @@ namespace InterprojectExchange
         /// <param name="station">Станция, номер</param>
         /// <param name="pacName">Имя ПЛК</param>
         public void AddPLCData(bool emulationEnabled, int cycleTime,
-            int timeout, int port, bool gateEnabled, int station, 
+            int timeout, int port, bool gateEnabled, int station,
             string pacName)
         {
             if (!pacDTOs.ContainsKey(pacName))
@@ -147,9 +147,6 @@ namespace InterprojectExchange
         /// </summary>
         public bool Selected { get; set; } = false;
 
-        /// <summary>
-        /// Альтернативный проект, который выбран для обмена с текущим
-        /// </summary>
         public string SelectedAdvancedProject { get; set; }
 
         /// <summary>
@@ -185,9 +182,9 @@ namespace InterprojectExchange
         {
             get
             {
-                if(!receiverSignals.ContainsKey(SelectedAdvancedProject))
+                if (!receiverSignals.ContainsKey(SelectedAdvancedProject))
                 {
-                    receiverSignals.Add(SelectedAdvancedProject, 
+                    receiverSignals.Add(SelectedAdvancedProject,
                         new DeviceSignalsInfo());
                 }
                 return receiverSignals[SelectedAdvancedProject];
@@ -198,7 +195,7 @@ namespace InterprojectExchange
         {
             get
             {
-                if(!pacDTOs.ContainsKey(SelectedAdvancedProject))
+                if (!pacDTOs.ContainsKey(SelectedAdvancedProject))
                 {
                     pacDTOs.Add(SelectedAdvancedProject, new PacInfo());
                 }

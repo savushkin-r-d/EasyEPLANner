@@ -43,7 +43,7 @@ namespace InterprojectExchange
         }
 
         private FilterConfiguration filterConfiguration;
-        private InterprojectExchange interprojectExchange;
+        private IInterprojectExchange interprojectExchange;
 
         private List<ListViewItem> currProjItems;
         private List<ListViewItem> advProjItems;

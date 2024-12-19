@@ -20,7 +20,7 @@ namespace InterprojectExchange
         /// <param name="owner">Класс-владелец</param>
         /// <param name="signalsFile">Имя файла, межконтроллерного обмена
         /// </param>
-        public InterprojectExchangeSaver(InterprojectExchange owner,
+        public InterprojectExchangeSaver(IInterprojectExchange owner,
             string signalsFile)
         {
             interprojectExchange = owner;
@@ -630,7 +630,7 @@ namespace InterprojectExchange
         /// </summary>
         private string SharedFile { get; set; }
 
-        private InterprojectExchange interprojectExchange;
+        private IInterprojectExchange interprojectExchange;
 
         private const string DISignal = "DI";
         private const string DOSignal = "DO";
