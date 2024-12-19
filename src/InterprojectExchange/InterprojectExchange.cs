@@ -15,6 +15,8 @@ namespace InterprojectExchange
         protected InterprojectExchange()
         {
             interprojectExchangeModels = new List<IProjectModel>();
+            if (eProjectManager is null)
+                eProjectManager = EProjectManager.GetInstance();
         }
 
         public void Clear()
@@ -378,14 +380,7 @@ namespace InterprojectExchange
             }
         }
 
-        public string MainProjectName
-        {
-            get
-            {
-                return EProjectManager.GetInstance()
-                .GetModifyingCurrentProjectName();
-            }
-        }
+        public string MainProjectName => eProjectManager.GetModifyingCurrentProjectName();
 
         public string DefaultPathWithProjects
         {
@@ -447,6 +442,7 @@ namespace InterprojectExchange
             return interprojectExchange;
         }
 
+        private static IEProjectManager eProjectManager = null;
         private EditMode editMode;
         private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;

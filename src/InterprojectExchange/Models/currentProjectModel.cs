@@ -5,7 +5,7 @@ namespace InterprojectExchange
     /// <summary>
     /// Модель межпроектного обмена текущего проекта.
     /// </summary>
-    public class CurrentProjectModel : InterprojectExchangeModel, IProjectModel, ICurrentProjectModel
+    public class CurrentProjectModel : InterprojectExchangeModel,ICurrentProjectModel
     {
         public CurrentProjectModel()
         {

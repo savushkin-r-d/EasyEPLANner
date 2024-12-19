@@ -438,7 +438,7 @@ namespace InterprojectExchange
         const string devicesAndPLCInitializer = "sys_interproject_io.lua";
 
         private InterprojectExchangeForm form;
-        private IInterprojectExchange interprojectExchange;
+        private readonly IInterprojectExchange interprojectExchange;
         private InterprojectExchangeSaver interprojectExchangeSaver;
 
         Lua lua;

@@ -630,7 +630,7 @@ namespace InterprojectExchange
         /// </summary>
         private string SharedFile { get; set; }
 
-        private IInterprojectExchange interprojectExchange;
+        private readonly IInterprojectExchange interprojectExchange;
 
         private const string DISignal = "DI";
         private const string DOSignal = "DO";
