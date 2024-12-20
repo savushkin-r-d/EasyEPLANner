@@ -15,18 +15,6 @@ namespace InterprojectExchange
         protected InterprojectExchange()
         {
             interprojectExchangeModels = new List<IProjectModel>();
-            if (eProjectManager is null)
-            {
-                try
-                {
-                    eProjectManager = EProjectManager.GetInstance();
-                }
-                catch
-                {
-                    // skip EProjectManager int TESTS
-                }
-            }
-
         }
 
         public void Clear()
@@ -446,6 +434,18 @@ namespace InterprojectExchange
         {
             if (interprojectExchange == null)
             {
+                if (eProjectManager is null)
+                {
+                    try
+                    {
+                        eProjectManager = EProjectManager.GetInstance();
+                    }
+                    catch
+                    {
+                        // skip EProjectManager int TESTS
+                    }
+                }
+
                 interprojectExchange = new InterprojectExchange();
             }
 
