@@ -52,10 +52,24 @@ namespace EasyEPlanner.ProjectImportICP
                 Sortable = false,
             };
 
+            var typeColumn = new OLVColumn("Тип", "Type")
+            {
+                IsEditable = true,
+                AspectGetter = (obj) => (obj as ImportDevice).Type,
+                Sortable = false,
+            };
+
             var newNameColumn = new OLVColumn("Номер", "Number")
             {
                 IsEditable = true,
-                AspectGetter = (obj) => (obj as ImportDevice).Type + (obj as ImportDevice).Number,
+                AspectGetter = (obj) => (obj as ImportDevice).Number,
+                Sortable = false,
+            };
+
+            var descriptionColumn = new OLVColumn("Описание", "Description")
+            {
+                IsEditable = true,
+                AspectGetter = (obj) => (obj as ImportDevice).Description,
                 Sortable = false,
             };
 
@@ -63,7 +77,9 @@ namespace EasyEPlanner.ProjectImportICP
             objectListView.Columns.Add(oldNameColumn);
             objectListView.Columns.Add(toColumn);
             objectListView.Columns.Add(newObjectColumn);
+            objectListView.Columns.Add(typeColumn);
             objectListView.Columns.Add(newNameColumn);
+            objectListView.Columns.Add(descriptionColumn);
         }
 
         public void Init(List<ImportDevice> devices)
@@ -73,11 +89,12 @@ namespace EasyEPlanner.ProjectImportICP
             objectListView.Objects = devices;
 
             objectListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            objectListView.Columns[0].Width = 70;
-            objectListView.Columns[1].Width = 20;
-            objectListView.Columns[2].Width = 100;
-            objectListView.Columns[2].TextAlign = HorizontalAlignment.Right;
-            objectListView.Columns[3].Width = 70;
+            objectListView.Columns[0].Width = 70;  // old name
+            objectListView.Columns[1].Width = 25;  // ->
+            objectListView.Columns[2].Width = 60;  // Object
+            objectListView.Columns[3].Width = 40;  // Type
+            objectListView.Columns[4].Width = 50;  // Number
+            objectListView.Columns[5].Width = 250; // Description 
 
             objectListView.EndUpdate();
 
@@ -95,8 +112,16 @@ namespace EasyEPlanner.ProjectImportICP
                     editText = item.Object;
                     break;
 
-                case 3: 
+                case 3:
+                    editText = item.Type;
+                    break;
+
+                case 4: 
                     editText = item.Number.ToString();
+                    break;
+
+                case 5:
+                    editText = item.Description;
                     break;
 
                 default:
@@ -174,14 +199,16 @@ namespace EasyEPlanner.ProjectImportICP
             {
                 case 2:
                     device.Object = e.NewValue.ToString().ToUpper();
-                    objectListView.Refresh();
                     break;
 
                 case 3:
+                    device.Type = e.NewValue.ToString().ToUpper();
+                    break;
+
+                case 4:
                     if (int.TryParse(e.NewValue.ToString(), out var number))
                     {
                         device.Number = number;
-                        objectListView.Refresh();
                     } 
                     else
                     {
@@ -189,9 +216,13 @@ namespace EasyEPlanner.ProjectImportICP
                     }
                     
                     break;
+
+                case 5:
+                    device.Description = e.NewValue.ToString();
+                    break;
             }
 
-
+            objectListView.Refresh();
             e.Cancel = true;
             objectListView.Unfreeze();
         }
@@ -223,7 +254,7 @@ namespace EasyEPlanner.ProjectImportICP
             }
 
             var matches = Regex.Matches(data,
-                @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*",
+                @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*\|\s*\'(?<description>[\w\W]*?)\'\s*",
                 RegexOptions.None, 
                 TimeSpan.FromMilliseconds(100));
 
@@ -235,7 +266,9 @@ namespace EasyEPlanner.ProjectImportICP
                 var wagoType = match.Groups["wago_name"].Value;
                 var wagoNumber = int.Parse(match.Groups["wago_number"].Value);
                 var obj = match.Groups["object"].Value;
+                var type = match.Groups["type"].Value;
                 var number = int.Parse(match.Groups["number"].Value);
+                var description = match.Groups["description"].Value;
 
                 var dev = objectListView.Objects.OfType<ImportDevice>().FirstOrDefault(d => d.FullNumber == wagoNumber && d.WagoType == wagoType);
 
@@ -243,7 +276,9 @@ namespace EasyEPlanner.ProjectImportICP
                     continue;
                 
                 dev.Object = obj.ToUpper();
+                dev.Type = type.ToUpper();
                 dev.Number = number;
+                dev.Description = description;
 
                 objectListView.RefreshObject(dev);
             }

@@ -56,7 +56,7 @@ namespace EasyEPlanner
                 {
                     foreach (var dev in devices)
                     {
-                        writer.Write($"{dev.WagoType + dev.FullNumber,10} => {dev.Object,10} | {dev.Type, 3} | {dev.Number}\n");
+                        writer.Write($"{dev.WagoType + dev.FullNumber,10} => {dev.Object,10} | {dev.Type, 3} | {dev.Number, -5} | '{dev.Description}'\n");
                     }
                 }
             }
