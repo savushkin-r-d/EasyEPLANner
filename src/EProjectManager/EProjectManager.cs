@@ -9,7 +9,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Менеджер проекта в CAD Eplan.
     /// </summary>
-    class EProjectManager
+    class EProjectManager : IEProjectManager
     {
         public static EProjectManager GetInstance()
         {
@@ -20,7 +20,7 @@ namespace EasyEPlanner
             return instance;
         }
 
-        private EProjectManager() 
+        private EProjectManager()
         {
             eplanEventListener = new EplanEventListener();
             actMnr = new ActionManager();
@@ -109,20 +109,12 @@ namespace EasyEPlanner
             }
         }
 
-        /// <summary>
-        /// Имя проекта EPLAN
-        /// </summary>
-        /// <returns></returns>
         public string GetCurrentProjectName()
         {
             string name = currentProject.ProjectName;
             return name;
         }
 
-        /// <summary>
-        /// Модифицированное имя проекта (пробелы заменены на минусы)
-        /// </summary>
-        /// <returns></returns>
         public string GetModifyingCurrentProjectName()
         {
             string name = currentProject.ProjectName.Replace(" ", "-");
@@ -181,7 +173,7 @@ namespace EasyEPlanner
             StopEditModes();
 
             string projectName = currentProject.ProjectName;
-            string projectDirPath = currentProject.ProjectDirectoryPath;    
+            string projectDirPath = currentProject.ProjectDirectoryPath;
             ExcelRepoter.AutomaticExportExcelForSCADA(projectDirPath,
                 projectName);
             var xmlReporter = new XMLReporter();
@@ -216,7 +208,7 @@ namespace EasyEPlanner
         public bool ProjectDataIsLoaded { get; set; } = false;
 
         private Project currentProject = null;
-        private SelectInteractionWhileEditModes 
+        private SelectInteractionWhileEditModes
             selectInteractionWhileEditModes = null;
         private EplanEventListener eplanEventListener;
         private ActionManager actMnr;
