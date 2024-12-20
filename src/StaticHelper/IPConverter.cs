@@ -27,5 +27,14 @@ namespace StaticHelper
                 return 0;
             }
         }
+
+        /// <summary>
+        /// Конвертировать IP-адрес из long в строку
+        /// </summary>
+        /// <param name="ip">IP-адрес (long)</param>
+        public static string ToString(long ip)
+        {
+            return $"{(ip & 0xFF000000) >> 24}.{(ip & 0xFF0000) >> 16}.{(ip & 0xFF00) >> 8}.{ip & 0xFF}";
+        }
     }
 }
