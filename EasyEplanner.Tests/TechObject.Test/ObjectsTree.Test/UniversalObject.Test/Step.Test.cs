@@ -766,5 +766,27 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual("1", step.MaxDurationParam);
             });
         }
+
+        [Test]
+        public void GetBaseObjectList()
+        {
+            var mode = new Mode("", getN => 1, null, new BaseOperation("", "", new List<BaseParameter>() { },
+                new Dictionary<string, List<BaseStep>>() 
+                {
+                    { "RUN", new List<BaseStep>() { new BaseStep("", ""), new BaseStep("шаг 1", "step_1"), new BaseStep("шаг 2", "step_2") } }
+                }));
+            var state = new State(State.StateType.RUN, mode);
+            var step = state.AddStep("", "");
+
+
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(new List<string>() { "", "шаг 1", "шаг 2" }, step.BaseObjectsList);
+                
+                state.AddStep("шаг 1", "step_1");
+                CollectionAssert.AreEqual(new List<string>() { "", "шаг 2" }, step.BaseObjectsList);
+            });
+
+        }
     }
 }

@@ -1,25 +1,21 @@
 ﻿using EasyEPlanner.ProjectImportICP;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
-using Eplan.EplApi.DataModel.EObjects;
-using Eplan.EplApi.DataModel.MasterData;
-using LuaInterface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
     [ExcludeFromCodeCoverage]
-    public class ImportIcpWagoModulesAction : IEplAction
+    public class ImportIcpCreateRenamingMap : IEplAction
     {
-        ~ImportIcpWagoModulesAction() { }
+        ~ImportIcpCreateRenamingMap() { }
 
         public bool Execute(ActionCallingContext oActionCallingContext)
         {
@@ -34,27 +30,35 @@ namespace EasyEPlanner
                     return true;
                 }
 
-                var openFileDialog = new OpenFileDialog
+                var data = ImportIcpWagoProject.GetMainWagoPluaData();
+                if (string.IsNullOrEmpty(data))
+                    return true;
+
+                var devicesImporter = new DevicesImporter(currentProject, data, false);
+                devicesImporter.Import();
+
+                var devices = devicesImporter.ImportDevices;
+
+                var outputFileDialog = new SaveFileDialog
                 {
-                    Title = "Открытие main.wago.plua",
-                    Filter = "main.wago.plua|main.wago.plua",
-                    Multiselect = false
+                    Title = "Сохранение карты переименования устройств",
+                    Filter = "*.txt|*.txt",
+                    FileName = $"{currentProject.ProjectName}_devs_renaming",
+                    DefaultExt = "txt",
                 };
 
-                if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                if (outputFileDialog.ShowDialog() == DialogResult.Cancel)
                 {
-                    return true; 
+                    return true;
                 }
 
-                var data = "";
-                using (var reader = new StreamReader(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true))
+                using (var writer = new StreamWriter(outputFileDialog.FileName, false))
                 {
-                    // read main.wago.plua file data
-                    data = reader.ReadToEnd();
+                    foreach (var dev in devices)
+                    {
+                        writer.Write($"{dev.WagoType + dev.FullNumber,10} => {dev.Object,10} | {dev.Type, 3} | {dev.Number}\n");
+                    }
                 }
-
-                var modulesImporter = new ModulesImporter(currentProject, data);
-                modulesImporter.Import();
             }
             catch (Exception ex)
             {
@@ -66,7 +70,7 @@ namespace EasyEPlanner
 
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
-            Name = "ImportIcpWagoModules";
+            Name = nameof(ImportIcpCreateRenamingMap);
             Ordinal = 30;
 
             return true;

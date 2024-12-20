@@ -395,49 +395,50 @@ namespace TechObject
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
-            var mode = child as Mode;
-            var copyMode = copyObject as Mode;
-            bool objectsNotNull = mode != null && copyMode != null;
-            if (objectsNotNull)
+            var targetOperation = child as Mode;
+            var copiedOperation = copyObject as Mode;
+            
+            if (targetOperation is null || copiedOperation is null)
+                return null;
+
+            Mode newOperation = copiedOperation.Clone(GetModeN, this, copiedOperation.Name);
+
+            if (owner.BaseTechObject.BaseOperationsList.Count > 0 &&
+                !Owner.BaseTechObject.BaseOperationsList.Contains(copiedOperation.BaseOperation.Name) ||
+                !string.IsNullOrEmpty(copiedOperation.BaseOperation?.LuaName) &&
+                modes.Except(new List<Mode>() { targetOperation }).ToList().Exists(o => o.BaseOperation.LuaName == copiedOperation.BaseOperation.LuaName))
             {
-                Mode newMode = copyMode.Clone(GetModeN, this, copyMode.Name);
-                if (!mode.BaseObjectsList.Contains(copyMode.BaseOperation.Name))
-                {
-                    bool editBaseOperation = true;
-                    newMode.SetNewValue(string.Empty, editBaseOperation);
-                }
-                
-                int index = modes.IndexOf(mode);
-                modes.Remove(mode);
-                modes.Insert(index, newMode);
-
-                string modeTechObjName = Owner.NameEplan;
-                int modeTechObjNumber = Owner.TechNumber;
-                string copyObjTechObjName = copyMode.Owner.Owner.NameEplan;
-                int copyObjTechObjNumber = copyMode.Owner.Owner.TechNumber;
-                if (modeTechObjName == copyObjTechObjName)
-                {
-                    newMode.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
-                }
-                else
-                {
-                    newMode.ModifyDevNames(new DevModifyOptions(Owner, copyObjTechObjName, Owner.TechNumber));
-                }
-
-                ChangeRestrictionModeOwner(newMode);
-                int newN = TechObjectManager.GetInstance()
-                    .GetTechObjectN(Owner);
-                int oldN = TechObjectManager.GetInstance()
-                    .GetTechObjectN(copyMode.Owner.Owner);
-                newMode.ModifyRestrictObj(oldN, newN);
-
-                newMode.ChangeCrossRestriction(mode);
-
-                newMode.AddParent(this);
-                return newMode;
+                // reset base object
+                newOperation.SetNewValue(string.Empty, true);
             }
 
-            return null;
+            int index = modes.IndexOf(targetOperation);
+            modes.Remove(targetOperation);
+            modes.Insert(index, newOperation);
+
+            string modeTechObjName = Owner.NameEplan;
+            int modeTechObjNumber = Owner.TechNumber;
+            string copyObjTechObjName = copiedOperation.Owner.Owner.NameEplan;
+            if (modeTechObjName == copyObjTechObjName)
+            {
+                newOperation.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
+            }
+            else
+            {
+                newOperation.ModifyDevNames(new DevModifyOptions(Owner, copyObjTechObjName, Owner.TechNumber));
+            }
+
+            ChangeRestrictionModeOwner(newOperation);
+            int newN = TechObjectManager.GetInstance()
+                .GetTechObjectN(Owner);
+            int oldN = TechObjectManager.GetInstance()
+                .GetTechObjectN(copiedOperation.Owner.Owner);
+            newOperation.ModifyRestrictObj(oldN, newN);
+
+            newOperation.ChangeCrossRestriction(targetOperation);
+
+            newOperation.AddParent(this);
+            return newOperation;
         }
 
         override public bool IsInsertableCopy
@@ -450,31 +451,39 @@ namespace TechObject
 
         override public ITreeViewItem InsertCopy(object obj)
         {
-            var objMode = obj as Mode;
-            if (objMode != null)
+            var copiedOperation = obj as Mode;
+
+            if (copiedOperation is null)
+                return null;
+
+            Mode newOperation = copiedOperation.Clone(GetModeN, this);
+
+            if (owner.BaseTechObject.BaseOperationsList.Count > 0 &&
+                !Owner.BaseTechObject.BaseOperationsList.Contains(copiedOperation.BaseOperation.Name) ||
+                !string.IsNullOrEmpty(copiedOperation.BaseOperation?.LuaName) &&
+                modes.Exists(o => o.BaseOperation.LuaName == copiedOperation.BaseOperation.LuaName))
             {
-                Mode newMode = objMode.Clone(GetModeN, this);
-                modes.Add(newMode);
-
-                string objModeTechObjectName = objMode.Owner.Owner.NameEplan;
-                int objMobeTechObjectNumber = objMode.Owner.Owner.TechNumber;
-                if (owner.NameEplan == objModeTechObjectName)
-                {
-                    newMode.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
-                }
-                else
-                {
-                    newMode.ModifyDevNames(new DevModifyOptions(Owner, objModeTechObjectName, Owner.TechNumber));
-                }
-
-                ChangeRestrictionModeOwner(newMode);
-                newMode.ChangeCrossRestriction();
-
-                newMode.AddParent(this);
-                return newMode;
+                // reset base object
+                newOperation.SetNewValue(string.Empty, true);    
             }
 
-            return null;
+            modes.Add(newOperation);
+
+            string techObjectName = copiedOperation.Owner.Owner.NameEplan;
+            if (owner.NameEplan == techObjectName)
+            {
+                newOperation.ModifyDevNames(new DevModifyOptions(Owner, Owner.NameEplan, -1));
+            }
+            else
+            {
+                newOperation.ModifyDevNames(new DevModifyOptions(Owner, techObjectName, Owner.TechNumber));
+            }
+
+            ChangeRestrictionModeOwner(newOperation);
+            newOperation.ChangeCrossRestriction();
+
+            newOperation.AddParent(this);
+            return newOperation;
         }
 
         override public bool IsInsertable

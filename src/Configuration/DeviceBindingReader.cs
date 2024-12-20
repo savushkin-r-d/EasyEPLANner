@@ -558,6 +558,8 @@ namespace EasyEPlanner
                         out error, module.PhysicalNumber, logicalPort,
                         moduleOffset, channelName);
 
+                CheckAndSetExtraOffset(module, device, logicalPort);
+
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
@@ -590,6 +592,22 @@ namespace EasyEPlanner
                 Logs.AddMessage($"К модулю {module.Name} узла {node.Name} привязано несколько устройств " +
                     $"с одинаковым AS ({group.Key}): {string.Join(", ", group.Select(dev => dev.EplanName))}");
             }
+        }
+
+
+        /// <summary>
+        /// Проверка и установка доп.смещения привязки клапанов для IO-Link мастера
+        /// </summary>
+        /// <param name="module">Модуль</param>
+        /// <param name="device">Устройство</param>
+        /// <param name="logicalPort">Логический номер клеммы (сигнальной)</param>
+        public static void CheckAndSetExtraOffset(IIOModule module, IODevice device, int logicalPort)
+        {
+            if (module.Info.Number != 657 || // 750-657 - IO-Link Master
+                !device.RuntimeParameters.ContainsKey(IODevice.RuntimeParameter.R_EXTRA_OFFSET))
+                return;
+
+            device.RuntimeParameters[IODevice.RuntimeParameter.R_EXTRA_OFFSET] = -(logicalPort - 1);
         }
 
         /// <summary>

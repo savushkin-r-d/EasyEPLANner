@@ -413,7 +413,7 @@ namespace TechObject
             items.Add(toStateByConditionAction);
         }
 
-        public Step Clone(GetN getN, string name = "")
+        public Step Clone(State newOwner, GetN getN, string name = "")
         {
             Step clone = (Step)MemberwiseClone();
             clone.getN = getN;
@@ -423,6 +423,7 @@ namespace TechObject
                 clone.name = name.Substring(3);
             }
 
+            clone.Owner = newOwner;
             clone.actions = new List<IAction>();
             foreach (IAction action in actions)
             {
@@ -434,8 +435,8 @@ namespace TechObject
 
             if (!IsMainStep)
             {
-                clone.timeParam = timeParam.Clone();
-                clone.maxDurationParam = maxDurationParam.Clone();
+                clone.timeParam = (timeParam as BaseParameter).Clone();
+                clone.maxDurationParam = (maxDurationParam as BaseParameter).Clone();
                 clone.nextStepN = nextStepN.Clone();
 
                 clone.items.Add(clone.timeParam);
@@ -890,16 +891,14 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override List<string> BaseObjectsList
+        public override IEnumerable<string> BaseObjectsList
         {
-            get
-            {
-                State state = Owner;
-                Mode mode = state.Owner;
-                List<string> stepsNames = mode.BaseOperation
-                    .GetStateStepsNames(state.Type);
-                return stepsNames;
-            }
+            get => Owner.Owner.BaseOperation
+                .GetStateStepsNames(Owner.Type)
+                .Except(from step in Owner.Steps
+                        where step.GetBaseStepName() != string.Empty && step != this
+                        select step.GetBaseStepName())
+                ;
         }
 
         public override bool ContainsBaseObject

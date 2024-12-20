@@ -162,5 +162,29 @@ namespace EasyEplannerTests.ConfigurationTest
                 DeviceBindingReader.CheckBindAllowedSubTypesToDOModule(device, moduleMock.Object, "") == string.Empty);
         }
 
+
+        [Test]
+        public void CheckAndSetExtraOffset()
+        {
+            var ioModuleInfo = IOModuleInfo.Stub;
+            ioModuleInfo.Number = 657;
+
+            var module = Mock.Of<IIOModule>(m => 
+                m.Info == ioModuleInfo);
+
+            var valve = new V("V1", "-V1", "", 1, "", -1, "");
+            valve.SetSubType(DeviceSubType.V_IOLINK_MIXPROOF.ToString());
+
+            Assert.Multiple(() =>
+            {
+                DeviceBindingReader.CheckAndSetExtraOffset(module, valve, 1);
+                Assert.IsTrue(valve.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_EXTRA_OFFSET, out var extraOffset));
+                Assert.AreEqual(0, extraOffset);
+
+                DeviceBindingReader.CheckAndSetExtraOffset(module, valve, 3);
+                valve.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_EXTRA_OFFSET, out extraOffset);
+                Assert.AreEqual(-2, extraOffset);
+            });
+        }
     }
 }

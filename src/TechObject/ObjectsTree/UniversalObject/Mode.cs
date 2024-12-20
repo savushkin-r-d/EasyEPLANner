@@ -119,7 +119,7 @@ namespace TechObject
             clone.stepsMngr = new List<State>();
             for (int idx = 0; idx < stepsMngr.Count; idx++)
             {
-                clone.stepsMngr.Add(stepsMngr[idx].Clone());
+                clone.stepsMngr.Add(stepsMngr[idx].Clone(clone));
             }
 
             clone.operPar = operPar.Clone(clone);
@@ -545,7 +545,7 @@ namespace TechObject
             bool statesNotNull = selectedState != null && copiedState != null;
             if (statesNotNull)
             {
-                State newState = copiedState.Clone();
+                State newState = copiedState.Clone(this);
                 if (newState.Name != selectedState.Name)
                 {
                     newState.Name = selectedState.Name;
@@ -638,16 +638,12 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override List<string> BaseObjectsList
+        public override IEnumerable<string> BaseObjectsList
         {
-            get
-            {
-                ModesManager modesManager = Owner;
-                TechObject techObject = modesManager.Owner;
-                BaseTechObject baseTechObject = techObject.BaseTechObject;
-                List<string> baseModesList = baseTechObject.BaseOperationsList;
-                return baseModesList;
-            }
+            get => Owner.Owner.BaseTechObject.BaseOperationsList
+                .Except(from operation in Owner.Modes
+                        where operation.BaseOperation.Name != string.Empty && operation != this
+                        select operation.BaseOperation.Name);
         }
 
         public override bool ContainsBaseObject
