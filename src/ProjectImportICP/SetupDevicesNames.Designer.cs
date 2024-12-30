@@ -46,7 +46,7 @@
             this.objectListView.HideSelection = false;
             this.objectListView.Location = new System.Drawing.Point(3, 3);
             this.objectListView.Name = "objectListView";
-            this.objectListView.Size = new System.Drawing.Size(359, 451);
+            this.objectListView.Size = new System.Drawing.Size(486, 451);
             this.objectListView.TabIndex = 0;
             this.objectListView.UseCompatibleStateImageBehavior = false;
             this.objectListView.View = System.Windows.Forms.View.Details;
@@ -56,9 +56,9 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
             this.tableLayoutPanel1.Controls.Add(this.objectListView, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.LoadRenameMapBttn, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.OkBttn, 2, 1);
@@ -68,7 +68,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(365, 495);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(492, 495);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // LoadRenameMapBttn
@@ -76,20 +76,20 @@
             this.LoadRenameMapBttn.Dock = System.Windows.Forms.DockStyle.Top;
             this.LoadRenameMapBttn.Location = new System.Drawing.Point(3, 460);
             this.LoadRenameMapBttn.Name = "LoadRenameMapBttn";
-            this.LoadRenameMapBttn.Size = new System.Drawing.Size(226, 23);
+            this.LoadRenameMapBttn.Size = new System.Drawing.Size(235, 23);
             this.LoadRenameMapBttn.TabIndex = 1;
-            this.LoadRenameMapBttn.Text = "Применить файл переименования";
+            this.LoadRenameMapBttn.Text = "Использовать файл переименования";
             this.LoadRenameMapBttn.UseVisualStyleBackColor = true;
             this.LoadRenameMapBttn.Click += new System.EventHandler(this.LoadRenameMapBttn_Click);
             // 
             // OkBttn
             // 
             this.OkBttn.Dock = System.Windows.Forms.DockStyle.Top;
-            this.OkBttn.Location = new System.Drawing.Point(293, 460);
+            this.OkBttn.Location = new System.Drawing.Point(404, 460);
             this.OkBttn.Name = "OkBttn";
-            this.OkBttn.Size = new System.Drawing.Size(69, 23);
+            this.OkBttn.Size = new System.Drawing.Size(85, 23);
             this.OkBttn.TabIndex = 2;
-            this.OkBttn.Text = "OK";
+            this.OkBttn.Text = "Применить";
             this.OkBttn.UseVisualStyleBackColor = true;
             this.OkBttn.Click += new System.EventHandler(this.OkBttn_Click);
             // 
@@ -97,7 +97,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(365, 495);
+            this.ClientSize = new System.Drawing.Size(492, 495);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "SetupDevicesNames";
             this.ShowIcon = false;
