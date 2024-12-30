@@ -100,7 +100,12 @@ namespace TechObject
                 {
                     var parameterNumber = Parameter.GetParameterNumber;
                     if (parameterNumber == 0)
-                        SetNewValue("-1"); // Параметр удален
+                    {
+                        if (Parameters.GetParam(Parameter.GetNameLua()) == null)
+                            SetNewValue("-1"); // Параметр удален
+                        else
+                            SetNewValue(Parameters.GetParam(Parameter.GetNameLua()).GetParameterNumber.ToString()); // Параметр заменен
+                    }   
                     else if (OnlyParameterNumber && parameterNumber.ToString() != value.ToString())
                         SetNewValue(parameterNumber.ToString()); // Параметр задан номером и перемещен
                 }
