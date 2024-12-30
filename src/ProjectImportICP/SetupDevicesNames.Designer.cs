@@ -56,9 +56,9 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
             this.tableLayoutPanel1.Controls.Add(this.objectListView, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.LoadRenameMapBttn, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.OkBttn, 2, 1);
@@ -76,20 +76,20 @@
             this.LoadRenameMapBttn.Dock = System.Windows.Forms.DockStyle.Top;
             this.LoadRenameMapBttn.Location = new System.Drawing.Point(3, 460);
             this.LoadRenameMapBttn.Name = "LoadRenameMapBttn";
-            this.LoadRenameMapBttn.Size = new System.Drawing.Size(327, 23);
+            this.LoadRenameMapBttn.Size = new System.Drawing.Size(235, 23);
             this.LoadRenameMapBttn.TabIndex = 1;
-            this.LoadRenameMapBttn.Text = "Применить файл переименования";
+            this.LoadRenameMapBttn.Text = "Использовать файл переименования";
             this.LoadRenameMapBttn.UseVisualStyleBackColor = true;
             this.LoadRenameMapBttn.Click += new System.EventHandler(this.LoadRenameMapBttn_Click);
             // 
             // OkBttn
             // 
             this.OkBttn.Dock = System.Windows.Forms.DockStyle.Top;
-            this.OkBttn.Location = new System.Drawing.Point(419, 460);
+            this.OkBttn.Location = new System.Drawing.Point(404, 460);
             this.OkBttn.Name = "OkBttn";
-            this.OkBttn.Size = new System.Drawing.Size(70, 23);
+            this.OkBttn.Size = new System.Drawing.Size(85, 23);
             this.OkBttn.TabIndex = 2;
-            this.OkBttn.Text = "OK";
+            this.OkBttn.Text = "Применить";
             this.OkBttn.UseVisualStyleBackColor = true;
             this.OkBttn.Click += new System.EventHandler(this.OkBttn_Click);
             // 
