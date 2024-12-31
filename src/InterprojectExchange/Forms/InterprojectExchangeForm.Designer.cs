@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("AO", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("AI", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("DO", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("DI", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Остальные", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("AO", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("AI", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("DO", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("DI", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Остальные", System.Windows.Forms.HorizontalAlignment.Left);
             this.currProjNameTextBox = new System.Windows.Forms.TextBox();
             this.advProjNameComboBox = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
@@ -72,6 +72,7 @@
             // advProjNameComboBox
             // 
             this.advProjNameComboBox.BackColor = System.Drawing.Color.White;
+            this.advProjNameComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.advProjNameComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.advProjNameComboBox.FormattingEnabled = true;
             this.advProjNameComboBox.Location = new System.Drawing.Point(835, 11);
@@ -79,6 +80,7 @@
             this.advProjNameComboBox.Size = new System.Drawing.Size(194, 21);
             this.advProjNameComboBox.Sorted = true;
             this.advProjNameComboBox.TabIndex = 5;
+            this.advProjNameComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.advProjNameComboBox_DrawItem);
             this.advProjNameComboBox.SelectedValueChanged += new System.EventHandler(this.advProjNameComboBox_SelectedItemChanged);
             // 
             // closeButton
@@ -253,22 +255,22 @@
             this.currentProj,
             this.advProj});
             this.bindedSignalsList.FullRowSelect = true;
-            listViewGroup1.Header = "AO";
-            listViewGroup1.Name = "AO";
-            listViewGroup2.Header = "AI";
-            listViewGroup2.Name = "AI";
-            listViewGroup3.Header = "DO";
-            listViewGroup3.Name = "DO";
-            listViewGroup4.Header = "DI";
-            listViewGroup4.Name = "DI";
-            listViewGroup5.Header = "Остальные";
-            listViewGroup5.Name = "Other";
+            listViewGroup6.Header = "AO";
+            listViewGroup6.Name = "AO";
+            listViewGroup7.Header = "AI";
+            listViewGroup7.Name = "AI";
+            listViewGroup8.Header = "DO";
+            listViewGroup8.Name = "DO";
+            listViewGroup9.Header = "DI";
+            listViewGroup9.Name = "DI";
+            listViewGroup10.Header = "Остальные";
+            listViewGroup10.Name = "Other";
             this.bindedSignalsList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4,
-            listViewGroup5});
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9,
+            listViewGroup10});
             this.bindedSignalsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.bindedSignalsList.HideSelection = false;
             this.bindedSignalsList.Location = new System.Drawing.Point(369, 38);

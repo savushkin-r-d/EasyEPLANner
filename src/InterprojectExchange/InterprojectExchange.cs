@@ -10,37 +10,24 @@ namespace InterprojectExchange
     /// <summary>
     /// Межконтроллерный обмен сигналами. Обмен с формами
     /// </summary>
-    public class InterprojectExchange
+    public class InterprojectExchange : IInterprojectExchange
     {
         protected InterprojectExchange()
         {
             interprojectExchangeModels = new List<IProjectModel>();
         }
 
-        /// <summary>
-        /// Очистка обмена между проектами
-        /// </summary>
         public void Clear()
         {
             interprojectExchangeStarter = null;
             interprojectExchangeModels.Clear();
         }
 
-        /// <summary>
-        /// Добавить модель
-        /// </summary>
-        /// <param name="model">Модель</param>
         public void AddModel(IProjectModel model)
         {
             interprojectExchangeModels.Add(model);
         }
 
-        /// <summary>
-        /// Загрузка данных проекта (вызывает событие)
-        /// </summary>
-        /// <param name="pathToProjectDir">Путь к папке с файлами проекта</param>
-        /// <param name="errors">Ошибки возникшие при загрузке</param>
-        /// <returns>Успешно или неуспешно загружены данные</returns>
         public bool LoadProjectData(string pathToProjectDir, out string errors)
         {
             // Генерация пути к папке с проектами и его имени из полного пути
@@ -53,21 +40,11 @@ namespace InterprojectExchange
             return loaded;
         }
 
-        /// <summary>
-        /// Проверка корректности пути к файлам проекта
-        /// </summary>
-        /// <param name="path">Путь к файлам проекта</param>
-        /// <returns></returns>
         public bool CheckPathToProjectFiles(string path)
         {
             return Owner.CheckProjectData(path);
         }
 
-        /// <summary>
-        /// Получить модель
-        /// </summary>
-        /// <param name="projName">Имя проекта</param>
-        /// <returns></returns>
         public IProjectModel GetModel(string projName)
         {
             IProjectModel model = interprojectExchangeModels
@@ -76,15 +53,11 @@ namespace InterprojectExchange
             return model;
         }
 
-        /// <summary>
-        /// Отметка выбранной модели в GUI. Другие модели снимают выбор.
-        /// </summary>
-        /// <param name="selectingModel">Выбранная модель</param>
         public void SelectModel(IProjectModel selectingModel)
         {
-            CurrentProjectModel currentProjectModel = MainModel;
+            var currentProjectModel = MainModel;
 
-            foreach(var model in Models)
+            foreach (var model in Models)
             {
                 if (model.ProjectName == selectingModel.ProjectName)
                 {
@@ -99,10 +72,6 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Удалить обмен с проектом
-        /// </summary>
-        /// <param name="projectName">Имя проекта</param>
         public void DeleteExchangeWithProject(string projectName)
         {
             IProjectModel model = GetModel(projectName);
@@ -116,23 +85,16 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Изменить режим редактирования связей
-        /// </summary>
         public void ChangeEditMode(int selectedModeIndex)
         {
             editMode = (EditMode)selectedModeIndex;
         }
 
-        /// <summary>
-        /// Получить сигналы активных проектов для вставки в список связанных
-        /// сигналов
-        /// </summary>
         public Dictionary<string, List<string[]>> GetBindedSignals()
         {
             var signals = new Dictionary<string, List<string[]>>();
 
-            foreach(var channelName in DeviceChannelsNames)
+            foreach (var channelName in DeviceChannelsNames)
             {
                 List<string[]> channelSignals = GetSignalsPairs(
                     GetCurrentProjectSignals(channelName),
@@ -148,22 +110,22 @@ namespace InterprojectExchange
             var err = new StringBuilder();
             var mainModel = MainModel;
 
-            foreach (var model in Models)
+            foreach (var model in Models.Where(m => m.Loaded && m != MainModel))
             {
-                if (model == MainModel) continue;
-
                 mainModel.SelectedAdvancedProject = model.ProjectName;
 
                 string receiverErr = mainModel.ReceiverSignals.CountCompare(model.SourceSignals);
                 if (!string.IsNullOrEmpty(receiverErr))
                 {
                     err.Append($"remote_gateways: {model.ProjectName} - {receiverErr}\n");
+                    model.Loaded = false;
                 }
 
                 string sourceErr = mainModel.SourceSignals.CountCompare(model.ReceiverSignals);
                 if (!string.IsNullOrEmpty(sourceErr))
                 {
                     err.Append($"shared_devices: {model.ProjectName} - {sourceErr}\n");
+                    model.Loaded = false;
                 }
             }
 
@@ -179,7 +141,7 @@ namespace InterprojectExchange
         /// проекта</param>
         /// <returns></returns>
         private static List<string[]> GetSignalsPairs(
-            List<string> currentProjectSignals, 
+            List<string> currentProjectSignals,
             List<string> advancedProjectSignals)
         {
             if (currentProjectSignals.Count > 0 &&
@@ -188,7 +150,7 @@ namespace InterprojectExchange
                 return (from cps in currentProjectSignals
                         join aps in advancedProjectSignals
                         on currentProjectSignals.IndexOf(cps) equals advancedProjectSignals.IndexOf(aps)
-                        select new [] { cps, aps }).ToList();
+                        select new[] { cps, aps }).ToList();
             }
             else
             {
@@ -196,14 +158,6 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Связать сигналы
-        /// </summary>
-        /// <param name="signalType">Тип сигнала текущего проекта</param>
-        /// <param name="currentProjectDevice">Устройство текущего проекта
-        /// </param>
-        /// <param name="advancedProjectDevice">Устройство альтернативного 
-        /// проекта</param>
         public bool BindSignals(string signalType, string currentProjectDevice,
             string advancedProjectDevice)
         {
@@ -224,15 +178,6 @@ namespace InterprojectExchange
             return true;
         }
 
-        /// <summary>
-        /// Удаление связи между сигналами
-        /// </summary>
-        /// <param name="signalType">Тип сигнала</param>
-        /// <param name="currentProjectDevice">Устройство текущего проекта
-        /// </param>
-        /// <param name="advancedProjectDevice">Устройство альтернативного
-        /// проекта</param>
-        /// <returns></returns>
         public bool DeleteSignalsBind(string signalType,
             string currentProjectDevice, string advancedProjectDevice)
         {
@@ -247,16 +192,6 @@ namespace InterprojectExchange
             return true;
         }
 
-        /// <summary>
-        /// Подвинуть уже привязанные сигналы
-        /// </summary>
-        /// <param name="signalType">Группа (тип сигналов)</param>
-        /// <param name="currProjSignal">Выбранный сигнал текущего проекта
-        /// </param>
-        /// <param name="advProjSignal">Выбранный сигнал альтернативного проекта
-        /// </param>
-        /// <param name="move">Индекс сдвига (1 - вниз, -1 - вверх)</param>
-        /// <returns></returns>
         public bool MoveSignalsBind(string signalType, string currProjSignal,
             string advProjSignal, int move)
         {
@@ -268,14 +203,14 @@ namespace InterprojectExchange
             int currSignalIndex = currentProjSignals.IndexOf(currProjSignal);
             int advSignalindex = advancedProjSignals.IndexOf(advProjSignal);
 
-            bool blockMoveUp = 
+            bool blockMoveUp =
                 (currSignalIndex == 0 || advSignalindex == 0) &&
                 move == -1;
             bool blockMoveDown =
                 (currSignalIndex == currentProjSignals.Count - 1 ||
                 advSignalindex == advancedProjSignals.Count - 1) &&
                 move == 1;
-            if(blockMoveDown || blockMoveUp)
+            if (blockMoveDown || blockMoveUp)
             {
                 return false;
             }
@@ -289,30 +224,19 @@ namespace InterprojectExchange
             return true;
         }
 
-        /// <summary>
-        /// Изменение устройства в связи текущего проекта
-        /// </summary>
-        /// <param name="signalType">Тип сигнала</param>
-        /// <param name="oldValue">Старое значение</param>
-        /// <param name="newValue">Новое значение</param>
-        /// <param name="mainProject">Редактируется главный проект или нет
-        /// </param>
-        /// <param name="needSwap">Нужно ли поменять старые и новые значения
-        /// местами</param>
-        /// <returns></returns>
-        public bool UpdateProjectBinding(string signalType, 
+        public bool UpdateProjectBinding(string signalType,
             string oldValue, string newValue, bool mainProject,
             out bool needSwap)
         {
             needSwap = false;
 
-            if(oldValue == newValue)
+            if (oldValue == newValue)
             {
                 return false;
             }
 
-            List<string> signals = mainProject ? 
-                GetCurrentProjectSignals(signalType) : 
+            List<string> signals = mainProject ?
+                GetCurrentProjectSignals(signalType) :
                 GetAdvancedProjectSignals(signalType);
 
             void RemoveAndInsert<T>(List<T> collection, int index, T value)
@@ -323,7 +247,7 @@ namespace InterprojectExchange
 
             int oldValueIndex = signals.IndexOf(oldValue);
             int newValueIndex = signals.IndexOf(newValue);
-            if(newValueIndex >= 0)
+            if (newValueIndex >= 0)
             {
                 RemoveAndInsert(signals, oldValueIndex, newValue);
                 RemoveAndInsert(signals, newValueIndex, oldValue);
@@ -410,26 +334,18 @@ namespace InterprojectExchange
             return new List<string>();
         }
 
-        /// <summary>
-        /// Сохранение межконтроллерного обмена
-        /// </summary>
         public void Save()
         {
             Owner.Save();
         }
 
-        /// <summary>
-        /// Восстановить модель
-        /// </summary>
-        /// <param name="projectName">Имя проекта для проверки</param>
-        /// <returns>Возможно или нет это действие</returns>
         public bool RestoreModel(string projectName)
         {
             var canRestore = false;
 
-            foreach(var model in Models)
+            foreach (var model in Models)
             {
-                bool foundMarkedModel = 
+                bool foundMarkedModel =
                     projectName == model.ProjectName && model.MarkedForDelete;
                 if (foundMarkedModel)
                 {
@@ -441,9 +357,6 @@ namespace InterprojectExchange
             return canRestore;
         }
 
-        /// <summary>
-        /// Имена загруженных альтернативных моделей
-        /// </summary>
         public string[] LoadedAdvancedModelNames
         {
             get
@@ -457,33 +370,16 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Главная модель
-        /// </summary>
-        public virtual CurrentProjectModel MainModel 
-        { 
-            get
-            {
-                return GetModel(MainProjectName) as CurrentProjectModel;
-            } 
-        }
-
-        /// <summary>
-        /// Получить имя текущего проекта для формы
-        /// </summary>
-        /// <returns></returns>
-        public string MainProjectName
+        public virtual ICurrentProjectModel MainModel
         {
             get
             {
-                return EProjectManager.GetInstance()
-                .GetModifyingCurrentProjectName();
+                return GetModel(MainProjectName) as ICurrentProjectModel;
             }
         }
 
-        /// <summary>
-        /// Получить путь к папке с проектами
-        /// </summary>
+        public string MainProjectName => eProjectManager.GetModifyingCurrentProjectName();
+
         public string DefaultPathWithProjects
         {
             get
@@ -492,9 +388,6 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Класс-владелец
-        /// </summary>
         public InterprojectExchangeStarter Owner
         {
             get
@@ -507,9 +400,6 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Модели с данными по проектам
-        /// </summary>
         public List<IProjectModel> Models
         {
             get
@@ -518,9 +408,6 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Выбранная в GUI модель альтернативного проекта
-        /// </summary>
         public IProjectModel SelectedModel
         {
             get
@@ -529,9 +416,6 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Имена каналов для устройств
-        /// </summary>
         public string[] DeviceChannelsNames
         {
             get
@@ -540,25 +424,35 @@ namespace InterprojectExchange
             }
         }
 
-        /// <summary>
-        /// Режим редактирования
-        /// </summary>
         public EditMode EditMode => editMode;
 
         /// <summary>
         /// Получить экземпляр класса. Singleton
         /// </summary>
         /// <returns></returns>
-        public static InterprojectExchange GetInstance()
+        public static IInterprojectExchange GetInstance()
         {
             if (interprojectExchange == null)
             {
+                if (eProjectManager is null)
+                {
+                    try
+                    {
+                        eProjectManager = EProjectManager.GetInstance();
+                    }
+                    catch
+                    {
+                        // skip EProjectManager int TESTS
+                    }
+                }
+
                 interprojectExchange = new InterprojectExchange();
             }
 
             return interprojectExchange;
         }
 
+        private static IEProjectManager eProjectManager = null;
         private EditMode editMode;
         private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;
