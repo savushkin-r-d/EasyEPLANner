@@ -30,6 +30,7 @@ local iolink_devices =
     { articleName = "IFM.PM1709", sizeIn = 2, sizeOut = 0 },
     { articleName = "IFM.PM1715", sizeIn = 2, sizeOut = 0 },
     { articleName = "FES.8001446", sizeIn = 1, sizeOut = 0 },
+    { articleName = "IFM.PM1706", sizeIn = 2, sizeOut = 0 }, -- PT&LT
     -- LT
     { articleName = "IFM.LR2750", sizeIn = 1, sizeOut = 0 },
     -- TE
@@ -58,7 +59,10 @@ local iolink_devices =
     -- HLA
     { articleName = "PXC.1191993", sizeIn = 0, sizeOut = 1 },
     -- G
-    { articleName = "TRIO3-PS/1AC/24DC/10/4C/IOL", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1252696", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1252697", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1362791", sizeIn = 9, sizeOut = 3.5 },
+    { articleName = "PXC.1362792", sizeIn = 9, sizeOut = 3.5 },
 }
 
 return iolink_devices

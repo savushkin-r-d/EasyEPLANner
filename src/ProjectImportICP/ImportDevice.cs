@@ -1,4 +1,5 @@
-﻿using System;
+using EplanDevice;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,6 +17,11 @@ namespace EasyEPlanner.ProjectImportICP
         /// Тип устройства
         /// </summary>
         string Type { get; set; }
+
+        /// <summary>
+        /// Тип устройства в WAGO
+        /// </summary>
+        string WagoType { get; set; }
     
         /// <summary>
         /// Подтип устройства
@@ -58,12 +64,16 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="offset">Смещение адреса клеммы</param>
         /// <param name="comment">Примечание: номер канала, если несколько одного типа</param>
         void AddChannel(string type, int node, int offset, string comment);
+
+       void AddAsNumber(int asNumber, int asGateway);
     }
 
     [ExcludeFromCodeCoverage]
     public class ImportDevice : IImportDevice
     {
         public string Type { get; set; }
+
+        public string WagoType {  get; set; }
 
         public string Subtype { get; set; }
 
@@ -77,7 +87,15 @@ namespace EasyEPlanner.ProjectImportICP
 
         public List<(string type, int node, int offset, string comment)> Channels { get; set; } = new List<(string, int, int, string)>();
 
-        public List<int> Parameters { get; set; } = new List<int> { };
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
+
+        public Dictionary<string, string> RuntimeParameters { get; set; } = new Dictionary<string, string>();
+
+        public void AddAsNumber(int asNumber, int asGateway)
+        {
+            RuntimeParameters.Add(IODevice.RuntimeParameter.R_AS_NUMBER, asNumber.ToString());
+            RuntimeParameters.Add("as_gateway", asGateway.ToString());
+        }
 
         public void AddChannel(string type, int node, int offset, string comment)
         {

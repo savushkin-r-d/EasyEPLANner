@@ -435,8 +435,8 @@ namespace TechObject
 
             if (!IsMainStep)
             {
-                clone.timeParam = timeParam.Clone();
-                clone.maxDurationParam = maxDurationParam.Clone();
+                clone.timeParam = (timeParam as BaseParameter).Clone();
+                clone.maxDurationParam = (maxDurationParam as BaseParameter).Clone();
                 clone.nextStepN = nextStepN.Clone();
 
                 clone.items.Add(clone.timeParam);
@@ -896,7 +896,7 @@ namespace TechObject
             get => Owner.Owner.BaseOperation
                 .GetStateStepsNames(Owner.Type)
                 .Except(from step in Owner.Steps
-                        where step.GetBaseStepName() != string.Empty
+                        where step.GetBaseStepName() != string.Empty && step != this
                         select step.GetBaseStepName())
                 ;
         }

@@ -642,7 +642,7 @@ namespace TechObject
         {
             get => Owner.Owner.BaseTechObject.BaseOperationsList
                 .Except(from operation in Owner.Modes
-                        where operation.BaseOperation.Name != string.Empty
+                        where operation.BaseOperation.Name != string.Empty && operation != this
                         select operation.BaseOperation.Name);
         }
 

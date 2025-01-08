@@ -138,6 +138,10 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.ABS_V, 1},
+                                {Tag.DAY_T1, 1},
+                                {Tag.PREV_DAY_T1, 1},
+                                {Tag.DAY_T2, 1},
+                                {Tag.PREV_DAY_T2, 1},
                             };
 
                         case DeviceSubType.FQT_F:
@@ -153,6 +157,10 @@ namespace EplanDevice
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                                 {Parameter.P_ERR_MIN_FLOW, 1},
+                                {Tag.DAY_T1, 1},
+                                {Tag.PREV_DAY_T1, 1},
+                                {Tag.DAY_T2, 1},
+                                {Tag.PREV_DAY_T2, 1},
                             };
 
                         case DeviceSubType.FQT_VIRT:
@@ -168,6 +176,10 @@ namespace EplanDevice
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                                 {Parameter.P_ERR_MIN_FLOW, 1},
+                                {Tag.DAY_T1, 1},
+                                {Tag.PREV_DAY_T1, 1},
+                                {Tag.DAY_T2, 1},
+                                {Tag.PREV_DAY_T2, 1},
                             };
                         case DeviceSubType.FQT_IOLINK:
                             return new Dictionary<string, int>()
@@ -178,6 +190,10 @@ namespace EplanDevice
                                 {Tag.ABS_V, 1},
                                 {Tag.T, 1},
                                 {Parameter.P_ERR_MIN_FLOW, 1},
+                                {Tag.DAY_T1, 1},
+                                {Tag.PREV_DAY_T1, 1},
+                                {Tag.DAY_T2, 1},
+                                {Tag.PREV_DAY_T2, 1},
                             };
                     }
                     break;

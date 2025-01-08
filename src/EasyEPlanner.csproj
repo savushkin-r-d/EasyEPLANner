@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -114,7 +114,12 @@
     <Compile Include="ColumnNode.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
-    <Compile Include="Main\ImportIcpWagoProjectAction.cs" />
+    <Compile Include="EProjectManager\IEProjectManager.cs" />
+    <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
+    <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
+    <Compile Include="Main\ImportIcpWagoProject.cs" />
+    <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
     <Compile Include="Device\IDevice.cs" />
@@ -181,6 +186,12 @@
     <Compile Include="Extensions\ApiExtensions.cs" />
     <Compile Include="ProjectImportICP\ImportDevice.cs" />
     <Compile Include="ProjectImportICP\ImportModule.cs" />
+    <Compile Include="ProjectImportICP\ModifyChannelsDBDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectImportICP\ModifyChannelsDBDialog.Designer.cs">
+      <DependentUpon>ModifyChannelsDBDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectImportICP\ModulesImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
@@ -305,6 +316,13 @@
     <Compile Include="FileSavers\PrgLuaSaver.cs" />
     <Compile Include="Configuration\ProjectConfiguration.cs" />
     <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
+    <Compile Include="ProjectImportICP\SetupDevicesNames.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectImportICP\SetupDevicesNames.Designer.cs">
+      <DependentUpon>SetupDevicesNames.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectImportICP\XmlNodeChbaseExtension.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -437,6 +455,12 @@
     <EmbeddedResource Include="ModeFrm.resx">
       <DependentUpon>ModeFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectImportICP\ModifyChannelsDBDialog.resx">
+      <DependentUpon>ModifyChannelsDBDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectImportICP\SetupDevicesNames.resx">
+      <DependentUpon>SetupDevicesNames.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

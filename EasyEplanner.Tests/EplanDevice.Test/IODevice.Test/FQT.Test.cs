@@ -130,6 +130,10 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.DAY_T1, 1},
+                {IODevice.Tag.PREV_DAY_T1, 1},
+                {IODevice.Tag.DAY_T2, 1},
+                {IODevice.Tag.PREV_DAY_T2, 1},
             };
 
             var exportForFQTF = new Dictionary<string, int>()
@@ -144,6 +148,10 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.F, 1},
                 {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.DAY_T1, 1},
+                {IODevice.Tag.PREV_DAY_T1, 1},
+                {IODevice.Tag.DAY_T2, 1},
+                {IODevice.Tag.PREV_DAY_T2, 1},
             };
 
             var exportForFQTVirt = new Dictionary<string, int>()
@@ -158,6 +166,10 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.F, 1},
                 {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.DAY_T1, 1},
+                {IODevice.Tag.PREV_DAY_T1, 1},
+                {IODevice.Tag.DAY_T2, 1},
+                {IODevice.Tag.PREV_DAY_T2, 1},
             };
 
             var exportForFQTIOLink = new Dictionary<string, int>()
@@ -168,6 +180,10 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.ABS_V, 1},
                 {IODevice.Tag.T, 1},
                 {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
+                {IODevice.Tag.DAY_T1, 1},
+                {IODevice.Tag.PREV_DAY_T1, 1},
+                {IODevice.Tag.DAY_T2, 1},
+                {IODevice.Tag.PREV_DAY_T2, 1},
             };
 
             return new object[]

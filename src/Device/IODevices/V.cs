@@ -146,6 +146,8 @@ namespace EplanDevice
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
+                    rtParameters.Add(RuntimeParameter.R_EXTRA_OFFSET, null);
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
@@ -186,6 +188,8 @@ namespace EplanDevice
 
                     parameters.Add(Parameter.P_ON_TIME, null);
                     parameters.Add(Parameter.P_FB, 1);
+
+                    rtParameters.Add(RuntimeParameter.R_EXTRA_OFFSET, null);
 
                     SetIOLinkSizes(ArticleName);
                     break;

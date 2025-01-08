@@ -289,17 +289,15 @@ namespace TechObject
             return false;
         }
 
-        override public ITreeViewItem Replace(object child,
-            object copyObject)
+        override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var parsManager = child as ParamsManager;
-            if (copyObject is ParamsManager && parsManager != null)
+            if (copyObject is ParamsManager && child is ParamsManager parsManager)
             {
                 Clear();
                 var copyPars = copyObject as ParamsManager;
-                foreach (Params parGroup in copyPars.Items)
+                foreach (var parGroup in copyPars.Items.OfType<Params>())
                 {
-                    foreach (Param par in parGroup.Items)
+                    foreach (var par in parGroup.Items.OfType<Param>())
                     {
                         Param addedParam = AddParam(parGroup.LuaName,
                             par.GetName(), float.Parse(par.GetValue()),
@@ -312,12 +310,11 @@ namespace TechObject
                 return parsManager;
             }
 
-            Params pars = child as Params;
-            if (copyObject is Params && pars != null)
+            if (copyObject is Params && child is Params pars)
             {
                 pars.Clear();
                 Params copyPars = copyObject as Params;
-                foreach (Param par in copyPars.Items)
+                foreach (var par in copyPars.Items.OfType<Param>())
                 {
                     pars.InsertCopy(par);
                 }

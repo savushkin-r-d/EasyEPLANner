@@ -747,6 +747,11 @@ namespace Tests.EplanDevices
                 IODevice.RuntimeParameter.R_ID_LOWER_SEAT,
             };
 
+            var V_IOL_EXTRA_OFFSET_RT = new string[]
+            {
+                IODevice.RuntimeParameter.R_EXTRA_OFFSET,
+            };
+
             return new object[]
             {
                 new object[]
@@ -793,7 +798,7 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    new string[0],
+                    V_IOL_EXTRA_OFFSET_RT,
                     V_IOLINK_MIXPROOF,
                     GetRandomVDevice()
                 },
@@ -817,7 +822,7 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    new string[0],
+                    V_IOL_EXTRA_OFFSET_RT,
                     V_IOLINK_DO1_DI2,
                     GetRandomVDevice()
                 },

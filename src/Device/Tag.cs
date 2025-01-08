@@ -197,6 +197,25 @@ namespace EplanDevice
             /// </summary>
             public const string OUT_POWER_90 = "OUT_POWER_90";
 
+            /// <summary>
+            /// Сегодня, счетчик 1
+            /// </summary>
+            public const string DAY_T1 = nameof(DAY_T1);
+            
+            /// <summary>
+            /// Вчера, счетчик 1
+            /// </summary>
+            public const string PREV_DAY_T1 = nameof(PREV_DAY_T1);
+
+            /// <summary>
+            /// Сегодня, счетчик 2
+            /// </summary>
+            public const string DAY_T2 = nameof(DAY_T2);
+            
+            /// <summary>
+            /// Вчера, счетчик 2
+            /// </summary>
+            public const string PREV_DAY_T2 = nameof(PREV_DAY_T2);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Eplan.EplApi.Base;
+using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.Graphics;
 using Eplan.EplApi.DataModel.MasterData;
 using Eplan.EplApi.HEServices;
+using EplanDevice;
 using LuaInterface;
 using StaticHelper;
 using System;
@@ -47,7 +48,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="subtype">Подтип</param>
         /// <param name="description">Описание</param>
         /// <returns>Описание импортированного устройства: описание дополняется в Lua</returns>
-        IImportDevice ImportDevice(string type, int number, string subtype, string description);
+        IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description);
 
         /// <summary>
         /// [[ LuaMember ]] - вызывается из Lua
@@ -215,10 +216,15 @@ namespace EasyEPlanner.ProjectImportICP
         /// </summary>
         private readonly List<int> tanks = new List<int>();
 
+        /// <summary>
+        /// Генерировать страницы EPLAN с устройствами
+        /// </summary>
+        private readonly bool generatePages;
 
-        public DevicesImporter(Project project, string wagoData)
+        public DevicesImporter(Project project, string wagoData, bool generatePages = true)
         {
             this.project = project;
+            this.generatePages = generatePages;
 
             try
             {
@@ -262,16 +268,11 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void Import()
         {
-            Logs.Clear();
-            Logs.Show();
-
             Logs.AddMessage("\n\n");
             Logs.AddMessage("Импорт устройств:\n");
 
             // call Import() function in lua
             lua.GetFunction("Import").Call(this);
-
-            Logs.EnableButtons();
         }
 
 
@@ -280,16 +281,47 @@ namespace EasyEPlanner.ProjectImportICP
         public List<ImportDevice> ImportDevices { get; private set; } = new List<ImportDevice>();
 
 
-        public IImportDevice ImportDevice(string type, int number, string subtype, string description)
+        public IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description)
         {
             var dev = new ImportDevice()
             {
                 Type = type,
+                WagoType = wagoType,
                 FullNumber = number,
                 Number = number,
                 Subtype = subtype,
                 Description = description
             };
+
+            // Установка стандартных параметров для определенных типов устройств
+            switch (type)
+            {
+                case "DI":
+                    dev.Parameters.Add(IODevice.Parameter.P_DT, "0");
+                    break;
+
+                case "V":
+                case "M":
+                    dev.Parameters.Add(IODevice.Parameter.P_ON_TIME, "0");
+                    break;
+
+                case "TE":
+                case "LT":
+                    dev.Parameters.Add(IODevice.Parameter.P_C0, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_ERR, "0");
+                    break;
+
+                case "AO":
+                    dev.Parameters.Add(IODevice.Parameter.P_MIN_V, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_MAX_V, "0");
+                    break;
+
+                case "QT":
+                    dev.Parameters.Add(IODevice.Parameter.P_MIN_V, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_MAX_V, "0");
+                    dev.Parameters.Add(IODevice.Parameter.P_C0, "0");
+                    break;
+            }
 
             // Если в проекте есть подходящий номеру танк
             if (tanks.Contains(number / 100))
@@ -316,6 +348,13 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void GenerateDevicesPages()
         {
+            var setupRenaming = new SetupDevicesNames();
+            setupRenaming.Init(ImportDevices);
+            setupRenaming.ShowDialog();
+
+            if (!generatePages)
+                return;
+
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
                 var devices = Object.ToList();
@@ -357,8 +396,7 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-
-                new ApiHelper().SetSupplementaryFieldValue(function, 1, device.Subtype);
+                SetSupplementaryFiels(device, function);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X + (device.Type == "DI" ? 0 : SIGNAL_WIDTH), Y);
 
@@ -415,13 +453,13 @@ namespace EasyEPlanner.ProjectImportICP
                         FUNC_COUNTER = device.Number,
                     }, $"-{device.Type}{device.Number}");
 
-                new ApiHelper().SetSupplementaryFieldValue(function, 1, device.Subtype);
+                SetSupplementaryFiels(device, function);
                 function.Properties.FUNC_COMMENT = device.Description;
                 function.Location = new PointD(X, Y);
 
                 // Add signature of full wago name
                 var fullName = new Text();
-                fullName.Create(page, $"{device.Type}{device.FullNumber}", TEXT_HEIGHT);
+                fullName.Create(page, $"{device.WagoType}{device.FullNumber}", TEXT_HEIGHT);
                 fullName.LockObject();
                 fullName.Location = new PointD(X + DEVICE_FULL_WAGO_NAME_X_OFFSET, Y + DEVICE_FULL_WAGO_NAME_Y_OFFSET);
 
@@ -453,7 +491,19 @@ namespace EasyEPlanner.ProjectImportICP
             }
         }
 
-        
+
+        private void SetSupplementaryFiels(ImportDevice device, Function function)
+        {
+            var apiHelper = new ApiHelper();
+            apiHelper.SetSupplementaryFieldValue(function, 2, device.Subtype);
+            apiHelper.SetSupplementaryFieldValue(function, 10, $"{device.WagoType}{device.FullNumber}");
+            apiHelper.SetSupplementaryFieldValue(function, 3, string.Join(", ", device.Parameters.Select(p => $"{p.Key}={p.Value}")));
+            apiHelper.SetSupplementaryFieldValue(function, 5, string.Join(", ", device.RuntimeParameters.Select(rp => $"{rp.Key}={rp.Value}")));
+
+            function.AddArticleReference(" ");
+        }
+
+
         /// <summary>
         /// Создать новую страницу
         /// </summary>

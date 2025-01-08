@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -267,8 +268,74 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             CollectionAssert.AreEqual(SharedFileAsStringList_ExpectedAfterUpdateSharedDevices(), SharedFileAsStringList);
         }
 
+
+        [Test]
+        public void SaveAsync()
+        {
+            var projectsDir = Path.Combine(TestContext.CurrentContext.TestDirectory, "InterprojectExchange.Test", "projects.test");
+
+            var mainModel = Mock.Of<ICurrentProjectModel>(m =>
+                m.PathToProject == projectsDir &&
+                m.ProjectName == "T1-PROJECT" &&
+                m.Loaded == true &&
+                m.ReceiverSignals == new DeviceSignalsInfo() &&
+                m.SourceSignals == new DeviceSignalsInfo() &&
+                m.PacInfo == new PacInfo() { Station = 1 } &&
+                m.SharedFileAsStringList == new List<string>() 
+                {
+                    "remote_gateways =\n",
+                    "{\n",
+                    "    ['T1-ALT_PROJECT'] =\n",
+                    "    {\n",
+                    "    },\n",
+                    "}\n",
+                    "shared_devices =\n",
+                    "{\n",
+                    "}\n"
+                });
+
+            var altModel = Mock.Of<IProjectModel>(m =>
+                m.PathToProject == projectsDir &&
+                m.ProjectName == "T1-ALT_PROJECT" &&
+                m.Loaded == true &&
+                m.PacInfo == new PacInfo() { Station = 1 } &&
+                m.ReceiverSignals == new DeviceSignalsInfo() &&
+                m.SourceSignals == new DeviceSignalsInfo() &&
+                m.SharedFileAsStringList == new List<string>()
+                {
+                    "remote_gateways =\n",
+                    "{\n",
+                    "    ['T1-PROJECT'] =\n",
+                    "    {\n",
+                    "    },\n",
+                    "}\n",
+                    "shared_devices =\n",
+                    "{\n",
+                    "}\n"
+                });
+
+            var interprojectExchange = Mock.Of<IInterprojectExchange>(m =>
+                m.Models == new List<IProjectModel> { mainModel, altModel } &&
+                m.MainModel == mainModel && 
+                m.GetModel("T1-PROJECT") == mainModel &&
+                m.GetModel("T1-ALT_PROJECT") == altModel);
+            
+            var saver = new InterprojectExchangeSaver(interprojectExchange, "shared.lua");  
+            saver.SaveAsync().Wait();
+
+            Assert.Multiple(() =>
+            {
+                Mock.Get(interprojectExchange).Verify(m => m.SelectModel(altModel));
+                Assert.IsTrue(File.Exists(Path.Combine(projectsDir, "T1-PROJECT", "shared.lua")));
+                Assert.IsTrue(File.Exists(Path.Combine(projectsDir, "T1-ALT_PROJECT", "shared.lua")));
+            });
+        }
+
+
+
+
         private InterprojectExchangeSaver saver;
-        private InterprojectExchange.InterprojectExchange interprojectExchange 
+        private InterprojectExchange.IInterprojectExchange interprojectExchange 
             = InterprojectExchange.InterprojectExchange.GetInstance();
     }
 }
