@@ -1264,7 +1264,8 @@ ProjectTestEnabled=True
 | LS           | IFM.LMT104                                             | 2             | 0              |
 | LS           | IFM.LMT105                                             | 2             | 0              |
 | LS           | E&H.FTL33-GR7N2ABW5J                                   | 2             | 0              |
-| LS           | E&H.FTW33                                              | 2             | 0              |
+| LS           | E&H.FTW33-GR7NWVJ                                      | 2             | 0              |
+| LS           | E&H.FTW33-GR7NW5J                                      | 2             | 0              |
 | DEV_VTUG и Y | FES.VTUG-10-MSDR-B1Y-25V20-G18FD-DTFD-M7SFD-12K+M1SCVA | 0             | 4              |
 | DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-12K+SCVA         | 0             | 4              |
 | DEV_VTUG и Y | FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-16K+SCVA         | 0             | 4              |
