@@ -1,4 +1,3 @@
-using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.Graphics;
@@ -360,15 +359,6 @@ namespace EasyEPlanner.ProjectImportICP
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
                 var devices = Object.Where(dev => deviceManager.GetDevice(dev.Object + dev.Type + dev.Number).Description == CommonConst.Cap).ToList();
-                    
-                // Установка стандартных параметров для определенных типов устройств
-                foreach (var device in devices)
-                {
-                    foreach (var parameter in DefaultParameters.Where(p => p.DeviceType == device.Type))
-                    {
-                        device.Parameters.Add(parameter.Parameter, parameter.DefaultValue.ToString());
-                    }
-                }
 
                 if (string.IsNullOrEmpty(Object.Key))
                 { // Генерация страницы с сигналами DO/DO без объекта
