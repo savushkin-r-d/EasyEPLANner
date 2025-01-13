@@ -348,9 +348,10 @@ namespace EasyEPlanner.ProjectImportICP
             if (!generatePages)
                 return;
 
+            var deviceManager = DeviceManager.GetInstance();
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
-                var devices = Object.ToList();
+                var devices = Object.Where(dev => deviceManager.GetDevice(dev.Object + dev.Type + dev.Number).Description == CommonConst.Cap).ToList();
 
                 // Установка стандартных параметров для определенных типов устройств
                 foreach (var device in devices)
