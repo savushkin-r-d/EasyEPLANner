@@ -28,30 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.objectListView = new BrightIdeasSoftware.ObjectListView();
+            this.renameDevicesOLV = new BrightIdeasSoftware.ObjectListView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.LoadRenameMapBttn = new System.Windows.Forms.Button();
             this.OkBttn = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.objectListView)).BeginInit();
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.DevicesTabPage = new System.Windows.Forms.TabPage();
+            this.parametersTabPage = new System.Windows.Forms.TabPage();
+            this.defaultParametersOLV = new BrightIdeasSoftware.ObjectListView();
+            ((System.ComponentModel.ISupportInitialize)(this.renameDevicesOLV)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            this.tabControl.SuspendLayout();
+            this.DevicesTabPage.SuspendLayout();
+            this.parametersTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.defaultParametersOLV)).BeginInit();
             this.SuspendLayout();
             // 
-            // objectListView
+            // renameDevicesOLV
             // 
-            this.objectListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
-            this.objectListView.CellEditUseWholeCell = false;
-            this.tableLayoutPanel1.SetColumnSpan(this.objectListView, 3);
-            this.objectListView.Cursor = System.Windows.Forms.Cursors.Default;
-            this.objectListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.objectListView.HideSelection = false;
-            this.objectListView.Location = new System.Drawing.Point(3, 3);
-            this.objectListView.Name = "objectListView";
-            this.objectListView.Size = new System.Drawing.Size(486, 451);
-            this.objectListView.TabIndex = 0;
-            this.objectListView.UseCompatibleStateImageBehavior = false;
-            this.objectListView.View = System.Windows.Forms.View.Details;
-            this.objectListView.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.objectListView_CellEditFinishing);
-            this.objectListView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.objectListView_CellEditStarting);
+            this.renameDevicesOLV.AccessibleName = "";
+            this.renameDevicesOLV.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
+            this.renameDevicesOLV.CellEditUseWholeCell = false;
+            this.renameDevicesOLV.Cursor = System.Windows.Forms.Cursors.Default;
+            this.renameDevicesOLV.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.renameDevicesOLV.HideSelection = false;
+            this.renameDevicesOLV.Location = new System.Drawing.Point(3, 3);
+            this.renameDevicesOLV.Name = "renameDevicesOLV";
+            this.renameDevicesOLV.Size = new System.Drawing.Size(478, 425);
+            this.renameDevicesOLV.TabIndex = 0;
+            this.renameDevicesOLV.UseCompatibleStateImageBehavior = false;
+            this.renameDevicesOLV.View = System.Windows.Forms.View.Details;
+            this.renameDevicesOLV.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.renameDevicesOLV_CellEditFinishing);
+            this.renameDevicesOLV.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.renameDevicesOLV_CellEditStarting);
             // 
             // tableLayoutPanel1
             // 
@@ -59,15 +67,17 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
-            this.tableLayoutPanel1.Controls.Add(this.objectListView, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.LoadRenameMapBttn, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.OkBttn, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.tabControl, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(492, 495);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
@@ -93,6 +103,57 @@
             this.OkBttn.UseVisualStyleBackColor = true;
             this.OkBttn.Click += new System.EventHandler(this.OkBttn_Click);
             // 
+            // tabControl
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.tabControl, 3);
+            this.tabControl.Controls.Add(this.DevicesTabPage);
+            this.tabControl.Controls.Add(this.parametersTabPage);
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.Location = new System.Drawing.Point(0, 0);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(492, 457);
+            this.tabControl.TabIndex = 3;
+            // 
+            // DevicesTabPage
+            // 
+            this.DevicesTabPage.Controls.Add(this.renameDevicesOLV);
+            this.DevicesTabPage.Location = new System.Drawing.Point(4, 22);
+            this.DevicesTabPage.Name = "DevicesTabPage";
+            this.DevicesTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.DevicesTabPage.Size = new System.Drawing.Size(484, 431);
+            this.DevicesTabPage.TabIndex = 0;
+            this.DevicesTabPage.Text = "Переименование устройств";
+            this.DevicesTabPage.UseVisualStyleBackColor = true;
+            // 
+            // parametersTabPage
+            // 
+            this.parametersTabPage.Controls.Add(this.defaultParametersOLV);
+            this.parametersTabPage.Location = new System.Drawing.Point(4, 22);
+            this.parametersTabPage.Name = "parametersTabPage";
+            this.parametersTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.parametersTabPage.Size = new System.Drawing.Size(484, 431);
+            this.parametersTabPage.TabIndex = 1;
+            this.parametersTabPage.Text = "Параметры по умолчанию";
+            this.parametersTabPage.UseVisualStyleBackColor = true;
+            // 
+            // defaultParametersOLV
+            // 
+            this.defaultParametersOLV.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
+            this.defaultParametersOLV.CellEditUseWholeCell = false;
+            this.defaultParametersOLV.Cursor = System.Windows.Forms.Cursors.Default;
+            this.defaultParametersOLV.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.defaultParametersOLV.HideSelection = false;
+            this.defaultParametersOLV.Location = new System.Drawing.Point(3, 3);
+            this.defaultParametersOLV.Name = "defaultParametersOLV";
+            this.defaultParametersOLV.Size = new System.Drawing.Size(478, 425);
+            this.defaultParametersOLV.TabIndex = 0;
+            this.defaultParametersOLV.UseCompatibleStateImageBehavior = false;
+            this.defaultParametersOLV.View = System.Windows.Forms.View.Details;
+            this.defaultParametersOLV.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.defaultParametersOLV_CellEditFinishing);
+            this.defaultParametersOLV.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.defaultParametersOLV_CellEditStarting);
+            // 
             // SetupDevicesNames
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -104,17 +165,25 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Настройка замены имен устройств";
             this.TopMost = true;
-            ((System.ComponentModel.ISupportInitialize)(this.objectListView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.renameDevicesOLV)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
+            this.DevicesTabPage.ResumeLayout(false);
+            this.parametersTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.defaultParametersOLV)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private BrightIdeasSoftware.ObjectListView objectListView;
+        private BrightIdeasSoftware.ObjectListView renameDevicesOLV;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button LoadRenameMapBttn;
         private System.Windows.Forms.Button OkBttn;
+        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.TabPage DevicesTabPage;
+        private System.Windows.Forms.TabPage parametersTabPage;
+        private BrightIdeasSoftware.ObjectListView defaultParametersOLV;
     }
 }

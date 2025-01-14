@@ -211,6 +211,7 @@
     <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
+    <Compile Include="ProjectImportICP\ImportDefaultDeviceParamter.cs" />
     <Compile Include="ProjectImportICP\ImportDevice.cs" />
     <Compile Include="ProjectImportICP\ImportModule.cs" />
     <Compile Include="ProjectImportICP\ModifyChannelsDBDialog.cs">
