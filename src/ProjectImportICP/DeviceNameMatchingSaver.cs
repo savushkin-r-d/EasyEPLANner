@@ -9,10 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using StaticHelper;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner.ProjectImportICP
 {
-    public class DeviceNameMatchingSaver
+    public static class DeviceNameMatchingSaver
     {
         /// <summary>
         /// Название 1й колонки в CSV
@@ -93,6 +94,7 @@ namespace EasyEPlanner.ProjectImportICP
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public class CsvIODeviceMap : ClassMap<IODevice>
     {
         private static readonly ApiHelper ApiHelper = new ApiHelper();

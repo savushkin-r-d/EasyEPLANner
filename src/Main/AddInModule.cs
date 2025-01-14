@@ -88,13 +88,6 @@ namespace EasyEPlanner
                 "Документ соответствия названий устройств CSV", menuID, 1,
                 false, false);
 
-            // NOT USED : DEPRECATED
-            // menuID = oMenu.AddMenuItem(
-            //    "Модифицировать базу каналов (не используется)",
-            //    nameof(ModifyIcpChbase),
-            //    "Модифицировать базу каналов (не используется)", menuID, 1,
-            //    false, false);
-
             menuID = oMenu.AddMenuItem(
                 "Обновления", nameof(OpenUpdater),
                 "", menuID, 1, true, false);
