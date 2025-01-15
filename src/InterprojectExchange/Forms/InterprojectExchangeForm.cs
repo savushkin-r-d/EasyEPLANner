@@ -982,7 +982,9 @@ namespace InterprojectExchange
 
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[selectedIndex].ToString());
 
-            if (selectedIndex >= 0 && model?.Loaded is true)
+            if (selectedIndex >= 0 &&
+                selectedIndex != prevSelectedIndex &&
+                model?.Loaded is true)
             {
                 LoadAdvProjData(advProjNameComboBox.Text);
                 prevSelectedIndex = selectedIndex;
