@@ -23,18 +23,18 @@
         /// <returns></returns>
         public PacInfo Clone()
         {
-            var cloned = new PacInfo();
-
-            cloned.IP = IP;
-            cloned.IPEmulator = IPEmulator;
-            cloned.EmulationEnabled = EmulationEnabled;
-            cloned.CycleTime = CycleTime;
-            cloned.TimeOut = TimeOut;
-            cloned.Port = Port;
-            cloned.GateEnabled = GateEnabled;
-            cloned.Station = Station;
-
-            return cloned;
+            return new PacInfo
+            {
+                IP = IP,
+                IPEmulator = IPEmulator,
+                EmulationEnabled = EmulationEnabled,
+                CycleTime = CycleTime,
+                TimeOut = TimeOut,
+                Port = Port,
+                GateEnabled = GateEnabled,
+                Station = Station,
+                ModelLoaded = ModelLoaded
+            };
         }
 
         /// <summary>
@@ -76,5 +76,10 @@
         /// Номер Modbus-станции
         /// </summary>
         public int Station { get; set; }
+
+        /// <summary>
+        /// Модель загружена
+        /// </summary>
+        public bool ModelLoaded { get; set; } = false;
     }
 }

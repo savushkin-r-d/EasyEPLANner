@@ -120,6 +120,7 @@ namespace InterprojectExchange
             PacInfo.Port = port;
             PacInfo.GateEnabled = gateEnabled;
             PacInfo.Station = station;
+            PacInfo.ModelLoaded = Loaded;
         }
 
         /// <summary>
