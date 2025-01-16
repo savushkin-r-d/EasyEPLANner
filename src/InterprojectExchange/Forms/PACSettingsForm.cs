@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -223,6 +224,7 @@ namespace InterprojectExchange
         /// Загрузка данных проекта в поля
         /// </summary>
         /// <param name="projectName">Имя проекта</param>
+        [ExcludeFromCodeCoverage]
         private void LoadProjectDataToFields(string projectName)
         {
             PacInfo pacInfo;
