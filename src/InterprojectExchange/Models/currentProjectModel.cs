@@ -140,6 +140,7 @@ namespace InterprojectExchange
             pacDTOs[pacName].Port = port;
             pacDTOs[pacName].GateEnabled = gateEnabled;
             pacDTOs[pacName].Station = station;
+            pacDTOs[pacName].ModelLoaded = Loaded;
         }
 
         /// <summary>

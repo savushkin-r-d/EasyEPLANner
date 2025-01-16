@@ -239,6 +239,12 @@ namespace InterprojectExchange
                     !signalsSendingToMainEmpty[projectName];
             }
 
+            // Настройки проекта, отключаемые для изменения, если модель не загружена
+            projNameTextBox.Enabled = pacInfo.ModelLoaded;
+            ipAddressTextBox.Enabled = pacInfo.ModelLoaded;
+            portTextBox.Enabled = pacInfo.ModelLoaded;
+            stationNumberTextBox.Enabled = pacInfo.ModelLoaded;
+
             projNameTextBox.Text = projectName;
             ipAddressTextBox.Text = pacInfo.IP;
             emulatorIPTextBox.Text = pacInfo.IPEmulator;
