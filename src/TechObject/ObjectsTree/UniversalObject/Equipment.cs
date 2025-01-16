@@ -141,6 +141,7 @@ namespace TechObject
                 {
                     var newValues = property.Value.Split(' ')
                         .Select(deviceManager.GetDeviceByEplanName)
+                        .Where(dev => dev.ObjectName == techObjName)
                         .Select(dev => $"{techObjName}{techNumber}{dev.DeviceDesignation}")
                         .Where(name => deviceManager.GetDeviceByEplanName(name).Description != CommonConst.Cap);
 
