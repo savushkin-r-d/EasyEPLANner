@@ -849,47 +849,31 @@ namespace InterprojectExchange
         {
             bool canDelete = advProjNameComboBox.Items.Count > 0 &&
                 advProjNameComboBox.SelectedIndex > -1;
-            if (canDelete)
+
+            if (!canDelete)
+                return;
+
+            string projName = advProjNameComboBox.Text;
+            string message = $"Удалить обмен с проектом \"{projName}\".";
+            
+            if (DialogResult.No == ShowWarningMessage(message, MessageBoxButtons.YesNo))
+                return;
+
+            try
             {
-                string projName = advProjNameComboBox.Text;
-                string message = $"Удалить обмен с проектом \"{projName}\".";
-                DialogResult delete = ShowWarningMessage(message, 
-                    MessageBoxButtons.YesNo);
-                if (delete == DialogResult.No)
-                {
-                    return;
-                }
-
-                try
-                {
-                    interprojectExchange.DeleteExchangeWithProject(projName);
-                }
-                catch (Exception exception)
-                {
-                    ShowErrorMessage(exception.Message);
-                    return;
-                }
-
-                int selectedIndex = advProjNameComboBox.Items.IndexOf(projName);
-                advProjNameComboBox.Items.Remove(projName);
-                if(advProjNameComboBox.Items.Count > 0)
-                {
-                    if(selectedIndex > 0) 
-                    {
-                        // Выбрать элемент из списка повыше
-                        advProjNameComboBox.SelectedIndex = selectedIndex - 1;
-                    }
-                    else
-                    {
-                        advProjNameComboBox.SelectedIndex = selectedIndex;
-                    }
-                }
-                else
-                {
-                    advancedProjSignalsList.Items.Clear();
-                    bindedSignalsList.Items.Clear();
-                }
+                interprojectExchange.DeleteExchangeWithProject(projName);
             }
+            catch (Exception exception)
+            {
+                ShowErrorMessage(exception.Message);
+                return;
+            }
+
+            advProjNameComboBox.Items.Remove(projName);
+            prevSelectedIndex = 0;
+            advProjNameComboBox.SelectedIndex = 0;
+            
+            bindedSignalsList.Items.Clear();
         }
 
         /// <summary>
@@ -1135,6 +1119,9 @@ namespace InterprojectExchange
         /// </summary>
         private void advProjNameComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
+            if (e.Index < 0 || e.Index > advProjNameComboBox.Items.Count)
+                return;
+
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[e.Index].ToString());
 
             if (model?.Loaded is false) //We are disabling item based on Index, you can have your logic here
