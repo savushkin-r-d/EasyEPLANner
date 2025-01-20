@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -223,6 +224,7 @@ namespace InterprojectExchange
         /// Загрузка данных проекта в поля
         /// </summary>
         /// <param name="projectName">Имя проекта</param>
+        [ExcludeFromCodeCoverage]
         private void LoadProjectDataToFields(string projectName)
         {
             PacInfo pacInfo;
@@ -238,6 +240,12 @@ namespace InterprojectExchange
                 stationNumberTextBox.Enabled =
                     !signalsSendingToMainEmpty[projectName];
             }
+
+            // Настройки проекта, отключаемые для изменения, если модель не загружена
+            projNameTextBox.Enabled = pacInfo.ModelLoaded;
+            ipAddressTextBox.Enabled = pacInfo.ModelLoaded;
+            portTextBox.Enabled = pacInfo.ModelLoaded;
+            stationNumberTextBox.Enabled = pacInfo.ModelLoaded;
 
             projNameTextBox.Text = projectName;
             ipAddressTextBox.Text = pacInfo.IP;

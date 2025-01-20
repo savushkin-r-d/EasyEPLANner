@@ -150,8 +150,10 @@ namespace InterprojectExchange
             errors = SetIPFromMainModel(projName);
             if (string.IsNullOrEmpty(errors))
             {
-                interprojectExchange.GetModel(projName)
-                    .PathToProject = pathToProjectDir;
+                var model = interprojectExchange.GetModel(projName);
+                model.PathToProject = pathToProjectDir;
+                model.Loaded = true;
+
                 return true;
             }
             else

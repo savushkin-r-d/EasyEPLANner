@@ -21,11 +21,7 @@ namespace TechObject
         {
             get
             {
-                if (MissingMainStep)
-                {
-                   modeStep = AddNewStepToItems(true);
-                   modeStep.AddParent(this);
-                }
+                CheckMainStep();
 
                 if (steps.Count > 0)
                 {
@@ -169,11 +165,7 @@ namespace TechObject
         /// <param name="baseStepLuaName">Имя базового шага</param>
         public Step AddStep(string stepName, string baseStepLuaName)
         {
-            if (MissingMainStep)
-            {
-                modeStep = AddNewStepToItems(MissingMainStep);
-                modeStep.AddParent(this);
-            }
+            CheckMainStep();
 
             Step newStep = AddNewStepToItems(false, stepName);
             newStep.AddParent(this);
@@ -427,6 +419,8 @@ namespace TechObject
             if (copiedStep is null)
                 return null;
 
+            CheckMainStep();
+
             var newStep = copiedStep.Clone(this, GetStepN);
 
             if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 && 
@@ -443,6 +437,23 @@ namespace TechObject
             newStep.Owner = this;
             
             return newStep;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private ITreeViewItem CheckMainStep()
+        {
+            if (MissingMainStep)
+            {
+                modeStep = AddNewStepToItems(true);
+                modeStep.AddParent(this);
+
+                return modeStep;
+            }
+
+            return null;
         }
 
         override public bool IsCopyable
@@ -471,13 +482,9 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            if (MissingMainStep)
-            {
-                modeStep = AddNewStepToItems(MissingMainStep);
-                modeStep.AddParent(this);
-
-                return modeStep;
-            }
+            var mainStep = CheckMainStep();
+            if (mainStep != null)
+                return mainStep;
 
             Step newStep = AddNewStepToItems();
             newStep.AddParent(this);
