@@ -77,15 +77,15 @@ namespace EasyEPlanner
                 true, false);
 
             menuID = oMenu.AddMenuItem(
-                "Создать/изменить файл переименования устройств",
+                "Создать файл переименования старых устройств",
                 nameof(ImportIcpCreateRenamingMap),
-                "Создать/изменить файл переименования устройств", menuID, 1,
+                "Создать файл переименования старых устройств", menuID, 1,
                 false, false);
 
             menuID = oMenu.AddMenuItem(
-                "Документ соответствия названий устройств CSV",
-                nameof(ImportIcpCreateDeviceNameMathchingFile),
-                "Документ соответствия названий устройств CSV", menuID, 1,
+                "Модифицировать базу каналов",
+                nameof(ModifyIcpChbase),
+                "Модифицировать базу каналов", menuID, 1,
                 false, false);
 
             menuID = oMenu.AddMenuItem(
