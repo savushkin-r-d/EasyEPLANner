@@ -51,7 +51,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Индекс предыдущего выбранного проекта в <see cref="advProjNameComboBox"/>
         /// </summary>
-        private int prevSelectedIndex = 0;
+        private int advProjPrevSelectedIndex = 0;
 
         /// <summary>
         /// Шрифт для <see cref="advProjNameComboBox"/>
@@ -869,8 +869,9 @@ namespace InterprojectExchange
                 return;
             }
 
+            
             advProjNameComboBox.Items.Remove(projName);
-            prevSelectedIndex = 0;
+            advProjPrevSelectedIndex = 0;
             advProjNameComboBox.SelectedIndex = 0;
             
             bindedSignalsList.Items.Clear();
@@ -966,16 +967,24 @@ namespace InterprojectExchange
 
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[selectedIndex].ToString());
 
+            if (selectedIndex == 0 && advProjPrevSelectedIndex == 0)
+            {
+                interprojectExchange.SelectModel(new AdvancedProjectModel());
+                advProjItems.Clear();
+                RefilterListViews(true);
+                return;
+            }
+
             if (selectedIndex >= 0 &&
-                selectedIndex != prevSelectedIndex &&
+                selectedIndex != advProjPrevSelectedIndex &&
                 model?.Loaded is true)
             {
                 LoadAdvProjData(advProjNameComboBox.Text);
-                prevSelectedIndex = selectedIndex;
+                advProjPrevSelectedIndex = selectedIndex;
             }
             else
             {
-                advProjNameComboBox.SelectedIndex = prevSelectedIndex;
+                advProjNameComboBox.SelectedIndex = advProjPrevSelectedIndex;
             }
         }
 
@@ -987,26 +996,27 @@ namespace InterprojectExchange
         {
             advProjItems.Clear();
             IProjectModel model = interprojectExchange.GetModel(projName);
-            if (!model.Selected)
-            {
-                List<DeviceInfo> devices = model.Devices;
-                foreach (var devInfo in devices)
-                {
-                    var info = new string[] 
-                    { 
-                        devInfo.Name, 
-                        devInfo.Description 
-                    };
-                    var item = new ListViewItem(info);
-                    item.Tag = devInfo.Type;
-                    advProjItems.Add(item);
-                }
-                interprojectExchange.SelectModel(model);
+            
+            if (model.Selected)
+                return;
 
-                ReloadListViewWithSignals();
-                bool hardRefilter = true;
-                RefilterListViews(hardRefilter);
-            }         
+            List<DeviceInfo> devices = model.Devices;
+            foreach (var devInfo in devices)
+            {
+                var info = new string[] 
+                { 
+                    devInfo.Name, 
+                    devInfo.Description 
+                };
+                var item = new ListViewItem(info);
+                item.Tag = devInfo.Type;
+                advProjItems.Add(item);
+            }
+            interprojectExchange.SelectModel(model);
+
+            ReloadListViewWithSignals();
+            bool hardRefilter = true;
+            RefilterListViews(hardRefilter);         
         }
 
         /// <summary>
