@@ -349,9 +349,24 @@ namespace EasyEPlanner.ProjectImportICP
                 return;
 
             var deviceManager = DeviceManager.GetInstance();
+            var apiHelper = new ApiHelper();
+
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
                 var devices = Object.Where(dev => deviceManager.GetDevice(dev.Object + dev.Type + dev.Number).Description == CommonConst.Cap).ToList();
+                
+                // Для уже существующих устройств в проекте:
+                //   Переносим описание для последующей привязки
+                //   Устанавливаем доп.поле [10] со старым названием
+                var existWagoDevices = Object.Except(devices);
+                var existDevices = existWagoDevices.Select(dev => deviceManager.GetDevice(dev.Object + dev.Type + dev.Number));
+                foreach (var devicePair in existWagoDevices.Zip(existDevices, (w, d) => new { wagoDevice = w, device = d }))
+                {
+                    devicePair.wagoDevice.Description = devicePair.device.Description;
+                    devicePair.device.EplanObjectFunction.LockObject();
+                    apiHelper.SetSupplementaryFieldValue(devicePair.device.EplanObjectFunction, 10,
+                        $"{devicePair.wagoDevice.WagoType}{devicePair.wagoDevice.FullNumber}");
+                }
 
                 // Установка стандартных параметров для определенных типов устройств
                 foreach (var device in devices)
