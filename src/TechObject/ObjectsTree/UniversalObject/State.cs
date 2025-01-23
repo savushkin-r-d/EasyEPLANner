@@ -423,8 +423,7 @@ namespace TechObject
 
             var newStep = copiedStep.Clone(this, GetStepN);
 
-            if (Owner.BaseOperation.GetStateStepsNames(Type).Count > 0 && 
-                !Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
+            if (!Owner.BaseOperation.GetStateStepsNames(Type).Contains(copiedStep.GetBaseStepName()) ||
                 !string.IsNullOrEmpty(copiedStep.GetBaseStepLuaName()) &&
                 steps.Exists(s => s.GetBaseStepLuaName() == copiedStep.GetBaseStepLuaName()))
             {

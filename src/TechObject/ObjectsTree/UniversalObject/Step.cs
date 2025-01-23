@@ -715,48 +715,37 @@ namespace TechObject
 
         public override bool SetNewValue(string newVal, bool isExtraValue)
         {
-            State state = Owner;
-
-            Step equalStep = state.Steps
-                .Where(x => x.GetBaseStepName() == newVal)
-                .FirstOrDefault();
-            if (equalStep == null)
+            // сброс базового шага
+            if (newVal == string.Empty)
             {
-                equalStep = state.Steps
-                    .Where(x => x.GetBaseStepLuaName() == newVal)
-                    .FirstOrDefault();
-            }
-
-            if (equalStep != null && newVal != string.Empty)
-            {
-                return false;
-            }
-
-            Mode mode = state.Owner;
-            BaseStep baseStep = mode.BaseOperation
-                .GetStateBaseSteps(state.Type)
-                .Where(x => x.LuaName == newVal).FirstOrDefault();
-            if (baseStep == null)
-            {
-                baseStep = mode.BaseOperation
-                    .GetStateBaseSteps(state.Type)
-                    .Where(x => x.Name == newVal).FirstOrDefault();
-            }
-
-            if (baseStep != null)
-            {
-                this.baseStep = baseStep.Clone();
-                this.baseStep.Owner = this;
-                if (name.Contains(NewStepName) && baseStep.Name != string.Empty)
-                {
-                    name = baseStep.Name;
-                }
-
+                baseStep = new BaseStep("", "", 0, this);
                 OnValueChanged(this);
                 return true;
             }
 
-            return false;
+            State state = Owner;
+            // уже есть такой базовый шаг
+            if (Owner.Steps.Any(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal))
+            {
+                return false;
+            }
+
+            // Установка базового шага
+            BaseStep stateBaseStep = state.Owner.BaseOperation.GetStateBaseSteps(state.Type)
+                .FirstOrDefault(x => x.LuaName == newVal || x.Name == newVal);
+
+            if (stateBaseStep is null)
+                return false;
+            
+            baseStep = stateBaseStep.Clone();
+            baseStep.Owner = this;
+            if (name.Contains(NewStepName) && stateBaseStep.Name != string.Empty)
+            {
+                name = stateBaseStep.Name;
+            }
+
+            OnValueChanged(this);
+            return true;
         }
 
         override public bool IsEditable
