@@ -14,22 +14,6 @@ namespace EasyEPlanner.ProjectImportICP
 {
     public static class DeviceNameMatchingSaver
     {
-        
-        /// <summary>
-        /// Название 1й колонки в CSV
-        /// </summary>
-        static public readonly string IcpNameColumn = "Название в ICP CON";
-
-        /// <summary>
-        /// Название 2й колонки в CSV
-        /// </summary>
-        static public readonly string NewNameColumn = "Новое название";
-
-        /// <summary>
-        /// Название 3й колонки в CSV
-        /// </summary>
-        static public readonly string DescriptionColumn = "Описание";
-
         /// <summary>
         /// Сохранить CSV-файл соответствия названий устройств между <br/>
         /// ICP CON проектом и новым проектом
@@ -92,7 +76,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// <summary>
         /// Модель для CSV-файла
         /// </summary>
-        private class CsvDeviceMatchingData
+        private sealed class CsvDeviceMatchingData
         {
             public CsvDeviceMatchingData(string wagoName, string name, string description) 
             { 
