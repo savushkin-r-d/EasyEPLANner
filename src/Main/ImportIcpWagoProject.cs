@@ -1,4 +1,4 @@
-﻿using BrightIdeasSoftware;
+using BrightIdeasSoftware;
 using EasyEPlanner.ProjectImportICP;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
@@ -76,6 +76,21 @@ namespace EasyEPlanner
                 devicesImporter.Import();
 
                 new BindingImporter(modulesImporter.ImportModules, devicesImporter.ImportDevices).Bind();
+
+                if (DialogResult.Yes == MessageBox.Show("Сохранить файл соответствия наименования устройств?",
+                    "EPlanner", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                {
+                    var openFileDialog = new SaveFileDialog()
+                    {
+                        Title = "Сохранение файла соответствия наименования устройств",
+                        Filter = "CSV file (*.scv)|*.csv",
+                    };
+
+                    if (openFileDialog.ShowDialog() != DialogResult.Cancel)
+                    {
+                        DeviceNameMatchingSaver.Save(openFileDialog.FileName, devicesImporter.ImportDevices);
+                    }
+                }
 
                 Logs.EnableButtons();
                 Logs.ShowLastLine();

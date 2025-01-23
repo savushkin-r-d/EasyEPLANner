@@ -117,10 +117,12 @@
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
+    <Compile Include="ProjectImportICP\DeviceNameMatchingSaver.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IIOChannel.cs" />
