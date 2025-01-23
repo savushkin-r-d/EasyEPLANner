@@ -718,31 +718,30 @@ namespace TechObject
             // сброс базового шага
             if (newVal == string.Empty)
             {
-                this.baseStep = new BaseStep("", "", 0, this);
+                baseStep = new BaseStep("", "", 0, this);
                 OnValueChanged(this);
                 return true;
             }
 
             State state = Owner;
             // уже есть такой базовый шаг
-            if (Owner.Steps.Where(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal)
-                .Any())
+            if (Owner.Steps.Any(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal))
             {
                 return false;
             }
 
             // Установка базового шага
-            BaseStep baseStep = state.Owner.BaseOperation.GetStateBaseSteps(state.Type)
-                .Where(x => x.LuaName == newVal || x.Name == newVal).FirstOrDefault();
+            BaseStep stateBaseStep = state.Owner.BaseOperation.GetStateBaseSteps(state.Type)
+                .FirstOrDefault(x => x.LuaName == newVal || x.Name == newVal);
 
-            if (baseStep is null)
+            if (stateBaseStep is null)
                 return false;
             
-            this.baseStep = baseStep.Clone();
-            this.baseStep.Owner = this;
-            if (name.Contains(NewStepName) && baseStep.Name != string.Empty)
+            baseStep = stateBaseStep.Clone();
+            baseStep.Owner = this;
+            if (name.Contains(NewStepName) && stateBaseStep.Name != string.Empty)
             {
-                name = baseStep.Name;
+                name = stateBaseStep.Name;
             }
 
             OnValueChanged(this);
