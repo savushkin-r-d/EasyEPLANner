@@ -167,6 +167,9 @@ namespace InterprojectExchange
         {
             get
             {
+                if (SelectedAdvancedProject is null)
+                    return new DeviceSignalsInfo();
+
                 if (!sourceSignals.ContainsKey(SelectedAdvancedProject))
                 {
                     sourceSignals.Add(SelectedAdvancedProject,
@@ -183,6 +186,9 @@ namespace InterprojectExchange
         {
             get
             {
+                if (SelectedAdvancedProject is null)
+                    return new DeviceSignalsInfo();
+
                 if (!receiverSignals.ContainsKey(SelectedAdvancedProject))
                 {
                     receiverSignals.Add(SelectedAdvancedProject,

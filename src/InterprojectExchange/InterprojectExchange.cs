@@ -309,11 +309,11 @@ namespace InterprojectExchange
             DeviceSignalsInfo advancedProjectSignals;
             if (editMode == EditMode.SourceReciever)
             {
-                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
+                advancedProjectSignals = advancedProjectModel?.ReceiverSignals ?? new DeviceSignalsInfo();
             }
             else
             {
-                advancedProjectSignals = advancedProjectModel.SourceSignals;
+                advancedProjectSignals = advancedProjectModel?.SourceSignals ?? new DeviceSignalsInfo();
             }
 
             switch (signalType)
