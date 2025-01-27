@@ -503,29 +503,21 @@ namespace TechObject
             }
         }
 
-        public BaseOperation Clone(Mode owner)
-        {
-            var operation = Clone();
-            operation.owner = owner;
-            return operation;
-        }
-
         /// <summary>
         /// Копирование объекта
         /// </summary>
         /// <returns></returns>
-        public BaseOperation Clone()
+        public BaseOperation Clone(Mode owner)
         {
             var operation = EmptyOperation();
-            List<BaseParameter> properties = CloneProperties(operation);
-            Dictionary<string, List<BaseStep>> states = CloneStates(operation);
 
             operation.Name = operationName;
             operation.LuaName = luaOperationName;
-            operation.Properties = properties;
-            operation.states = states;
-            operation.owner = Owner;
+            operation.owner = owner ?? Owner;
             operation.DefaultPosition = DefaultPosition;
+
+            operation.Properties = CloneProperties(operation);
+            operation.states = CloneStates(operation);
 
             operation.SetItems();
 
@@ -534,6 +526,8 @@ namespace TechObject
 
             return operation;
         }
+
+        public BaseOperation Clone() => Clone(null);
 
         /// <summary>
         /// Копирование доп. свойств базовой операции
@@ -544,17 +538,12 @@ namespace TechObject
         {
             var properties = new List<BaseParameter>();
 
-            for (int i = 0; i < baseOperationProperties.Count; i++)
+            foreach (BaseParameter oldProperty in baseOperationProperties)
             {
-                BaseParameter oldProperty = baseOperationProperties[i];
                 BaseParameter newProperty = oldProperty.Clone();
-                if (oldProperty.Owner is BaseTechObject)
+                if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
                 {
-                    var obj = oldProperty.Owner as BaseTechObject;
-                    if (obj.IsAttachable)
-                    {
-                        newProperty.Owner = oldProperty.Owner;
-                    }
+                    newProperty.Owner = obj.Clone(newOwner.Owner.Owner.Owner);
                 }
                 else
                 {

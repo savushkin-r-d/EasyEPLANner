@@ -392,13 +392,9 @@ namespace TechObject
             Editor.Editor.GetInstance().RefreshObject(this);
         }
 
-        override public ITreeViewItem Replace(object child,
-            object copyObject)
+        override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var targetOperation = child as Mode;
-            var copiedOperation = copyObject as Mode;
-            
-            if (targetOperation is null || copiedOperation is null)
+            if (!(child is Mode targetOperation && copyObject is Mode copiedOperation))
                 return null;
 
             Mode newOperation = copiedOperation.Clone(GetModeN, this, copiedOperation.Name);
