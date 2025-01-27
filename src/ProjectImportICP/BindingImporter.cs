@@ -70,7 +70,7 @@ namespace EasyEPlanner.ProjectImportICP
                             $"{device.Description}\r\n" +
                             $"{channel.comment}";
 
-                        Logs.AddMessage($"\tКанал {device.Object}{device.Type}{device.Number}:{channel.type}{channel.comment}" +
+                        Logs.AddMessage($"\tКанал {device.Object}{device.Type}{device.Number}:{channel.type} {channel.comment}" +
                             $" привязан к клемме {module.Function.VisibleName}:{clamp.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART}\n");
                     }
                     else
