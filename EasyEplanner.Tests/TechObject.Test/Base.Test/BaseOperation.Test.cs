@@ -615,7 +615,9 @@ namespace EasyEplanner.Tests
                 };
             operation.AddProperties(objParams, baseTechObj);
 
-            BaseOperation cloned = operation.Clone();
+            var mode = new Mode("", getN => 1, new ModesManager(null));
+
+            BaseOperation cloned = operation.Clone(mode);
 
             Assert.Multiple(() =>
             {
@@ -623,7 +625,7 @@ namespace EasyEplanner.Tests
                     cloned.DefaultPosition);
                 Assert.AreEqual(operation.Name, cloned.Name);
                 Assert.AreEqual(operation.LuaName, cloned.LuaName);
-                Assert.IsNull(cloned.Owner);
+                Assert.AreEqual(mode, cloned.Owner);
 
                 foreach (var property in operation.Properties)
                 {
