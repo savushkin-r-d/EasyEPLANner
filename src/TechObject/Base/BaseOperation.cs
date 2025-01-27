@@ -507,7 +507,7 @@ namespace TechObject
         /// Копирование объекта
         /// </summary>
         /// <returns></returns>
-        public BaseOperation Clone(Mode owner = null)
+        public BaseOperation Clone(Mode owner)
         {
             var operation = EmptyOperation();
 
@@ -526,6 +526,8 @@ namespace TechObject
 
             return operation;
         }
+
+        public BaseOperation Clone() => Clone(null);
 
         /// <summary>
         /// Копирование доп. свойств базовой операции
