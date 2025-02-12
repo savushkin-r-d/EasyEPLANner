@@ -115,8 +115,19 @@
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="EProjectManager\IEProjectManager.cs" />
+    <Compile Include="FileSavers\ModbusXML\TagReference.cs" />
+    <Compile Include="FileSavers\ModbusXML\ModbusChbaseModelView.cs" />
+    <Compile Include="FileSavers\ModbusXML\ModbusXMLDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileSavers\ModbusXML\ModbusXMLDialog.Designer.cs">
+      <DependentUpon>ModbusXMLDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileSavers\ModbusXML\ModbusXMLSaver.cs" />
+    <Compile Include="FileSavers\ModbusXML\XmlExt.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="Main\ImportCsvToXml.cs" />
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
@@ -435,6 +446,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\ObjectAdder\ObjectAdder.resx">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileSavers\ModbusXML\ModbusXMLDialog.resx">
+      <DependentUpon>ModbusXMLDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
