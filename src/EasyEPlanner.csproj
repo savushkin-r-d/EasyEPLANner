@@ -127,7 +127,7 @@
     <Compile Include="FileSavers\ModbusXML\XmlExt.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
-    <Compile Include="Main\ImportCsvToXml.cs" />
+    <Compile Include="Main\GenerateXmlFromCsv.cs" />
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
