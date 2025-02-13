@@ -10,11 +10,11 @@ using System.Xml;
 
 namespace EasyEPlanner.FileSavers.ModbusXML
 {
-    public class ModbusXMLSaver
+    public class ModbusXmlSaver
     {
-        XmlDocument xmlDoc;
+        private readonly XmlDocument xmlDoc;
 
-        public ModbusXMLSaver()
+        public ModbusXmlSaver()
         {
             xmlDoc = new XmlDocument();
         }
@@ -129,7 +129,7 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         /// <param name="element">XML-элемент для добавления параметра</param>
         /// <param name="name">Название параметра</param>
         /// <param name="value">Значение параметра</param>
-        private void AddParameter(XmlElement element, string name, object value)
+        private static void AddParameter(XmlElement element, string name, object value)
         {
             element
                 .Insert("parameters", "parameter")
@@ -145,7 +145,7 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         /// </summary>
         /// <param name="csvData">Данные CSV-файла</param>
         /// <returns>Разобранные данные проекта для базы каналов</returns>
-        private IEnumerable<Channel> ParseCSV(string csvData)
+        private static IEnumerable<Channel> ParseCSV(string csvData)
         {
             var tags = csvData.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(l =>
@@ -214,7 +214,7 @@ namespace EasyEPlanner.FileSavers.ModbusXML
             Tag = tag;
             Type = type;
 
-            if (int.TryParse(address.Split('.').First(), out var addres_n))
+            if (int.TryParse(address.Split('.')[0], out var addres_n))
             {
                 Address = addres_n / 2;
             }

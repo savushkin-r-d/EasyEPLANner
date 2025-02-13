@@ -1,6 +1,6 @@
 ﻿namespace EasyEPlanner.FileSavers.ModbusXML
 {
-    partial class ModbusXMLDialog
+    partial class ModbusXmlDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -439,7 +439,7 @@
             // 
             this.tableLayoutPanel5.ColumnCount = 2;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 350F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 128F));
             this.tableLayoutPanel5.Controls.Add(this.CsvFileTB, 0, 1);
             this.tableLayoutPanel5.Controls.Add(this.ReviewCsvPathBttn, 1, 1);
             this.tableLayoutPanel5.Controls.Add(this.label9, 0, 0);
@@ -484,7 +484,7 @@
             this.label9.Text = "CSV-файл описания проекта:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // ModbusXMLDialog
+            // ModbusXmlDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -492,7 +492,7 @@
             this.Controls.Add(this.tableLayoutPanel3);
             this.MaximumSize = new System.Drawing.Size(500, 400);
             this.MinimumSize = new System.Drawing.Size(500, 400);
-            this.Name = "ModbusXMLDialog";
+            this.Name = "ModbusXmlDialog";
             this.Text = "ModbusXMLDialog";
             this.ChbaseGB.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);

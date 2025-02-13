@@ -3,6 +3,7 @@ using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public class GenerateXmlFromCsv : IEplAction
     {
         ~GenerateXmlFromCsv() { }
@@ -23,7 +25,7 @@ namespace EasyEPlanner
             try
             {
                 var context = new ModbusChbaseModelView();
-                var dialog = new ModbusXMLDialog(context)
+                var dialog = new ModbusXmlDialog(context)
                 {
                     StartPosition = FormStartPosition.CenterScreen,
                 };
@@ -42,7 +44,7 @@ namespace EasyEPlanner
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var saver = new ModbusXMLSaver();
+                    var saver = new ModbusXmlSaver();
                     saver.Save(saveFileDialog.FileName, context);
                 }
 

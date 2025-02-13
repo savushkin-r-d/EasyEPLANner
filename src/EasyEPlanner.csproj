@@ -123,7 +123,7 @@
     <Compile Include="FileSavers\ModbusXML\ModbusXMLDialog.Designer.cs">
       <DependentUpon>ModbusXMLDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="FileSavers\ModbusXML\ModbusXMLSaver.cs" />
+    <Compile Include="FileSavers\ModbusXML\ModbusXmlSaver.cs" />
     <Compile Include="FileSavers\ModbusXML\XmlExt.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,15 +13,12 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner.FileSavers.ModbusXML
 {
-    public partial class ModbusXMLDialog : Form
+    [ExcludeFromCodeCoverage]
+    public partial class ModbusXmlDialog : Form
     {
-        private IModbusChbaseViewModel context;
-
-        public ModbusXMLDialog(IModbusChbaseViewModel context)
+        public ModbusXmlDialog(IModbusChbaseViewModel context)
         {
             InitializeComponent();
-
-            this.context = context;
 
             ChbaseNameTB.Text = context.Driver.Name;
             ChbaseIdTB.Text = $"{context.Driver.ID:X}";
@@ -84,10 +82,8 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         }
 
         /// <summary>
-        /// 
+        /// Валидация IP-адреса
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void TextBoxIP_Validating(object sender, CancelEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -103,10 +99,8 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         }
 
         /// <summary>
-        /// 
+        /// Валидация 16-ричного числа
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void TextBoxHexToInt_Validating(object sender, CancelEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -122,10 +116,8 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         }
 
         /// <summary>
-        /// 
+        /// Валидация строк
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void TextBoxString_Validating(object sender, CancelEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -134,10 +126,8 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         }
 
         /// <summary>
-        /// 
+        /// Валидация номера
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void TextBoxInt_Validating(object sender, CancelEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -153,15 +143,15 @@ namespace EasyEPlanner.FileSavers.ModbusXML
         }
 
         /// <summary>
-        /// 
+        /// Обзор
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ReviewCsvPathBttn_Click(object sender, EventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = $"CSV-файлы|*.csv"
+                Title = "Выбрать CSV-файл описания проекта",
+                Filter = $"CSV-файлы|*.csv",
+                Multiselect = false,
             };
             DialogResult openFileResult = openFileDialog.ShowDialog();
 
