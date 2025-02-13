@@ -493,7 +493,8 @@
             this.MaximumSize = new System.Drawing.Size(500, 400);
             this.MinimumSize = new System.Drawing.Size(500, 400);
             this.Name = "ModbusXmlDialog";
-            this.Text = "ModbusXMLDialog";
+            this.ShowIcon = false;
+            this.Text = "Экспорт XML из CSV";
             this.ChbaseGB.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

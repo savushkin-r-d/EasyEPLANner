@@ -30,7 +30,7 @@ namespace EasyEPlanner
                     StartPosition = FormStartPosition.CenterScreen,
                 };
 
-                if (dialog.ShowDialog() == DialogResult.Cancel)
+                if (dialog.ShowDialog() != DialogResult.OK)
                     return true;
 
 
