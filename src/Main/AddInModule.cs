@@ -1,3 +1,4 @@
+using EasyEPlanner.Main;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Starter;
 using System;
@@ -93,6 +94,9 @@ namespace EasyEPlanner
                 "", menuID, 1, true, false);
 
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", 
+                menuID, 1, false, false);
+
+            menuID = oMenu.AddMenuItem("Новая кнопка", nameof(ShowMessageBox), "",
                 menuID, 1, false, false);
 
             ProjectManager.GetInstance().Init();
