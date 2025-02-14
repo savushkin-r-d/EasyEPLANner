@@ -35,7 +35,7 @@ namespace EplanDevice
         /// </summary>
         /// <param name="dst">Подтип устройства</param>
         /// <param name="dt">Тип устройства</param>
-        public virtual Dictionary<string, int> GetDeviceProperties(
+        public virtual Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -52,8 +52,7 @@ namespace EplanDevice
         /// <param name="rootNode">Корневой узел</param>
         public virtual void GenerateDeviceTags(TreeNode rootNode)
         {
-            Dictionary<string, int> propertiesList = GetDeviceProperties(
-                DeviceType, DeviceSubType);
+            Dictionary<ITag, int> propertiesList = GetDeviceProperties(DeviceType, DeviceSubType);
             if (propertiesList == null)
             {
                 return;
@@ -61,7 +60,8 @@ namespace EplanDevice
 
             foreach (var tagPair in propertiesList)
             {
-                string propName = tagPair.Key;
+                string propName = tagPair.Key.Name;
+                string propDescription = tagPair.Key.Description;
                 int theSameTagsCount = tagPair.Value;
 
                 TreeNode newNode;
@@ -81,13 +81,13 @@ namespace EplanDevice
 
                     if (theSameTagsCount > 1)
                     {
-                        newNode.Nodes.Add($"{Name}.{propName}[ {i} ]",
-                            $"{Name}.{propName}[ {i} ]");
+                        var descr = $"{Name}.{propName}[ {i} ] -- {propDescription} {i}";
+                        newNode.Nodes.Add(descr, descr);
                     }
                     else
                     {
-                        newNode.Nodes.Add($"{Name}.{propName}",
-                            $"{Name}.{propName}");
+                        var descr = $"{Name}.{propName} -- {propDescription}";
+                        newNode.Nodes.Add(descr, descr);
                     }
                 }
             }
