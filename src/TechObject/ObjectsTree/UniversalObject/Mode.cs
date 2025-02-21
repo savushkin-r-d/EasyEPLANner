@@ -8,11 +8,25 @@ using Editor;
 
 namespace TechObject
 {
+    /// <summary>
+    /// Операция технологического объекта. Состоит из последовательно 
+    /// (или в ином порядке) выполняемых шагов.
+    /// </summary>
     public interface IMode : ITreeViewItem
     {
+        /// <summary>
+        /// Операции тех.объекта
+        /// </summary>
         ModesManager Owner { get; }
+
+        /// <summary>
+        /// Тех.объект, которому принадлежит операция
+        /// </summary>
         TechObject TechObject { get; }
 
+        /// <summary>
+        /// Базовая операция
+        /// </summary>
         BaseOperation BaseOperation { get; }
     }
 

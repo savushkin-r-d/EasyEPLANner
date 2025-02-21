@@ -5,12 +5,25 @@ using Editor;
 
 namespace TechObject
 {
+    /// <summary>
+    /// Состояние операции. Содержит группу шагов, выполняемых последовательно
+    /// (или в ином порядке).
+    /// </summary>
     public interface IState : ITreeViewItem
     {
+        /// <summary>
+        /// Операция состояния
+        /// </summary>
         IMode Owner { get; }
 
+        /// <summary>
+        /// Технологический объект, которому принадлежит состояние
+        /// </summary>
         TechObject TechObject { get; }
 
+        /// <summary>
+        /// Тип состояния
+        /// </summary>
         State.StateType Type { get; }
     }
 
@@ -645,9 +658,6 @@ namespace TechObject
         /// </summary>
         public bool NeedMainStep { get; private set; }
 
-        /// <summary>
-        /// Тип состояния
-        /// </summary>
         public StateType Type { get; private set; }
 
         public enum StateType : int
