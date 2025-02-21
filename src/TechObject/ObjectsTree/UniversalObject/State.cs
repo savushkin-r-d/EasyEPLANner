@@ -5,11 +5,20 @@ using Editor;
 
 namespace TechObject
 {
+    public interface IState : ITreeViewItem
+    {
+        IMode Owner { get; }
+
+        TechObject TechObject { get; }
+
+        State.StateType Type { get; }
+    }
+
     /// <summary>
     /// Состояние операции. Содержит группу шагов, выполняемых последовательно
     /// (или в ином порядке).
     /// </summary>
-    public class State : TreeViewItem
+    public class State : TreeViewItem, IState
     {
         /// <summary>
         /// Получение шага по номеру (нумерация с -1 - шаг операции, который 
@@ -51,7 +60,7 @@ namespace TechObject
         /// <param name="stateType">Тип состояния</param>
         /// <param name="needMainStep">Надо ли основной шаг.</param>
         /// <param name="owner">Владелец состояния (Операция)</param>
-        public State(StateType stateType, Mode owner, bool needMainStep = false)
+        public State(StateType stateType, IMode owner, bool needMainStep = false)
         {
             name = stateStr[(int)stateType];
             Type = stateType;
@@ -223,13 +232,9 @@ namespace TechObject
             }
         }
 
-        public Mode Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public IMode Owner => owner;
+
+        public TechObject TechObject => Owner.TechObject;
 
         /// <summary>
         /// Проверка шагов состояния
@@ -377,10 +382,7 @@ namespace TechObject
 
         override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var targetStep = child as Step;
-            var copiedStep = copyObject as Step;
-
-            if (targetStep is null || copiedStep is null)
+            if (!(child is Step targetStep && copyObject is Step copiedStep))
                 return null;
 
 
@@ -405,18 +407,16 @@ namespace TechObject
             }
 
             newStep.Owner = this;
-            
-            index = steps.IndexOf(newStep);
-
             newStep.AddParent(this);
+
+            newStep.ModifyDevNames(new DevModifyOptions(TechObject, copiedStep.TechObject.NameEplan, copiedStep.TechObject.TechNumber));
+
             return newStep;
         }
 
         public override ITreeViewItem InsertCopy(object copyObject)
         {
-            var copiedStep = copyObject as Step;
-
-            if (copiedStep is null)
+            if (!(copyObject is Step copiedStep))
                 return null;
 
             CheckMainStep();
@@ -434,7 +434,9 @@ namespace TechObject
             steps.Add(newStep);
             newStep.AddParent(this);
             newStep.Owner = this;
-            
+
+            newStep.ModifyDevNames(new DevModifyOptions(TechObject, copiedStep.TechObject.NameEplan, copiedStep.TechObject.TechNumber));
+
             return newStep;
         }
 
@@ -677,6 +679,6 @@ namespace TechObject
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
-        private Mode owner;///< Владелец элемента
+        private IMode owner;///< Владелец элемента
     }
 }

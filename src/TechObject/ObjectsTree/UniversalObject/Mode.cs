@@ -8,11 +8,20 @@ using Editor;
 
 namespace TechObject
 {
+    public interface IMode : ITreeViewItem
+    {
+        ModesManager Owner { get; }
+        TechObject TechObject { get; }
+
+        BaseOperation BaseOperation { get; }
+    }
+
+
     /// <summary>
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : TreeViewItem
+    public class Mode : TreeViewItem, IMode
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
@@ -361,13 +370,7 @@ namespace TechObject
         /// <summary>
         /// Получить базовую операцию для этой операции
         /// </summary>
-        public BaseOperation BaseOperation
-        {
-            get
-            {
-                return baseOperation as BaseOperation;
-            }
-        }
+        public BaseOperation BaseOperation => baseOperation as BaseOperation;
 
         // Получение номера операции
         public int GetModeNumber()
@@ -375,13 +378,9 @@ namespace TechObject
             return getN(this);
         }
 
-        public ModesManager Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public ModesManager Owner => owner;
+
+        public TechObject TechObject => Owner.TechObject;
 
         public string Name
         {
