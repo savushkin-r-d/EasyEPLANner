@@ -116,6 +116,10 @@ init_operation_parameters = function(operation, params)
     -- Добавить булевы параметра операции
     local activeBoolParameters = params.bool or { }
     init_active_bool_parameters(operation, activeBoolParameters)
+
+    -- Добавить float параметры операции
+    local floatParameters = params.float or {}
+    init_float_parameters(operation, floatParameters);
 end
 
 -- Инициализация активных параметров

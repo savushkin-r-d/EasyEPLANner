@@ -183,6 +183,13 @@ namespace TechObject
             par.ValueChanged += (sender) => OnValueChanged(sender);
         }
 
+
+        public void AddFloatParameter(string luaName, string name, int value, string meter)
+        {
+            var par = new Param(getN => 0, name, false, 0, meter, luaName, true);
+            Parameters.Add(par);
+        }
+
         public string Name
         {
             get => operationName;
@@ -258,9 +265,8 @@ namespace TechObject
                 {
                     Name = operation.Name;
                     LuaName = operation.LuaName;
-                    Properties = operation.Properties
-                        .Select(x => x.Clone())
-                        .ToList();
+                    Properties = operation.Properties.Select(x => x.Clone()).ToList();
+                    Parameters = new List<Param>(operation.Parameters);
                     foreach(var property in Properties)
                     {
                         property.Owner = this;
@@ -378,6 +384,8 @@ namespace TechObject
             get => baseOperationProperties;
             set => baseOperationProperties = value;
         }
+
+        public List<Param> Parameters { get; private set; } = new List<Param>();
 
         public Mode Owner
         {
@@ -518,6 +526,7 @@ namespace TechObject
 
             operation.Properties = CloneProperties(operation);
             operation.states = CloneStates(operation);
+            operation.Parameters = new List<Param>(Parameters);
 
             operation.SetItems();
 

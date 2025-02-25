@@ -393,6 +393,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\GroupableAction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\GenericTechObject.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Interfaces\IAutocompletable.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />
@@ -568,6 +569,7 @@
     <None Include="Resources\delete.png" />
     <None Include="Resources\changeObj.png" />
     <None Include="Resources\cut.png" />
+    <None Include="Resources\autocomplete.png" />
     <Content Include="Resources\edit.ico" />
     <None Include="Resources\edit1.png" />
     <None Include="Resources\export.png" />

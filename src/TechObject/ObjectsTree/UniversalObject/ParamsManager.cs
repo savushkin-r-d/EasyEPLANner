@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Windows.Forms;
 using Editor;
 using Eplan.EplApi.HEServices;
 
 namespace TechObject
 {
-    public class ParamsManager : TreeViewItem
+    public class ParamsManager : TreeViewItem, IAutocompletable
     {
         /// <summary>
         /// Все параметры технологического объекта.
@@ -403,6 +405,36 @@ namespace TechObject
                 parUint.CreateGenericByTechObjects(parUintList);
             if (parUintRuntimeList.All(par => par != null))
                 parUintRuntime.CreateGenericByTechObjects(parUintRuntimeList);
+        }
+
+        public void Autocomplete()
+        {
+            foreach (var operation in TechObject.ModesManager.Modes)
+            {
+                var parameters = operation.BaseOperation.Parameters;
+
+                // Если все параметры базовой операции уже добавлены, пропускаем
+                var existsParametersCount = parameters
+                    .Select(p => Float.GetParam(p.GetNameLua()))
+                    .Where(p => p != null).Count();
+                if (existsParametersCount == parameters.Count)
+                    continue;
+
+                foreach (var param in parameters)
+                {
+                    if (Float.Contains(param.GetNameLua()))
+                        continue;
+
+                    var parameter = Float.Insert() as Param;
+                    parameter.SetNewValue(param.GetName()); 
+                    parameter.LuaNameProperty.SetNewValue(param.GetNameLua());
+                    parameter.MeterItem.SetNewValue(param.GetMeter());
+                }
+
+                // Добавляем 2 заглушки после параметров операции
+                Float.Insert();
+                Float.Insert();
+            }
         }
 
         public TechObject TechObject => Parent as TechObject;
