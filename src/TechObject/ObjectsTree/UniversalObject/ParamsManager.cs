@@ -414,21 +414,18 @@ namespace TechObject
                 var parameters = operation.BaseOperation.Parameters;
 
                 // Если все параметры базовой операции уже добавлены, пропускаем
-                var existsParametersCount = parameters
-                    .Select(p => Float.GetParam(p.GetNameLua()))
-                    .Where(p => p != null).Count();
-                if (existsParametersCount == parameters.Count)
+                if (parameters.Count(p => Float.HaveSameLuaName(p.LuaName)) == parameters.Count)
                     continue;
 
                 foreach (var param in parameters)
                 {
-                    if (Float.Contains(param.GetNameLua()))
+                    if (Float.HaveSameLuaName(param.LuaName))
                         continue;
 
                     var parameter = Float.Insert() as Param;
-                    parameter.SetNewValue(param.GetName()); 
-                    parameter.LuaNameProperty.SetNewValue(param.GetNameLua());
-                    parameter.MeterItem.SetNewValue(param.GetMeter());
+                    parameter.SetNewValue(param.Name); 
+                    parameter.LuaNameProperty.SetNewValue(param.LuaName);
+                    parameter.MeterItem.SetNewValue(param.Meter);
                 }
 
                 // Добавляем 2 заглушки после параметров операции

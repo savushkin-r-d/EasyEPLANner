@@ -362,6 +362,7 @@
     <Compile Include="StaticHelper\ApiHelper.cs" />
     <Compile Include="FileSavers\XMLReporter.cs" />
     <Compile Include="StaticHelper\ProjectHelper.cs" />
+    <Compile Include="TechObject\Base\BaseFloatParameter.cs" />
     <Compile Include="TechObject\Base\BaseProperties.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectSaver.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectLoader.cs" />

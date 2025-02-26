@@ -1879,7 +1879,7 @@ namespace Editor
                 return;
 
             ContextMenuStrip_CreateGenericAndGrouping(item, items, singleSelection);
-            ContextMenuStrip_GenerateParameters(item, items, singleSelection);
+            ContextMenuStrip_Autocomplete(item);
             ContextMenuStrip_InsertableAndDeletable(item, items, singleSelection);
             ContextMenuStrip_CopyableAndCuttable(item, items, singleSelection);
             ContextMenuStrip_PasteableAndReplaceable(item, items, singleSelection);
@@ -1898,7 +1898,7 @@ namespace Editor
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Enabled = Editable;
         }
 
-        private void ContextMenuStrip_GenerateParameters(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
+        private void ContextMenuStrip_Autocomplete(ITreeViewItem item)
         {
             contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)].Visible = item is ParamsManager;
             contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)].Enabled = Editable;

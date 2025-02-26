@@ -509,7 +509,7 @@ namespace Editor
             this.moveUpToolStripMenuItem,
             this.moveDownToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(225, 280);
+            this.contextMenuStrip.Size = new System.Drawing.Size(225, 258);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // createToolStripMenuItem

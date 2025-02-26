@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Editor;
 
 namespace TechObject
@@ -184,10 +185,9 @@ namespace TechObject
         }
 
 
-        public void AddFloatParameter(string luaName, string name, int value, string meter)
+        public void AddFloatParameter(string luaName, string name, double defaultValue, string meter)
         {
-            var par = new Param(getN => 0, name, false, 0, meter, luaName, true);
-            Parameters.Add(par);
+            Parameters.Add(new BaseFloatParameter(luaName, name, defaultValue, meter));
         }
 
         public string Name
@@ -266,7 +266,7 @@ namespace TechObject
                     Name = operation.Name;
                     LuaName = operation.LuaName;
                     Properties = operation.Properties.Select(x => x.Clone()).ToList();
-                    Parameters = new List<Param>(operation.Parameters);
+                    Parameters = new List<IBaseFloatParameter>(operation.Parameters);
                     foreach(var property in Properties)
                     {
                         property.Owner = this;
@@ -385,7 +385,7 @@ namespace TechObject
             set => baseOperationProperties = value;
         }
 
-        public List<Param> Parameters { get; private set; } = new List<Param>();
+        public List<IBaseFloatParameter> Parameters { get; set; } = new List<IBaseFloatParameter>();
 
         public Mode Owner
         {
@@ -526,7 +526,7 @@ namespace TechObject
 
             operation.Properties = CloneProperties(operation);
             operation.states = CloneStates(operation);
-            operation.Parameters = new List<Param>(Parameters);
+            operation.Parameters = new List<IBaseFloatParameter>(Parameters);
 
             operation.SetItems();
 
