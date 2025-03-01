@@ -788,5 +788,21 @@ namespace EasyEplanner.Tests
             });
 
         }
+
+        [Test]
+        public void Replace_Null()
+        {
+            var step = new Step("", getN => 1, null);
+
+            Assert.IsNull(step.Replace(null, null));
+        }
+
+        [Test]
+        public void Replace_DifferentActions()
+        {
+            var step = new Step("", getN => 1, null);
+
+            Assert.IsNull(step.Replace(Mock.Of<IAction>(a => a.LuaName == "LuaName_1"), Mock.Of<IAction>(a => a.LuaName == "LuaName_2")));
+        }
     }
 }

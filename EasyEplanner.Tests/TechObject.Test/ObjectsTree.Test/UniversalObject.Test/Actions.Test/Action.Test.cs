@@ -728,8 +728,26 @@ namespace TechObjectTests
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(null, deviceManager);
 
-            var step1 = new Step("Шаг1", GetN => 1, null);
-            var step2 = new Step("Шаг2", GetN => 2, null);
+            var to = new TechObject.TechObject("", getN => 1, 1, 2, "TANK", -1, "", "", null);
+            var baseOperation = new BaseOperation(
+                    "операция", "operation",
+                    new List<BaseParameter>() { },
+                    new Dictionary<string, List<BaseStep>>()
+                    {
+                        { "RUN", new List<BaseStep>() { new BaseStep("", ""), new BaseStep("шаг_1", "step_1"), new BaseStep("шаг_2", "step_2") } },
+                    }
+                );
+
+            var operation = Mock.Of<IMode>(m =>
+                m.TechObject == to &&
+                m.BaseOperation == baseOperation);
+
+            var state = Mock.Of<IState>(s => 
+                s.TechObject == to);
+
+
+            var step1 = new Step("Шаг1", GetN => 1, state);
+            var step2 = new Step("Шаг2", GetN => 2, state);
 
             var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
             techObject.GetParamsManager().Float.Insert();
