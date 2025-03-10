@@ -66,7 +66,7 @@ namespace TechObject.Tests
 
                 Assert.AreEqual("FILL_PARAMETER", param.GetNameLua());
                 Assert.AreEqual("Наполнение. Параметр", param.GetName());
-                Assert.AreEqual(1, param.Operations);
+                Assert.AreEqual("1", param.Operations);
             });
         }
     }
