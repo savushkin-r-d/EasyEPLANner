@@ -64,7 +64,7 @@ namespace TechObject
         /// Автоматическое заполнение связанных параметров агрегата.
         /// Добавление float-параметра к операции с автоматической привязкой.
         /// </summary>
-        private void Autocomplete()
+        public void Autocomplete()
         {
             foreach (var baseParameter in (Owner as BaseTechObject).AggregateParameters)
             {

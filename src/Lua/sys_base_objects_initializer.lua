@@ -131,7 +131,7 @@ init_aggregate_active_parameters = function (object, activeParameters)
 
         if type(defaultValue) == "table" then
             -- Добавить активный параметр агрегата с float-параметром по умолчанию
-            local parameter = object:AddAggregateActiveParameter(luaName, name)
+            local parameter = object:AddActiveAggregateParameter(luaName, name)
             parameter:SetFloatParameter(defaultValue.luaName or "", defaultValue.name or "",
                 defaultValue.defaultValue or 0, defaultValue.meter or "")
         else
