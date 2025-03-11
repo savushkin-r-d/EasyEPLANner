@@ -5,37 +5,45 @@
         /// <summary>
         /// Свойство устройства.
         /// </summary>
-        public class Property
+        public class Property : ITag
         {
-            /// <summary>
-            /// Связанные моторы.
-            /// </summary>
-            public const string MT = "MT";
+            private readonly string name;
+            private readonly string description;
+
+            /// <summary> Связанные моторы. </summary>
+            public static readonly Property MT = new Property(nameof(MT), "Связанные моторы");
+
+            /// <summary> Датчик давления. </summary>
+            public static readonly Property PT = new Property(nameof(PT), "Датчик давления");
+
+            /// <summary> Входное значение (обычно для ПИД-а). </summary>
+            public static readonly Property IN_VALUE = new Property(nameof(IN_VALUE), "Входное значение");
+
+            /// <summary> Выходное значение (обычно для ПИД-а). </summary>
+            public static readonly Property OUT_VALUE = new Property(nameof(OUT_VALUE), "Выходное значение");
+
+            /// <summary> IP-адрес устройства. </summary>
+            public static readonly Property IP = new Property(nameof(IP), "IP-адрес");
+
+            /// <summary> Последовательность сигналов. </summary>
+            public static readonly Property SIGNALS_SEQUENCE = new Property(nameof(SIGNALS_SEQUENCE), "Последовательность сигналов");
+
 
             /// <summary>
-            /// Датчик давления.
+            /// Неявное преобразование параметра в строку с названием
             /// </summary>
-            public const string PT = "PT";
+            /// <param name="property">Параметр</param>
+            public static implicit operator string(Property property) => property.name;
 
-            /// <summary>
-            /// Входное значение (обычно для ПИД-а).
-            /// </summary>
-            public const string IN_VALUE = "IN_VALUE";
+            private Property(string name, string description)
+            {
+                this.name = name;
+                this.description = description;
+            }
 
-            /// <summary>
-            /// Выходное значение (обычно для ПИД-а).
-            /// </summary>
-            public const string OUT_VALUE = "OUT_VALUE";
+            public string Name => name;
 
-            /// <summary>
-            /// IP-адрес устройства.
-            /// </summary>
-            public const string IP = "IP";
-
-            /// <summary>
-            /// Последовательность сигналов.
-            /// </summary>
-            public const string SIGNALS_SEQUENCE = "SIGNALS_SEQUENCE";
+            public string Description => description;
         }
     }
 }
