@@ -31,6 +31,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner_debug</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -63,6 +65,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=0c6c09a5ec550785, processorArchitecture=MSIL">
@@ -373,6 +376,7 @@
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveAggregateParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ComboBoxParameter.cs" />
     <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />

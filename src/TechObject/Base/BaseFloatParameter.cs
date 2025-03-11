@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ namespace TechObject
         /// Значение по умолчанию
         /// </summary>
         double DefaultValue { get; }
-        
+
         /// <summary>
         /// Lua-имя
         /// </summary>
@@ -34,7 +34,7 @@ namespace TechObject
 
     public class BaseFloatParameter : IBaseFloatParameter
     {
-        public BaseFloatParameter(string luaName, string name, double defaultValue, string meter) 
+        public BaseFloatParameter(string luaName, string name, double defaultValue, string meter)
         {
             LuaName = luaName;
             Name = name;
@@ -43,9 +43,9 @@ namespace TechObject
         }
 
         public double DefaultValue { get; private set; }
-        
+
         public string LuaName { get; private set; }
-        
+
         public string Meter { get; private set; }
 
         public string Name { get; private set; }
