@@ -138,7 +138,6 @@
     <Compile Include="IO\ViewModel\Module.cs" />
     <Compile Include="IO\ViewModel\Node.cs" />
     <Compile Include="IO\ViewModel\Root.cs" />
-    <Compile Include="IO\ViewModel\ContextContainer.cs" />
     <Compile Include="IO\View\IOViewControl.EplanForm.cs">
       <SubType>Form</SubType>
     </Compile>
