@@ -135,27 +135,15 @@ namespace EasyEPlanner
                 string type = GetNodeTypeFromFunction(function);
                 string location = function.Properties
                     .DESIGNATION_FULLLOCATION_WITHPREFIX;
+                string locationDescription = function.Properties.DESIGNATION_FULLLOCATION_DESCR.GetString();
+
 
                 if (type != "")
                 {
-                    if (isContainsA1 == true)
-                    {
-                        if (nodeNumber == numberA1)
-                        {
-                            IOManager.AddNode(numberA1, nodeNumber, type, ipAdress, name,
-                                location);
-                        }
-                        else
-                        {
-                            IOManager.AddNode(nodeNumber/100 + numberA1,
-                                nodeNumber, type, ipAdress, name, location);
-                        }
-                    }
-                    else
-                    {
-                        IOManager.AddNode(nodeNumber/100, nodeNumber, type,
-                            ipAdress, name, location);
-                    }
+                    var node = IOManager.AddNode(nodeNumber / 100 + (isContainsA1 ? 1 : 0),
+                        nodeNumber, type, ipAdress, name, location, locationDescription);
+
+                    node.SetEplanFunction(new EplanFunction(function));
                 }
                 else
                 {
@@ -269,7 +257,7 @@ namespace EasyEPlanner
 
                 IO.IOModule nodeModule = new IO.IOModule(inOffset,
                     outOffset, moduleInfo, moduleNumber,
-                    deviceHelper.GetArticleName(function), function);
+                    deviceHelper.GetArticleName(function), new EplanFunction(function));
 
                 node.DI_count += moduleInfo.DICount;
                 node.DO_count += moduleInfo.DOCount;

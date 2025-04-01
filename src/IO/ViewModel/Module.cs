@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace IO.ViewModel
+{
+    public class Module : IModule, IHasIcon
+    {
+        private INode owner;
+
+        private List<IClamp> binds = [];
+
+
+        public Module(IIOModule module, INode owner)
+        {
+            this.owner = owner;
+
+            IOModule = module;
+
+            binds.AddRange(module.Info.ChannelClamps.Select(c => new Clamp(this, c)));
+        }
+
+        public IEnumerable<IViewItem> Items => binds;
+
+        public string Name => IOModule.Name;
+
+        public string Description => IOModule.Info.Description;
+
+        public IIOModule IOModule { get; private set; }
+
+        public IIONode IONode => owner.IONode;
+
+        Icon IHasIcon.Icon => IOModule.Info.ModuleColor.Name switch
+        {
+            nameof(Color.Black) => Icon.BlackModule,
+            nameof(Color.Gray) => Icon.GrayModule,
+            nameof(Color.Green) => Icon.GreenModule,
+            nameof(Color.Lime) => Icon.LimeModule,
+            nameof(Color.Orange) => Icon.OrangeModule,
+            nameof(Color.Red) => Icon.RedModule,
+            nameof(Color.Violet) => Icon.VioletModule,
+            nameof(Color.Yellow) => Icon.YellowModule,
+            _ => Icon.None
+        };
+    }
+}

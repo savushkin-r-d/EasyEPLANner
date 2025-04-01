@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -19,7 +20,7 @@ namespace IO
         /// <param name="ip">IP-адрес.</param>
         /// <param name="name">Имя на схеме (А100 и др.).</param>
         public IONode(string typeStr, int n, int nodeNumber , string ip,
-            string name, string location)
+            string name, string location, string locationDescription)
         {
             this.typeStr = typeStr;
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
@@ -33,6 +34,7 @@ namespace IO
             this.nodeNumber = nodeNumber;
             this.name = name;
             this.location = location;
+            LocationDescription = locationDescription;
 
             iOModules = new List<IIOModule>();
 
@@ -287,8 +289,21 @@ namespace IO
                 return location;
             }
         }
+        
+        public string LocationDescription { get; private set; }
 
         public bool IsCoupler { get; private set; } = false;
+
+        /// <summary>
+        /// Установить функцию для узла
+        /// </summary>
+        /// <param name="function"></param>
+        public void SetEplanFunction(IEplanFunction functin)
+        {
+            Function = functin;
+        }
+
+        public IEplanFunction Function { get; private set; }
 
         #region Закрытые поля.
         /// <summary>

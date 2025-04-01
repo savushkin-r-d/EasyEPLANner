@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StaticHelper;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace IO
@@ -71,10 +72,21 @@ namespace IO
         string Location { get; }
 
         /// <summary>
+        /// Описание расположения.
+        /// </summary>
+        string LocationDescription { get; }
+
+        /// <summary>
+        /// Функция узла на ФСА
+        /// </summary>
+        IEplanFunction Function { get; }
+
+        /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
         string SaveAsLuaTable(string prefix);
+
         void SaveAsConnectionArray(ref object[,] res, ref int idx, Dictionary<string, int> modulesCount,
             Dictionary<string, Color> modulesColor, int nodeIdx, Dictionary<string, object[,]> asInterfaceConnection);
 

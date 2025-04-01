@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using EplanDevice;
 using IO;
 using StaticHelper;
+using IO.View;
 
 namespace EasyEPlanner
 {
@@ -49,6 +50,7 @@ namespace EasyEPlanner
                 if (!string.IsNullOrEmpty(ResetDevicesChannel))
                 {
                     ResetChannel();
+                    SelectedClamp?.Reset();
                 }
 
                 SetFunctionalTextInClamp();
@@ -99,26 +101,28 @@ namespace EasyEPlanner
         /// </summary>
         private void InitStartValues()
         {
+            const string Message = "Ошибка при инициализации базовых значений";
+
+            SelectedNode = startValues.GetSelectedNode();
+            SelectedClamp = IOViewControl.DataContext.SelectedClamp;
+            NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
+            SelectedChannel = startValues.GetChannel(NodeFromSelectedNode);
+            SelectedDevice = startValues.GetDevice(NodeFromSelectedNode);
+            
             try
             {
-                SelectedNode = startValues.GetSelectedNode();
-                NodeFromSelectedNode = startValues
-                    .GetNodeFromSelectedNode(SelectedNode);
-                SelectedChannel = startValues
-                    .GetChannel(NodeFromSelectedNode);
-                SelectedDevice = startValues
-                    .GetDevice(NodeFromSelectedNode);
+                // Пробуем получить выбранную клемму на ФСА
                 SelectedObject = apiHelper.GetSelectedObject();
-                SelectedClampFunction = ioHelper.GetClampFunction(
-                    SelectedObject);
-                SelectedIOModuleFunction = ioHelper
-                    .GetIOModuleFunction(SelectedClampFunction);
+                SelectedClampFunction = ioHelper.GetClampFunction(SelectedObject);
+                SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
             catch
             {
-                const string Message = "Ошибка при инициализации " +
-                    "базовых значений";
-                throw new Exception(Message);
+                // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
+                // (если таковой нет, то генерируем исключение)
+                SelectedClampFunction = (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)?.Function 
+                    ?? throw new Exception(Message);
+                SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
         }
 
@@ -306,16 +310,18 @@ namespace EasyEPlanner
                 .IONodes[nodeNumber].
                 IOModules[moduleNumber - 1].InOffset;
 
-            SelectedChannel.SetChannel(nodeNumber, moduleNumber,
-                clampNumber, deviceNumber, logicalPort, moduleOffset);
+            var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
+            reader.ReadModuleClampBinding(SelectedClamp.Node, SelectedClamp.Module,
+                new EplanFunction(SelectedClampFunction));
         }
 
         /// <summary>
-        /// Обновление дерева устройств после привязки
+        /// Обновление дерева устройств и модулей после привязки
         /// </summary>
         private void RefreshTree()
         {
             DevicesForm.RefreshTreeAfterBinding();
+            IOViewControl.Instance?.RefreshTreeAfterBinding();
         }
 
         /// <summary>
@@ -435,6 +441,12 @@ namespace EasyEPlanner
         }
 
         #region Закрытые поля
+        
+        /// <summary>
+        /// Выбранная клемма в <see cref="IO.View.IOViewControl">окне модулей</see>
+        /// </summary>
+        private IO.ViewModel.IClamp SelectedClamp { get; set; }
+
         /// <summary>
         /// Выбранный узел на дереве
         /// </summary>

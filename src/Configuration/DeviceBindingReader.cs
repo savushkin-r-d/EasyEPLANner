@@ -78,6 +78,12 @@ namespace EasyEPlanner
                     foreach (var function in module.Function.SubFunctions)
                     {
                         ReadModuleClampBinding(node, module, function);
+
+                        // Добавляем функцию клеммы в модуль
+                        if (module.Info.ChannelClamps.Contains(function.ClampNumber) && function.PlacedOnCircuit)
+                        {
+                            module.AddClampFunction(function);
+                        }
                     }
                 }
             }
@@ -89,10 +95,10 @@ namespace EasyEPlanner
         /// <param name="node">Узел</param>
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
-        private void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
-            Function clampFunction)
+        public void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
+            IEplanFunction clampFunction)
         {
-            string description = apiHelper.GetFunctionalText(clampFunction);
+            string description = clampFunction.FunctionalText;
             var descriptionMatches = Regex.Matches(description,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN,
                 RegexOptions.None,
@@ -133,7 +139,7 @@ namespace EasyEPlanner
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
         [ExcludeFromCodeCoverage]
-        private bool NeedToSkip(IO.IIOModule module, Function clampFunction, string description , MatchCollection descriptionMatches)
+        private bool NeedToSkip(IO.IIOModule module, IEplanFunction clampFunction, string description , MatchCollection descriptionMatches)
         {
             var skip = false;
 
@@ -148,11 +154,8 @@ namespace EasyEPlanner
                         $" привязано устройство \"{device?.EplanName}\".";  
             }
 
-            string clampString = clampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            int clamp;
-            bool isDigit = int.TryParse(clampString, out clamp);
-            if (isDigit == false)
+            var clamp = clampFunction.ClampNumber;
+            if (clamp == -1)
             {
                 if (device != null)
                     Logs.AddMessage(error);
@@ -169,9 +172,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            DocumentTypeManager.DocumentType documentType = clampFunction.Page
-                .PageType;
-            if (documentType != DocumentTypeManager.DocumentType.Circuit)
+            if (clampFunction.PlacedOnCircuit is false)
             {
                 skip = true;
                 return skip;
@@ -512,15 +513,10 @@ namespace EasyEPlanner
         /// <param name="clampFunction">Функция клеммы</param>
         /// <param name="comment">Комментарий к устройству</param>
         private void SetBind(string description, List<string> actions, 
-            IO.IIOModule module, IO.IIONode node, Function clampFunction, 
+            IO.IIOModule module, IO.IIONode node, IEplanFunction clampFunction, 
             List<string> comments, bool bindToValveTerminal)
         {
-            // Конвертируем в IOModule, потому что не тестируется IIOModule
-            // из-за Function (еплановская библиотека).
-            var ioModule = module as IO.IOModule;
-            string clampStr = clampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            int.TryParse(clampStr, out int clamp);
+            var clamp = clampFunction.ClampNumber;
             
             var descriptionMatches = Regex.Matches(description,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
@@ -528,7 +524,7 @@ namespace EasyEPlanner
             if (devicesCount < 1 && !description.Equals(CommonConst.Reserve))
             {
                 Logs.AddMessage(
-                    $"\"{ioModule.Function.VisibleName}:{clampStr}\"" +
+                    $"\"{module.Function.VisibleName}:{clamp:00}\"" +
                     $" - неверное имя привязанного устройства - " +
                     $"\"{description}\".");
             }
@@ -562,8 +558,8 @@ namespace EasyEPlanner
 
                 if (error != "")
                 {
-                    error = string.Format("\"{0}:{1}\" : {2}",
-                        ioModule.Function.VisibleName, clampStr, error);
+                    error = string.Format("\"{0}:{1:00}\" : {2}",
+                        module.Function.VisibleName, clamp, error);
                     Logs.AddMessage(error); 
                 }
 
