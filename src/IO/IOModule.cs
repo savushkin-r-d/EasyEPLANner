@@ -24,7 +24,7 @@ namespace IO
         /// <param name="function">Eplan функция модуля.</param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info, int physicalNumber, string articleName,
-            Eplan.EplApi.DataModel.Function function)
+            IEplanFunction function)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
@@ -390,13 +390,7 @@ namespace IO
             }
         }
 
-        public Eplan.EplApi.DataModel.Function Function
-        {
-            get
-            {
-                return function;
-            }
-        }
+        public IEplanFunction Function => function;
 
         public string Name
         {
@@ -437,6 +431,17 @@ namespace IO
             }
 
             return isIOLink;
+        }
+
+        public void AddClampFunction(IEplanFunction clampFunction)
+        {
+            ClampFunctions[clampFunction.ClampNumber] = clampFunction;
+        }
+
+        public void ClearBind(int clamp)
+        {
+            Devices[clamp] = null;
+            DevicesChannels[clamp] = null;
         }
 
         /// <summary>
@@ -488,6 +493,8 @@ namespace IO
             }
         }
 
+        public Dictionary<int, IEplanFunction> ClampFunctions { get; private set; } = [];
+
         #region Закрытые поля.
         private List<EplanDevice.IIODevice>[] devices;
         private List<EplanDevice.IODevice.IIOChannel>[] devicesChannels;
@@ -495,7 +502,7 @@ namespace IO
         private int outAddressSpaceOffset;
         private IOModuleInfo info;
         private int physicalNumber;
-        Eplan.EplApi.DataModel.Function function;
+        IEplanFunction function;
         private string articleName;
         #endregion
     }

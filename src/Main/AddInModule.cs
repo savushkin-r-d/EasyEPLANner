@@ -44,6 +44,10 @@ namespace EasyEPlanner
                 "Редактирование технологических объектов", menuID, 1, 
                 false, false);
 
+            menuID = oMenu.AddMenuItem("Структура ПЛК",
+               nameof(ShowPlcAction), "Структура ПЛК", menuID,
+               1, false, false);
+
             menuID = oMenu.AddMenuItem("Устройства, параметры объектов", 
                 "ShowDevicesAction", "Отображение устройств", menuID,
                 int.MaxValue, false, false);
