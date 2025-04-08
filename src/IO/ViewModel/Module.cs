@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Module : IModule, IHasIcon
+    public class Module : IModule, IExpandable, IHasIcon, IToolTip
     {
         private INode owner;
 
@@ -28,6 +28,11 @@ namespace IO.ViewModel
         public string Name => IOModule.Name;
 
         public string Description => IOModule.Info.Description;
+
+        string IToolTip.Description => 
+            $"Артикул: {IOModule.Info.Name}\n" +
+            $"Описание: {IOModule.Info.Description}\n " +
+            $"{IOModule.Info.TypeName}";
 
         public IIOModule IOModule { get; private set; }
 

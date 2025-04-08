@@ -19,6 +19,10 @@ namespace IO.View
 {
     public partial class IOViewControl : Form
     {
+        private bool cancelChanges = false;
+
+        private bool isCellEditing = false;
+
         public static IOViewControl Instance { get; private set; }
 
         /// <summary>
@@ -48,6 +52,13 @@ namespace IO.View
         {
             StructPLC.CanExpandGetter = obj => obj is IExpandable exp && (exp.Items?.Any() ?? false);
             StructPLC.ChildrenGetter = obj => (obj as IExpandable)?.Items;
+            StructPLC.CellToolTipGetter = (col, obj) => (col.Index) switch
+            {
+                0 => (obj as IToolTip)?.Name ?? (obj as IViewItem).Name,
+                1 => (obj as IToolTip)?.Description ?? (obj as IViewItem).Description,
+                _ => ""
+            };
+
 
             var firstColumn = new OLVColumn("Название", nameof(IViewItem.Name))
             {
@@ -138,21 +149,47 @@ namespace IO.View
 
         private void CellEditStarting(object sender, CellEditEventArgs e)
         {
-            var item = StructPLC.SelectedObject as IEditable;
-
-            if (item is null ||
-                e.Column.Index != 1)
+            if (StructPLC.SelectedObject is not IEditable item || e.Column.Index != 1)
             {
                 e.Cancel = true;
                 return;
             }
 
-            InitTextBoxCellEditor(item.Description, e.CellBounds);
+            isCellEditing = true;
+
+            InitTextBoxCellEditor(item.Value, e.CellBounds);
 
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
 
             StructPLC.Freeze();
+        }
+
+        private void CellEditFinishing(object sender, CellEditEventArgs e)
+        {
+            isCellEditing = false;
+
+            if (cancelChanges || StructPLC.SelectedObject is not IEditable item)
+            {
+                e.Cancel = true;
+                cancelChanges = true;
+
+                StructPLC.Unfreeze();
+
+                return;
+            }
+
+            StructPLC.Controls.Remove(textBoxCellEditor);
+
+            var modified = item.SetValue(e.NewValue.ToString());
+
+            if (modified)
+            {
+                RefreshTree();
+            }
+
+            e.Cancel = true;
+            StructPLC.Unfreeze();
         }
 
         private void InitTextBoxCellEditor(string text, Rectangle bounds)
@@ -165,35 +202,39 @@ namespace IO.View
                 Bounds = bounds,
             };
 
-            //textBoxCellEditor.LostFocus += editorTView_LostFocus;
-            //textBoxCellEditor.KeyDown += CellEditor_KeyDown;
 
+            textBoxCellEditor.LostFocus += CellEditor_LostFocus;
+            textBoxCellEditor.KeyDown += CellEditor_KeyDown;
+            
             StructPLC.Controls.Add(textBoxCellEditor);
         }
 
-        private void CellEditFinishing(object sender, CellEditEventArgs e)
+        private void CellEditor_LostFocus(object sender, EventArgs e)
         {
-            var item = StructPLC.SelectedObject as IEditable;
+            if (isCellEditing)
+                StructPLC.FinishCellEdit();
+        }
 
-            if (item is null)
+        
+
+        private void CellEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
             {
-                e.Cancel = true;
-                StructPLC.Unfreeze();
+                case Keys.Enter:
+                    StructPLC.FinishCellEdit();
+                    break;
 
+                case Keys.Escape:
+                    cancelChanges = true;
+                    StructPLC.FinishCellEdit();
+                    break;
 
-                return;
-            }
-            
-            StructPLC.Controls.Remove(textBoxCellEditor);
-            var modified = item.SetValue(e.NewValue.ToString());
-
-            if (modified)
-            {
-                RefreshTree();
+                default:
+                    return; // exit without e.Handled
             }
 
-            e.Cancel = true;
-            StructPLC.Unfreeze();
+            e.Handled = true;
         }
 
         public void RefreshTree()
@@ -206,6 +247,7 @@ namespace IO.View
             }
             else
             {
+                StructPLC.FocusedObject = StructPLC.SelectedObject;
                 StructPLC.RefreshObjects(DataContext.Roots.ToList());
             }
         }
@@ -261,6 +303,38 @@ namespace IO.View
 
             DataContext.RebuildTree();
             InitDataStructPLC();
-        }   
+        }
+
+        private void KeyDownHandler(object sender, KeyEventArgs e)
+        {
+            var tlv = sender as TreeListView;
+           
+
+            switch (e.KeyCode)
+            {
+                case Keys.Delete:
+                    (tlv.SelectedObject as IDeletable)?.Delete();
+                    break;
+
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Right:
+                case Keys.Left:
+                    //tlv.SelectedIndex = tlv.IndexOf(tlv.SelectedObject);
+                    //tlv.FocusedObject = tlv.SelectedObject;
+                    break;
+            }
+
+            RefreshTree();
+        }
+
+        private void KeyUpHandler(object sender, KeyEventArgs e)
+        {
+
+            var tlv = sender as TreeListView;
+
+
+
+        }
     }
 }

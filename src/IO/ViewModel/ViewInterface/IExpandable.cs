@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace IO.ViewModel
 {
     /// <summary>
-    /// Элемент имеет дочерние элементы и 
-    /// может быть открыт(развернут) на представлении
+    /// Элемент имеет дочерние элементы и <br/>
+    /// может быть открыт (развернут) на представлении.
     /// </summary>
     public interface IExpandable
     {
         /// <summary>
-        /// Дочерние элементы
+        /// Дочерние элементы.
         /// </summary>
         public IEnumerable<IViewItem> Items { get; }
     }

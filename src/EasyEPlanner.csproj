@@ -129,9 +129,11 @@
     <Compile Include="IO\ViewModel\IModule.cs" />
     <Compile Include="IO\ViewModel\INode.cs" />
     <Compile Include="IO\ViewModel\Property.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />
     <Compile Include="IO\ViewModel\IRoot.cs" />
     <Compile Include="IO\ViewModel\Location.cs" />

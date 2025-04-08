@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 namespace IO.ViewModel
 {
     /// <summary>
-    /// Элемент модели представления
-    /// Отображаемые свойства
+    /// Элемент модели представления. <br/>
+    /// Отображаемые свойства.
     /// </summary>
     public interface IViewItem
     {
         /// <summary>
-        /// Название
+        /// Название.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Описание
+        /// Описание.
         /// </summary>
         string Description { get; }
     }

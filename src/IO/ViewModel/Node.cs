@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Node : INode, IHasIcon
+    public class Node : INode, IExpandable, IHasIcon
     {
         
         private List<IModule> modules = [];

@@ -28,6 +28,10 @@ namespace IO.View
 
         public static IntPtr wndDevVisibilePtr;
 
+        private PI.LowLevelKeyboardProc mainWndKeyboardCallbackDelegate = null;
+
+        private IntPtr globalKeyboardHookPtr = IntPtr.Zero;
+
         /// <summary>
         /// Показать окно в формой
         /// </summary>
@@ -81,10 +85,90 @@ namespace IO.View
         {
             dialogCallbackDelegate = new PI.HookProc(DlgWndHookCallbackFunction);
 
+            mainWndKeyboardCallbackDelegate = new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
+
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
                 dialogCallbackDelegate, IntPtr.Zero, pid);
+
+
+
+            globalKeyboardHookPtr = PI.SetWindowsHookEx(
+                PI.HookType.WH_KEYBOARD_LL, mainWndKeyboardCallbackDelegate,
+                IntPtr.Zero, 0);
+
+            if (globalKeyboardHookPtr == IntPtr.Zero)
+            {
+                MessageBox.Show("Ошибка! Не удалось переназначить клавиши!");
+            }
         }
+
+        private IntPtr GlobalHookKeyboardCallbackFunction(int code,
+            PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
+        {
+            const short SHIFTED = 0x80;
+            bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
+            uint vkCode = lParam.vkCode;
+
+            // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
+            // так как они ломают отрисовку
+            // (переключаются вкладки дерево-список на оригинальном окне)
+            if (wParam == PI.WM.KEYDOWN && Ctrl &&
+                (vkCode is PI.VIRTUAL_KEY.VK_PRIOR or PI.VIRTUAL_KEY.VK_NEXT))
+            {
+                return (IntPtr)1;
+            }
+
+
+            if (code < 0 || StructPLC is null || !(StructPLC.Focused || isCellEditing))
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+
+            //Отпускание клавиш - если активно окно редактора, то не пускаем дальше.
+            if (wParam is PI.WM.KEYUP or PI.WM.CHAR &&
+                vkCode is PI.VIRTUAL_KEY.VK_DELETE &&
+                (StructPLC.Focused || isCellEditing))
+            {
+                return (IntPtr)1;
+            }
+
+            //Нажатие клавиш - если активно окно редактора, то обрабатываем и
+            //не пускаем дальше.
+            if (wParam == PI.WM.KEYDOWN)
+            {
+                switch (vkCode)
+                {
+                    // Если активен текстовый редактор
+                    // - команды работы с текстом
+                    case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && isCellEditing:
+                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+                        return (IntPtr)1;
+
+                    // Перехватываем используемые
+                    // комбинации клавиш:
+                    case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
+                    case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
+                    case PI.VIRTUAL_KEY.VK_DELETE:  // Delete
+
+                    case PI.VIRTUAL_KEY.VK_UP:      // Up
+                    case PI.VIRTUAL_KEY.VK_DOWN:    // Down
+                    case PI.VIRTUAL_KEY.VK_LEFT:    // Left
+                    case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
+                        PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
+                        return (IntPtr)1;
+                }
+            }
+
+            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+        }
+
+        private static readonly Dictionary<uint, uint> KeyCommands
+            = new Dictionary<uint, uint>
+            {
+                [(uint)Keys.X] = (int)PI.WM.CUT,    // Вырезать
+                [(uint)Keys.C] = (int)PI.WM.COPY,   // Копировать
+                [(uint)Keys.V] = (int)PI.WM.PASTE,  // Вставить
+            };
+
 
         private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam,
             IntPtr lParam)
@@ -172,5 +256,20 @@ namespace IO.View
         }
 
 
+
+        private void StructPLC_MouseEnter(object sender, EventArgs e)
+        {
+            globalKeyboardHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
+                mainWndKeyboardCallbackDelegate, IntPtr.Zero, 0);
+        }
+
+        private void StructPLC_MouseLeave(object sender, EventArgs e)
+        {
+            if (globalKeyboardHookPtr != IntPtr.Zero)
+            {
+                PI.UnhookWindowsHookEx(globalKeyboardHookPtr);
+                globalKeyboardHookPtr = IntPtr.Zero;
+            }
+        }
     }
 }

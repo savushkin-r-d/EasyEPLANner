@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Location : ILocation, IHasIcon
+    public class Location : ILocation, IExpandable, IHasIcon
     {
         private List<INode> nodes = [];
 

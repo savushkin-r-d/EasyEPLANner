@@ -11,7 +11,9 @@ namespace IO.ViewModel
     /// </summary>
     public interface IRoot : IViewItem, IExpandable
     {
+        /// <summary>
+        /// Модель представления
+        /// </summary>
         IIOViewModel Context { get; }
-
     }
 }

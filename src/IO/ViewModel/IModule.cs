@@ -6,10 +6,19 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public interface IModule : IViewItem, IExpandable
+    /// <summary>
+    /// Модуль (элемент дерева).
+    /// </summary>
+    public interface IModule : IViewItem
     {
+        /// <summary>
+        /// Модуль.
+        /// </summary>
         IIOModule IOModule { get; }
 
+        /// <summary>
+        /// Узел.
+        /// </summary>
         IIONode IONode { get; }
 
     }

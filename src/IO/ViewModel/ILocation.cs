@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 namespace IO.ViewModel
 {
     /// <summary>
-    /// Расположение (шкаф)
+    /// Расположение (шкаф).
     /// </summary>
-    public interface ILocation : IViewItem, IExpandable
-    {
-
-    }
+    public interface ILocation : IViewItem
+    { }
 }

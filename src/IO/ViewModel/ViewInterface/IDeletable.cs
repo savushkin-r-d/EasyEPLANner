@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace IO.ViewModel
 {
     /// <summary>
-    /// Узел (элемент дерева).
+    /// Элемент может быть удален/сброшен
     /// </summary>
-    public interface INode : IViewItem
+    public interface IDeletable : IViewItem
     {
         /// <summary>
-        /// Узел.
+        /// Удалить
         /// </summary>
-        IIONode IONode { get; }
+        void Delete();
     }
 }

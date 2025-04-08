@@ -78,6 +78,7 @@ namespace IO.View
             this.StructPLC.LargeImageList = this.ViewItemImageList;
             this.StructPLC.Location = new System.Drawing.Point(0, 30);
             this.StructPLC.Margin = new System.Windows.Forms.Padding(0);
+            this.StructPLC.MultiSelect = false;
             this.StructPLC.Name = "StructPLC";
             this.StructPLC.OwnerDrawnHeader = true;
             this.StructPLC.PersistentCheckBoxes = false;
@@ -105,6 +106,10 @@ namespace IO.View
             this.StructPLC.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.CellEditFinishing);
             this.StructPLC.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.CellEditStarting);
             this.StructPLC.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.SelectionChanged);
+            this.StructPLC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownHandler);
+            this.StructPLC.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpHandler);
+            this.StructPLC.MouseEnter += new System.EventHandler(this.StructPLC_MouseEnter);
+            this.StructPLC.MouseLeave += new System.EventHandler(this.StructPLC_MouseLeave);
             // 
             // ViewItemImageList
             // 
@@ -126,16 +131,16 @@ namespace IO.View
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.ColumnCount = 3;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 148F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.Controls.Add(this.toolStrip1, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(597, 30);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
@@ -147,7 +152,7 @@ namespace IO.View
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(254, 30);
+            this.toolStrip1.Size = new System.Drawing.Size(597, 30);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -159,7 +164,7 @@ namespace IO.View
             this.Expand_2,
             this.Expand_3,
             this.Expand_4});
-            this.Expand.Image = global::EasyEPlanner.Properties.Resources.expand;
+            this.Expand.Image = ((System.Drawing.Image)(resources.GetObject("Expand.Image")));
             this.Expand.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Expand.Name = "Expand";
             this.Expand.Size = new System.Drawing.Size(29, 27);
@@ -167,7 +172,7 @@ namespace IO.View
             // 
             // Expand_1
             // 
-            this.Expand_1.Image = global::EasyEPlanner.Properties.Resources.expand1;
+            this.Expand_1.Image = ((System.Drawing.Image)(resources.GetObject("Expand_1.Image")));
             this.Expand_1.Name = "Expand_1";
             this.Expand_1.Size = new System.Drawing.Size(183, 22);
             this.Expand_1.Tag = "1";
@@ -176,7 +181,7 @@ namespace IO.View
             // 
             // Expand_2
             // 
-            this.Expand_2.Image = global::EasyEPlanner.Properties.Resources.expand2;
+            this.Expand_2.Image = ((System.Drawing.Image)(resources.GetObject("Expand_2.Image")));
             this.Expand_2.Name = "Expand_2";
             this.Expand_2.Size = new System.Drawing.Size(183, 22);
             this.Expand_2.Tag = "2";
@@ -185,7 +190,7 @@ namespace IO.View
             // 
             // Expand_3
             // 
-            this.Expand_3.Image = global::EasyEPlanner.Properties.Resources.expand3;
+            this.Expand_3.Image = ((System.Drawing.Image)(resources.GetObject("Expand_3.Image")));
             this.Expand_3.Name = "Expand_3";
             this.Expand_3.Size = new System.Drawing.Size(183, 22);
             this.Expand_3.Tag = "3";
@@ -194,7 +199,7 @@ namespace IO.View
             // 
             // Expand_4
             // 
-            this.Expand_4.Image = global::EasyEPlanner.Properties.Resources.expand4;
+            this.Expand_4.Image = ((System.Drawing.Image)(resources.GetObject("Expand_4.Image")));
             this.Expand_4.Name = "Expand_4";
             this.Expand_4.Size = new System.Drawing.Size(183, 22);
             this.Expand_4.Tag = "4";
@@ -204,7 +209,7 @@ namespace IO.View
             // toolStripButton1
             // 
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = global::EasyEPlanner.Properties.Resources.refresh;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 27);

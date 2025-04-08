@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
+    /// <summary>
+    /// Свойство (текстовое поле).
+    /// </summary>
     public interface IProperty : IViewItem
-    {
-    }
+    { }
 }
