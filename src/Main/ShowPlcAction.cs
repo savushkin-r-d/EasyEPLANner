@@ -31,9 +31,6 @@ namespace EasyEPlanner
                 }
 
                 IOViewControl.Start();
-                //var context = new IOViewModel(IOManager.GetInstance());
-                //var form = new IOViewControl(context);
-                //form.ShowDlg();
             }
             catch (Exception ex)
             {

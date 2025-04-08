@@ -97,11 +97,6 @@ namespace IO.View
             StructPLC.EndUpdate();
         }
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void Expand_Click(object sender, EventArgs e)
         {
             int level = Convert.ToInt32((sender as ToolStripMenuItem).Tag);
@@ -129,16 +124,16 @@ namespace IO.View
         {
             foreach (var item in items.OfType<IExpandable>())
             {
-                if (level > 0 && StructPLC.IsExpanded(item) is false)
+                if (level > 0 && !StructPLC.IsExpanded(item))
                 {
                     StructPLC.Expand(item);
                 }
-                else if (level == 0 && StructPLC.IsExpanded(item) == true)
+                else if (level == 0 && StructPLC.IsExpanded(item))
                 {
                     StructPLC.Collapse(item);
                 }
 
-                if (item != null)
+                if (item is not null)
                 {
                     ExpandToLevel(level - 1, item.Items);
                 }
@@ -209,14 +204,14 @@ namespace IO.View
             StructPLC.Controls.Add(textBoxCellEditor);
         }
 
+
         private void CellEditor_LostFocus(object sender, EventArgs e)
         {
             if (isCellEditing)
                 StructPLC.FinishCellEdit();
         }
 
-        
-
+       
         private void CellEditor_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
@@ -237,6 +232,7 @@ namespace IO.View
             e.Handled = true;
         }
 
+
         public void RefreshTree()
         {
             if (StructPLC.Items.Count == 0)
@@ -252,15 +248,18 @@ namespace IO.View
             }
         }
 
+
         public void RefreshTreeAfterBinding()
         {
             RefreshTree();
         }
 
+
         private void ItemExpanded(object sender, TreeBranchExpandedEventArgs e)
         {
             AutoResizeColumns(sender as TreeListView);
         }
+
 
         private void ItemCollapsed(object sender, TreeBranchCollapsedEventArgs e)
         {
@@ -268,7 +267,7 @@ namespace IO.View
         }
 
 
-        public void AutoResizeColumns(TreeListView treeListView)
+        private void AutoResizeColumns(TreeListView treeListView)
         {
             if (treeListView is null)
                 return;

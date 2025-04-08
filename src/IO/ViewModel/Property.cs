@@ -13,7 +13,7 @@ namespace IO.ViewModel
     /// <param name="name">Название свойства</param>
     /// <param name="getter">Делегат получения значения свойства</param>
     /// <param name="setter">Делегат установки значения свойства</param>
-    public class Property(string name, Func<string> getter, Action<string> setter = null) : IProperty, IViewItem, IEditable
+    public class Property(string name, Func<string> getter, Action<string> setter = null) : IProperty, IEditable
     {
         public string Name => name;
 

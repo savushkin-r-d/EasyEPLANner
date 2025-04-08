@@ -14,36 +14,67 @@ namespace StaticHelper
     public interface IEplanFunction
     {
         /// <summary>
-        /// Поле "Начальный адрес карты ПЛК"
+        /// Поле "Начальный адрес карты ПЛК".
         /// </summary>
         string IP { get; set; }
 
         /// <summary>
-        /// Доп.поле [<paramref name="propertyIndex"/>]
+        /// Доп.поле [<paramref name="propertyIndex"/>].
         /// </summary>
         /// <param name="propertyIndex">Номер доп. поля</param>
         /// <returns>Содержимое доп. поля</returns>
         string GetSupplemenataryField(int propertyIndex);
 
         /// <summary>
-        /// Сетевой шлюз
+        /// Установить значение в Доп.поле [<paramref name="propertyIndex"/>].
+        /// </summary>
+        /// <param name="propertyIndex">Номер доп. поля</param>
+        /// <param name="value">Новое значение</param>
+        void SetSupplementaryField(int propertyIndex, string value);
+
+        /// <summary>
+        /// Сетевой шлюз.
         /// </summary>
         string Gateway { get; set; }
 
+        /// <summary>
+        /// Маска подсети.
+        /// </summary>
         string SubnetMask { get; set; }
 
+        /// <summary>
+        /// Номер клеммы.
+        /// </summary>
         int ClampNumber { get; }
 
+        /// <summary>
+        /// Видимое название.
+        /// </summary>
         string VisibleName { get; }
 
+        /// <summary>
+        /// Название.
+        /// </summary>
         string Name { get; }
 
+        /// <summary>
+        /// Вложенные функции.
+        /// </summary>
         IEnumerable<IEplanFunction> SubFunctions { get; }
 
+        /// <summary>
+        /// Функциональный текст.
+        /// </summary>
         string FunctionalText { get; set; }
 
+        /// <summary>
+        /// Размещен на схеме.
+        /// </summary>
         bool PlacedOnCircuit { get; }
 
+        /// <summary>
+        /// Главная функция.
+        /// </summary>
         bool IsMainFunction {  get; }
     }
 
@@ -63,7 +94,7 @@ namespace StaticHelper
 
         public string SubnetMask 
         { 
-            get => function.Properties.FUNC_PLC_SUBNETMASK; 
+            get => function.Properties.FUNC_PLC_SUBNETMASK.GetString(); 
             set => function.Properties.FUNC_PLC_SUBNETMASK = value;
         }
 
@@ -100,7 +131,5 @@ namespace StaticHelper
         }
 
         public bool IsMainFunction => function.IsMainFunction;
-
-        //public bool IsClamp => function.Page.PageType is DocumentTypeManager.DocumentType.;
     }
 }

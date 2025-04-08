@@ -63,7 +63,6 @@ namespace IO.View
             this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.MainTableLayoutPanel.Size = new System.Drawing.Size(597, 521);
             this.MainTableLayoutPanel.TabIndex = 1;
-            this.MainTableLayoutPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
             // StructPLC
             // 
@@ -118,15 +117,16 @@ namespace IO.View
             this.ViewItemImageList.Images.SetKeyName(0, "cab.png");
             this.ViewItemImageList.Images.SetKeyName(1, "node.png");
             this.ViewItemImageList.Images.SetKeyName(2, "module_black.png");
-            this.ViewItemImageList.Images.SetKeyName(3, "module_gray.png");
-            this.ViewItemImageList.Images.SetKeyName(4, "module_green.png");
-            this.ViewItemImageList.Images.SetKeyName(5, "module_lime.png");
-            this.ViewItemImageList.Images.SetKeyName(6, "module_orange.png");
-            this.ViewItemImageList.Images.SetKeyName(7, "module_red.png");
-            this.ViewItemImageList.Images.SetKeyName(8, "module_violet.png");
-            this.ViewItemImageList.Images.SetKeyName(9, "module_yellow.png");
-            this.ViewItemImageList.Images.SetKeyName(10, "clamp.png");
-            this.ViewItemImageList.Images.SetKeyName(11, "cable.png");
+            this.ViewItemImageList.Images.SetKeyName(3, "module_blue.png");
+            this.ViewItemImageList.Images.SetKeyName(4, "module_gray.png");
+            this.ViewItemImageList.Images.SetKeyName(5, "module_green.png");
+            this.ViewItemImageList.Images.SetKeyName(6, "module_lime.png");
+            this.ViewItemImageList.Images.SetKeyName(7, "module_orange.png");
+            this.ViewItemImageList.Images.SetKeyName(8, "module_red.png");
+            this.ViewItemImageList.Images.SetKeyName(9, "module_violet.png");
+            this.ViewItemImageList.Images.SetKeyName(10, "module_yellow.png");
+            this.ViewItemImageList.Images.SetKeyName(11, "clamp.png");
+            this.ViewItemImageList.Images.SetKeyName(12, "cable.png");
             // 
             // tableLayoutPanel2
             // 

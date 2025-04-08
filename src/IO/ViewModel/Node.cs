@@ -9,18 +9,15 @@ namespace IO.ViewModel
 {
     public class Node : INode, IExpandable, IHasIcon
     {
-        
-        private List<IModule> modules = [];
+        private readonly List<IModule> modules = [];
 
-        private IProperty IP;
-
-        private List<IViewItem> items = [];
+        private readonly List<IViewItem> items = [];
 
         public Node(IIONode node, ILocation owner)
         {
             IONode = node;
             
-            IP = new Property("IP-адрес",
+            var ip = new Property("IP-адрес",
                 () => IONode.Function.IP,
                 ip => IONode.Function.IP = ip);
 
@@ -34,7 +31,7 @@ namespace IO.ViewModel
 
             modules.AddRange(node.IOModules.Select(m => new Module(m, this)));
             
-            items.Add(IP);
+            items.Add(ip);
             items.Add(SubnetMask);
             items.Add(Gateway);
             items.AddRange(modules);

@@ -8,18 +8,8 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Clamp : IClamp, IHasIcon, IHasDescriptionIcon, IDeletable, IToolTip, IEditable
+    public class Clamp(IModule owner, int clamp) : IClamp, IHasIcon, IHasDescriptionIcon, IDeletable, IToolTip, IEditable
     {
-        private IModule owner;
-
-        private int clamp;
-
-        public Clamp(IModule owner, int clamp)
-        {
-            this.owner = owner;
-            this.clamp = clamp;
-        }
-
         public string Name => clamp.ToString();
 
         string IToolTip.Description => Description.Replace(" || ", "\n");

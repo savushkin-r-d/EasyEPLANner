@@ -121,7 +121,7 @@ namespace EasyEPlanner
                 // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
                 // (если таковой нет, то генерируем исключение)
                 SelectedClampFunction = (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)?.Function 
-                    ?? throw new Exception(Message);
+                    ?? throw new ArgumentNullException(Message);
                 SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
         }
@@ -280,35 +280,6 @@ namespace EasyEPlanner
             {
                 return;
             }
-
-            int propertyNumber = (int) Eplan.EplApi.DataModel
-                .Properties.Article.ARTICLE_TYPENR;
-            string name = GetSelectedIOModuleArticleProperty(propertyNumber);
-
-            var deviceNumber = Convert.ToInt32(match.Groups["n"].Value);
-            var moduleNumber = deviceNumber % 100;
-            int nodeNumber;
-            var clampNumber = SelectedClampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt();
-
-            // Есть ли PXC A1 в проекте
-            if (IOManager.GetInstance().IONodes[0].NodeNumber == 1)
-            {
-                // Если есть "A1", то учитываем, что он первый
-                nodeNumber = deviceNumber / 100;
-            }
-            else
-            {
-                // Если нету, оставляем как было
-                nodeNumber = deviceNumber / 100 - 1;
-            }
-
-            var moduleInfo = IOModuleInfo.GetModuleInfo(name, out _);
-            var logicalPort = Array.IndexOf(moduleInfo.ChannelClamps,
-                clampNumber) + 1;
-            var moduleOffset = IOManager.GetInstance()
-                .IONodes[nodeNumber].
-                IOModules[moduleNumber - 1].InOffset;
 
             var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
             reader.ReadModuleClampBinding(SelectedClamp.Node, SelectedClamp.Module,

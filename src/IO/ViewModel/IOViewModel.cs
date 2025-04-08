@@ -9,11 +9,9 @@ namespace IO.ViewModel
 {
     public class IOViewModel : IIOViewModel
     {
-        private IIOManager manager;
-
         public IOViewModel(IIOManager manager) 
         {
-            this.manager = manager;
+            IOManager = manager;
 
             Root = new Root(this);
         }
@@ -22,7 +20,7 @@ namespace IO.ViewModel
 
         public IRoot Root { get; private set; }
 
-        public IIOManager IOManager => manager;
+        public IIOManager IOManager {get; private set;}
 
         public IEplanFunction SelectedClampFunction { get; set; }
 

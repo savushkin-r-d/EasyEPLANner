@@ -23,6 +23,9 @@ namespace IO.ViewModel
         /// <summary> Модуль (черный). </summary>
         BlackModule,
 
+        /// <summary> Модуль (синий). </summary>
+        BlueModule,
+
         /// <summary> Модуль (серый). </summary>
         GrayModule,
 

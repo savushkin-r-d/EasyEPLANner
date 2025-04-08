@@ -2,6 +2,7 @@
 using PInvoke;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ using System.Windows.Forms;
 
 namespace IO.View
 {
+    // Функционал окна отвечающий за его отображение в окне EPLAN
+    [ExcludeFromCodeCoverage]
     public partial class IOViewControl : Form
     {
         private bool isLoaded = false;
@@ -26,7 +29,7 @@ namespace IO.View
 
         private IntPtr panelPtr = IntPtr.Zero;
 
-        public static IntPtr wndDevVisibilePtr;
+        private static IntPtr wndDevVisibilePtr;
 
         private PI.LowLevelKeyboardProc mainWndKeyboardCallbackDelegate = null;
 
@@ -43,7 +46,7 @@ namespace IO.View
             const int wndWmCommand = 35084;
             string windowName = "ПЛК";
 
-            if (isLoaded == true)
+            if (isLoaded)
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
                     wndDevVisibilePtr, wndWmCommand);
@@ -57,7 +60,7 @@ namespace IO.View
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
                     wndDevVisibilePtr, wndWmCommand);
 
-                if (isLoaded == false)
+                if (!isLoaded)
                 {
                     StaticHelper.GUIHelper.ChangeWindowMainPanels(
                         ref dialogHandle, ref panelPtr);
@@ -74,7 +77,6 @@ namespace IO.View
                     // изменений при закрытии и отключения хука).
                     SetUpHook();
 
-                    //deviceIsShown = true;
                     isLoaded = true;
                 }
             }
@@ -139,7 +141,7 @@ namespace IO.View
                 {
                     // Если активен текстовый редактор
                     // - команды работы с текстом
-                    case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && isCellEditing:
+                    case uint when KeyCommands.ContainsKey(vkCode) && Ctrl && isCellEditing:
                         PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
                         return (IntPtr)1;
 
@@ -199,26 +201,15 @@ namespace IO.View
                     case (int)PI.WM.SETTEXT:
                         return IntPtr.Zero;
 
-                    case (int)PI.WM.WINDOWPOSCHANGED:
-                        PI.WINDOWPOS p = new PI.WINDOWPOS();
-                        p = (PI.WINDOWPOS)
-                            System.Runtime.InteropServices.Marshal
-                            .PtrToStructure(lParam, typeof(PI.WINDOWPOS));
-
-                        break;
-
                     case (int)PI.WM.DESTROY:
                         PI.UnhookWindowsHookEx(dialogHookPtr);
                         dialogHookPtr = IntPtr.Zero;
                         dialogHandle = IntPtr.Zero;
 
                         PI.SetParent(MainTableLayoutPanel.Handle, this.Handle);
-                        //PI.SetParent(toolStrip.Handle, this.Handle);
                         this.Controls.Add(MainTableLayoutPanel);
-                        //this.Controls.Add(toolStrip);
                         MainTableLayoutPanel.Hide();
                         System.Threading.Thread.Sleep(1);
-                        //deviceIsShown = false;
                         isLoaded = false;
                         break;
 
@@ -240,21 +231,13 @@ namespace IO.View
         {
             IntPtr dialogPtr = PI.GetParent(MainTableLayoutPanel.Handle);
 
-            PI.RECT rctDialog;
-            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.GetWindowRect(dialogPtr, out PI.RECT rctDialog);
 
-            int w = rctDialog.Right - rctDialog.Left;
-            int h = rctDialog.Bottom - rctDialog.Top;
-
-            //toolStrip.Location = new Point(0, 0);
             MainTableLayoutPanel.Location = new Point(0, 0);
 
-            //toolStrip.Width = w;
-            MainTableLayoutPanel.Width = w;
-            MainTableLayoutPanel.Height = h;
-            //MainTableLayoutPanel.Columns.First().Width = w;
+            MainTableLayoutPanel.Width = rctDialog.Right - rctDialog.Left;
+            MainTableLayoutPanel.Height = rctDialog.Bottom - rctDialog.Top;
         }
-
 
 
         private void StructPLC_MouseEnter(object sender, EventArgs e)

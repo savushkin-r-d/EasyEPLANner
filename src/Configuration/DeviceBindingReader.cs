@@ -172,7 +172,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            if (clampFunction.PlacedOnCircuit is false)
+            if (!clampFunction.PlacedOnCircuit)
             {
                 skip = true;
                 return skip;

@@ -9,9 +9,9 @@ namespace IO.ViewModel
 {
     public class Module : IModule, IExpandable, IHasIcon, IToolTip
     {
-        private INode owner;
+        private readonly INode owner;
 
-        private List<IClamp> binds = [];
+        private readonly List<IClamp> binds = [];
 
 
         public Module(IIOModule module, INode owner)
@@ -41,6 +41,7 @@ namespace IO.ViewModel
         Icon IHasIcon.Icon => IOModule.Info.ModuleColor.Name switch
         {
             nameof(Color.Black) => Icon.BlackModule,
+            nameof(Color.Blue) => Icon.BlueModule,
             nameof(Color.Gray) => Icon.GrayModule,
             nameof(Color.Green) => Icon.GreenModule,
             nameof(Color.Lime) => Icon.LimeModule,

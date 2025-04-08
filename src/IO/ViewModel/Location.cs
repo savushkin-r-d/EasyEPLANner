@@ -8,7 +8,7 @@ namespace IO.ViewModel
 {
     public class Location : ILocation, IExpandable, IHasIcon
     {
-        private List<INode> nodes = [];
+        private readonly List<INode> nodes = [];
 
         public Location(string name, string description,IEnumerable<IIONode> nodes, IRoot owner)
         {

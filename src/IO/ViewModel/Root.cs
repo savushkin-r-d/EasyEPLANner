@@ -8,7 +8,7 @@ namespace IO.ViewModel
 {
     public class Root : IRoot
     {
-        private List<ILocation> locations = [];
+        private readonly List<ILocation> locations = [];
 
         public Root(IIOViewModel context)
         {

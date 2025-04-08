@@ -502,7 +502,7 @@ namespace IO
         private int outAddressSpaceOffset;
         private IOModuleInfo info;
         private int physicalNumber;
-        IEplanFunction function;
+        private readonly IEplanFunction function;
         private string articleName;
         #endregion
     }
