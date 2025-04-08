@@ -74,6 +74,7 @@ namespace IO.View
             this.StructPLC.FullRowSelect = true;
             this.StructPLC.GridLines = true;
             this.StructPLC.HideSelection = false;
+            this.StructPLC.LabelWrap = false;
             this.StructPLC.LargeImageList = this.ViewItemImageList;
             this.StructPLC.Location = new System.Drawing.Point(0, 30);
             this.StructPLC.Margin = new System.Windows.Forms.Padding(0);
@@ -106,7 +107,6 @@ namespace IO.View
             this.StructPLC.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.CellEditStarting);
             this.StructPLC.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.SelectionChanged);
             this.StructPLC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownHandler);
-            this.StructPLC.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyUpHandler);
             this.StructPLC.MouseEnter += new System.EventHandler(this.StructPLC_MouseEnter);
             this.StructPLC.MouseLeave += new System.EventHandler(this.StructPLC_MouseLeave);
             // 

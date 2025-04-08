@@ -267,7 +267,7 @@ namespace IO.View
         }
 
 
-        private void AutoResizeColumns(TreeListView treeListView)
+        private static void AutoResizeColumns(TreeListView treeListView)
         {
             if (treeListView is null)
                 return;
@@ -308,32 +308,18 @@ namespace IO.View
         {
             var tlv = sender as TreeListView;
            
-
             switch (e.KeyCode)
             {
                 case Keys.Delete:
                     (tlv.SelectedObject as IDeletable)?.Delete();
                     break;
 
-                case Keys.Up:
-                case Keys.Down:
-                case Keys.Right:
-                case Keys.Left:
-                    //tlv.SelectedIndex = tlv.IndexOf(tlv.SelectedObject);
-                    //tlv.FocusedObject = tlv.SelectedObject;
-                    break;
+                default:
+                    return;
             }
 
+            e.Handled = true;
             RefreshTree();
-        }
-
-        private void KeyUpHandler(object sender, KeyEventArgs e)
-        {
-
-            var tlv = sender as TreeListView;
-
-
-
         }
     }
 }

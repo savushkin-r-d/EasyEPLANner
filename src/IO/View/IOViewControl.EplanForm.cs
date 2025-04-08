@@ -60,25 +60,22 @@ namespace IO.View
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
                     wndDevVisibilePtr, wndWmCommand);
 
-                if (!isLoaded)
-                {
-                    StaticHelper.GUIHelper.ChangeWindowMainPanels(
-                        ref dialogHandle, ref panelPtr);
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(
+                    ref dialogHandle, ref panelPtr);
 
-                    Controls.Clear();
+                Controls.Clear();
 
-                    // Переносим на найденное окно свои элементы (SetParent) и
-                    // подгоняем их размеры и позицию.
-                    PI.SetParent(MainTableLayoutPanel.Handle, dialogHandle);
-                    ChangeUISize();
+                // Переносим на найденное окно свои элементы (SetParent) и
+                // подгоняем их размеры и позицию.
+                PI.SetParent(MainTableLayoutPanel.Handle, dialogHandle);
+                ChangeUISize();
 
-                    // Устанавливаем свой хук для найденного окна
-                    // (для изменения размеров своих элементов, сохранения
-                    // изменений при закрытии и отключения хука).
-                    SetUpHook();
+                // Устанавливаем свой хук для найденного окна
+                // (для изменения размеров своих элементов, сохранения
+                // изменений при закрытии и отключения хука).
+                SetUpHook();
 
-                    isLoaded = true;
-                }
+                isLoaded = true;
             }
             ChangeUISize();
         }
@@ -137,14 +134,16 @@ namespace IO.View
             //не пускаем дальше.
             if (wParam == PI.WM.KEYDOWN)
             {
-                switch (vkCode)
+                if (KeyCommands.ContainsKey(vkCode) && Ctrl && isCellEditing)
                 {
                     // Если активен текстовый редактор
                     // - команды работы с текстом
-                    case uint when KeyCommands.ContainsKey(vkCode) && Ctrl && isCellEditing:
-                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
-                        return (IntPtr)1;
+                    PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+                    return (IntPtr)1;
+                }
 
+                switch (vkCode)
+                {
                     // Перехватываем используемые
                     // комбинации клавиш:
                     case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc

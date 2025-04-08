@@ -26,7 +26,7 @@ namespace IO.ViewModel
             if (setter is null)
                 return false;
 
-            setter?.Invoke(value);
+            setter.Invoke(value);
             return true;
         }
     }
