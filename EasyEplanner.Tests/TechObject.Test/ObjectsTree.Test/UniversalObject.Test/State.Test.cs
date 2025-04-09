@@ -5,6 +5,7 @@ using Moq;
 using Editor;
 using System;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 
 namespace EasyEplanner.Tests
 {
@@ -129,16 +130,20 @@ namespace EasyEplanner.Tests
         [Test]
         public void InsertCopyAndReplace()
         {
-            var operation = new Mode("Операция", getN => 1, null,
-                new BaseOperation(
+            var techObject = new TechObject.TechObject("", getN => 1, 1, 2, "TANK", -1, "", "", null);
+            var baseOperation = new BaseOperation(
                     "операция", "operation",
                     new List<BaseParameter>() { },
-                    new Dictionary<string, List<BaseStep>>() 
+                    new Dictionary<string, List<BaseStep>>()
                     {
                         { "RUN", new List<BaseStep>() { new BaseStep("", ""), new BaseStep("шаг_1", "step_1"), new BaseStep("шаг_2", "step_2") } },
                     }
-                )
-            );
+                );
+
+            var operation = Mock.Of<IMode>(m => 
+                m.TechObject == techObject &&
+                m.BaseOperation == baseOperation);
+           
 
             var state = new State(State.StateType.RUN, operation, true);
 
