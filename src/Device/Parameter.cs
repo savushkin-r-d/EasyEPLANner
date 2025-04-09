@@ -26,7 +26,7 @@ namespace EplanDevice
         /// <summary>
         /// Описание параметров устройства.
         /// </summary>
-        public class Parameter
+        public class Parameter : ITag
         {
             /// <summary> Номинальная нагрузка в кг. </summary>
             public static readonly Parameter P_NOMINAL_W = new Parameter("P_NOMINAL_W", "Номинальная нагрузка", UnitFormat.Kilograms);
@@ -169,7 +169,7 @@ namespace EplanDevice
 
             /// <summary>
             /// Неявное преобразование названия в параметр по его названию
-            /// Если парметр не найден, возвращатся новый параметр с неверным названиемю
+            /// Если параметр не найден, возвращается новый параметр с неверным названием
             /// </summary>
             /// <param name="parameterName">Название параметра</param>
             public static implicit operator Parameter(string parameterName)
