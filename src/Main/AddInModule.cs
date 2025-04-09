@@ -34,6 +34,12 @@ namespace EasyEPlanner
                 "Экспорт XML для EasyServer", 0);
 
             menuID = oMenu.AddMenuItem(
+                "Экспорт XML из CSV для Modbus",
+                nameof(GenerateXmlFromCsv),
+                "Экспорт XML из CSV для Modbus", menuID, 1,
+                false, true);
+
+            menuID = oMenu.AddMenuItem(
                 "Экспорт технологических устройств в Excel",
                 "ExportTechDevsToExcel",
                 "Экспорт технологических устройств в Excel", menuID, 1, 
