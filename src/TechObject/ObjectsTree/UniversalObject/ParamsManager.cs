@@ -413,6 +413,9 @@ namespace TechObject
             {
                 var parameters = operation.BaseOperation.Parameters;
 
+                // Если такой параметр уже добавлен, пробуем добавить в него операцию
+                parameters.ForEach(p => Float.GetParam(p.LuaName)?.UseInOperation(operation.GetModeNumber()));
+
                 // Если все параметры базовой операции уже добавлены, пропускаем
                 if (parameters.Count(p => Float.HaveSameLuaName(p.LuaName)) == parameters.Count)
                     continue;
@@ -426,6 +429,8 @@ namespace TechObject
                     parameter.SetNewValue(param.Name); 
                     parameter.LuaNameProperty.SetNewValue(param.LuaName);
                     parameter.MeterItem.SetNewValue(param.Meter);
+                    parameter.ValueItem.SetNewValue(param.DefaultValue.ToString());
+                    parameter.UseInOperation(operation.GetModeNumber());
                 }
 
                 // Добавляем 2 заглушки после параметров операции

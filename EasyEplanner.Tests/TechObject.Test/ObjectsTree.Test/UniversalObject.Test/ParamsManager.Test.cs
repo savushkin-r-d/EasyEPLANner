@@ -44,7 +44,7 @@ namespace EasyEplannerTests
                         Parameters = new List<IBaseFloatParameter>()
                         {
                             new BaseFloatParameter("PAR_1", "Параметр 1", 0, "шт"),
-                            new BaseFloatParameter("PAR_2", "Параметр 2", 0, "шт"),
+                            new BaseFloatParameter("PAR_2", "Параметр 2", 1.4, "шт"),
                         }
                     },
                     new BaseOperation(null)
@@ -55,7 +55,7 @@ namespace EasyEplannerTests
                         Parameters = new List<IBaseFloatParameter>()
                         {
                             new BaseFloatParameter("PAR_1", "Параметр 1", 0, "шт"),
-                            new BaseFloatParameter("PAR_3", "Параметр 3", 0, "шт"),
+                            new BaseFloatParameter("PAR_3", "Параметр 3", 1, "шт"),
                         }
                     },
                     new BaseOperation(null)
@@ -90,6 +90,10 @@ namespace EasyEplannerTests
                 Assert.AreEqual("P", paramsManager.Float.GetParam(6).GetNameLua());
 
                 Assert.IsNull(paramsManager.Float.GetParam(7));
+
+                Assert.AreEqual("1 2", paramsManager.Float.GetParam(0).Operations);
+                Assert.AreEqual("1.4", paramsManager.Float.GetParam(1).GetValue());
+                Assert.AreEqual("1", paramsManager.Float.GetParam(4).GetValue());
             });
         }
     }
