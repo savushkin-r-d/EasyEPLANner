@@ -303,6 +303,31 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Использовать в операции N: Добавляет в список операций новую.
+        /// </summary>
+        /// <param name="operationNumber">Номер операции</param>
+        public void UseInOperation(int operationNumber)
+        {
+            try
+            {
+                var ops = Operations.Split(' ')
+                    .Select(int.Parse)
+                    .Append(operationNumber)
+                    .Where(n => n != -1)
+                    .Distinct()
+                    .OrderBy(n => n)
+                    .Aggregate("", (r, n) => $"{r} {n}")
+                    .Trim();
+
+                oper.SetNewValue(ops);
+            }
+            catch
+            {
+                // do nothing
+            }
+        }
+
         public bool IsUseOperation()
         {
             return oper != null;

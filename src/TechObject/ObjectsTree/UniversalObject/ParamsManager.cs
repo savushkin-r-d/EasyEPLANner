@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Windows.Forms;
 using Editor;
 using Eplan.EplApi.HEServices;
 
 namespace TechObject
 {
-    public class ParamsManager : TreeViewItem
+    public class ParamsManager : TreeViewItem, IAutocompletable
     {
         /// <summary>
         /// Все параметры технологического объекта.
@@ -403,6 +405,38 @@ namespace TechObject
                 parUint.CreateGenericByTechObjects(parUintList);
             if (parUintRuntimeList.All(par => par != null))
                 parUintRuntime.CreateGenericByTechObjects(parUintRuntimeList);
+        }
+
+        public void Autocomplete()
+        {
+            foreach (var operation in TechObject.ModesManager.Modes)
+            {
+                var parameters = operation.BaseOperation.Parameters;
+
+                // Если такой параметр уже добавлен, пробуем добавить в него операцию
+                parameters.ForEach(p => Float.GetParam(p.LuaName)?.UseInOperation(operation.GetModeNumber()));
+
+                // Если все параметры базовой операции уже добавлены, пропускаем
+                if (parameters.Count(p => Float.HaveSameLuaName(p.LuaName)) == parameters.Count)
+                    continue;
+
+                foreach (var param in parameters)
+                {
+                    if (Float.HaveSameLuaName(param.LuaName))
+                        continue;
+
+                    var parameter = Float.Insert() as Param;
+                    parameter.SetNewValue(param.Name); 
+                    parameter.LuaNameProperty.SetNewValue(param.LuaName);
+                    parameter.MeterItem.SetNewValue(param.Meter);
+                    parameter.ValueItem.SetNewValue(param.DefaultValue.ToString());
+                    parameter.UseInOperation(operation.GetModeNumber());
+                }
+
+                // Добавляем 2 заглушки после параметров операции
+                Float.Insert();
+                Float.Insert();
+            }
         }
 
         public TechObject TechObject => Parent as TechObject;
