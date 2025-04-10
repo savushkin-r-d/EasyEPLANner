@@ -14,9 +14,10 @@ namespace IO.ViewModel
         {
             Context = context;
 
-            var locs = context.IOManager.IONodes
+            var locs = context.IOManager?.IONodes
                 .GroupBy(n => (n.Location, n.LocationDescription))
-                .Select(g => new Location(g.Key.Location, g.Key.LocationDescription, g.ToList(), this));
+                .Select(g => new Location(g.Key.Location, g.Key.LocationDescription, [.. g]))
+                ?? [];
 
             locations.AddRange(locs);
         }

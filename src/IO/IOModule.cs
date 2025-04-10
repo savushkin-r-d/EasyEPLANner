@@ -1,7 +1,9 @@
-﻿using StaticHelper;
+﻿using EplanDevice;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -358,7 +360,7 @@ namespace IO
             return size;
         }
 
-        public IOModuleInfo Info
+        public IIOModuleInfo Info
         {
             get
             {
@@ -442,6 +444,12 @@ namespace IO
         {
             Devices[clamp] = null;
             DevicesChannels[clamp] = null;
+        }
+
+        public IEnumerable<(IIODevice, IODevice.IIOChannel)> GetClampBinding(int clamp)
+        {
+            return Devices[clamp]?
+                .Zip(DevicesChannels[clamp], (dev, channel) => (dev, channel)) ?? null;
         }
 
         /// <summary>

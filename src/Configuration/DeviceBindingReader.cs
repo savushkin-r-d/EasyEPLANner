@@ -163,7 +163,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            IO.IOModuleInfo moduleInfo = module.Info;
+            IO.IIOModuleInfo moduleInfo = module.Info;
             if (Array.IndexOf(moduleInfo.ChannelClamps, clamp) < 0)
             {
                 if (device != null)

@@ -31,7 +31,7 @@ namespace IO.ViewModel
 
         string IToolTip.Description => 
             $"Артикул: {IOModule.Info.Name}\n" +
-            $"Описание: {IOModule.Info.Description}\n " +
+            $"Описание: {IOModule.Info.Description}\n" +
             $"{IOModule.Info.TypeName}";
 
         public IIOModule IOModule { get; private set; }

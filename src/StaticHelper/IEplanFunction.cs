@@ -2,6 +2,7 @@
 using Eplan.EplApi.DataModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,6 +83,7 @@ namespace StaticHelper
     /// <inheritdoc cref="IEplanFunction"/>
     /// </summary>
     /// <param name="function"></param>
+    [ExcludeFromCodeCoverage]
     public class EplanFunction(Function function) : IEplanFunction
     {
         public Function Function => function;

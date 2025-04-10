@@ -1,4 +1,5 @@
-﻿using EplanDevice;
+﻿using EasyEPlanner;
+using EplanDevice;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,8 @@ namespace IO.ViewModel
         string IToolTip.Description => Description.Replace(" || ", "\n");
 
         public string Description => string.Join(" || ",
-            Module.Devices[clamp]?.Zip(Module.DevicesChannels[clamp], ChannelBinding) ?? []);
+            Module.GetClampBinding(clamp)?
+                .Select(g => ChannelBinding(g.Item1, g.Item2)) ?? []);
 
         /// <summary>
         /// Генерация текста привязки канала устройства к клемме
@@ -65,14 +67,21 @@ namespace IO.ViewModel
 
         public void Delete()
         {
+            foreach (var (dev, channel) in Module.GetClampBinding(clamp))
+            {
+                dev.ClearChannel(Module.Info.AddressSpaceType, channel.Comment, channel.Name);
+            }
             ClampFunction.FunctionalText = "Резерв";
-
             Reset();
         }
 
         public bool SetValue(string value)
         {
+            if (ClampFunction.FunctionalText == value)
+                return false;
+
             ClampFunction.FunctionalText = value;
+            Reset();
 
             return true;
         }

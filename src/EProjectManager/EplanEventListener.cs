@@ -3,6 +3,7 @@ using System;
 using IdleTimeModule;
 using IdleTimeModule.EplanAPIHelper;
 using System.Diagnostics;
+using IO.View;
 
 namespace EasyEPlanner
 {
@@ -82,6 +83,7 @@ namespace EasyEPlanner
                 EProjectManager.GetInstance().SaveAndClose();
 
                 DFrm.GetInstance().ShowNoDevices();
+                IOViewControl.Instance.Clear();
 
                 EProjectManager.GetInstance().ResetCurrentPrj();
                 EProjectManager.isPreCloseProjectComplete = true;
@@ -163,6 +165,21 @@ namespace EasyEPlanner
                     }
                 }
 
+                oAction = oAMnr.FindAction(nameof(ShowPlcAction));
+                if (oAction is not null)
+                {
+                    // Восстановление при необходимости окна операций.
+                    var path = Environment.GetFolderPath(
+                        Environment.SpecialFolder.ApplicationData) +
+                        @"\Eplan\eplan.cfg";
+                    var iniFile = new PInvoke.IniFile(path);
+                    string res = iniFile.ReadString("main", "show_plc_window", "false");
+                    if (res is "true")
+                    {
+                        oAction.Execute(ctx);
+                    }
+                }
+
                 // Проект открыт, ставим флаг в изначальное состояние.
                 EProjectManager.isPreCloseProjectComplete = false;
             }
@@ -183,6 +200,7 @@ namespace EasyEPlanner
                     DFrm.SaveCfg(false);
                     ModeFrm.SaveCfg(false);
                     Editor.NewEditorControl.SaveCfg(false);
+                    IOViewControl.SaveCfg(false);
                 }
             }
 

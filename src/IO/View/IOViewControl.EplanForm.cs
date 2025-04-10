@@ -29,7 +29,7 @@ namespace IO.View
 
         private IntPtr panelPtr = IntPtr.Zero;
 
-        private static IntPtr wndDevVisibilePtr;
+        private static IntPtr wndPlcVisibilePtr;
 
         private PI.LowLevelKeyboardProc mainWndKeyboardCallbackDelegate = null;
 
@@ -49,16 +49,16 @@ namespace IO.View
             if (isLoaded)
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
-                    wndDevVisibilePtr, wndWmCommand);
+                    wndPlcVisibilePtr, wndWmCommand);
                 return;
             }
 
             StaticHelper.GUIHelper.SearchWindowDescriptor(oCurrent, windowName,
-                wndWmCommand, ref dialogHandle, ref wndDevVisibilePtr);
-            if (wndDevVisibilePtr != IntPtr.Zero)
+                wndWmCommand, ref dialogHandle, ref wndPlcVisibilePtr);
+            if (wndPlcVisibilePtr != IntPtr.Zero)
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
-                    wndDevVisibilePtr, wndWmCommand);
+                    wndPlcVisibilePtr, wndWmCommand);
 
                 StaticHelper.GUIHelper.ChangeWindowMainPanels(
                     ref dialogHandle, ref panelPtr);
@@ -78,6 +78,21 @@ namespace IO.View
                 isLoaded = true;
             }
             ChangeUISize();
+        }
+
+        public static void SaveCfg()
+        {
+            SaveCfg(PI.IsWindowVisible(wndPlcVisibilePtr));
+        }
+
+        public static void SaveCfg(bool wndState)
+        {
+            var path = Environment.GetFolderPath(
+                            Environment.SpecialFolder.ApplicationData);
+
+            var ini = new IniFile(path + @"\Eplan\eplan.cfg");
+
+            ini.WriteString("main", "show_plc_window", wndState.ToString().ToLower());
         }
 
         private void SetUpHook()

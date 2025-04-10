@@ -3,6 +3,7 @@ using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
 using Spire.Xls;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace StaticHelper
@@ -48,6 +49,7 @@ namespace StaticHelper
     /// <summary>
     /// Обертка над Eplan API
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ApiHelper : IApiHelper
     {
         public SelectionSet GetSelectionSet()
@@ -83,6 +85,7 @@ namespace StaticHelper
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static class ApiHelperExt
     {
         public static string GetString(this PropertyValue value)

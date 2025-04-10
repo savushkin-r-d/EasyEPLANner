@@ -101,8 +101,6 @@ namespace EasyEPlanner
         /// </summary>
         private void InitStartValues()
         {
-            const string Message = "Ошибка при инициализации базовых значений";
-
             SelectedNode = startValues.GetSelectedNode();
             SelectedClamp = IOViewControl.DataContext.SelectedClamp;
             NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
@@ -121,7 +119,7 @@ namespace EasyEPlanner
                 // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
                 // (если таковой нет, то генерируем исключение)
                 SelectedClampFunction = (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)?.Function 
-                    ?? throw new ArgumentNullException(nameof(SelectedClampFunction), Message);
+                    ?? throw new ArgumentNullException();
                 SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
         }

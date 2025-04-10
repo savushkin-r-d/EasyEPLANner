@@ -37,15 +37,21 @@ namespace IO.View
         {
             Instance ??= new IOViewControl(new IOViewModel(IOManager.GetInstance()));
             Instance.ShowDlg();
+
+            DataContext = new IOViewModel(IOManager.GetInstance());
+            Instance.InitDataStructPLC();
+        }
+
+        public void Clear()
+        {
+            DataContext = new IOViewModel(null);
+            InitDataStructPLC();
         }
 
         private IOViewControl(IIOViewModel viewModel)
         {
-            DataContext = viewModel;
-
             InitializeComponent();
             InitStructPLC();
-            InitDataStructPLC();
         }
 
         private void InitStructPLC()
@@ -167,7 +173,7 @@ namespace IO.View
             if (cancelChanges || StructPLC.SelectedObject is not IEditable item)
             {
                 e.Cancel = true;
-                cancelChanges = true;
+                cancelChanges = false;
 
                 StructPLC.Unfreeze();
 
@@ -181,6 +187,7 @@ namespace IO.View
             if (modified)
             {
                 RefreshTree();
+                DFrm.GetInstance().RefreshTreeAfterBinding();
             }
 
             e.Cancel = true;
@@ -320,6 +327,7 @@ namespace IO.View
 
             e.Handled = true;
             RefreshTree();
+            DFrm.GetInstance().RefreshTreeAfterBinding();
         }
     }
 }

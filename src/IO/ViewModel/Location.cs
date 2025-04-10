@@ -10,7 +10,7 @@ namespace IO.ViewModel
     {
         private readonly List<INode> nodes = [];
 
-        public Location(string name, string description,IEnumerable<IIONode> nodes, IRoot owner)
+        public Location(string name, string description, IEnumerable<IIONode> nodes)
         {
             Name = name;
             Description = description;
