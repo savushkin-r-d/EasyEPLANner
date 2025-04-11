@@ -137,7 +137,10 @@ namespace EasyEPlanner
         /// <param name="action">Действие по открытию окна</param>
         /// <param name="ctx">Контекст запуска действия</param>
         /// <param name="cfgWindowKey">Ключ в конфигурации</param>
-        private void AttemptRestoreWindow(Eplan.EplApi.ApplicationFramework.Action action, ActionCallingContext ctx, string cfgWindowKey)
+        private static void AttemptRestoreWindow(
+            Eplan.EplApi.ApplicationFramework.Action action,
+            ActionCallingContext ctx,
+            string cfgWindowKey)
         {
             var iniFile = new PInvoke.IniFile(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +

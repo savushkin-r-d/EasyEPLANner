@@ -81,12 +81,12 @@ namespace IO.View
             ChangeUISize();
         }
 
+        public static readonly string CfgShowWindowKey = "show_plc_window";
+
         public static void SaveCfg()
         {
             SaveCfg(PI.IsWindowVisible(wndPlcVisibilePtr));
         }
-
-        public static readonly string CfgShowWindowKey = "show_plc_window";
 
         public static void SaveCfg(bool wndState)
         {
