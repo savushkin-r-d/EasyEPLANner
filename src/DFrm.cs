@@ -11,6 +11,7 @@ using StaticHelper;
 using EplanDevice;
 using System.Text.RegularExpressions;
 using TechObject;
+using IO.View;
 
 namespace EasyEPlanner
 {
@@ -1591,6 +1592,7 @@ namespace EasyEPlanner
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
             Editor.Editor.GetInstance().EditorForm.RefreshTree();
+            IOViewControl.Instance?.RefreshTree();
 
             RefreshTree();
         }

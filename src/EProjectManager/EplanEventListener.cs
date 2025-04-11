@@ -3,9 +3,13 @@ using System;
 using IdleTimeModule;
 using IdleTimeModule.EplanAPIHelper;
 using System.Diagnostics;
+using IO.View;
+using System.Diagnostics.CodeAnalysis;
+using EasyEPlanner.Main;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     class EplanEventListener
     {
         Eplan.EplApi.ApplicationFramework.EventHandler onUserPreCloseProject =
@@ -82,6 +86,7 @@ namespace EasyEPlanner
                 EProjectManager.GetInstance().SaveAndClose();
 
                 DFrm.GetInstance().ShowNoDevices();
+                IOViewControl.Instance.Clear();
 
                 EProjectManager.GetInstance().ResetCurrentPrj();
                 EProjectManager.isPreCloseProjectComplete = true;
@@ -107,64 +112,46 @@ namespace EasyEPlanner
                     oAMnr.FindAction(strAction);
                 var ctx = new ActionCallingContext();
 
-                if (oAction != null)
-                {
-                    oAction.Execute(ctx);
-                }
+                oAction?.Execute(ctx);
 
-                strAction = "ShowTechObjectsAction";
-                oAction = oAMnr.FindAction(strAction);
-                if (oAction != null)
-                {
-                    // Восстановление при необходимости окна редактора.
-                    string path = Environment.GetFolderPath(
-                        Environment.SpecialFolder.ApplicationData) +
-                        @"\Eplan\eplan.cfg";
-                    var iniFile = new PInvoke.IniFile(path);
-                    string res = iniFile
-                        .ReadString("main", "show_obj_window", "false");
-                    if (res == "true")
-                    {
-                        oAction.Execute(ctx);
-                    }
-                }
+                AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowTechObjectsAction)),
+                    ctx, "show_obj_window");
 
-                strAction = "ShowDevicesAction";
-                oAction = oAMnr.FindAction(strAction);
-                if (oAction != null)
-                {
-                    // Восстановление при необходимости окна устройств.
-                    string path = Environment.GetFolderPath(
-                        Environment.SpecialFolder.ApplicationData) +
-                        @"\Eplan\eplan.cfg";
-                    var iniFile = new PInvoke.IniFile(path);
-                    string res = iniFile
-                        .ReadString("main", "show_dev_window", "false");
-                    if (res == "true")
-                    {
-                        oAction.Execute(ctx);
-                    }
-                }
+                AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowDevicesAction)),
+                    ctx, "show_dev_window");
 
-                strAction = "ShowOperationsAction";
-                oAction = oAMnr.FindAction(strAction);
-                if (oAction != null)
-                {
-                    // Восстановление при необходимости окна операций.
-                    string path = Environment.GetFolderPath(
-                        Environment.SpecialFolder.ApplicationData) +
-                        @"\Eplan\eplan.cfg";
-                    var iniFile = new PInvoke.IniFile(path);
-                    string res = iniFile
-                        .ReadString("main", "show_oper_window", "false");
-                    if (res == "true")
-                    {
-                        oAction.Execute(ctx);
-                    }
-                }
+                AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowOperationsAction)),
+                    ctx, "show_oper_window");
+
+                AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowPlcAction)),
+                    ctx, IOViewControl.CfgShowWindowKey);
 
                 // Проект открыт, ставим флаг в изначальное состояние.
                 EProjectManager.isPreCloseProjectComplete = false;
+            }
+        }
+
+        /// <summary>
+        /// Восстановить окно при необходимости
+        /// </summary>
+        /// <param name="action">Действие по открытию окна</param>
+        /// <param name="ctx">Контекст запуска действия</param>
+        /// <param name="cfgWindowKey">Ключ в конфигурации</param>
+        private static void AttemptRestoreWindow(
+            Eplan.EplApi.ApplicationFramework.Action action,
+            ActionCallingContext ctx,
+            string cfgWindowKey)
+        {
+            var iniFile = new PInvoke.IniFile(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                @"\Eplan\eplan.cfg");
+
+            string res = iniFile.ReadString("main", cfgWindowKey, "false")
+                .Trim().ToLower();
+            
+            if (res is "true")
+            {
+                action.Execute(ctx);
             }
         }
 
@@ -183,6 +170,7 @@ namespace EasyEPlanner
                     DFrm.SaveCfg(false);
                     ModeFrm.SaveCfg(false);
                     Editor.NewEditorControl.SaveCfg(false);
+                    IOViewControl.SaveCfg(false);
                 }
             }
 

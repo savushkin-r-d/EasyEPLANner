@@ -5,17 +5,102 @@ using System.Linq;
 
 namespace IO
 {
-    public interface IIOModuleInfo
-    {
-        /// <summary>
-        /// задает клеммы, к которым не возможна одноверменная привязка
-        /// </summary>
-        List<List<int>> AlternateChannelsClamps { get; set;}
-    }
     /// <summary>
     /// Описание модуля ввода-вывода IO.
     /// </summary>
-    public class IOModuleInfo : IIOModuleInfo, ICloneable
+    public interface IIOModuleInfo
+    {
+        /// <summary>
+        /// Тип адресного пространства модуля ввода-вывода IO.
+        /// </summary>
+        IOModuleInfo.ADDRESS_SPACE_TYPE AddressSpaceType { get; set; }
+
+        /// <summary>
+        /// Количество аналоговых входов. 
+        /// </summary>
+        int AICount { get; set; }
+
+        /// <summary>
+        /// задает клеммы, к которым не возможна одноверменная привязка
+        /// </summary>
+        List<List<int>> AlternateChannelsClamps { get; set; }
+
+        /// <summary>
+        /// Количество аналоговых выходов. 
+        /// </summary>
+        int AOCount { get; set; }
+
+        /// <summary>
+        /// Адреса каналов ввода.
+        /// </summary>
+        int[] ChannelAddressesIn { get; set; }
+
+        /// <summary>
+        /// Адреса каналов вывода.
+        /// </summary>
+        int[] ChannelAddressesOut { get; set; }
+
+        /// <summary>
+        /// Клеммы каналов ввода-вывода.
+        /// </summary>
+        int[] ChannelClamps { get; set; }
+
+        /// <summary>
+        /// Описание модуля ввода-вывода IO.
+        /// </summary> 
+        string Description { get; set; }
+
+        /// <summary>
+        /// Количество дискретных входов. 
+        /// </summary>
+        int DICount { get; set; }
+
+        /// <summary>
+        /// Количество дискретных выходов. 
+        /// </summary>
+        int DOCount { get; set; }
+
+        /// <summary>
+        /// Имя серии модуля ввода-вывода IO (например 750-800).
+        /// </summary>    
+        string GroupName { get; set; }
+
+        /// <summary>
+        /// Адресное пространство, занимаемое модулем.
+        /// </summary>
+        int LocalbusData { get; set; }
+
+        /// <summary>
+        /// Физический цвет модуля
+        /// </summary>
+        Color ModuleColor { get; set; }
+
+        /// <summary>
+        /// Имя модуля ввода-вывода IO (серия-номер, например: 750-860).
+        /// </summary>  
+        string Name { get; set; }
+
+        /// <summary>
+        /// Номер модуля ввода-вывода IO (например: 860).
+        /// </summary>  
+        int Number { get; set; }
+
+        /// <summary>
+        /// Имя типа (дискретный выход, аналоговый выход, ...).
+        /// </summary>
+        string TypeName { get; set; }
+
+        /// <summary>
+        /// Копия
+        /// </summary>
+        object Clone(); 
+    }
+
+
+    /// <summary>
+    /// Описание модуля ввода-вывода IO.
+    /// </summary>
+    public class IOModuleInfo : ICloneable, IIOModuleInfo
     {
         /// <summary>
         /// Добавить информацию о модуле ввода вывода
@@ -150,82 +235,37 @@ namespace IO
                 AlternateChannelsClamps = alternateChannelClamps,
             };
         }
-
-        /// <summary>
-        /// Имя модуля ввода-вывода IO (серия-номер, например: 750-860).
-        /// </summary>        
+      
         public string Name { get; set; }
 
-        /// <summary>
-        /// Номер модуля ввода-вывода IO (например: 860).
-        /// </summary>  
         public int Number { get; set; }
-
-        /// <summary>
-        /// Описание модуля ввода-вывода IO.
-        /// </summary>  
+ 
         public string Description { get; set; }
 
-        /// <summary>
-        /// Тип адресного пространства модуля ввода-вывода IO.
-        /// </summary>
         public ADDRESS_SPACE_TYPE AddressSpaceType { get; set; }
 
-        /// <summary>
-        /// Клеммы каналов ввода-вывода.
-        /// </summary>
         public int[] ChannelClamps { get; set; }
 
         public List<List<int>> AlternateChannelsClamps { get; set; }
 
-        /// <summary>
-        /// Адреса каналов ввода.
-        /// </summary>
         public int[] ChannelAddressesIn { get; set; }
 
-        /// <summary>
-        /// Адреса каналов вывода.
-        /// </summary>
         public int[] ChannelAddressesOut { get; set; }
 
-        /// <summary>
-        /// Количество дискретных выходов. 
-        /// </summary>
         public int DOCount { get; set; }
 
-        /// <summary>
-        /// Количество дискретных входов. 
-        /// </summary>
         public int DICount { get; set; }
 
-        /// <summary>
-        /// Количество аналоговых выходов. 
-        /// </summary>
         public int AOCount { get; set; }
 
-        /// <summary>
-        /// Количество аналоговых входов. 
-        /// </summary>
         public int AICount { get; set; }
 
-        /// <summary>
-        /// Адресное пространство, занимаеоме модулем.
-        /// </summary>
         public int LocalbusData { get; set; }
 
-        /// <summary>
-        /// Имя типа (дискретный выход, аналоговый выход, ...).
-        /// </summary>
         public string TypeName { get; set; }
 
-        /// <summary>
-        /// Физический цвет модуля
-        /// </summary>
         public Color ModuleColor { get; set; }
-
-        /// <summary>
-        /// Имя серии модуля ввода-вывода IO (например 750-800).
-        /// </summary>        
+    
         public string GroupName { get; set; }
 
         /// <summary>

@@ -2,6 +2,8 @@
 using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
+using Spire.Xls;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace StaticHelper
@@ -47,6 +49,7 @@ namespace StaticHelper
     /// <summary>
     /// Обертка над Eplan API
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class ApiHelper : IApiHelper
     {
         public SelectionSet GetSelectionSet()
@@ -72,35 +75,30 @@ namespace StaticHelper
 
         public string GetSupplementaryFieldValue(Function function, int propertyIndex)
         {
-            var propertyValue = string.Empty;
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex].IsEmpty)
-            {
-                propertyValue = function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex]
-                    .ToString(ISOCode.Language.L___);
-
-                if (propertyValue == string.Empty)
-                {
-                    propertyValue = function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                propertyValue = Regex.Replace(propertyValue,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (propertyValue == null)
-            {
-                propertyValue = string.Empty;
-            }
-
-            return propertyValue.Trim();
+            return function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex].GetString();
         }
 
         public void SetSupplementaryFieldValue(Function function, int propertyIndex,
             string value)
         {
             function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex] = value;
+        }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public static class ApiHelperExt
+    {
+        public static string GetString(this PropertyValue value)
+        {
+            if (value is null || value.IsEmpty)
+                return string.Empty;
+
+            var res = value.ToString(ISOCode.Language.L___);
+
+            if (res == string.Empty)
+                res = value.ToString(ISOCode.Language.L_ru_RU);
+
+            return res?.Trim() ?? string.Empty;
         }
     }
 }

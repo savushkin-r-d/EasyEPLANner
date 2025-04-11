@@ -292,14 +292,7 @@ namespace EplanDevice
             }
         }
 
-        /// <summary>
-        /// Сброс канала ввода\вывода.
-        /// </summary>
-        /// <param name="addressSpace">Тип адресного пространства канала.
-        /// </param>   
-        /// <param name="comment">Комментарий к каналу.</param>
-        /// <param name="error">Строка с описанием ошибки при возникновении 
-        /// таковой.</param>
+
         public bool ClearChannel(
             IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
             string comment, string channelName)

@@ -3,6 +3,7 @@ using Eplan.EplApi.DataModel;
 using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
+using IO.View;
 
 namespace EasyEPlanner
 {
@@ -187,6 +188,7 @@ namespace EasyEPlanner
             DFrm.SaveCfg(DFrm.deviceIsShown);
             Editor.NewEditorControl.CheckShown();
             Editor.NewEditorControl.SaveCfg();
+            IOViewControl.SaveCfg();
 
             if (Editor.Editor.GetInstance().IsShown())
             {
