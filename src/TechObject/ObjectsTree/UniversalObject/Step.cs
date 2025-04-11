@@ -23,7 +23,7 @@ namespace TechObject
         /// <param name="isMainStep">Признак того, является ли шаг 
         /// шагом операции. </param>
         /// <param name="owner">Владелец шага (Состояние)</param>
-        public Step(string name, GetN getN, State owner,
+        public Step(string name, GetN getN, IState owner,
             bool isMainStep = false)
         {
             this.name = name ?? string.Empty;
@@ -664,7 +664,9 @@ namespace TechObject
             return getN(this);
         }
 
-        public State Owner { get; set; }
+        public IState Owner { get; set; }
+
+        public TechObject TechObject => Owner.TechObject;
 
         /// <summary>
         /// Lua-имя базового шага
@@ -723,9 +725,9 @@ namespace TechObject
                 return true;
             }
 
-            State state = Owner;
+            State state = Owner as State;
             // уже есть такой базовый шаг
-            if (Owner.Steps.Any(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal))
+            if (state.Steps.Any(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal))
             {
                 return false;
             }
@@ -788,34 +790,30 @@ namespace TechObject
 
         public override ITreeViewItem Replace(object child, object copyObject)
         {
-            var copyAction = copyObject as IAction;
-            var childAction = child as IAction;
-            bool notNullObjects = copyAction != null && childAction != null;
-            if (notNullObjects)
-            {
-                bool canReplace = copyAction.LuaName == childAction.LuaName;
-                if (canReplace)
-                {
-                    var newAction = copyAction.Clone();
+            if (!(child is IAction targetAction && copyObject is IAction copyAction))
+                return null;
 
-                    int index = actions.IndexOf(childAction);
-                    actions.RemoveAt(index);
-                    actions.Insert(index, newAction);
+            if (copyAction.LuaName != targetAction.LuaName)
+                return null;
 
-                    newAction.Owner = this;
+            var newAction = copyAction.Clone();
 
-                    newAction.AddParent(this);
+            int index = actions.IndexOf(targetAction);
+            actions.RemoveAt(index);
+            actions.Insert(index, newAction);
 
-                    var childActionAsITreeViewItem = (ITreeViewItem)childAction;
-                    var newActionAsITreeViewItem = (ITreeViewItem)newAction;
-                    index = items.IndexOf(childActionAsITreeViewItem);
-                    items.RemoveAt(index);
-                    items.Insert(index, newActionAsITreeViewItem);
-                    return newAction as ITreeViewItem;
-                }
-            }
+            newAction.Owner = this;
+            newAction.AddParent(this);
 
-            return null;
+            var childActionAsITreeViewItem = (ITreeViewItem)targetAction;
+            var newActionAsITreeViewItem = (ITreeViewItem)newAction;
+            index = items.IndexOf(childActionAsITreeViewItem);
+            items.RemoveAt(index);
+            items.Insert(index, newActionAsITreeViewItem);
+
+            targetAction.ModifyDevNames(new DevModifyOptions(Owner.TechObject, copyAction.Owner.TechObject.NameEplan, copyAction.Owner.TechObject.TechNumber));
+
+            return newAction as ITreeViewItem;
         }
 
         override public string[] EditText
@@ -884,7 +882,7 @@ namespace TechObject
         {
             get => Owner.Owner.BaseOperation
                 .GetStateStepsNames(Owner.Type)
-                .Except(from step in Owner.Steps
+                .Except(from step in (Owner as State).Steps
                         where step.GetBaseStepName() != string.Empty && step != this
                         select step.GetBaseStepName())
                 ;
@@ -916,8 +914,8 @@ namespace TechObject
         {
             var errors = string.Empty;
 
-            State state = Owner;
-            Mode mode = state.Owner;
+            State state = Owner as State;
+            Mode mode = state.Owner as Mode;
             ModesManager modesManager = mode.Owner;
             TechObject techObject = modesManager.Owner;
             string techObjName = techObject.DisplayText[0];
