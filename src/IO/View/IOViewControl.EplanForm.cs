@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -85,6 +86,8 @@ namespace IO.View
             SaveCfg(PI.IsWindowVisible(wndPlcVisibilePtr));
         }
 
+        public static readonly string CfgShowWindowKey = "show_plc_window";
+
         public static void SaveCfg(bool wndState)
         {
             var path = Environment.GetFolderPath(
@@ -92,7 +95,7 @@ namespace IO.View
 
             var ini = new IniFile(path + @"\Eplan\eplan.cfg");
 
-            ini.WriteString("main", "show_plc_window", wndState.ToString().ToLower());
+            ini.WriteString("main", CfgShowWindowKey, wndState.ToString().ToLower());
         }
 
         private void SetUpHook()
@@ -145,33 +148,32 @@ namespace IO.View
                 return (IntPtr)1;
             }
 
-            //Нажатие клавиш - если активно окно редактора, то обрабатываем и
-            //не пускаем дальше.
-            if (wParam == PI.WM.KEYDOWN)
+            if (wParam is not PI.WM.KEYDOWN)
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+            //  || Нажатие клавиш ||
+            //  \/                \/
+
+            // Если активен текстовый редактор - команды работы с текстом
+            if (KeyCommands.ContainsKey(vkCode) && Ctrl && isCellEditing)
             {
-                if (KeyCommands.ContainsKey(vkCode) && Ctrl && isCellEditing)
-                {
-                    // Если активен текстовый редактор
-                    // - команды работы с текстом
-                    PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+
+                PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+                return (IntPtr)1;
+            }
+
+            // Перехватываем используемые комбинации клавиш:
+            switch (vkCode)
+            {
+                case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
+                case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
+                case PI.VIRTUAL_KEY.VK_DELETE:  // Delete
+
+                case PI.VIRTUAL_KEY.VK_UP:      // Up
+                case PI.VIRTUAL_KEY.VK_DOWN:    // Down
+                case PI.VIRTUAL_KEY.VK_LEFT:    // Left
+                case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
+                    PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
                     return (IntPtr)1;
-                }
-
-                switch (vkCode)
-                {
-                    // Перехватываем используемые
-                    // комбинации клавиш:
-                    case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
-                    case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
-                    case PI.VIRTUAL_KEY.VK_DELETE:  // Delete
-
-                    case PI.VIRTUAL_KEY.VK_UP:      // Up
-                    case PI.VIRTUAL_KEY.VK_DOWN:    // Down
-                    case PI.VIRTUAL_KEY.VK_LEFT:    // Left
-                    case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
-                        PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
-                        return (IntPtr)1;
-                }
             }
 
             return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);

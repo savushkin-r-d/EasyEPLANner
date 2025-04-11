@@ -9,6 +9,7 @@ using EplanDevice;
 using IO;
 using StaticHelper;
 using IO.View;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -99,6 +100,7 @@ namespace EasyEPlanner
         /// Инициализация базовых значений переменных
         /// необходимых для привязки
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void InitStartValues()
         {
             SelectedNode = startValues.GetSelectedNode();
@@ -118,8 +120,9 @@ namespace EasyEPlanner
             {
                 // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
                 // (если таковой нет, то генерируем исключение)
-                SelectedClampFunction = (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)?.Function 
-                    ?? throw new ArgumentNullException();
+                SelectedClampFunction = (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)?.Function;
+                if (SelectedClampFunction is null)
+                    throw new ArgumentNullException(nameof(SelectedClampFunction));
                 SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
         }
