@@ -16,6 +16,28 @@ namespace IOTests
     public class ClampTest
     {
         [Test]
+        public void Getters()
+        {
+            var node = Mock.Of<IIONode>();
+            var module = Mock.Of<IModule>(m => 
+                m.IONode == node &&
+                m.IOModule.Devices == new List<IIODevice>[] 
+                { 
+                    new List<IIODevice>() { },
+                    new List<IIODevice>() { Mock.Of<IIODevice>() } 
+                });
+            var clamp = new Clamp(module, 1);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("1", clamp.Name);
+                Assert.AreSame(node, clamp.Node);
+                Assert.AreEqual(Icon.Clamp, (clamp as IHasIcon).Icon);
+                Assert.AreEqual(Icon.Cable, (clamp as IHasDescriptionIcon).Icon);
+            });
+        }
+
+        [Test]
         public void DeleteAndReset()
         {
             var device = Mock.Of<IIODevice>();
