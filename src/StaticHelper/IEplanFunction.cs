@@ -77,6 +77,15 @@ namespace StaticHelper
         /// Главная функция.
         /// </summary>
         bool IsMainFunction {  get; }
+
+        /// <summary>
+        /// Состояние <see cref="IO.ViewModel.IExpandable">развертуности</see> 
+        /// на <see cref="IO.View.IOViewControl"/>.
+        /// </summary>
+        /// <remarks>
+        /// reserved Доп. поле [13]
+        /// </remarks>
+        bool Expanded { get; set; }
     }
 
     /// <summary>
@@ -129,9 +138,24 @@ namespace StaticHelper
 
         public void SetSupplementaryField(int propertyIndex, string value)
         {
+            try
+            {
+                function.LockObject();
+            }
+            catch 
+            {
+                //do nothing
+            }
+            
             function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex] = value;
         }
 
         public bool IsMainFunction => function.IsMainFunction;
+
+        public bool Expanded 
+        {
+            get => bool.TryParse(GetSupplemenataryField(13), out var res) && res;
+            set => SetSupplementaryField(13, value.ToString());
+        }
     }
 }

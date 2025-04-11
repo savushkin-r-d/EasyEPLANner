@@ -45,6 +45,12 @@ namespace IO.ViewModel
 
         public string Description => IONode.TypeStr;
 
+        public bool Expanded 
+        {
+            get => IONode.Function.Expanded;
+            set => IONode.Function.Expanded = value;
+        }
+
         Icon IHasIcon.Icon => Icon.Node;
     }
 }

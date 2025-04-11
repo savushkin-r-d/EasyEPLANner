@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Root : IRoot
+    public class Root : IRoot, IExpandable
     {
         private readonly List<ILocation> locations = [];
 
@@ -29,5 +29,7 @@ namespace IO.ViewModel
         public string Description => string.Empty;
 
         public IEnumerable<IViewItem> Items => locations;
+
+        public bool Expanded { get; set; } = true;
     }
 }

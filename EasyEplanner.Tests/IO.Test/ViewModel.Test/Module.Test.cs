@@ -16,13 +16,16 @@ namespace IOTests
         [Test]
         public void Getters()
         {
+            var expanded = true;
+
             var node = Mock.Of<INode>();
             var ioModule = Mock.Of<IIOModule>(m =>
                 m.Info.ChannelClamps == new int[]{ } &&
                 m.Name == "A101" &&
                 m.Info.Description == "description" &&
                 m.Info.TypeName == "type_name" &&
-                m.Info.Name == "123");
+                m.Info.Name == "123" && 
+                m.Function.Expanded == expanded);
             
 
             var module = new Module(ioModule, node);
@@ -32,6 +35,10 @@ namespace IOTests
             {
                 Assert.AreEqual("A101", module.Name);
                 Assert.AreEqual("description", module.Description);
+                Assert.IsTrue(module.Expanded);
+                
+                module.Expanded = false;
+                Assert.IsFalse(module.Expanded);
 
                 Assert.AreEqual("Артикул: 123\nОписание: description\ntype_name", (module as IToolTip).Description);
 

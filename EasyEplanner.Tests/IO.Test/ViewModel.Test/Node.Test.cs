@@ -15,13 +15,16 @@ namespace IOTests
         [Test]
         public void Getters()
         {
+            var expanded = true;
+
             var ioNode = Mock.Of<IIONode>(n =>
                 n.Name == "A100" &&
                 n.TypeStr == "AO" &&
                 n.IOModules == new List<IIOModule>() &&
                 n.Function.IP == "ip" &&
                 n.Function.SubnetMask == "mask" &&
-                n.Function.Gateway == "gateway");
+                n.Function.Gateway == "gateway" && 
+                n.Function.Expanded == expanded);
 
             var location = Mock.Of<ILocation>();
 
@@ -31,6 +34,10 @@ namespace IOTests
             {
                 Assert.AreEqual("A100", node.Name);
                 Assert.AreEqual("AO", node.Description);
+                Assert.IsTrue(node.Expanded);
+
+                node.Expanded = false;
+                Assert.IsFalse(node.Expanded);
 
                 CollectionAssert.AreEqual(
                     new List<string>() { "IP-адрес", "Маска подсети", "Сетевой шлюз" },

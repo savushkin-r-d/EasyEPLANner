@@ -97,10 +97,25 @@ namespace IO.View
             StructPLC.Columns[1].Width = 200;
 
             StructPLC.Expand(DataContext.Root);
+            RestoreExpanded(DataContext.Roots);
+
             StructPLC.SelectedIndex = 0;
             StructPLC.SelectedItem.EnsureVisible();
 
             StructPLC.EndUpdate();
+        }
+
+        private void RestoreExpanded(IEnumerable items)
+        {
+            foreach (var item in items.OfType<IExpandable>())
+            {
+                if (item.Expanded)
+                {
+                    StructPLC.Expand(item);
+                }
+
+                RestoreExpanded(item.Items);
+            }
         }
 
         private void Expand_Click(object sender, EventArgs e)
@@ -264,12 +279,14 @@ namespace IO.View
 
         private void ItemExpanded(object sender, TreeBranchExpandedEventArgs e)
         {
+            (e.Model as IExpandable).Expanded = true;
             AutoResizeColumns(sender as TreeListView);
         }
 
 
         private void ItemCollapsed(object sender, TreeBranchCollapsedEventArgs e)
         {
+            (e.Model as IExpandable).Expanded = false;
             AutoResizeColumns(sender as TreeListView);
         }
 

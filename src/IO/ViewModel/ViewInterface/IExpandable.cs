@@ -16,5 +16,10 @@ namespace IO.ViewModel
         /// Дочерние элементы.
         /// </summary>
         public IEnumerable<IViewItem> Items { get; }
+
+        /// <summary>
+        /// Элемент развернут.
+        /// </summary>
+        public bool Expanded { get; set; }
     }
 }

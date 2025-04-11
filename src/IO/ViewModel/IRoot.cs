@@ -9,7 +9,7 @@ namespace IO.ViewModel
     /// <summary>
     /// Корневой элемент представления "узлы и модули ввода-вывода"
     /// </summary>
-    public interface IRoot : IViewItem, IExpandable
+    public interface IRoot : IViewItem
     {
         /// <summary>
         /// Модель представления

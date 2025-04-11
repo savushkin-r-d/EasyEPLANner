@@ -51,5 +51,11 @@ namespace IO.ViewModel
             nameof(Color.Yellow) => Icon.YellowModule,
             _ => Icon.None
         };
+
+        public bool Expanded 
+        { 
+            get => IOModule.Function.Expanded;
+            set => IOModule.Function.Expanded = value;
+        }
     }
 }
