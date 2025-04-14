@@ -1592,7 +1592,7 @@ namespace EasyEPlanner
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
             Editor.Editor.GetInstance().EditorForm.RefreshTree();
-            IOViewControl.Instance?.RefreshTree();
+            IOViewControl.Instance?.RebuildTree();
 
             RefreshTree();
         }

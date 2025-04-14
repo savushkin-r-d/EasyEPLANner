@@ -90,6 +90,7 @@ namespace IO.View
         private void InitDataStructPLC()
         {
             StructPLC.BeginUpdate();
+            StructPLC.Freeze();
 
             StructPLC.Roots = DataContext.Roots;
 
@@ -102,6 +103,7 @@ namespace IO.View
             StructPLC.SelectedIndex = 0;
             StructPLC.SelectedItem.EnsureVisible();
 
+            StructPLC.Unfreeze();
             StructPLC.EndUpdate();
         }
 
@@ -270,12 +272,16 @@ namespace IO.View
             }
         }
 
-
         public void RefreshTreeAfterBinding()
         {
             RefreshTree();
         }
 
+        public void RebuildTree()
+        {
+            DataContext.RebuildTree();
+            InitDataStructPLC();
+        }
 
         private void ItemExpanded(object sender, TreeBranchExpandedEventArgs e)
         {
@@ -324,8 +330,7 @@ namespace IO.View
             Editor.Editor.GetInstance().EditorForm.RefreshTree();
             DFrm.GetInstance().RefreshTree();
 
-            DataContext.RebuildTree();
-            InitDataStructPLC();
+            RebuildTree();
         }
 
         private void KeyDownHandler(object sender, KeyEventArgs e)
