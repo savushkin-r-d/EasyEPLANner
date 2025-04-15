@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using IO;
+using System.Collections.Generic;
 
 namespace EplanDevice
 {
@@ -37,5 +38,16 @@ namespace EplanDevice
         /// </summary>
         /// <param name="allowed"> Массив разрешенных подтипов </param>
         bool AllowedSubtype(params DeviceSubType[] allowed);
+
+        /// <summary>
+        /// Сброс канала ввода\вывода.
+        /// </summary>
+        /// <param name="addressSpace">Тип адресного пространства канала.
+        /// </param>   
+        /// <param name="comment">Комментарий к каналу.</param>
+        /// <param name="error">Строка с описанием ошибки при возникновении 
+        /// таковой.</param>
+        bool ClearChannel(IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
+            string comment, string channelName);
     }
 }

@@ -14,6 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
 using TechObject;
+using IO.View;
 
 namespace Editor
 {
@@ -1231,6 +1232,8 @@ namespace Editor
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
             DFrm.GetInstance().RefreshTree();
+            IOViewControl.Instance?.RebuildTree();
+
             editorTView.RefreshObjects(treeViewItemsList);
         }
 
