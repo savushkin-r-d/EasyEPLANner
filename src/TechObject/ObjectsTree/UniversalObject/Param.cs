@@ -322,10 +322,10 @@ namespace TechObject
 
                 oper.SetNewValue(ops);
             }
-            catch
+            catch (Exception ex)
             {
-                // do nothing
-            }
+                System.Diagnostics.Debug.WriteLine($"Exception in UseInOperation: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
         }
 
         public bool IsUseOperation()
