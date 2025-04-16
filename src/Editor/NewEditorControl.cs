@@ -14,10 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
 using TechObject;
-using EasyEPlanner.PxcIolinkConfiguration.Models;
-using Eplan.EplApi.Base.Internal;
-using Spire.Xls.Collections;
-using System.Runtime.ConstrainedExecution;
+using IO.View;
 
 namespace Editor
 {
@@ -1243,6 +1240,8 @@ namespace Editor
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
             DFrm.GetInstance().RefreshTree();
+            IOViewControl.Instance?.RebuildTree();
+
             editorTView.RefreshObjects(treeViewItemsList);
         }
 

@@ -1,7 +1,10 @@
 ﻿using Eplan.EplApi.DataModel;
 using EplanDevice;
+using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -10,7 +13,7 @@ namespace IO
         /// <summary>
         /// Описание модуля.
         /// </summary>
-        IOModuleInfo Info { get; }
+        IIOModuleInfo Info { get; }
 
         /// <summary>
         /// Имя модуля на схеме ПЛК (А***).
@@ -31,6 +34,17 @@ namespace IO
         /// Привязанные каналы.
         /// </summary>
         List<EplanDevice.IODevice.IIOChannel>[] DevicesChannels { get; }
+
+        /// <summary>
+        /// Получить привязку клеммы
+        /// </summary>
+        /// <param name="clamp">Номер клеммы</param>
+        IEnumerable<(IIODevice, IODevice.IIOChannel)> GetClampBinding(int clamp);
+
+        /// <summary>
+        /// Функции клемм с ФСА
+        /// </summary>
+        Dictionary<int, IEplanFunction> ClampFunctions { get; }
 
         /// <summary>
         /// Смещение входного адресного пространства модуля.
@@ -80,5 +94,22 @@ namespace IO
         /// <param name="prefix">Префикс (для выравнивания).</param>
         /// <returns>Описание в виде таблицы Lua.</returns>
         string SaveAsLuaTable(string prefix);
+
+        /// <summary>
+        /// Функция модуля на ФСА
+        /// </summary>
+        IEplanFunction Function {  get; }
+
+        /// <summary>
+        /// Добавить функцию клеммы 
+        /// </summary>
+        /// <param name="clampFunction">Функция</param>
+        void AddClampFunction(IEplanFunction clampFunction);
+
+        /// <summary>
+        /// Очистить привязку клеммы
+        /// </summary>
+        /// <param name="clamp">Адрес клеммы</param>
+        void ClearBind(int clamp);
     }
 }

@@ -120,10 +120,40 @@
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\IProperty.cs" />
+    <Compile Include="IO\ViewModel\IOViewModel.cs" />
+    <Compile Include="IO\ViewModel\IClamp.cs" />
+    <Compile Include="IO\ViewModel\IIOViewModel.cs" />
+    <Compile Include="IO\ViewModel\ILocation.cs" />
+    <Compile Include="IO\ViewModel\IModule.cs" />
+    <Compile Include="IO\ViewModel\INode.cs" />
+    <Compile Include="IO\ViewModel\Property.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />
+    <Compile Include="IO\ViewModel\IRoot.cs" />
+    <Compile Include="IO\ViewModel\Location.cs" />
+    <Compile Include="IO\ViewModel\Module.cs" />
+    <Compile Include="IO\ViewModel\Node.cs" />
+    <Compile Include="IO\ViewModel\Root.cs" />
+    <Compile Include="IO\View\IOViewControl.EplanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\View\IOViewControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\View\IOViewControl.Designer.cs">
+      <DependentUpon>IOViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
+    <Compile Include="Main\ShowPlcAction.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
     <Compile Include="ProjectImportICP\DeviceNameMatchingSaver.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
@@ -359,6 +389,7 @@
     <Compile Include="StaticHelper\DeviceHelper.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
+    <Compile Include="StaticHelper\IEplanFunction.cs" />
     <Compile Include="StaticHelper\IOHelper.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
@@ -456,6 +487,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\UnknownDevTypeForm.resx">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IO\View\IOViewControl.resx">
+      <DependentUpon>IOViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>

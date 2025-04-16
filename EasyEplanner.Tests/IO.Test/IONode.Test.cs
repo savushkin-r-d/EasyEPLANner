@@ -23,8 +23,7 @@ namespace IOTests
         public void Type_NewNode_CorrectGetAndSet(string typeStr,
             IONode.TYPES expectedType)
         {
-            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             Assert.AreEqual(expectedType, testNode.Type);
         }
@@ -85,8 +84,7 @@ namespace IOTests
         public void IsCoupler_NewNode_ReturnsTrueOrFalse(string typeStr,
             bool expectedValue)
         {
-            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             Assert.AreEqual(expectedValue, testNode.IsCoupler);
         }
@@ -98,8 +96,7 @@ namespace IOTests
         public void Name_NewNode_CorrectGetAndSet(string expected,
             string actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, actual,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, actual, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.Name);
         }
 
@@ -109,8 +106,7 @@ namespace IOTests
         [TestCase("12.12.12.12", "12.12.12.12")]
         public void IP_NewNode_CorrectGetAndSet(string expected, string actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, actual, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, IntStub, actual, StrStub, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.IP);
         }
 
@@ -120,8 +116,7 @@ namespace IOTests
         [TestCase("Строковый тип", "Строковый тип")]
         public void Type_NewNode_CorrectGetAndSet(string expected, string actual)
         {
-            var testNode = new IONode(actual, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(actual, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.TypeStr);
         }
 
@@ -131,8 +126,7 @@ namespace IOTests
         [TestCase(10, 10)]
         public void N_NewNode_CorrectGetAndSet(int expected, int actual)
         {
-            var testNode = new IONode(StrStub, actual, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, actual, IntStub, StrStub, StrStub, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.N);
         }
 
@@ -142,8 +136,7 @@ namespace IOTests
         [TestCase(900, 900)]
         public void FullN_NewNode_CorrectGetAndSet(int expected, int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, actual, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, actual, StrStub, StrStub, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.NodeNumber);
         }
 
@@ -152,8 +145,7 @@ namespace IOTests
         public void AIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             testNode.AI_count += actual;
 
@@ -165,8 +157,7 @@ namespace IOTests
         public void AOcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             testNode.AO_count += actual;
 
@@ -178,8 +169,7 @@ namespace IOTests
         public void DIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             testNode.DI_count += actual;
 
@@ -191,8 +181,7 @@ namespace IOTests
         public void DOcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
-                StrStub);
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             testNode.DO_count += actual;
 
@@ -207,8 +196,7 @@ namespace IOTests
         public void Location_NewNode_CorrectGetAndSet(string expected,
             string actual)
         {
-            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
-                actual);
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, actual, StrStub);
             Assert.AreEqual(expected, testNode.Location);
         }
 
@@ -225,7 +213,7 @@ namespace IOTests
             var IOModuleMock = new Mock<IIOModule>();
             IOModuleMock.Setup(m => m.Name).Returns(moduleName);
 
-            var testNodeMock = new Mock<IONode>(nodeType, 1, 1, string.Empty, string.Empty, string.Empty);
+            var testNodeMock = new Mock<IONode>(nodeType, 1, 1, string.Empty, string.Empty, string.Empty, string.Empty);
             testNodeMock.Setup(n => n.StubIOModule).Returns(EmptyIOModuleMock.Object);
 
             var testNode = testNodeMock.Object;
@@ -239,7 +227,7 @@ namespace IOTests
         [TestCase("750-863", 65)]
         public void SetModule_IndexOutOfRangeException(string type, int index)
         {
-            var testNode = new IONode(type, 1, 1, string.Empty, string.Empty, string.Empty);
+            var testNode = new IONode(type, 1, 1, string.Empty, string.Empty, string.Empty, string.Empty);
 
             var IOModuleMock = new Mock<IIOModule>();
 
@@ -249,7 +237,7 @@ namespace IOTests
         [TestCase("AXC F 1152", 1)]
         public void SetModule_AddressAreaOutOfRangeException(string type, int index)
         {
-            var testNode = new IONode(type, 1, 1, string.Empty, string.Empty, string.Empty);
+            var testNode = new IONode(type, 1, 1, string.Empty, string.Empty, string.Empty, string.Empty);
 
             var currentAddressArea = typeof(IONode).GetField("currentAddressArea",
                 BindingFlags.NonPublic | BindingFlags.Instance);
@@ -264,7 +252,7 @@ namespace IOTests
         [Test]
         public void SetModule_AddressAreaNullReferenceException()
         {
-            var testNode = new IONode("AXC F 1152", 1, 1, string.Empty, string.Empty, string.Empty);
+            var testNode = new IONode("AXC F 1152", 1, 1, string.Empty, string.Empty, string.Empty, string.Empty);
             typeof(IONode).GetProperty("AddressArea", BindingFlags.Public | BindingFlags.Instance)
                 .SetValue(testNode, null);
 
