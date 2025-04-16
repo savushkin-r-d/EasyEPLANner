@@ -324,8 +324,9 @@ namespace TechObject
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Exception in UseInOperation: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Exception in {nameof(UseInOperation)}: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+            }
         }
 
         public bool IsUseOperation()
