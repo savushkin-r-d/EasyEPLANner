@@ -152,8 +152,30 @@
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
+    <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="Main\ShowPlcAction.cs" />
+    <Compile Include="ModbusExchange\Model\Exchange.cs" />
+    <Compile Include="ModbusExchange\Model\Gateway.cs" />
+    <Compile Include="ModbusExchange\Model\Group.cs" />
+    <Compile Include="ModbusExchange\Model\IExchange.cs" />
+    <Compile Include="ModbusExchange\Model\IGateway.cs" />
+    <Compile Include="ModbusExchange\Model\IGatewayViewItem.cs" />
+    <Compile Include="ModbusExchange\Model\IGroup.cs" />
+    <Compile Include="ModbusExchange\Model\ISignal.cs" />
+    <Compile Include="ModbusExchange\Model\Signal.cs" />
+    <Compile Include="ModbusExchange\View\InputGatewayName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModbusExchange\View\InputGatewayName.Designer.cs">
+      <DependentUpon>InputGatewayName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModbusExchange\View\ModbusExchangeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
+      <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
     <Compile Include="ProjectImportICP\DeviceNameMatchingSaver.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
@@ -494,6 +516,12 @@
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModbusExchange\View\InputGatewayName.resx">
+      <DependentUpon>InputGatewayName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModbusExchange\View\ModbusExchangeView.resx">
+      <DependentUpon>ModbusExchangeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModeFrm.resx">
       <DependentUpon>ModeFrm.cs</DependentUpon>
