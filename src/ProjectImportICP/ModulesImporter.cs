@@ -391,11 +391,7 @@ namespace EasyEPlanner.ProjectImportICP
             var macro = OpenMacro(moduleN);
             var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
 
-            List<Terminal> clamps = null;
-            if (moduleN != 600) // exclude end module
-            {
-                clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
-            }
+            List<Terminal> clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
 
             var module = CreateModuleOnBus(macro, moduleIndex, moduleNumber, moduleInfo, isStub);
 
