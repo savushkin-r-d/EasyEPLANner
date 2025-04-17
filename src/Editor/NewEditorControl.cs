@@ -367,7 +367,8 @@ namespace Editor
                     // Если активен текстовый редактор
                     // - команды работы с текстом
                     case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && IsCellEditing:
-                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode].Command,
+                            KeyCommands[vkCode].wParam, KeyCommands[vkCode].lParam);
                         return (IntPtr)1;
 
                     // Перехватываем используемые
@@ -376,6 +377,7 @@ namespace Editor
                     case (int)Keys.X when Ctrl:     // Ctrl + X
                     case (int)Keys.V when Ctrl:     // Ctrl + V
                     case (int)Keys.B when Ctrl:     // Ctrl + B
+                    case (int)Keys.A when Ctrl:     // Ctrl + A
 
                     case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
                     case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
@@ -398,12 +400,13 @@ namespace Editor
         /// <summary>
         /// Комманды работы с текстом по соответствующим клавишам
         /// </summary>
-        private static readonly Dictionary<uint, uint> KeyCommands
-            = new Dictionary<uint, uint>
+        private static readonly Dictionary<uint, (uint Command, int wParam, int lParam)> KeyCommands
+            = new Dictionary<uint, (uint, int, int)>
             {
-                [(uint)Keys.X] = (int)PI.WM.CUT,    // Вырезать
-                [(uint)Keys.C] = (int)PI.WM.COPY,   // Копировать
-                [(uint)Keys.V] = (int)PI.WM.PASTE,  // Втсавить
+                [(uint)Keys.X] = ((int)PI.WM.CUT, 0, 0),    // Вырезать
+                [(uint)Keys.C] = ((int)PI.WM.COPY, 0, 0),   // Копировать
+                [(uint)Keys.V] = ((int)PI.WM.PASTE, 0, 0),  // Вставить
+                [(uint)Keys.A] = (0x00B1, 0, -1),           // Выбрать все
             };
 
         /// <summary>
@@ -693,6 +696,11 @@ namespace Editor
                 // Объеденить в группу с типовым объектом
                 case Keys.G when e.Control && Editable:
                     uniteToGenericToolStripMenuItem_Click(null, null);
+                    break;
+
+                // Автозаполнение
+                case Keys.A when e.Control && Editable:
+                    autocompleteToolStripMenuItem_Click(null, null);
                     break;
 
                 // Создание новой группы с типовым объектом
@@ -1848,6 +1856,16 @@ namespace Editor
             }
         }
 
+        private void autocompleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = GetActiveItem();
+            if (item is IAutocompletable autofillable && Editable)
+            {
+                autofillable.Autocomplete();
+                RefreshTree();
+            }
+        }
+
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             var items = GetActiveItems();
@@ -1860,6 +1878,7 @@ namespace Editor
                 return;
 
             ContextMenuStrip_CreateGenericAndGrouping(item, items, singleSelection);
+            ContextMenuStrip_Autocomplete(item);
             ContextMenuStrip_InsertableAndDeletable(item, items, singleSelection);
             ContextMenuStrip_CopyableAndCuttable(item, items, singleSelection);
             ContextMenuStrip_PasteableAndReplaceable(item, items, singleSelection);
@@ -1876,6 +1895,12 @@ namespace Editor
             // Объеденение технологических объектов в группу с типовым объектом
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Visible = items.TrueForAll(o => o is TechObject.TechObject && o.Parent is BaseObject);
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Enabled = Editable;
+        }
+
+        private void ContextMenuStrip_Autocomplete(ITreeViewItem item)
+        {
+            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)].Visible = item is ParamsManager;
+            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)].Enabled = Editable;
         }
 
         private void ContextMenuStrip_InsertableAndDeletable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)

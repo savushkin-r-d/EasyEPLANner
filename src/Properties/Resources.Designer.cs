@@ -73,6 +73,16 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap autocomplete {
+            get {
+                object obj = ResourceManager.GetObject("autocomplete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap changeObj {
             get {
                 object obj = ResourceManager.GetObject("changeObj", resourceCulture);
