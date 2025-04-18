@@ -155,6 +155,7 @@
     <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="Main\ShowPlcAction.cs" />
+    <Compile Include="ModbusExchange\CSVImporter.cs" />
     <Compile Include="ModbusExchange\Model\Exchange.cs" />
     <Compile Include="ModbusExchange\Model\Gateway.cs" />
     <Compile Include="ModbusExchange\Model\Group.cs" />

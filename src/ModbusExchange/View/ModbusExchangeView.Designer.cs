@@ -33,11 +33,11 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.listView1 = new System.Windows.Forms.ListView();
             this.Exchange = new BrightIdeasSoftware.TreeListView();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.ImportGatewayStructBttn = new System.Windows.Forms.Button();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.GatewaySelectionCB = new System.Windows.Forms.ComboBox();
             this.AddGatewayBttn = new System.Windows.Forms.Button();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Exchange)).BeginInit();
@@ -106,13 +106,23 @@
             this.Exchange.View = System.Windows.Forms.View.Details;
             this.Exchange.VirtualMode = true;
             // 
+            // ImportGatewayStructBttn
+            // 
+            this.ImportGatewayStructBttn.Location = new System.Drawing.Point(654, 3);
+            this.ImportGatewayStructBttn.Name = "ImportGatewayStructBttn";
+            this.ImportGatewayStructBttn.Size = new System.Drawing.Size(112, 23);
+            this.ImportGatewayStructBttn.TabIndex = 2;
+            this.ImportGatewayStructBttn.Text = "Импортировать";
+            this.ImportGatewayStructBttn.UseVisualStyleBackColor = true;
+            this.ImportGatewayStructBttn.Click += new System.EventHandler(this.ImportGatewayStructBttn_Click);
+            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 4;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 225F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 182F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 183F));
             this.tableLayoutPanel3.Controls.Add(this.GatewaySelectionCB, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.AddGatewayBttn, 3, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -123,29 +133,6 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.3871F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(788, 93);
             this.tableLayoutPanel3.TabIndex = 1;
-            // 
-            // tableLayoutPanel4
-            // 
-            this.tableLayoutPanel4.ColumnCount = 3;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 206F));
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 407);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(788, 61);
-            this.tableLayoutPanel4.TabIndex = 2;
-            // 
-            // ImportGatewayStructBttn
-            // 
-            this.ImportGatewayStructBttn.Location = new System.Drawing.Point(654, 3);
-            this.ImportGatewayStructBttn.Name = "ImportGatewayStructBttn";
-            this.ImportGatewayStructBttn.Size = new System.Drawing.Size(75, 23);
-            this.ImportGatewayStructBttn.TabIndex = 2;
-            this.ImportGatewayStructBttn.Text = "button1";
-            this.ImportGatewayStructBttn.UseVisualStyleBackColor = true;
             // 
             // GatewaySelectionCB
             // 
@@ -161,9 +148,23 @@
             this.AddGatewayBttn.Name = "AddGatewayBttn";
             this.AddGatewayBttn.Size = new System.Drawing.Size(75, 23);
             this.AddGatewayBttn.TabIndex = 1;
-            this.AddGatewayBttn.Text = "button2";
+            this.AddGatewayBttn.Text = "+";
             this.AddGatewayBttn.UseVisualStyleBackColor = true;
             this.AddGatewayBttn.Click += new System.EventHandler(this.AddGatewayBttn_Click);
+            // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 3;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 206F));
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 407);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 1;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(788, 61);
+            this.tableLayoutPanel4.TabIndex = 2;
             // 
             // ModbusExchangeView
             // 
@@ -172,6 +173,7 @@
             this.ClientSize = new System.Drawing.Size(794, 471);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ModbusExchangeView";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ModbusExchangeView";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);

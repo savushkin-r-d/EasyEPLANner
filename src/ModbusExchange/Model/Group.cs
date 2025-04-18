@@ -12,7 +12,26 @@ namespace EasyEPlanner.ModbusExchange.Model
 
         public IEnumerable<IGatewayViewItem> Items => items;
 
-        public string Name => name;
+        public string Name => $"{name} " +
+            $"({
+                Signals.GroupBy(s => $"{s.DataType}_{s.Word}")
+                .Aggregate(0, (r, s) => r + (s.FirstOrDefault()?.DataType switch
+                {
+                    null => 0,
+                    "Real" => 2,
+                    _ => 1
+                }))
+            })";
+
+        private IEnumerable<ISignal> Signals => items.SelectMany(i =>
+        {
+            if (i is ISignal s)
+                return [s];
+            if (i is IGroup g)
+                return g.Items.OfType<ISignal>();
+            return [];
+        });
+
 
         public string DataType => string.Empty;
 

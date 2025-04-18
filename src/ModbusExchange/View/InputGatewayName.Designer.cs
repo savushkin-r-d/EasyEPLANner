@@ -108,6 +108,7 @@
             this.ClientSize = new System.Drawing.Size(315, 100);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "InputGatewayName";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "InputGatewayName";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

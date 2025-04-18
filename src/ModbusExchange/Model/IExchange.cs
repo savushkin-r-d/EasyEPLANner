@@ -15,5 +15,7 @@ namespace EasyEPlanner.ModbusExchange.Model
         void AddModel(string modelName);
 
         void SelectModel(string modelName);
+
+        void ImportCSV();
     }
 }

@@ -73,7 +73,7 @@ namespace EasyEPlanner.ModbusExchange.View
         private void AddGatewayBttn_Click(object sender, EventArgs e)
         {
             var input = new InputGatewayName();
-            input.ShowDialog();
+            input.ShowDialog(this);
 
             if (input.DialogResult is DialogResult.Cancel)
                 return;
@@ -82,6 +82,12 @@ namespace EasyEPlanner.ModbusExchange.View
 
             DataContext.AddModel(name);
             InitExchangeData();
+        }
+
+        private void ImportGatewayStructBttn_Click(object sender, EventArgs e)
+        {
+            DataContext.ImportCSV();
+            InitExchangeData(); 
         }
     }
 }
