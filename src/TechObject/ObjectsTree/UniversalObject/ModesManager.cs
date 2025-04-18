@@ -174,13 +174,9 @@ namespace TechObject
             return false;
         }
 
-        public TechObject Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public TechObject Owner => owner;
+
+        public TechObject TechObject => Owner;
 
         public List<Mode> Modes
         {

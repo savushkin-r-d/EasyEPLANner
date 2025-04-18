@@ -174,6 +174,11 @@ namespace EasyEPlanner.ProjectImportICP
         private static readonly int MACRO_VARIANT_A = 0;
 
         /// <summary>
+        /// Вариант A макроса - клеммы на ...
+        /// </summary>
+        private static readonly int MACRO_VARIANT_B = 1;
+
+        /// <summary>
         /// Начальный отступ слева страницы для вставки узла и модулей (мм)
         /// </summary>
         private static readonly int X_OFFSET = 30;
@@ -386,11 +391,7 @@ namespace EasyEPlanner.ProjectImportICP
             var macro = OpenMacro(moduleN);
             var moduleInfo = IOModuleInfo.GetModuleInfo($"750-{moduleN}", out var isStub);
 
-            List<Terminal> clamps = null;
-            if (moduleN != 600) // exclude end module
-            {
-                clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
-            }
+            List<Terminal> clamps = CreatePageWithModuleClamps(macro, moduleInfo, moduleNumber);
 
             var module = CreateModuleOnBus(macro, moduleIndex, moduleNumber, moduleInfo, isStub);
 
@@ -451,21 +452,39 @@ namespace EasyEPlanner.ProjectImportICP
                Insert.MoveKind.Absolute,
                WindowMacro.Enums.NumerationMode.Number);
 
+            var clamps = new List<Terminal>();
+
             var module = objects.OfType<PLC>().FirstOrDefault();
             if (module != null)
             {
                 module.LockObject();
                 module.Properties.FUNC_MAINFUNCTION = false;
 
+                clamps.AddRange(objects.OfType<Terminal>());
+
                 if (module.VisibleName != $"-A{moduleNumber}")
                 {
                     Logs.AddMessage($"\tНе удалось проиндексировать модуль -A{moduleNumber} на странице \"{page.Properties.PAGE_NAME} {moduleInfo.TypeName}. {moduleInfo.Number}\".\n");
                 }
-
-                return objects.OfType<Terminal>().ToList();
             }
 
-            return Enumerable.Empty<Terminal>().ToList();
+            if (moduleInfo.Number == 1504 || moduleInfo.Number == 1405)
+            {
+                var objectsB = Insert.WindowMacro(macro,
+                     MULTILINE, MACRO_VARIANT_B, page,
+                     new PointD(X_OFFSET, PAGE_HEIGHT - Y_OFFSET - 100),
+                     Insert.MoveKind.Absolute);
+
+                var moduleB = objectsB.OfType<PLC>().FirstOrDefault();
+                if (moduleB != null)
+                {
+                    moduleB.LockObject();
+                    moduleB.Properties.FUNC_MAINFUNCTION = false;
+                    clamps.AddRange(objectsB.OfType<Terminal>());
+                }
+            }
+
+            return clamps;
         }
     }
 }

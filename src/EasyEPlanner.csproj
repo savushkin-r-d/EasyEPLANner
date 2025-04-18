@@ -31,6 +31,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner_debug</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -63,6 +65,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=0c6c09a5ec550785, processorArchitecture=MSIL">
@@ -118,10 +121,40 @@
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\IProperty.cs" />
+    <Compile Include="IO\ViewModel\IOViewModel.cs" />
+    <Compile Include="IO\ViewModel\IClamp.cs" />
+    <Compile Include="IO\ViewModel\IIOViewModel.cs" />
+    <Compile Include="IO\ViewModel\ILocation.cs" />
+    <Compile Include="IO\ViewModel\IModule.cs" />
+    <Compile Include="IO\ViewModel\INode.cs" />
+    <Compile Include="IO\ViewModel\Property.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />
+    <Compile Include="IO\ViewModel\IRoot.cs" />
+    <Compile Include="IO\ViewModel\Location.cs" />
+    <Compile Include="IO\ViewModel\Module.cs" />
+    <Compile Include="IO\ViewModel\Node.cs" />
+    <Compile Include="IO\ViewModel\Root.cs" />
+    <Compile Include="IO\View\IOViewControl.EplanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\View\IOViewControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\View\IOViewControl.Designer.cs">
+      <DependentUpon>IOViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
+    <Compile Include="Main\ShowPlcAction.cs" />
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
     <Compile Include="ProjectImportICP\DeviceNameMatchingSaver.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
@@ -357,12 +390,14 @@
     <Compile Include="StaticHelper\DeviceHelper.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
+    <Compile Include="StaticHelper\IEplanFunction.cs" />
     <Compile Include="StaticHelper\IOHelper.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />
     <Compile Include="FileSavers\XMLReporter.cs" />
     <Compile Include="StaticHelper\ProjectHelper.cs" />
+    <Compile Include="TechObject\Base\BaseFloatParameter.cs" />
     <Compile Include="TechObject\Base\BaseProperties.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectSaver.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectLoader.cs" />
@@ -373,6 +408,7 @@
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveAggregateParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ComboBoxParameter.cs" />
     <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
@@ -394,6 +430,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\GroupableAction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\GenericTechObject.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Interfaces\IAutocompletable.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />
@@ -451,6 +488,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\UnknownDevTypeForm.resx">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IO\View\IOViewControl.resx">
+      <DependentUpon>IOViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>
@@ -569,6 +609,7 @@
     <None Include="Resources\delete.png" />
     <None Include="Resources\changeObj.png" />
     <None Include="Resources\cut.png" />
+    <None Include="Resources\autocomplete.png" />
     <Content Include="Resources\edit.ico" />
     <None Include="Resources\edit1.png" />
     <None Include="Resources\export.png" />

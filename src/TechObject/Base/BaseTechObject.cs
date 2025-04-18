@@ -62,6 +62,24 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Добавить активный параметр агрегата с привязкой 
+        /// </summary>
+        /// <param name="luaName">Lua-имя/param>
+        /// <param name="name">Имя</param>
+        /// <returns>Добавленный параметр</returns>
+        public ActiveAggregateParameter AddActiveAggregateParameter(string luaName, string name)
+        {
+            var parameter = new ActiveAggregateParameter(luaName, name, "",
+                new List<BaseParameter.DisplayObject>() { BaseParameter.DisplayObject.Parameters })
+            {
+                Owner = this
+            };
+
+            AggregateParameters.Add(parameter);
+            return parameter;
+        }
+
+        /// <summary>
         /// Добавить активный булевый параметр агрегата
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
@@ -81,12 +99,16 @@ namespace TechObject
         /// <param name="luaName"></param>
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
-        public void AddMainAggregateParameter(string luaName, string name,
+        public MainAggregateParameter AddMainAggregateParameter(string luaName, string name,
             string defaultValue)
         {
-            var par = new MainAggregateParameter(luaName, name, defaultValue);
-            par.Owner = this;
+            var par = new MainAggregateParameter(luaName, name, defaultValue)
+            {
+                Owner = this
+            };
             MainAggregateParameter = par;
+
+            return par;
         }
 
         /// <summary>

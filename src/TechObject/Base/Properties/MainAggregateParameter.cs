@@ -30,46 +30,70 @@ namespace TechObject
 
         public override bool SetNewValue(string newValue)
         {
-            var result = base.SetNewValue(newValue);
+            var succes = base.SetNewValue(newValue);
             SetUpParametersVisibility();
-            return result;
+
+            if (succes && Value is "true")
+                Autocomplete();
+
+            return succes;
         }
 
-        public override bool NeedDisable
-        {
-            get
-            {
-                return needDisable;
-            }
-        }
+        public override bool NeedDisable => needDisable;
 
         /// <summary>
         /// Установка видимости параметров агрегата-объекта-владельца в аппарате
         /// </summary>
         private void SetUpParametersVisibility()
         {
-            var parentBaseOperation = Parent as BaseOperation;
-            var aggregateParameters = (Owner as BaseTechObject)
-                .AggregateParameters;
+            var properties = (Parent as BaseOperation).Properties;
+            var aggregateParameters = (Owner as BaseTechObject).AggregateParameters;
 
             foreach (var parameter in aggregateParameters)
             {
-                var foundProperty = parentBaseOperation.Properties
-                    .Where(x => x.LuaName == parameter.LuaName)
-                    .FirstOrDefault();
+                var foundProperty = properties
+                    .FirstOrDefault(x => x.LuaName == parameter.LuaName && x.Owner == Owner);
                 if (foundProperty != null)
                 {
-                    if (Value == "false")
-                    {
-                        foundProperty.NeedDisable = true;
-                    }
-                    else
-                    {
-                        foundProperty.NeedDisable = false;
-                    }
+                    foundProperty.NeedDisable = Value is "false";
                 }
             }
         }
+
+        /// <summary>
+        /// Автоматическое заполнение связанных параметров агрегата.
+        /// Добавление float-параметра к операции с автоматической привязкой.
+        /// </summary>
+        public void Autocomplete()
+        {
+            foreach (var baseParameter in (Owner as BaseTechObject).AggregateParameters)
+            {
+                var aggregateParameter = (Parent as BaseOperation).Properties
+                    .FirstOrDefault(x => x.LuaName == baseParameter.LuaName && x.Owner == Owner);
+
+                if (aggregateParameter is IActiveAggregateParameter activeAggregateParameter &&
+                    aggregateParameter.Value == string.Empty)
+                {
+                    var baseFloatParameter = activeAggregateParameter.Parameter;
+                    var baseOperation = aggregateParameter.Parent as BaseOperation;
+
+                    var paramLuaName = $"{baseOperation.LuaName}_{baseFloatParameter.LuaName}";
+                    var paramName = $"{baseOperation.Name}. {baseFloatParameter.Name}";
+
+                    aggregateParameter.SetValue(paramLuaName);
+
+                    var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
+
+                    if (paramsManager.Float.HaveSameLuaName(paramLuaName))
+                        continue;
+
+                    var param = paramsManager.AddFloatParam(paramName,
+                        baseFloatParameter.DefaultValue, baseFloatParameter.Meter, paramLuaName);
+                    param.SetOperationN(baseOperation.Owner.GetModeNumber());
+                }
+            }
+        }
+
 
         private readonly bool needDisable = false;
     }
