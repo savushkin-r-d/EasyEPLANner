@@ -97,7 +97,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesNoSignalsSequenceData))]
         public void GetDeviceProperties_NoSignalsSequence_ReturnsProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -113,7 +113,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesNoSignalsSequenceData()
         {
-            var exportForHLA = new Dictionary<string, int>()
+            var exportForHLA = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -140,14 +140,14 @@ namespace Tests.EplanDevices
         /// <param name="sequenceValue">Последовательность сигналов</param>
         [TestCaseSource(nameof(GetDevicePropertiesWithoutSequenceSignalsData))]
         public void GetDeviceProperties_HasSignalsSequence_ReturnsProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device, string sequenceValue)
         {
             string signalsSequenceName = IODevice.Property.SIGNALS_SEQUENCE;
             device.SetSubType(subType);
             device.SetProperty(signalsSequenceName, sequenceValue);
 
-            Dictionary<string, int> actualDeviceProperties = device
+            Dictionary<ITag, int> actualDeviceProperties = device
                 .GetDeviceProperties(device.DeviceType, device.DeviceSubType);
 
             Assert.AreEqual(expectedProperties, actualDeviceProperties);
@@ -162,28 +162,28 @@ namespace Tests.EplanDevices
         private static object[] GetDevicePropertiesWithoutSequenceSignalsData()
         {
 
-            var defaultProps = new Dictionary<string, int>()
+            var defaultProps = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
             };
 
-            var sirenProps = new Dictionary<string, int>(defaultProps);
+            var sirenProps = new Dictionary<ITag, int>(defaultProps);
             sirenProps.Add(IODevice.Tag.L_SIREN, 1);
 
-            var sirenBlueProps = new Dictionary<string, int>(sirenProps);
+            var sirenBlueProps = new Dictionary<ITag, int>(sirenProps);
             sirenBlueProps.Add(IODevice.Tag.L_BLUE, 1);
 
             var sirenBlueGreenProps =
-                new Dictionary<string, int>(sirenBlueProps);
+                new Dictionary<ITag, int>(sirenBlueProps);
             sirenBlueGreenProps.Add(IODevice.Tag.L_GREEN, 1);
 
             var sirenBlueGreenYellowProps =
-                new Dictionary<string, int>(sirenBlueGreenProps);
+                new Dictionary<ITag, int>(sirenBlueGreenProps);
             sirenBlueGreenYellowProps.Add(IODevice.Tag.L_YELLOW, 1);
 
             var sirenBluGreenYellowRedProps =
-                new Dictionary<string, int>(sirenBlueGreenYellowProps);
+                new Dictionary<ITag, int>(sirenBlueGreenYellowProps);
             sirenBluGreenYellowRedProps.Add(IODevice.Tag.L_RED, 1);
 
             string emptySequence = string.Empty;
