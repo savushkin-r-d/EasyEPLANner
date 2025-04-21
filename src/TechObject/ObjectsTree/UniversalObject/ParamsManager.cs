@@ -407,6 +407,8 @@ namespace TechObject
                 parUintRuntime.CreateGenericByTechObjects(parUintRuntimeList);
         }
 
+        bool IAutocompletable.CanExecute => true;
+
         public void Autocomplete()
         {
             foreach (var operation in TechObject.ModesManager.Modes)
