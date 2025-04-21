@@ -90,9 +90,10 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Чтение привязки
+        /// Чтение привязки.
         /// </summary>
         /// <param name="clampFunction">Функция клеммы</param>
+        [ExcludeFromCodeCoverage]
         public void ReadModuleClampBinding(IEplanFunction clampFunction)
         {
             foreach (var node in IOManager.IONodes)

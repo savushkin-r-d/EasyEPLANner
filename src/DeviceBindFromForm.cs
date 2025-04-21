@@ -121,7 +121,7 @@ namespace EasyEPlanner
                 // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
                 // (если таковой нет, то генерируем исключение)
                 SelectedClampFunction = 
-                    (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)
+                    (IOViewControl.DataContext?.SelectedClampFunction as EplanFunction)
                         ?.Function ?? throw new ArgumentNullException();
                     
                 SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
@@ -284,7 +284,6 @@ namespace EasyEPlanner
             }
 
             var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
-
 
             reader.ReadModuleClampBinding(new EplanFunction(SelectedClampFunction));
         }
