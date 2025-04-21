@@ -269,6 +269,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Привязать канал
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void BindChannel()
         {
             if (SelectedIOModuleFunction == null)
