@@ -90,6 +90,27 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Чтение привязки
+        /// </summary>
+        /// <param name="clampFunction">Функция клеммы</param>
+        public void ReadModuleClampBinding(IEplanFunction clampFunction)
+        {
+            foreach (var node in IOManager.IONodes)
+            {
+                var module = node.IOModules
+                    .Find(m => m.ClampFunctions.Values
+                        .FirstOrDefault(c => c.Equals(clampFunction)) is not null);
+
+                if (module is null)
+                    continue;
+
+                module.ClearBind(clampFunction.ClampNumber);
+                ReadModuleClampBinding(node, module, clampFunction);
+                return;
+            }
+        }
+
+        /// <summary>
         /// Чтение привязки клеммы модуля ввода-вывода.
         /// </summary>
         /// <param name="node">Узел</param>
@@ -201,7 +222,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <returns>
         /// null - альтернативные клеммы не привязаны
-        /// n - номер привязанной альернативной клеммы
+        /// node - номер привязанной альернативной клеммы
         /// </returns>
         private int? AlternateClampBinded(IIOModuleInfo moduleInfo, int clamp, Dictionary<int, string> currentBinding)
         {
@@ -451,7 +472,7 @@ namespace EasyEPlanner
                 .IsMultipleBinding(description);
             if (isMultipleBinding == false)
             {
-                //Для многострочного описания убираем tab+\r\n
+                //Для многострочного описания убираем tab+\r\node
                 description = description.Replace(
                     $"\t{CommonConst.NewLineWithCarriageReturn}", "");
                 description = description.Replace(

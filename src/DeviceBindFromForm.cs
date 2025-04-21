@@ -104,7 +104,7 @@ namespace EasyEPlanner
         private void InitStartValues()
         {
             SelectedNode = startValues.GetSelectedNode();
-            SelectedClamp = IOViewControl.DataContext.SelectedClamp;
+            SelectedClamp = IOViewControl.DataContext?.SelectedClamp;
             NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
             SelectedChannel = startValues.GetChannel(NodeFromSelectedNode);
             SelectedDevice = startValues.GetDevice(NodeFromSelectedNode);
@@ -284,8 +284,9 @@ namespace EasyEPlanner
             }
 
             var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
-            reader.ReadModuleClampBinding(SelectedClamp.Node, SelectedClamp.Module,
-                new EplanFunction(SelectedClampFunction));
+
+
+            reader.ReadModuleClampBinding(new EplanFunction(SelectedClampFunction));
         }
 
         /// <summary>

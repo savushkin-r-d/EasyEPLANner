@@ -12,7 +12,7 @@ namespace StaticHelper
     /// <summary>
     /// Обертка для <see cref="Function">функции</see> на ФСА
     /// </summary>
-    public interface IEplanFunction
+    public interface IEplanFunction : IEquatable<IEplanFunction>
     {
         /// <summary>
         /// Поле "Начальный адрес карты ПЛК".
@@ -149,6 +149,8 @@ namespace StaticHelper
             
             function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex] = value;
         }
+
+        public bool Equals(IEplanFunction other) => Function == (other as EplanFunction).Function;
 
         public bool IsMainFunction => function.IsMainFunction;
 
