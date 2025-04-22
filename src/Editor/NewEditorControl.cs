@@ -1899,8 +1899,11 @@ namespace Editor
 
         private void ContextMenuStrip_Autocomplete(ITreeViewItem item)
         {
-            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)].Visible = item is ParamsManager;
-            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)].Enabled = Editable;
+            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)]
+                .Visible = item is IAutocompletable;
+            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)]
+                .Enabled = Editable &&
+                    ((item as IAutocompletable)?.CanExecute ?? false);
         }
 
         private void ContextMenuStrip_InsertableAndDeletable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class MainAggregateParameter : ActiveBoolParameter
+    public class MainAggregateParameter : ActiveBoolParameter, IAutocompletable
     {
         public MainAggregateParameter(string luaName, string name,
             string defaultValue, List<DisplayObject> displayObjects = null)
@@ -33,9 +33,6 @@ namespace TechObject
             var succes = base.SetNewValue(newValue);
             SetUpParametersVisibility();
 
-            if (succes && Value is "true")
-                Autocomplete();
-
             return succes;
         }
 
@@ -60,10 +57,8 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Автоматическое заполнение связанных параметров агрегата.
-        /// Добавление float-параметра к операции с автоматической привязкой.
-        /// </summary>
+        bool IAutocompletable.CanExecute => Value is "true";
+
         public void Autocomplete()
         {
             foreach (var baseParameter in (Owner as BaseTechObject).AggregateParameters)
