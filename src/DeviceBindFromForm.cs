@@ -104,7 +104,7 @@ namespace EasyEPlanner
         private void InitStartValues()
         {
             SelectedNode = startValues.GetSelectedNode();
-            SelectedClamp = IOViewControl.DataContext.SelectedClamp;
+            SelectedClamp = IOViewControl.DataContext?.SelectedClamp;
             NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
             SelectedChannel = startValues.GetChannel(NodeFromSelectedNode);
             SelectedDevice = startValues.GetDevice(NodeFromSelectedNode);
@@ -121,7 +121,7 @@ namespace EasyEPlanner
                 // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
                 // (если таковой нет, то генерируем исключение)
                 SelectedClampFunction = 
-                    (IOViewControl.DataContext.SelectedClampFunction as EplanFunction)
+                    (IOViewControl.DataContext?.SelectedClampFunction as EplanFunction)
                         ?.Function ?? throw new ArgumentNullException();
                     
                 SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
@@ -269,6 +269,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Привязать канал
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void BindChannel()
         {
             if (SelectedIOModuleFunction == null)
@@ -284,8 +285,8 @@ namespace EasyEPlanner
             }
 
             var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
-            reader.ReadModuleClampBinding(SelectedClamp.Node, SelectedClamp.Module,
-                new EplanFunction(SelectedClampFunction));
+
+            reader.ReadModuleClampBinding(new EplanFunction(SelectedClampFunction));
         }
 
         /// <summary>
