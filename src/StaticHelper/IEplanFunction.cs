@@ -154,7 +154,7 @@ namespace StaticHelper
             => function == (obj as EplanFunction)?.Function;
 
         public override int GetHashCode() 
-            => function.GetHashCode();
+            => function?.GetHashCode() ?? 0;
 
         public bool IsMainFunction => function.IsMainFunction;
 
