@@ -86,8 +86,6 @@ namespace StaticHelper
         /// reserved Доп. поле [13]
         /// </remarks>
         bool Expanded { get; set; }
-
-        bool Equals(IEplanFunction other);
     }
 
     /// <summary>
@@ -152,8 +150,11 @@ namespace StaticHelper
             function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex] = value;
         }
 
-        public bool Equals(IEplanFunction other) 
-            => function == (other as EplanFunction).Function;
+        public override bool Equals(object other) 
+            => function == (other as EplanFunction)?.Function;
+
+        public override int GetHashCode() 
+            => function.GetHashCode();
 
         public bool IsMainFunction => function.IsMainFunction;
 
