@@ -98,14 +98,14 @@ namespace EasyEPlanner
         {
             foreach (var node in IOManager.IONodes)
             {
-                foreach (var module in node.IOModules)
+                var module = node.IOModules
+                    .Find(m => m.ClampFunctions.ContainsValue(clampFunction));
+
+                if (module is not null)
                 {
-                    if (module.ClampFunctions.ContainsValue(clampFunction))
-                    {
-                        module.ClearBind(clampFunction.ClampNumber);
-                        ReadModuleClampBinding(node, module, clampFunction);
-                        return;
-                    }
+                    module.ClearBind(clampFunction.ClampNumber);
+                    ReadModuleClampBinding(node, module, clampFunction);
+                    return;
                 }
             }
         }

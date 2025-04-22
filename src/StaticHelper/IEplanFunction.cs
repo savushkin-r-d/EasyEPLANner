@@ -150,8 +150,8 @@ namespace StaticHelper
             function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex] = value;
         }
 
-        public override bool Equals(object other) 
-            => function == (other as EplanFunction)?.Function;
+        public override bool Equals(object obj) 
+            => function == (obj as EplanFunction)?.Function;
 
         public override int GetHashCode() 
             => function.GetHashCode();
