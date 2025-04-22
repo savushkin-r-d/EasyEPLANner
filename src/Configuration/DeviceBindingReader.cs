@@ -222,7 +222,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <returns>
         /// null - альтернативные клеммы не привязаны
-        /// node - номер привязанной альернативной клеммы
+        /// n - номер привязанной альернативной клеммы
         /// </returns>
         private int? AlternateClampBinded(IIOModuleInfo moduleInfo, int clamp, Dictionary<int, string> currentBinding)
         {
@@ -472,7 +472,7 @@ namespace EasyEPlanner
                 .IsMultipleBinding(description);
             if (isMultipleBinding == false)
             {
-                //Для многострочного описания убираем tab+\r\node
+                //Для многострочного описания убираем tab+\r\n
                 description = description.Replace(
                     $"\t{CommonConst.NewLineWithCarriageReturn}", "");
                 description = description.Replace(
