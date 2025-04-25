@@ -61,23 +61,26 @@ namespace TechObject
 
         public void Autocomplete()
         {
+            if (value is "false")
+                return;
+
             foreach (var baseParameter in (Owner as BaseTechObject).AggregateParameters)
             {
                 var aggregateParameter = (Parent as BaseOperation).Properties
                     .FirstOrDefault(x => x.LuaName == baseParameter.LuaName && x.Owner == Owner);
 
+                var baseOperation = aggregateParameter.Parent as BaseOperation;
+                var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
+
                 if (aggregateParameter is IActiveAggregateParameter activeAggregateParameter &&
-                    aggregateParameter.Value == string.Empty)
+                    !paramsManager.Float.HaveSameLuaName(aggregateParameter.Value))
                 {
                     var baseFloatParameter = activeAggregateParameter.Parameter;
-                    var baseOperation = aggregateParameter.Parent as BaseOperation;
-
+  
                     var paramLuaName = $"{baseOperation.LuaName}_{baseFloatParameter.LuaName}";
                     var paramName = $"{baseOperation.Name}. {baseFloatParameter.Name}";
 
                     aggregateParameter.SetValue(paramLuaName);
-
-                    var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
 
                     if (paramsManager.Float.HaveSameLuaName(paramLuaName))
                         continue;
