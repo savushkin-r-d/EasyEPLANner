@@ -411,33 +411,36 @@ namespace TechObject
 
         public void Autocomplete()
         {
-            foreach (var operation in TechObject.ModesManager.Modes)
+            Float.FillWithStubs();
+            TechObject.ModesManager.Modes.ForEach(m => m.Autocomplete());
+        }
+
+        /// <summary>
+        /// Заполнение параметров по операции
+        /// </summary>
+        /// <param name="operation"></param>
+        public void AutocompleteByOperation(Mode operation)
+        {
+            if (operation.Owner.Owner != TechObject) return;
+
+            var parameters = operation.BaseOperation.Parameters;
+
+            // Если такой параметр уже добавлен, пробуем добавить в него операцию
+            parameters.ForEach(p => Float.GetParam(p.LuaName)?.UseInOperation(operation.GetModeNumber()));
+
+            // Если все параметры базовой операции уже добавлены, пропускаем
+            if (parameters.Count(p => Float.HaveSameLuaName(p.LuaName)) == parameters.Count)
+                return;
+
+            foreach (var param in parameters)
             {
-                var parameters = operation.BaseOperation.Parameters;
-
-                // Если такой параметр уже добавлен, пробуем добавить в него операцию
-                parameters.ForEach(p => Float.GetParam(p.LuaName)?.UseInOperation(operation.GetModeNumber()));
-
-                // Если все параметры базовой операции уже добавлены, пропускаем
-                if (parameters.Count(p => Float.HaveSameLuaName(p.LuaName)) == parameters.Count)
+                if (Float.HaveSameLuaName(param.LuaName))
                     continue;
 
-                foreach (var param in parameters)
-                {
-                    if (Float.HaveSameLuaName(param.LuaName))
-                        continue;
-
-                    var parameter = Float.Insert() as Param;
-                    parameter.SetNewValue(param.Name); 
-                    parameter.LuaNameProperty.SetNewValue(param.LuaName);
-                    parameter.MeterItem.SetNewValue(param.Meter);
-                    parameter.ValueItem.SetNewValue(param.DefaultValue.ToString());
-                    parameter.UseInOperation(operation.GetModeNumber());
-                }
-
-                // Добавляем 2 заглушки после параметров операции
-                Float.Insert();
-                Float.Insert();
+                var parameter = AddFloatParam(
+                    param.Name, param.DefaultValue,
+                    param.Meter, param.LuaName);
+                parameter.UseInOperation(operation.GetModeNumber());
             }
         }
 

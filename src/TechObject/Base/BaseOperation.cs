@@ -75,7 +75,7 @@ namespace TechObject
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : TreeViewItem, IBaseOperation
+    public class BaseOperation : TreeViewItem, IBaseOperation, IAutocompletable
     {
         public BaseOperation(Mode owner)
         {
@@ -658,6 +658,16 @@ namespace TechObject
             return false;
         }
         #endregion
+
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            baseOperationProperties.OfType<IAutocompletable>()
+                .Where(i => i.CanExecute)
+                .ToList()
+                .ForEach(i => i.Autocomplete());
+        }
 
         private ITreeViewItem[] items = new ITreeViewItem[0];
         
