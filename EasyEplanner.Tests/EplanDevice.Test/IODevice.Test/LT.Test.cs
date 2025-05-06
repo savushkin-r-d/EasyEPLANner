@@ -116,7 +116,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -132,7 +132,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForLT = new Dictionary<string, int>()
+            var exportForLT = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
@@ -140,7 +140,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_ERR, 1},
             };
 
-            var exportForLTIOLink = new Dictionary<string, int>()
+            var exportForLTIOLink = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
@@ -152,7 +152,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_ERR, 1},
             };
 
-            var exportForLTCyl = new Dictionary<string, int>()
+            var exportForLTCyl = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
@@ -163,7 +163,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_ERR, 1},
             };
 
-            var exportForLTCone = new Dictionary<string, int>()
+            var exportForLTCone = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
@@ -175,7 +175,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_ERR, 1},
             };
 
-            var exportForLTTrunc = new Dictionary<string, int>()
+            var exportForLTTrunc = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
@@ -187,7 +187,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_ERR, 1},
             };
 
-            var exportForLTVirt = new Dictionary<string, int>()
+            var exportForLTVirt = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
