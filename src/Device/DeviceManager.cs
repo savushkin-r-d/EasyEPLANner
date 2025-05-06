@@ -461,6 +461,7 @@ namespace EplanDevice
             "PDS",
             "TS",
             "G",
+            nameof(LIFE_DEVICE),
         };
 
         public IODevice AddDeviceAndEFunction(string devName, string description,
@@ -663,6 +664,11 @@ namespace EplanDevice
                 case "G":
                     dev = new G(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, articleName);
+                    break;
+
+                case nameof(LIFE_DEVICE):
+                    dev = new LIFE_DEVICE(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, this);
                     break;
 
                 default:
