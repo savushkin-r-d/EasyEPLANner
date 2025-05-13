@@ -725,5 +725,20 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual("value", baseOperation_2.Properties.ElementAt(0).Value);
             });
         }
+
+        [Test]
+        public void Autocomplete()
+        {
+            var baseOperation = new BaseOperation(string.Empty, "base_operation",
+                new List<BaseParameter>() 
+                { 
+                    new MainAggregateParameter(string.Empty, "parameter", "value") 
+                }, null);
+
+            Assert.Multiple(() => 
+            {
+                Assert.IsTrue((baseOperation as IAutocompletable).CanExecute);
+            });
+        }
     }
 }

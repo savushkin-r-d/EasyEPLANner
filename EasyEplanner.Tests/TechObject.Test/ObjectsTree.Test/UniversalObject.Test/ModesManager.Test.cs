@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace TechObject.Tests
@@ -178,6 +179,26 @@ namespace TechObject.Tests
                 // no operation
                 var replacedOperation_null = modesManager.Replace(null, null) as Mode;
                 Assert.IsNull(replacedOperation_null);
+            });
+        }
+
+        [Test]
+        public void Autocomplete()
+        {
+            var baseTechObject = new BaseTechObject()
+            {
+            };
+
+            var techObject = new TechObject("", getN => 1, 1, 2, "", -1, "", "", baseTechObject);
+
+            var modesManager = new ModesManager(techObject);
+
+            modesManager.Autocomplete();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue((modesManager as IAutocompletable).CanExecute);
+                Assert.AreEqual(20, techObject.GetParamsManager().Float.Parameters.Count());
             });
         }
     }

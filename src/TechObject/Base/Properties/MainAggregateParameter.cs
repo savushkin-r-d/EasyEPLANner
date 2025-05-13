@@ -69,6 +69,9 @@ namespace TechObject
                 var aggregateParameter = (Parent as BaseOperation).Properties
                     .FirstOrDefault(x => x.LuaName == baseParameter.LuaName && x.Owner == Owner);
 
+                if (aggregateParameter is null)
+                    continue;
+
                 var baseOperation = aggregateParameter.Parent as BaseOperation;
                 var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
 
