@@ -10,6 +10,10 @@ namespace EasyEPlanner.ModbusExchange.Model
     {
         public string Name { get; }
 
+        public string IP { get; set; }
+
+        public int Port { get; set; }
+
         IEnumerable<IGatewayViewItem> Roots { get; }
 
         IGroup Read { get; }

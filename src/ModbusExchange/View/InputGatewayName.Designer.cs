@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.NameTB = new System.Windows.Forms.TextBox();
+            this.NameTextBox = new System.Windows.Forms.TextBox();
             this.Apply = new System.Windows.Forms.Button();
             this.Cancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,7 +42,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.Controls.Add(this.NameTB, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.NameTextBox, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.Apply, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.Cancel, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -56,15 +56,15 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(315, 100);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // NameTB
+            // NameTextBox
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.NameTB, 3);
-            this.NameTB.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NameTB.Location = new System.Drawing.Point(20, 36);
-            this.NameTB.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
-            this.NameTB.Name = "NameTB";
-            this.NameTB.Size = new System.Drawing.Size(275, 20);
-            this.NameTB.TabIndex = 0;
+            this.tableLayoutPanel1.SetColumnSpan(this.NameTextBox, 3);
+            this.NameTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NameTextBox.Location = new System.Drawing.Point(20, 36);
+            this.NameTextBox.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
+            this.NameTextBox.Name = "NameTextBox";
+            this.NameTextBox.Size = new System.Drawing.Size(275, 20);
+            this.NameTextBox.TabIndex = 0;
             // 
             // Apply
             // 
@@ -93,12 +93,13 @@
             this.label1.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.label1, 3);
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.Location = new System.Drawing.Point(20, 3);
             this.label1.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(275, 27);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Введите название:";
+            this.label1.Text = "Введите название шлюза:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // InputGatewayName
@@ -107,9 +108,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(315, 100);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "InputGatewayName";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "InputGatewayName";
+            this.Text = "Название шлюза";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -119,7 +125,7 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.TextBox NameTB;
+        private System.Windows.Forms.TextBox NameTextBox;
         private System.Windows.Forms.Button Apply;
         private System.Windows.Forms.Button Cancel;
         private System.Windows.Forms.Label label1;

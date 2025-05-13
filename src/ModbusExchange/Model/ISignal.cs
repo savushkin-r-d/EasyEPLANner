@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EplanDevice;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +12,18 @@ namespace EasyEPlanner.ModbusExchange.Model
     /// </summary>
     public interface ISignal : IGatewayViewItem
     {
+        string Description { get; }
+
         /// <summary>
         /// Адрес в словах.
         /// </summary>
-        public int Word { get; }
+        int Word { get; }
 
         /// <summary>
         /// Бит.
         /// </summary>
-        public int Bit { get; }
+        int Bit { get; }
+
+        IIODevice Device { get; set; } 
     }
 }

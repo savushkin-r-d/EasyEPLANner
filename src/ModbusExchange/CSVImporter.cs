@@ -2,13 +2,15 @@
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EasyEPlanner.ModbusExchange
 {
-    public class CSVImporter
+    public static class CSVImporter
     {
         const string Array = "Array";
         const string Struct = "Struct";
@@ -17,7 +19,30 @@ namespace EasyEPlanner.ModbusExchange
         const string Bool = "Bool";
         const string Byte = "Byte";
 
-        private CSVImporter() { }
+
+        public static void ImportCSV(this IGateway model)
+        {
+            if (model is null)
+                return;
+
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = "CSV структура шлюза",
+                Filter = "CSV|*.csv",
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() is DialogResult.Cancel)
+            {
+                return;
+            }
+
+            using StreamReader reader = new(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true);
+
+            var csvData = reader.ReadToEnd();
+
+            Import(model.Read, model.Write, csvData);
+        }
 
         public static void Import(IGroup read, IGroup write, string csvData)
         {

@@ -23,27 +23,6 @@ namespace EasyEPlanner.ModbusExchange.Model
             SelectedModel = model;
         }
 
-        public void ImportCSV()
-        {
-            var openFileDialog = new OpenFileDialog
-            {
-                Title = "CSV структура шлюза",
-                Filter = "CSV|*.csv",
-                Multiselect = false
-            };
-
-            if (openFileDialog.ShowDialog() is DialogResult.Cancel)
-            {
-                return;
-            }
-
-            using StreamReader reader = new(openFileDialog.FileName, EncodingDetector.DetectFileEncoding(openFileDialog.FileName), true);
-            
-            var csvData = reader.ReadToEnd();
-
-            CSVImporter.Import(SelectedModel.Read, SelectedModel.Write, csvData);
-        }
-
         public void SelectModel(string modelName)
         {
             SelectedModel = models.Find(m => m.Name == modelName);
