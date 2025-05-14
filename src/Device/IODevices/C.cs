@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Eplan.EplApi.DataModel;
+using EplanDevice;
+using StaticHelper;
+using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -108,6 +112,32 @@ namespace EplanDevice
             }
 
             return null;
+        }
+
+        public override string Check()
+        {
+            string res = base.Check();
+
+            res += CheckDeviceProperty(Property.IN_VALUE);
+            res += CheckDeviceProperty(Property.OUT_VALUE);
+
+            return res;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private string CheckDeviceProperty(string property)
+        {
+            if (properties.TryGetValue(property, out var value) &&
+                value is string dev &&
+                dev != string.Empty &&
+                DeviceManager.GetInstance().GetDevice(dev).Description is CommonConst.Cap)
+            {
+                properties[property] = string.Empty;
+                UpdateProperties();
+                return $"{Name}: в свойстве {property} сброшено несуществующее устройство {dev}.\n";
+            }
+
+            return string.Empty;
         }
 
         #region сохранение в Lua
