@@ -1,6 +1,9 @@
-﻿using StaticHelper;
+﻿using Eplan.EplApi.DataModel;
+using EplanDevice;
+using StaticHelper;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -121,6 +124,7 @@ namespace EplanDevice
             return res;
         }
 
+        [ExcludeFromCodeCoverage]
         private string CheckDeviceProperty(string property)
         {
             if (properties.TryGetValue(property, out var value) &&

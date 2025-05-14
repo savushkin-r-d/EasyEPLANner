@@ -282,6 +282,13 @@ namespace Tests.EplanDevices
             Assert.AreEqual(expectedSaveString, actualSaveString);
         }
 
+        [Test]
+        public void Check()
+        {
+            var device = GetNewCDevice();
+            Assert.AreEqual("", device.Check());
+        }
+
         /// <summary>
         /// Тестирование каналов устройства
         /// </summary>
