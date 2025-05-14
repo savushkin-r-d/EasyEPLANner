@@ -177,6 +177,8 @@ namespace TechObject
             }
         }
 
+        public string Name => name;
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
