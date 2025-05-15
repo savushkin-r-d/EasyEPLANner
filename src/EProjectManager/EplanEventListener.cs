@@ -86,7 +86,7 @@ namespace EasyEPlanner
                 EProjectManager.GetInstance().SaveAndClose();
 
                 DFrm.GetInstance().ShowNoDevices();
-                IOViewControl.Instance.Clear();
+                IOViewControl.Instance?.Clear();
 
                 EProjectManager.GetInstance().ResetCurrentPrj();
                 EProjectManager.isPreCloseProjectComplete = true;

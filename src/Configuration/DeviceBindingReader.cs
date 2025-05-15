@@ -90,6 +90,27 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Чтение привязки.
+        /// </summary>
+        /// <param name="clampFunction">Функция клеммы</param>
+        [ExcludeFromCodeCoverage]
+        public void ReadModuleClampBinding(IEplanFunction clampFunction)
+        {
+            foreach (var node in IOManager.IONodes)
+            {
+                foreach (var module in node.IOModules)
+                {
+                    if (module.ClampFunctions.ContainsValue(clampFunction))
+                    {
+                        module.ClearBind(clampFunction.ClampNumber);
+                        ReadModuleClampBinding(node, module, clampFunction);
+                        return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Чтение привязки клеммы модуля ввода-вывода.
         /// </summary>
         /// <param name="node">Узел</param>

@@ -54,7 +54,7 @@ namespace TechObject.Tests
 
             var main = tankBaseOperation.Properties.Find(p => p.LuaName == "MAIN");
             main.SetNewValue("true");
-
+            (main as IAutocompletable)?.Autocomplete();
 
             Assert.Multiple(() =>
             {
