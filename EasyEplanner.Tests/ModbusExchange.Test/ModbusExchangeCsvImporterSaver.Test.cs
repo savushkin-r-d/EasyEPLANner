@@ -38,7 +38,8 @@ namespace EasyEplannerTests.ModbusExchangeTest
 
             var filePath = Path.Combine(TestContext.CurrentContext.WorkDirectory,
                 "ModbusExchange.Test", "TestData", "gate_test.lua");
-            var exchangeData = File.ReadAllText(filePath, Encoding.UTF8);
+            var exchangeData = File.ReadAllText(filePath, Encoding.UTF8)
+                .Replace("\r\n", "\n");
 
             Assert.AreEqual(exchangeData, res);
         }
