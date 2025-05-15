@@ -109,6 +109,7 @@
             this.ClientSize = new System.Drawing.Size(315, 100);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "InputGatewayName";
@@ -116,6 +117,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Название шлюза";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputGatewayName_KeyDown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

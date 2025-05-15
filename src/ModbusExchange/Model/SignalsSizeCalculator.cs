@@ -9,10 +9,9 @@ namespace EasyEPlanner.ModbusExchange.Model
     public static class SignalsSizeCalculator
     {
         /// <summary>
-        /// 
+        /// Размер адресного пространства сигналов
         /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
+        /// <param name="signals">Список сигналов</param>
         public static int Size(this IEnumerable<ISignal> signals)
         {
             return signals.GroupBy(s => $"{s.DataType}_{s.Word}")
@@ -22,8 +21,7 @@ namespace EasyEPlanner.ModbusExchange.Model
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="DataType"></param>
-        /// <returns></returns>
+        /// <param name="DataType">Тип сигнала</param>
         public static int DataTypeSize(string DataType) => DataType switch
         {
             null => 0,

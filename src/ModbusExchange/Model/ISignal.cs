@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EasyEPlanner.ModbusExchange.Model
 {
     /// <summary>
-    /// 
+    /// Обмен с сигналом.
     /// </summary>
     public interface ISignal : IGatewayViewItem
     {
@@ -17,13 +17,16 @@ namespace EasyEPlanner.ModbusExchange.Model
         /// <summary>
         /// Адрес в словах.
         /// </summary>
-        int Word { get; }
+        int Word { get; set; }
 
         /// <summary>
         /// Бит.
         /// </summary>
         int Bit { get; }
 
+        /// <summary>
+        /// Сигнал для обмена
+        /// </summary>
         IIODevice Device { get; set; } 
     }
 }

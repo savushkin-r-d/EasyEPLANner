@@ -40,6 +40,9 @@
 	<None Update="InterprojectExchange.Test\TestData\mock_script.lua">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
+	<None Update="ModbusExchange.Test\TestData\gate_test.lua">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
     <None Update="ProjectImportICP.Test\TestData\Compare.dst.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -73,5 +76,9 @@
     <None Update="ProjectImportICP.Test\TestData\UpdateDevicesTags.src.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ModbusExchange.Test\Model.Test\" />
   </ItemGroup>
 </Project>

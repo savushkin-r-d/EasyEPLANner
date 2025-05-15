@@ -13,19 +13,19 @@ namespace EasyEPlanner.ModbusExchange.Model
 
         public IEnumerable<IGatewayViewItem> Items => items;
 
-        public string Name => $"{description} ({Signals.Size()})";
+        public string Name => $"{description} ({NestedSignals.Size()})";
 
-        public IEnumerable<ISignal> Signals => items.SelectMany(i => i switch
+        public IEnumerable<ISignal> NestedSignals => items.SelectMany(i => i switch
         {
             ISignal s => [s],
-            IGroup g => g.Signals,
+            IGroup g => g.NestedSignals,
             _ => []
         });
 
 
         public string DataType => string.Empty;
 
-        public string Address => string.Empty;
+        public string Address => Offset.ToString();
 
         public string Description => description;
 

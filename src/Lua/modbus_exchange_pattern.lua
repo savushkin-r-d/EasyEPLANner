@@ -24,7 +24,7 @@ end
 function modbus:InitExchangeFunctions()
     for _, group in ipairs(self.read) do
         for signal_index, signal in ipairs(group) do
-            local dev_name, type, word, bit = signal[2], signal[3], signal[4], signal[5]
+            local word, bit, type, dev_name = signal[1], signal[2], signal[3], signal[4]
 
             if dev_name == '' then
                 signal.read = function( ) end -- do nothing
@@ -50,7 +50,7 @@ function modbus:InitExchangeFunctions()
 
     for _, group in ipairs(self.write) do
         for signal_index, signal in ipairs(group) do
-            local dev_name, type, word, bit = signal[2], signal[3], signal[4], signal[5]
+            local word, bit, type, dev_name = signal[1], signal[2], signal[3], signal[4]
 
             if dev_name == '' then
                 signal.write = function( ) end -- do nothing
@@ -130,7 +130,7 @@ end
 ---@return integer area размер области для чтения/записи данных 
 function Area(g)
     local lastSignal = g[ #g ]
-    local data_type, word = lastSignal[ 3 ], lastSignal[ 4 ]
+    local word, data_type = lastSignal[ 1 ], lastSignal[ 3 ]
     return word + (data_type == 'Real' or data_type == 'Float') and 2 or 1
 end
 

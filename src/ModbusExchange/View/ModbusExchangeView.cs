@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using EasyEPlanner.ModbusExchange.Model;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Editor;
 using EplanDevice;
 using Spire.Pdf.Exporting.XPS.Schema;
 using StaticHelper;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,11 +19,14 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner.ModbusExchange.View
 {
+    [ExcludeFromCodeCoverage]
     public partial class ModbusExchangeView : Form
     {
         IExchange DataContext;
 
         IDeviceManager deviceManager = DeviceManager.GetInstance();
+
+        private TextBox textBoxCellEditor;
 
         public ModbusExchangeView()
         {
@@ -94,9 +99,9 @@ namespace EasyEPlanner.ModbusExchange.View
 
             Exchange.Roots = DataContext.SelectedModel?.Roots;
 
-            Exchange.Columns[0].Width = 200;
-            Exchange.Columns[1].Width = 100;
-            Exchange.Columns[2].Width = 100;
+            Exchange.Columns[0].Width = 150;
+            Exchange.Columns[1].Width = 50;
+            Exchange.Columns[2].Width = 50;
 
             Exchange.SelectedIndex = 0;
             Exchange.SelectedItem?.EnsureVisible();
@@ -147,8 +152,8 @@ namespace EasyEPlanner.ModbusExchange.View
 
             if (DataContext.SelectedModel is not null)
             {
-                var usedsignals = DataContext.SelectedModel.Read.Signals
-                    .Concat(DataContext.SelectedModel.Write.Signals);
+                var usedsignals = DataContext.SelectedModel.Read.NestedSignals
+                    .Concat(DataContext.SelectedModel.Write.NestedSignals);
 
                 devices = devices.Except(usedsignals.Select(s => s.Device));
             }
@@ -257,12 +262,12 @@ namespace EasyEPlanner.ModbusExchange.View
         {
             if (device.DeviceType is DeviceType.AI or DeviceType.DI)
             {
-                if (DataContext.SelectedModel.Write.Signals.Contains(signal))
+                if (DataContext.SelectedModel.Write.NestedSignals.Contains(signal))
                     return false;
             }
             else
             {
-                if (DataContext.SelectedModel.Read.Signals.Contains(signal))
+                if (DataContext.SelectedModel.Read.NestedSignals.Contains(signal))
                     return false;
             }
 
@@ -343,23 +348,14 @@ namespace EasyEPlanner.ModbusExchange.View
 
         private void Exchange_Expanded(object sender, TreeBranchExpandedEventArgs e)
         {
-            AutoResizeColumns(sender as TreeListView);
+            Exchange.Columns[0]
+                .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void Exchange_Collapsed(object sender, TreeBranchCollapsedEventArgs e)
         {
-            AutoResizeColumns(sender as TreeListView);
-        }
-
-        private static void AutoResizeColumns(TreeListView treeListView)
-        {
-            if (treeListView is null)
-                return;
-
-            foreach (ColumnHeader column in treeListView.Columns)
-            {
-                column.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
+            Exchange.Columns[0]
+                .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void ModbusExchangeView_FormClosing(object sender, FormClosingEventArgs e)
@@ -377,6 +373,48 @@ namespace EasyEPlanner.ModbusExchange.View
                     e.Cancel = true;
                     return;
             }
+        }
+
+        private void Exchange_CellEditStarting(object sender, CellEditEventArgs e)
+        {
+            if (e.Column.Index != 2 ||
+                Exchange.SelectedObject is not IGroup group)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            textBoxCellEditor = new TextBox
+            {
+                Enabled = true,
+                Visible = true,
+                Bounds = e.CellBounds,
+                Text = group.Offset.ToString(),
+            };
+            Exchange.Controls.Add(textBoxCellEditor);
+            e.Control = textBoxCellEditor;
+            textBoxCellEditor.Focus();
+            Exchange.Freeze();
+        }
+
+        private void Exchange_CellEditFinishing(object sender, CellEditEventArgs e)
+        {
+            if (Exchange.SelectedObject is not IGroup group)
+            {
+                e.Cancel = true;
+                Exchange.Unfreeze();
+                return;
+            }
+
+            if (int.TryParse(e.NewValue.ToString(), out var offset))
+            {
+                group.Offset = offset;
+                Exchange.RefreshObject(group);
+                Exchange.Controls.Remove(textBoxCellEditor);
+            }
+
+            e.Cancel = true;
+            Exchange.Unfreeze();
         }
     }
 }

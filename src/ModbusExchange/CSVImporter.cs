@@ -2,6 +2,7 @@
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,16 +11,46 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner.ModbusExchange
 {
+    /// <summary>
+    /// Импорт модели обмена со шлюзом из CSV файла.
+    /// </summary>
     public static class CSVImporter
     {
+        /// <summary>
+        /// Тип сигнала - Array.
+        /// </summary>
         const string Array = "Array";
+
+        /// <summary>
+        /// Тип сигнала - Struct (начальный сигнал группы сигналов).
+        /// </summary>
         const string Struct = "Struct";
-        const string ReadStruct = "snd";
-        const string WriteStruct = "rcv";
+
+        /// <summary>
+        /// Тип сигнала - Bool.
+        /// </summary>
         const string Bool = "Bool";
+
+        /// <summary>
+        /// Тип сигнала - Byte.
+        /// </summary>
         const string Byte = "Byte";
 
+        /// <summary>
+        /// Название сигнала - начальный сигнал группы чтения.
+        /// </summary>
+        const string ReadStruct = "snd";
 
+        /// <summary>
+        /// Название сигнала - начальный сигнал группы записи.
+        /// </summary>
+        const string WriteStruct = "rcv";
+
+        /// <summary>
+        /// Импортировать модель обмена из CSV файла.
+        /// </summary>
+        /// <param name="model"></param>
+        [ExcludeFromCodeCoverage]
         public static void ImportCSV(this IGateway model)
         {
             if (model is null)
@@ -41,25 +72,35 @@ namespace EasyEPlanner.ModbusExchange
 
             var csvData = reader.ReadToEnd();
 
-            Import(model.Read, model.Write, csvData);
+            model.Parse(csvData);
         }
 
-        public static void Import(IGroup read, IGroup write, string csvData)
+        /// <summary>
+        /// Разобрать данные CSV-файла по группам модели шлюза.
+        /// </summary>
+        /// <param name="model">Модель обмена шлюза</param>
+        /// <param name="csvData">Данные CSV файла</param>
+        public static void Parse(this IGateway model, string csvData)
         {
+            var read = model.Read;
+            var write = model.Write;
+
             var signals = csvData.Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
                 .Select(ParseSignal)
-                .Where(NotEmpty);
+                .Where(NotSkip);
 
             read.AddRange(Grouping(signals.SkipWhile(s => s.Name is not ReadStruct).Skip(1).TakeWhile(s => s.Name is not WriteStruct)));
             write.AddRange(Grouping(signals.SkipWhile(s => s.Name is not WriteStruct).Skip(1)));
+            
+            RecalculateAddressGroup(read);
+            RecalculateAddressGroup(write);
         }
 
 
         /// <summary>
-        /// 
+        /// Разобрать строку в <see cref="ISignal">Сигнал</see>.
         /// </summary>
-        /// <param name="line"></param>
-        /// <returns></returns>
+        /// <param name="line">строка CSV</param>
         private static ISignal ParseSignal(string line)
         {
             var parsedData = line.Split(';');
@@ -79,20 +120,19 @@ namespace EasyEPlanner.ModbusExchange
         }
 
         /// <summary>
-        /// 
+        /// Не пропускать сигнал.
         /// </summary>
         /// <param name="signal"></param>
-        /// <returns></returns>
-        private static bool NotEmpty(ISignal signal)
+        private static bool NotSkip(ISignal signal)
         {
             return signal.DataType != string.Empty && !signal.DataType.Contains(Array);
         }
 
         /// <summary>
-        /// 
+        /// Группировка сигналов.
         /// </summary>
-        /// <param name="signals"></param>
-        /// <returns></returns>
+        /// <param name="signals">Список сигналов</param>
+        /// <returns>Сгруппированный список</returns>
         private static IEnumerable<IGatewayViewItem> Grouping(IEnumerable<ISignal> signals)
         {
             List<IGatewayViewItem> result = [];
@@ -114,6 +154,32 @@ namespace EasyEPlanner.ModbusExchange
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Пересчет адресов по группам.
+        /// </summary>
+        /// <param name="group">Группа сигналов</param>
+        /// <param name="parentOffset">Отступ адреса внешней группы</param>
+        private static void RecalculateAddressGroup(IGroup group, int parentOffset = 0)
+        {
+            var signals = group.Items.OfType<ISignal>();
+            if (!signals.Any())
+                return;
+
+            var offset = group.NestedSignals.FirstOrDefault().Word;
+
+            foreach (var signal in signals)
+            {
+                signal.Word -= offset;
+            }
+
+            group.Offset = offset - parentOffset;
+
+            foreach (var subgroup in group.Items.OfType<IGroup>())
+            {
+                RecalculateAddressGroup(subgroup, group.Offset);
+            }
         }
     }
 }

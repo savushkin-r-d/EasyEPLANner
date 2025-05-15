@@ -79,7 +79,7 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 152F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 153F));
             this.tableLayoutPanel2.Controls.Add(this.SignalsList, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.Exchange, 2, 1);
             this.tableLayoutPanel2.Controls.Add(this.ImportGatewayStructBttn, 3, 0);
@@ -101,6 +101,7 @@
             this.SignalDescription});
             this.tableLayoutPanel2.SetColumnSpan(this.SignalsList, 2);
             this.SignalsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SignalsList.FullRowSelect = true;
             this.SignalsList.HideSelection = false;
             this.SignalsList.Location = new System.Drawing.Point(3, 33);
             this.SignalsList.Name = "SignalsList";
@@ -124,9 +125,11 @@
             // Exchange
             // 
             this.Exchange.AllowDrop = true;
+            this.Exchange.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
             this.Exchange.CellEditUseWholeCell = false;
             this.tableLayoutPanel2.SetColumnSpan(this.Exchange, 2);
             this.Exchange.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Exchange.FullRowSelect = true;
             this.Exchange.HideSelection = false;
             this.Exchange.Location = new System.Drawing.Point(294, 33);
             this.Exchange.Name = "Exchange";
@@ -138,6 +141,8 @@
             this.Exchange.VirtualMode = true;
             this.Exchange.Expanded += new System.EventHandler<BrightIdeasSoftware.TreeBranchExpandedEventArgs>(this.Exchange_Expanded);
             this.Exchange.Collapsed += new System.EventHandler<BrightIdeasSoftware.TreeBranchCollapsedEventArgs>(this.Exchange_Collapsed);
+            this.Exchange.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.Exchange_CellEditFinishing);
+            this.Exchange.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.Exchange_CellEditStarting);
             this.Exchange.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.Exchange_ItemSelectionChanged);
             this.Exchange.DragDrop += new System.Windows.Forms.DragEventHandler(this.Exchange_DragDrop);
             this.Exchange.DragOver += new System.Windows.Forms.DragEventHandler(this.Exchange_DragOver);
@@ -316,6 +321,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(604, 661);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(620, 700);
             this.Name = "ModbusExchangeView";
             this.ShowIcon = false;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner.ModbusExchange.View
 {
+    [ExcludeFromCodeCoverage]
     public partial class InputGatewayName : Form
     {
         readonly IExchange exchange;
@@ -46,6 +48,15 @@ namespace EasyEPlanner.ModbusExchange.View
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private void InputGatewayName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode is Keys.Return)
+                Apply.PerformClick();
+
+            if (e.KeyCode is Keys.Escape)
+                Cancel.PerformClick();
         }
     }
 }

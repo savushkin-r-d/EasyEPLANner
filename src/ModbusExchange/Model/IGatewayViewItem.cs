@@ -14,16 +14,16 @@ namespace EasyEPlanner.ModbusExchange.Model
         /// <summary>
         /// Столбец 1. "Название"
         /// </summary>
-        public string Name { get; }
+        string Name { get; }
 
         /// <summary>
         /// Столбец 2. "Тип данных"
         /// </summary>
-        public string DataType { get; }
+        string DataType { get; }
 
         /// <summary>
         /// Столбец 3. "Адрес"
         /// </summary>
-        public string Address { get; }
+        string Address { get; }
     }
 }

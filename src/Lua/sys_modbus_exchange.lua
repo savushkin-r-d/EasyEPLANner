@@ -17,7 +17,7 @@ function init_main_group( model_group, group )
         local name = subgroup.name or ''
         local g = GetGroup( model_group, name )
         for _, signal in ipairs( subgroup ) do
-            local description, device_name, data_type, word, bit =
+            local word, bit, data_type, device_name, description =
                 signal[1], signal[2], signal[3], signal[4], signal[5]
 
             AddSignal( g, description, device_name, data_type,

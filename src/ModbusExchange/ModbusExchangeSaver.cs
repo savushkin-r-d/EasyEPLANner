@@ -2,6 +2,7 @@
 using Eplan.EplApi.DataModel.E3D;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,16 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner.ModbusExchange
 {
-
+    /// <summary>
+    /// Сохранение файлов обмена сигналами по Modbus.
+    /// </summary>
     public static class ModbusExchangeSaver
     {
         /// <summary>
-        /// 
+        /// Сохранение обмена сигналами в Lua-файлы.
         /// </summary>
-        /// <param name="exchange"></param>
+        /// <param name="exchange">Модель обмена</param>
+        [ExcludeFromCodeCoverage]
         public static void Save(this IExchange exchange)
         {
             var path = GetPathToSave();
@@ -25,7 +29,7 @@ namespace EasyEPlanner.ModbusExchange
             {
                 using var writer = new StreamWriter(Path.Combine(path, $"gate_{model.Name}.lua"), false);
 
-                writer.Write(SaveModel(model));
+                writer.Write(model.Save(AssemblyVersion.GetVersionAsLuaComment()));
             }
 
             var modbusExchangePath = Path.Combine(path, $"modbusexchange.lua");
@@ -38,7 +42,10 @@ namespace EasyEPlanner.ModbusExchange
             }
         }
 
-
+        /// <summary>
+        /// modbus_exchange_pattern.lua path.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
         private static string GetModbusExchangePatternPath()
         {
             return Path.Combine(ProjectManager.GetInstance().SystemFilesPath,
@@ -46,9 +53,9 @@ namespace EasyEPlanner.ModbusExchange
         }
 
         /// <summary>
-        /// 
+        /// Путь к папке с файлами проекта.
         /// </summary>
-        /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private static string GetPathToSave()
         {
             var projectName = EProjectManager.GetInstance().GetCurrentProjectName();
@@ -57,13 +64,14 @@ namespace EasyEPlanner.ModbusExchange
         }
 
         /// <summary>
-        /// 
+        /// Сохранить <see cref="IGateway">модель шлюза</see> в виде Lua-таблицы.
         /// </summary>
-        /// <param name="gateway"></param>
-        /// <returns></returns>
-        public static string SaveModel(IGateway gateway)
+        /// <param name="gateway">Модель шлюза</param>
+        public static string Save(this IGateway gateway, string versionComment)
         {
             var rslt = new StringBuilder()
+                .Append($"{versionComment}\n")
+                .Append($"\n")
                 .Append($"local gate =\n")
                 .Append($"{{\n")
                 .Append($"    ip = '{gateway.IP}',\n")
@@ -76,18 +84,17 @@ namespace EasyEPlanner.ModbusExchange
                 .Append($"\n")
                 .Append($"local s, mt = pcall( require, 'modbusexchange' )\n")
                 .Append($"mt = s and mt or {{ }}\n")
-                .Append($"return setmetatable( gate, mt )\n");
+                .Append($"return setmetatable( gate, mt )");
 
             return rslt.ToString();
         }
 
         /// <summary>
-        /// 
+        /// Сохранение основной группы (чтение/запись) в виде Lua-таблицы.
         /// </summary>
-        /// <param name="group"></param>
-        /// <param name="prefix"></param>
-        /// <returns></returns>
-        public static StringBuilder SaveMainGroup(IGroup group, string prefix)
+        /// <param name="group">Группа сигналов</param>
+        /// <param name="prefix">Отступ</param>
+        private static StringBuilder SaveMainGroup(IGroup group, string prefix)
         {
             var rslt = new StringBuilder()
                 .Append($"{prefix}{{\n")
@@ -101,12 +108,11 @@ namespace EasyEPlanner.ModbusExchange
         }
 
         /// <summary>
-        /// 
+        /// Сохранение группы сигналов в виде Lua-таблицы.
         /// </summary>
-        /// <param name="group"></param>
-        /// <param name="prefix"></param>
-        /// <returns></returns>
-        public static string SaveGroup(IGroup group, string prefix)
+        /// <param name="group">Группа сигналов</param>
+        /// <param name="prefix">Отступ</param>
+        private static string SaveGroup(IGroup group, string prefix)
         {
             var name = group.Description is Gateway.READ or Gateway.WRITE ? 
                 string.Empty : group.Description;
@@ -116,33 +122,29 @@ namespace EasyEPlanner.ModbusExchange
             if (!signals.Any())
                 return string.Empty;
 
-            var offset = signals.First().Word;
-
             var rslt = new StringBuilder()
                 .Append($"{prefix}{{\n")
                 .Append($"{prefix}    name = '{name}',\n")
-                .Append($"{prefix}    offset = {offset},\n")
+                .Append($"{prefix}    offset = {group.Offset},\n")
                 .Append(string.Join("", signals
-                    .Select(s => SaveSignal(s, offset, prefix + "    "))))
+                    .Select(s => SaveSignal(s, prefix + "    "))))
                 .Append($"{prefix}}},\n");
 
             return rslt.ToString();
         }
 
         /// <summary>
-        /// 
+        /// Сохранение сигнала в виде Lua-таблицы.
         /// </summary>
-        /// <param name="signal"></param>
-        /// <param name="offset"></param>
-        /// <param name="prefix"></param>
-        /// <returns></returns>
-        public static string SaveSignal(ISignal signal, int offset, string prefix)
+        /// <param name="signal">Сигнал</param>
+        /// <param name="prefix">Отступ</param>
+        private static string SaveSignal(ISignal signal, string prefix)
         {
-            return $"{prefix}{{ '{signal.Description}'," +
-                $" '{signal.Device?.Name ?? string.Empty}'," +
+            return $"{prefix}{{ {signal.Word}," +
+                $" {signal.Bit}," +
                 $" '{signal.DataType}'," +
-                $" {signal.Word - offset}," +
-                $" {signal.Bit}}},\n";
+                $" '{signal.Device?.Name ?? string.Empty}'," +
+                $" '{signal.Description}' }},\n";
         }
     }
 }

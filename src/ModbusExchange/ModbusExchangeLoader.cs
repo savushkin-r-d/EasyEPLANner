@@ -4,6 +4,7 @@ using LuaInterface;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,16 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner.ModbusExchange
 {
+    /// <summary>
+    /// Чтение файлов обмена сигналами по Modbus.
+    /// </summary>
     public static class ModbusExchangeLoader
     {
+        /// <summary>
+        /// Загрузить модели обмена из файлов.
+        /// </summary>
+        /// <param name="exchange">Модель обмена</param>
+        [ExcludeFromCodeCoverage]
         public static void Load(this IExchange exchange)
         {
             var lua = PrepareLuaState();
@@ -41,9 +50,9 @@ namespace EasyEPlanner.ModbusExchange
         }
 
         /// <summary>
-        /// 
+        /// Получить путь к файлам проекта.
         /// </summary>
-        /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private static string GetPathToLoad()
         {
             var projectName = EProjectManager.GetInstance().GetCurrentProjectName();
@@ -51,7 +60,10 @@ namespace EasyEPlanner.ModbusExchange
                 .GetPtusaProjectsPath(projectName) + projectName;
         }
 
-
+        /// <summary>
+        /// Настройка Lua объекта.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
         private static Lua PrepareLuaState()
         {
             var lua = new Lua();
@@ -79,6 +91,15 @@ namespace EasyEPlanner.ModbusExchange
             return lua;
         }
 
+        /// <summary>
+        /// Добавить сигнал в группу (Вызывается из Lua).
+        /// </summary>
+        /// <param name="group">Группа сигналов</param>
+        /// <param name="description">Описание сигнала</param>
+        /// <param name="devName">Название устройства</param>
+        /// <param name="dataType">Тип сигнала</param>
+        /// <param name="word">Адрес (слово)</param>
+        /// <param name="bit">Адрес (бит)</param>
         private static void AddSignal(IGroup group, string description,
             string devName, string dataType, int word, int bit) 
         {
@@ -93,6 +114,11 @@ namespace EasyEPlanner.ModbusExchange
             group.Add(signal);
         }
 
+        /// <summary>
+        /// Получить подгруппу в группе.
+        /// </summary>
+        /// <param name="group">Группа</param>
+        /// <param name="description">Описание подгруппы</param>
         private static IGroup GetGroup(IGroup group, string description)
         {
             if (description == string.Empty)

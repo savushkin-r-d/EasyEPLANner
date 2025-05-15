@@ -9,7 +9,11 @@ namespace EasyEPlanner.ModbusExchange.Model
 {
     public class Signal(string description, string dataType, int word, int bit) : ISignal
     {
-        public int Word => word;
+        public int Word
+        {
+            get => word;
+            set => word = value;
+        }
 
         public int Bit => bit;
 
