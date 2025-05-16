@@ -1,4 +1,5 @@
 ﻿using Editor;
+using EplanDevice;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -15,9 +16,24 @@ namespace TechObjectTests
         public void GetObjectToDrawOnEplanPage_NewAction_ReturnsDrawInfoList(
             DrawInfo.Style drawStyle, List<int> devIdList_1, List<int> devIdList_2)
         {
-            var deviceManagerMock = new Mock<EplanDevice.IDeviceManager>();
-            deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
-                .Returns(new Mock<EplanDevice.IDevice>().Object);
+            var devices = new Dictionary<int, IDevice>()
+            {
+                [2] = Mock.Of<IDevice>(),
+                [3] = Mock.Of<IDevice>(),
+                [4] = Mock.Of<IDevice>(),
+                [6] = Mock.Of<IDevice>(),
+                [7] = Mock.Of<IDevice>(),
+                [8] = Mock.Of<IDevice>(),
+                [9] = Mock.Of<IDevice>(),
+                [22] = Mock.Of<IDevice>(),
+                [33] = Mock.Of<IDevice>(),
+                [66] = Mock.Of<IDevice>(),
+            };
+
+            var deviceManagerMock = new Mock<IDeviceManager>();
+            deviceManagerMock
+                .Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
+                .Returns<int>(x => devices[x]);
 
             typeof(Action).GetField("deviceManager",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
