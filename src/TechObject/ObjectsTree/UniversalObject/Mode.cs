@@ -35,7 +35,7 @@ namespace TechObject
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : TreeViewItem, IMode
+    public class Mode : TreeViewItem, IMode, IAutocompletable
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
@@ -371,7 +371,7 @@ namespace TechObject
                     objectAlreadyContainsThisOperation = true;
                 }
             }
-
+            
             return objectAlreadyContainsThisOperation;
         }
 
@@ -766,7 +766,21 @@ namespace TechObject
             States.ForEach(state => state.UpdateOnDeleteGeneric());
         }
 
-        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            var paramsManager = Owner.Owner.GetParamsManager();
+
+            paramsManager.Float.FillWithStubs();
+
+            paramsManager.AutocompleteByOperation(this);
+            (baseOperation as IAutocompletable)?.Autocomplete();
+
+            paramsManager.Float.FillWithStubs();
+        }
+
+        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance();
 
         private GetN getN;
 

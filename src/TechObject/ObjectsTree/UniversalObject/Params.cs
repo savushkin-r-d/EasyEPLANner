@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Windows.Forms;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Editor;
 
 namespace TechObject
@@ -468,7 +470,29 @@ namespace TechObject
                 .Any();
         }
 
+        /// <summary>
+        /// Дополнить параметры заглушками до количества кратного 10
+        /// (x2 в начале для системных параметров)
+        /// </summary>
+        public void FillWithStubs()
+        {
+            const int group = 10;
+
+            var needStub = group - parameters.Count % group;
+            needStub += parameters.Count < group ? group : 0;
+
+            if (parameters.Count > group && needStub == group)
+                return;
+
+            foreach (var _ in Enumerable.Range(0, needStub))
+            {
+                Insert();
+            }
+        }
+
         public ParamsManager ParamsManager => Parent as ParamsManager;
+
+        public IEnumerable<Param> Parameters => parameters;
 
         private string name;
         private string nameLua;

@@ -62,15 +62,16 @@ namespace EasyEplannerTests
                     {
                         LuaName = "Operation_3",
                         Name = "Операция 3",
-                        DefaultPosition = 2,
+                        DefaultPosition = 3,
                         Parameters = new List<IBaseFloatParameter>()
                         {
                             new BaseFloatParameter("PAR_2", "Параметр 2", 0, "шт"),
                         }
                     },
                 },
-
             };
+            baseTechObject.ParamsManager.AddFloatParam("Общий параметр 1", 0, "шт", "SYS_PAR1");
+
 
             var techObject = new TechObject.TechObject("", getN => 1, 1, 2, "", -1, "", "", baseTechObject);
             techObject.SetUpFromBaseTechObject();
@@ -80,20 +81,20 @@ namespace EasyEplannerTests
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual("PAR_1", paramsManager.Float.GetParam(0).GetNameLua());
-                Assert.AreEqual("PAR_2", paramsManager.Float.GetParam(1).GetNameLua());
-                Assert.AreEqual("P", paramsManager.Float.GetParam(2).GetNameLua());
-                Assert.AreEqual("P", paramsManager.Float.GetParam(3).GetNameLua());
+                Assert.AreEqual("PAR_1", paramsManager.Float.GetParam(20).GetNameLua());
+                Assert.AreEqual("PAR_2", paramsManager.Float.GetParam(21).GetNameLua());
+                Assert.AreEqual("P", paramsManager.Float.GetParam(22).GetNameLua());
+                Assert.AreEqual("P", paramsManager.Float.GetParam(23).GetNameLua());
 
-                Assert.AreEqual("PAR_3", paramsManager.Float.GetParam(4).GetNameLua());
-                Assert.AreEqual("P", paramsManager.Float.GetParam(5).GetNameLua());
-                Assert.AreEqual("P", paramsManager.Float.GetParam(6).GetNameLua());
+                Assert.AreEqual("PAR_3", paramsManager.Float.GetParam(30).GetNameLua());
+                Assert.AreEqual("P", paramsManager.Float.GetParam(31).GetNameLua());
+                Assert.AreEqual("P", paramsManager.Float.GetParam(32).GetNameLua());
 
-                Assert.IsNull(paramsManager.Float.GetParam(7));
+                Assert.AreEqual("1 2", paramsManager.Float.GetParam(20).Operations);
+                Assert.AreEqual("1.4", paramsManager.Float.GetParam(21).GetValue());
+                Assert.AreEqual("1", paramsManager.Float.GetParam(30).GetValue());
 
-                Assert.AreEqual("1 2", paramsManager.Float.GetParam(0).Operations);
-                Assert.AreEqual("1.4", paramsManager.Float.GetParam(1).GetValue());
-                Assert.AreEqual("1", paramsManager.Float.GetParam(4).GetValue());
+                Assert.IsNull(paramsManager.Float.GetParam(40));
             });
         }
     }
