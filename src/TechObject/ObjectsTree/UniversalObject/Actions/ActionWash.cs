@@ -7,7 +7,7 @@ namespace TechObject
     /// <summary>
     /// Специальное действие - обработка сигналов во время мойки.
     /// </summary>
-    public class ActionWash : GroupableAction
+    public class ActionWash : BaseActionCustom
     {
         /// <summary>
         /// Создание нового действия.
@@ -292,10 +292,6 @@ namespace TechObject
 
             return false;
         }
-
-        public override bool CanMoveUp(object child) => false;
-
-        public override bool CanMoveDown(object child) => false;
         #endregion
 
         public override string ToString()

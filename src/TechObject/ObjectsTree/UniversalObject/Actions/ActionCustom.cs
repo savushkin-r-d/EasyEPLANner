@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Настраиваемое действие
     /// </summary>
-    public class ActionCustom : GroupableAction
+    public class ActionCustom : BaseActionCustom
     {
         /// <summary>
         /// Создание нового действия
@@ -329,10 +329,6 @@ namespace TechObject
 
             return false;
         }
-
-        public override bool CanMoveUp(object child) => false;
-
-        public override bool CanMoveDown(object child) => false;
         #endregion
 
         public override string ToString()
