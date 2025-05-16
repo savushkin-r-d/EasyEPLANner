@@ -40,6 +40,9 @@
 	<None Update="InterprojectExchange.Test\TestData\mock_script.lua">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
+	<None Update="ModbusExchange.Test\TestData\gate_test.lua">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
     <None Update="ProjectImportICP.Test\TestData\Compare.dst.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

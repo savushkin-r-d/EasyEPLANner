@@ -1,3 +1,4 @@
+using EasyEPlanner.Main;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Starter;
 using System;
@@ -60,6 +61,11 @@ namespace EasyEPlanner
             menuID = oMenu.AddMenuItem("Обмен сигналами между проектами",
                 "InterprojectExchangeAction",
                 "Настройка межпроектного обмена сигналами", menuID, 1, false, 
+                false);
+
+            menuID = oMenu.AddMenuItem("Обмен сигналами Modbus",
+                nameof(ModbusExchangeAction),
+                "Обмен сигналами Modbus", menuID, 1, false,
                 false);
 
             menuID = oMenu.AddMenuItem(
