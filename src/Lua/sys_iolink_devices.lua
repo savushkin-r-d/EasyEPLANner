@@ -44,6 +44,8 @@ local iolink_devices =
     { articleName = "IFM.LMT102", sizeIn = 1, sizeOut = 0 },
     { articleName = "IFM.LMT104", sizeIn = 1, sizeOut = 0 },
     { articleName = "IFM.LMT105", sizeIn = 1, sizeOut = 0 },
+    { articleName = "IFM.LMT121", sizeIn = 1, sizeOut = 0 },
+    { articleName = "IFM.LMT202", sizeIn = 1, sizeOut = 0 },
     { articleName = "E&H.FTL33-GR7N2ABW5J", sizeIn = 1, sizeOut = 0 },
     -- DEV_VTUG
     { articleName = "FES.VTUG-10-MSDR-B1Y-25V20-G18FD-DTFD-M7SFD-12K+M1SCVA", sizeIn = 0, sizeOut = 2 },
