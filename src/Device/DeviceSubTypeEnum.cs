@@ -168,5 +168,9 @@ namespace EplanDevice
         //C
         C_PID = 1, ///< Пид-регулятор
         C_THLD, ///< Пороговый регулятор
+
+        // LIFE_DEVICE
+        LIFEBIT = 1, // 
+        LIFECOUNTER, // 
     };
 }
