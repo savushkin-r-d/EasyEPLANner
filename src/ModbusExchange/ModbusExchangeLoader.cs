@@ -36,10 +36,10 @@ namespace EasyEPlanner.ModbusExchange
             {
                 var modelName = Regex.Replace(
                     Path.GetFileNameWithoutExtension(filePath),
-                    "^gate_", string.Empty);
+                    "^gate_", string.Empty, RegexOptions.None,
+                    TimeSpan.FromMilliseconds(100));
 
                 exchange.AddModel(modelName);
-                var model = exchange.SelectedModel; 
 
                 using var reader = new StreamReader(filePath,
                     EncodingDetector.DetectFileEncoding(filePath), true);
@@ -70,12 +70,10 @@ namespace EasyEPlanner.ModbusExchange
 
             lua.RegisterFunction("AddSignal", null,
                 typeof(ModbusExchangeLoader).GetMethod(nameof(AddSignal),
-                    System.Reflection.BindingFlags.NonPublic |
                     System.Reflection.BindingFlags.Static));
 
             lua.RegisterFunction("GetGroup", null,
                 typeof(ModbusExchangeLoader).GetMethod(nameof(GetGroup),
-                    System.Reflection.BindingFlags.NonPublic |
                     System.Reflection.BindingFlags.Static));
 
             string sysLuaPath = Path.Combine(
@@ -100,7 +98,7 @@ namespace EasyEPlanner.ModbusExchange
         /// <param name="dataType">Тип сигнала</param>
         /// <param name="word">Адрес (слово)</param>
         /// <param name="bit">Адрес (бит)</param>
-        private static void AddSignal(IGroup group, string description,
+        public static void AddSignal(IGroup group, string description,
             string devName, string dataType, int word, int bit) 
         {
             var signal = new Signal(description, dataType, word, bit);
@@ -119,7 +117,7 @@ namespace EasyEPlanner.ModbusExchange
         /// </summary>
         /// <param name="group">Группа</param>
         /// <param name="description">Описание подгруппы</param>
-        private static IGroup GetGroup(IGroup group, string description)
+        public static IGroup GetGroup(IGroup group, string description)
         {
             if (description == string.Empty)
                 return group;

@@ -77,8 +77,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ModbusExchange.Test\Model.Test\" />
-  </ItemGroup>
 </Project>

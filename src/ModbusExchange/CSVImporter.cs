@@ -14,7 +14,7 @@ namespace EasyEPlanner.ModbusExchange
     /// <summary>
     /// Импорт модели обмена со шлюзом из CSV файла.
     /// </summary>
-    public static class CSVImporter
+    public static class CsvImporter
     {
         /// <summary>
         /// Тип сигнала - Array.
@@ -110,7 +110,7 @@ namespace EasyEPlanner.ModbusExchange
                 parsedData.ElementAtOrDefault(1),
                 parsedData.ElementAtOrDefault(2));
 
-            var parsedAddress = address.Split([',', '.']);
+            var parsedAddress = address.Split(',', '.');
 
             int.TryParse(parsedAddress.ElementAtOrDefault(0), out int word);
             int.TryParse(parsedAddress.ElementAtOrDefault(1), out int bit);
@@ -167,7 +167,7 @@ namespace EasyEPlanner.ModbusExchange
             if (!signals.Any())
                 return;
 
-            var offset = group.NestedSignals.FirstOrDefault().Word;
+            var offset = group.NestedSignals.FirstOrDefault()?.Word ?? 0;
 
             foreach (var signal in signals)
             {

@@ -19,7 +19,7 @@ namespace EasyEPlanner.ModbusExchange.Model
         }
 
         /// <summary>
-        /// 
+        /// Размерность сигнала в зависимости от типа
         /// </summary>
         /// <param name="DataType">Тип сигнала</param>
         public static int DataTypeSize(string DataType) => DataType switch

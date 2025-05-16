@@ -28,6 +28,8 @@ namespace EasyEPlanner.ModbusExchange.View
 
         private TextBox textBoxCellEditor;
 
+        IGateway SelectedModel => DataContext.SelectedModel;
+
         public ModbusExchangeView()
         {
             InitializeComponent();
@@ -145,32 +147,14 @@ namespace EasyEPlanner.ModbusExchange.View
 
         public void RebuildSignalsList()
         {
-            var devices = deviceManager.Devices
-                .Where(d => d.DeviceType is DeviceType.AO or DeviceType.AI or DeviceType.DO or DeviceType.DI)
-                .OfType<IIODevice>();
-
-
-            if (DataContext.SelectedModel is not null)
-            {
-                var usedsignals = DataContext.SelectedModel.Read.NestedSignals
-                    .Concat(DataContext.SelectedModel.Write.NestedSignals);
-
-                devices = devices.Except(usedsignals.Select(s => s.Device));
-            }
-
-            var signals = devices.Select(d => new ListViewItem([d.Name, d.Description]) { Tag = d });
-
-            if (SignalsSerch.Text != string.Empty)
-            {
-                signals = signals.Where(s =>
-                    s.SubItems[0].Text.ToLower().Contains(SignalsSerch.Text.ToLower()) ||
-                    s.SubItems[1].Text.ToLower().Contains(SignalsSerch.Text.ToLower()));
-            }
+            var signals = deviceManager
+                .GetModbusExchangeSignals(SelectedModel, SignalsSerch.Text)
+                .Select(d => new ListViewItem([d.Name, d.Description]) { Tag = d });
 
             SignalsList.Items.Clear();
-            SignalsList.Items.AddRange([.. signals]);
+            SignalsList.Items.AddRange(
+                [.. signals]);
         }
-
 
         private void SignalsList_ItemDrag(object sender, ItemDragEventArgs e)
         {
@@ -184,7 +168,7 @@ namespace EasyEPlanner.ModbusExchange.View
 
             if (e.Data.GetDataPresent(typeof(ListViewItem)) &&
                 item?.RowObject is ISignal signal && 
-                CanBind(signal, ((ListViewItem)e.Data.GetData(typeof(ListViewItem))).Tag as IIODevice))
+                SelectedModel.CanBind(signal, ((ListViewItem)e.Data.GetData(typeof(ListViewItem))).Tag as IIODevice))
             {
                 e.Effect = DragDropEffects.Link;
             }
@@ -257,33 +241,9 @@ namespace EasyEPlanner.ModbusExchange.View
             Bind(signal, device.Tag as IIODevice);
         }
 
-
-        private bool CanBind(ISignal signal, IIODevice device)
-        {
-            if (device.DeviceType is DeviceType.AI or DeviceType.DI)
-            {
-                if (DataContext.SelectedModel.Write.NestedSignals.Contains(signal))
-                    return false;
-            }
-            else
-            {
-                if (DataContext.SelectedModel.Read.NestedSignals.Contains(signal))
-                    return false;
-            }
-
-
-            if (device.DeviceType is DeviceType.AO or DeviceType.AI && signal.DataType is "Bool")
-                return false;
-
-            return true;
-        }
-
         private void Bind(ISignal signal, IIODevice device)
         {
-            if (CanBind(signal, device) is false)
-                return;
-
-            signal.Device = device;
+            SelectedModel.Bind(signal, device);
             RebuildSignalsListWithSaveScrollPosition();
         }
 

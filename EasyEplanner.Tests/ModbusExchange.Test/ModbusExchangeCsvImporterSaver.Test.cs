@@ -34,7 +34,7 @@ namespace EasyEplannerTests.ModbusExchangeTest
             };
             gateway.Parse(csvData);
 
-            var res = gateway.Save("-- test version");
+            var res = gateway.GetTextToSave("-- test version");
 
             var filePath = Path.Combine(TestContext.CurrentContext.WorkDirectory,
                 "ModbusExchange.Test", "TestData", "gate_test.lua");

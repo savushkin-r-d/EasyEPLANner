@@ -34,7 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // Save
+            // GetTextToSave
             // 
             this.Save.Location = new System.Drawing.Point(40, 76);
             this.Save.Name = "Save";

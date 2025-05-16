@@ -158,7 +158,7 @@
     <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="Main\ShowPlcAction.cs" />
-    <Compile Include="ModbusExchange\CSVImporter.cs" />
+    <Compile Include="ModbusExchange\CsvImporter.cs" />
     <Compile Include="ModbusExchange\ModbusExchangeLoader.cs" />
     <Compile Include="ModbusExchange\ModbusExchangeSaver.cs" />
     <Compile Include="ModbusExchange\Model\Exchange.cs" />
@@ -170,6 +170,8 @@
     <Compile Include="ModbusExchange\Model\IGroup.cs" />
     <Compile Include="ModbusExchange\Model\ISignal.cs" />
     <Compile Include="ModbusExchange\Model\Signal.cs" />
+    <Compile Include="ModbusExchange\Model\SignalBinder.cs" />
+    <Compile Include="ModbusExchange\Model\SignalsListBuilder.cs" />
     <Compile Include="ModbusExchange\Model\SignalsSizeCalculator.cs" />
     <Compile Include="ModbusExchange\View\InputGatewayName.cs">
       <SubType>Form</SubType>

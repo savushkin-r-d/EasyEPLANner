@@ -29,7 +29,7 @@ namespace EasyEPlanner.ModbusExchange
             {
                 using var writer = new StreamWriter(Path.Combine(path, $"gate_{model.Name}.lua"), false);
 
-                writer.Write(model.Save(AssemblyVersion.GetVersionAsLuaComment()));
+                writer.Write(model.GetTextToSave(AssemblyVersion.GetVersionAsLuaComment()));
             }
 
             var modbusExchangePath = Path.Combine(path, $"modbusexchange.lua");
@@ -67,7 +67,7 @@ namespace EasyEPlanner.ModbusExchange
         /// Сохранить <see cref="IGateway">модель шлюза</see> в виде Lua-таблицы.
         /// </summary>
         /// <param name="gateway">Модель шлюза</param>
-        public static string Save(this IGateway gateway, string versionComment)
+        public static string GetTextToSave(this IGateway gateway, string versionComment)
         {
             var rslt = new StringBuilder()
                 .Append($"{versionComment}\n")
@@ -77,9 +77,9 @@ namespace EasyEPlanner.ModbusExchange
                 .Append($"    ip = '{gateway.IP}',\n")
                 .Append($"    port = {gateway.Port},\n")
                 .Append($"    read =\n")
-                .Append(SaveMainGroup(gateway.Read, "    "))
+                .Append(GetTextMainGroup(gateway.Read, "    "))
                 .Append($"    write =\n")
-                .Append(SaveMainGroup(gateway.Write, "    "))
+                .Append(GetTextMainGroup(gateway.Write, "    "))
                 .Append($"}}\n")
                 .Append($"\n")
                 .Append($"local s, mt = pcall( require, 'modbusexchange' )\n")
@@ -94,14 +94,14 @@ namespace EasyEPlanner.ModbusExchange
         /// </summary>
         /// <param name="group">Группа сигналов</param>
         /// <param name="prefix">Отступ</param>
-        private static StringBuilder SaveMainGroup(IGroup group, string prefix)
+        private static StringBuilder GetTextMainGroup(IGroup group, string prefix)
         {
             var rslt = new StringBuilder()
                 .Append($"{prefix}{{\n")
                 .Append($"{prefix}    offset = 0,\n")
-                .Append(SaveGroup(group, prefix + "    "))
+                .Append(GetTextGroup(group, prefix + "    "))
                 .Append(string.Join("", group.Items.OfType<IGroup>()
-                    .Select(g => SaveGroup(g, prefix + "    "))))
+                    .Select(g => GetTextGroup(g, prefix + "    "))))
                 .Append($"{prefix}}},\n");
 
             return rslt;
@@ -112,7 +112,7 @@ namespace EasyEPlanner.ModbusExchange
         /// </summary>
         /// <param name="group">Группа сигналов</param>
         /// <param name="prefix">Отступ</param>
-        private static string SaveGroup(IGroup group, string prefix)
+        private static string GetTextGroup(IGroup group, string prefix)
         {
             var name = group.Description is Gateway.READ or Gateway.WRITE ? 
                 string.Empty : group.Description;
@@ -127,7 +127,7 @@ namespace EasyEPlanner.ModbusExchange
                 .Append($"{prefix}    name = '{name}',\n")
                 .Append($"{prefix}    offset = {group.Offset},\n")
                 .Append(string.Join("", signals
-                    .Select(s => SaveSignal(s, prefix + "    "))))
+                    .Select(s => GetTextSignal(s, prefix + "    "))))
                 .Append($"{prefix}}},\n");
 
             return rslt.ToString();
@@ -138,7 +138,7 @@ namespace EasyEPlanner.ModbusExchange
         /// </summary>
         /// <param name="signal">Сигнал</param>
         /// <param name="prefix">Отступ</param>
-        private static string SaveSignal(ISignal signal, string prefix)
+        private static string GetTextSignal(ISignal signal, string prefix)
         {
             return $"{prefix}{{ {signal.Word}," +
                 $" {signal.Bit}," +
