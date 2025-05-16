@@ -69,12 +69,10 @@ namespace EasyEPlanner.ModbusExchange
             var lua = new Lua();
 
             lua.RegisterFunction("AddSignal", null,
-                typeof(ModbusExchangeLoader).GetMethod(nameof(AddSignal),
-                    System.Reflection.BindingFlags.Static));
+                typeof(ModbusExchangeLoader).GetMethod(nameof(AddSignal)));
 
             lua.RegisterFunction("GetGroup", null,
-                typeof(ModbusExchangeLoader).GetMethod(nameof(GetGroup),
-                    System.Reflection.BindingFlags.Static));
+                typeof(ModbusExchangeLoader).GetMethod(nameof(GetGroup)));
 
             string sysLuaPath = Path.Combine(
                 ProjectManager.GetInstance().SystemFilesPath,
