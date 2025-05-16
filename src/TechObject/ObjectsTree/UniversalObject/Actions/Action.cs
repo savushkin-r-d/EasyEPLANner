@@ -731,6 +731,8 @@ namespace TechObject
             OnValueChanged(sender);
         }
 
+        public override bool IsMoveable => true;
+
         public override string SystemIdentifier => "process_action";
 
         protected string luaName;

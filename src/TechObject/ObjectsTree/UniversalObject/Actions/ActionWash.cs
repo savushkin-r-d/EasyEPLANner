@@ -7,7 +7,7 @@ namespace TechObject
     /// <summary>
     /// Специальное действие - обработка сигналов во время мойки.
     /// </summary>
-    public class ActionWash : GroupableAction
+    public class ActionWash : BaseActionCustom
     {
         /// <summary>
         /// Создание нового действия.
