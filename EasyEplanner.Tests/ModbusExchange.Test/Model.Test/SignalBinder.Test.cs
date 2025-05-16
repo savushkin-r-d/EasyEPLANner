@@ -34,14 +34,17 @@ namespace EasyEplannerTests.ModbusExchangeTest.ModelTest
             var device = Mock.Of<IIODevice>(d => d.DeviceType == deviceType);
 
             gate.Bind(readSignal, device);
+            gate.Bind(writeSignal, device);
 
-            Mock.Get(readSignal)
-                .SetupSet(content => content.Device = device)
-                .Verifiable(Times.Exactly(bindedToRead ? 1 : 0));
-            Mock.Get(writeSignal)
-                .SetupSet(content => content.Device = device)
-                .Verifiable(Times.Exactly(bindedToWrite ? 1 : 0));
+            Assert.Multiple(() =>
+            {
+                Mock.Get(readSignal)
+                    .SetupSet(s => s.Device = device)
+                    .Verifiable(Times.Exactly(bindedToRead ? 1 : 0));
+                Mock.Get(writeSignal)
+                    .SetupSet(content => content.Device = device)
+                    .Verifiable(Times.Exactly(bindedToWrite ? 1 : 0));
+            });
         }
-
     }
 }
