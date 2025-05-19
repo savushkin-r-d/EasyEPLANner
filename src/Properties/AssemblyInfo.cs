@@ -26,11 +26,11 @@ using System.Runtime.InteropServices;
 //
 //      Major Version
 //      Minor Version 
-//      Build Number
+//      GetTextToSave Number
 //      Revision
 //
-// You can specify all the values or you can default the Build and Revision Numbers 
+// You can specify all the values or you can default the GetTextToSave and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2025.04.*")]
-[assembly: AssemblyFileVersion("2025.04.0.0")]
+[assembly: AssemblyVersion("2025.05.*")]
+[assembly: AssemblyFileVersion("2025.05.0.0")]

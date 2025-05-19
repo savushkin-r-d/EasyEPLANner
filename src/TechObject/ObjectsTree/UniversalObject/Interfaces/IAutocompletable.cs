@@ -16,5 +16,7 @@ namespace TechObject
         /// Заполнить автоматически
         /// </summary>
         void Autocomplete();
+
+        bool CanExecute { get; }
     }
 }

@@ -16,48 +16,68 @@ namespace EplanDevice
             /// <summary>
             /// Номер клапана на пневмоострове
             /// </summary>
-            public static readonly RuntimeParameter R_VTUG_NUMBER = new RuntimeParameter(nameof(R_VTUG_NUMBER), "Номер клапана на пневмоострове");
+            public static readonly RuntimeParameter R_VTUG_NUMBER = 
+                new(nameof(R_VTUG_NUMBER),
+                    "Номер клапана на пневмоострове");
 
             /// <summary>
             /// Размер области клапана для пневмоострова
             /// </summary>
-            public static readonly RuntimeParameter R_VTUG_SIZE = new RuntimeParameter(nameof(R_VTUG_SIZE), "Размер области клапана для пневмоострова");
+            public static readonly RuntimeParameter R_VTUG_SIZE = 
+                new(nameof(R_VTUG_SIZE),
+                    "Размер области клапана для пневмоострова");
 
             /// <summary>
             /// Номер клапана в AS-i.
             /// </summary>
-            public static readonly RuntimeParameter R_AS_NUMBER = new RuntimeParameter(nameof(R_AS_NUMBER), "Номер клапана в AS-i");
+            public static readonly RuntimeParameter R_AS_NUMBER = 
+                new(nameof(R_AS_NUMBER), 
+                    "Номер клапана в AS-i");
 
             /// <summary>
             /// Тип красного сигнала устройства при подаче на него сигнала DO. 
             /// (Постоянный или мигающий). 1 - мигающий, 0 - постоянный.
             /// </summary>
-            public static readonly RuntimeParameter R_CONST_RED = new RuntimeParameter(nameof(R_CONST_RED), "Тип красного сигнала устройства при подаче на него сигнала DO");
+            public static readonly RuntimeParameter R_CONST_RED = 
+                new(nameof(R_CONST_RED),
+                    "Тип красного сигнала устройства при подаче на него сигнала DO");
 
             /// <summary>
             /// Номер клеммы пневмоострова для сигнала "Открыть"
             /// </summary>
-            public static readonly RuntimeParameter R_ID_ON = new RuntimeParameter(nameof(R_ID_ON), "Номер клеммы пневмоострова для сигнала 'Открыть'");
+            public static readonly RuntimeParameter R_ID_ON = 
+                new(nameof(R_ID_ON),
+                    "Номер клеммы пневмоострова для сигнала 'Открыть'");
 
             /// <summary>
             /// Номер клеммы пневмоострова для сигнала "Открыть верхнее седло"
             /// </summary>
-            public static readonly RuntimeParameter R_ID_UPPER_SEAT = new RuntimeParameter(nameof(R_ID_UPPER_SEAT), "Номер клеммы пневмоострвоа для сигнала 'Открыть верхнее седло'");
+            public static readonly RuntimeParameter R_ID_UPPER_SEAT = 
+                new(nameof(R_ID_UPPER_SEAT),
+                    "Номер клеммы пневмоострова для сигнала 'Открыть верхнее седло'");
 
             /// <summary>
             /// Номер клеммы пневмоострова для сигнала "Открыть нижнее седло"
             /// </summary>
-            public static readonly RuntimeParameter R_ID_LOWER_SEAT = new RuntimeParameter(nameof(R_ID_LOWER_SEAT), "Номер клеммы пневмоострвоа для сигнала 'Открыть нижнее седло'");
+            public static readonly RuntimeParameter R_ID_LOWER_SEAT = 
+                new(nameof(R_ID_LOWER_SEAT),
+                    "Номер клеммы пневмоострова для сигнала 'Открыть нижнее седло'");
 
             /// <summary>
             /// Смещение адресного пространства для клапанов 
             /// <see cref="DeviceSubType.V_IOLINK_MIXPROOF"/>, <see cref="DeviceSubType.V_IOLINK_DO1_DI2"/>
             /// привязанных к модулю WAGO.750-657
             /// </summary>
-            public static readonly RuntimeParameter R_EXTRA_OFFSET = new RuntimeParameter(nameof(R_EXTRA_OFFSET), "Смещение адресного пространства для клапана" , true);
+            public static readonly RuntimeParameter R_EXTRA_OFFSET = 
+                new(nameof(R_EXTRA_OFFSET),
+                    "Смещение адресного пространства для клапана" , true);
 
 
-            private RuntimeParameter(string name, string description, bool auto = false)
+            /// <param name="name">Название параметра</param>
+            /// <param name="description">Описание параметр</param>
+            /// <param name="auto">Метка генерации (параметр заполняется автоматически)</param>
+            private RuntimeParameter(
+                string name, string description, bool auto = false)
             {
                 Name = name;
                 Description = description;

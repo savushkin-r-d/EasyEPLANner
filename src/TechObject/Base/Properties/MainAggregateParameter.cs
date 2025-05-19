@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class MainAggregateParameter : ActiveBoolParameter
+    public class MainAggregateParameter : ActiveBoolParameter, IAutocompletable
     {
         public MainAggregateParameter(string luaName, string name,
             string defaultValue, List<DisplayObject> displayObjects = null)
@@ -33,9 +33,6 @@ namespace TechObject
             var succes = base.SetNewValue(newValue);
             SetUpParametersVisibility();
 
-            if (succes && Value is "true")
-                Autocomplete();
-
             return succes;
         }
 
@@ -55,34 +52,38 @@ namespace TechObject
                     .FirstOrDefault(x => x.LuaName == parameter.LuaName && x.Owner == Owner);
                 if (foundProperty != null)
                 {
-                    foundProperty.NeedDisable = Value is "false";
+                    foundProperty.NeedDisable = Value == "false";
                 }
             }
         }
 
-        /// <summary>
-        /// Автоматическое заполнение связанных параметров агрегата.
-        /// Добавление float-параметра к операции с автоматической привязкой.
-        /// </summary>
+        bool IAutocompletable.CanExecute => Value == "true";
+
         public void Autocomplete()
         {
+            if (Value == "false")
+                return;
+
             foreach (var baseParameter in (Owner as BaseTechObject).AggregateParameters)
             {
                 var aggregateParameter = (Parent as BaseOperation).Properties
                     .FirstOrDefault(x => x.LuaName == baseParameter.LuaName && x.Owner == Owner);
 
+                if (aggregateParameter is null)
+                    continue;
+
+                var baseOperation = aggregateParameter.Parent as BaseOperation;
+                var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
+
                 if (aggregateParameter is IActiveAggregateParameter activeAggregateParameter &&
-                    aggregateParameter.Value == string.Empty)
+                    !paramsManager.Float.HaveSameLuaName(aggregateParameter.Value))
                 {
                     var baseFloatParameter = activeAggregateParameter.Parameter;
-                    var baseOperation = aggregateParameter.Parent as BaseOperation;
-
+  
                     var paramLuaName = $"{baseOperation.LuaName}_{baseFloatParameter.LuaName}";
                     var paramName = $"{baseOperation.Name}. {baseFloatParameter.Name}";
 
                     aggregateParameter.SetValue(paramLuaName);
-
-                    var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
 
                     if (paramsManager.Float.HaveSameLuaName(paramLuaName))
                         continue;

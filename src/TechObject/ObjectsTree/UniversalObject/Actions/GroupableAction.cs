@@ -116,10 +116,7 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            return SubActions.SelectMany(sa => sa.DevicesIndex)
-                .Distinct()
-                .Select(index => new DrawInfo(DrawStyle, deviceManager.GetDeviceByIndex(index)))
-                .ToList();
+            return [.. SubActions.SelectMany(sa => sa.GetObjectToDrawOnEplanPage()).Distinct()];
         }
 
         private bool IdenticalActions(GroupableAction first, GroupableAction second)
@@ -227,6 +224,64 @@ namespace TechObject
                                         .ElementAtOrDefault(parIndex)?.Value == refPar.Value))
                     par.SetNewValue(refPar.Value);
             }
+        }
+
+
+        public override bool IsMoveable => true;
+
+        public override bool CanMoveUp(object child)
+        {
+            if (child is not IAction action)
+                return false;
+
+            return subActions.FirstOrDefault() != action;
+        }
+
+        public override ITreeViewItem MoveUp(object child)
+        {
+            if (child is not IAction action)
+                return null;
+
+
+            int index = subActions.IndexOf(action);
+
+            if (index <= 0)
+                return null;
+
+            SwapSubActions(index, index - 1);
+
+            OnValueChanged(this);
+            return child as ITreeViewItem;
+        }
+
+        public override bool CanMoveDown(object child)
+        {
+            if (child is not IAction action)
+                return false;
+
+            return subActions.LastOrDefault() != action;
+        }
+
+        public override ITreeViewItem MoveDown(object child)
+        {
+            if (child is not IAction action)
+                return null;
+
+            int index = subActions.IndexOf(action);
+
+            if (index > subActions.Count - 2)
+                return null;
+
+            SwapSubActions(index, index + 1);
+
+            OnValueChanged(this);
+            return child as ITreeViewItem;
+        }
+
+        public void SwapSubActions(int firstIndex, int secondIndex)
+        {
+            (subActions[firstIndex], subActions[secondIndex]) =
+                (subActions[secondIndex], subActions[firstIndex]);
         }
 
         public override void UpdateOnDeleteGeneric()
