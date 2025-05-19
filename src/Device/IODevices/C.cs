@@ -118,8 +118,11 @@ namespace EplanDevice
         {
             string res = base.Check();
 
-            res += CheckDeviceProperty(Property.IN_VALUE);
-            res += CheckDeviceProperty(Property.OUT_VALUE);
+            var propertiesToCheck = new[] { Property.IN_VALUE, Property.OUT_VALUE };
+            foreach (var property in propertiesToCheck)
+            {
+                res += CheckDeviceProperty(property);
+            }
 
             return res;
         }
