@@ -1319,6 +1319,10 @@ namespace Editor
             FormatItemsToBold(e, treeViewItemsList.ToArray());
             FormatActiveBoolParameters(e);
             FormatCuttedItems(e);
+        }
+
+        private void editorTView_FormatRow(object sender, FormatRowEventArgs e)
+        {
             FormatCopiedItems(e);
         }
 
@@ -1382,13 +1386,13 @@ namespace Editor
         /// Форматирование скопированного элемента
         /// </summary>
         /// <param name="e"></param>
-        private void FormatCopiedItems(FormatCellEventArgs e)
+        private void FormatCopiedItems(FormatRowEventArgs e)
         {
             var item = e.Model as ITreeViewItem;
-            if(copyItems?.Contains(item) is true && item?.MarkToCut is false)
+            if (copyItems?.Contains(item) is true && item?.MarkToCut is false)
             {
-                e.Item.BackColor = Color.FromArgb(50, Color.Orange); 
-                e.Item.SelectedForeColor = Color.FromArgb(50, Color.Orange);
+                e.Item.BackColor = Color.LightPink;
+                e.Item.SelectedForeColor = Color.DeepPink;
             }
         }
 
