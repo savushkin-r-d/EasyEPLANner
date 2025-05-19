@@ -36,6 +36,11 @@
             /// Последовательность сигналов.
             /// </summary>
             public const string SIGNALS_SEQUENCE = "SIGNALS_SEQUENCE";
+
+            /// <summary>
+            /// Устройство.
+            /// </summary>
+            public const string DEV = nameof(DEV);
         }
     }
 }
