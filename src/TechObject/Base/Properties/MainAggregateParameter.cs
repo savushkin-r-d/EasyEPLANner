@@ -52,16 +52,16 @@ namespace TechObject
                     .FirstOrDefault(x => x.LuaName == parameter.LuaName && x.Owner == Owner);
                 if (foundProperty != null)
                 {
-                    foundProperty.NeedDisable = Value is "false";
+                    foundProperty.NeedDisable = Value == "false";
                 }
             }
         }
 
-        bool IAutocompletable.CanExecute => Value is "true";
+        bool IAutocompletable.CanExecute => Value == "true";
 
         public void Autocomplete()
         {
-            if (value is "false")
+            if (Value == "false")
                 return;
 
             foreach (var baseParameter in (Owner as BaseTechObject).AggregateParameters)

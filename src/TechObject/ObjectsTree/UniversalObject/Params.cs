@@ -476,12 +476,15 @@ namespace TechObject
         /// </summary>
         public void FillWithStubs()
         {
-            const int group = 10;
+            const int paramsPerGroup = 10;
 
-            var needStub = group - parameters.Count % group;
-            needStub += parameters.Count < group ? group : 0;
+            var needStub = paramsPerGroup - parameters.Count % paramsPerGroup;
 
-            if (parameters.Count > group && needStub == group)
+            // Если это "системные параметры" (первые 20) и их < 10,
+            // добавляем к этому еще 10 заглушек
+            needStub += parameters.Count < paramsPerGroup ? paramsPerGroup : 0;
+
+            if (parameters.Count > paramsPerGroup && needStub == paramsPerGroup)
                 return;
 
             foreach (var _ in Enumerable.Range(0, needStub))
