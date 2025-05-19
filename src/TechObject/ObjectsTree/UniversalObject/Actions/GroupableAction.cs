@@ -116,10 +116,7 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            return SubActions.SelectMany(sa => sa.DevicesIndex)
-                .Distinct()
-                .Select(index => new DrawInfo(DrawStyle, deviceManager.GetDeviceByIndex(index)))
-                .ToList();
+            return [.. SubActions.SelectMany(sa => sa.GetObjectToDrawOnEplanPage()).Distinct()];
         }
 
         private bool IdenticalActions(GroupableAction first, GroupableAction second)
