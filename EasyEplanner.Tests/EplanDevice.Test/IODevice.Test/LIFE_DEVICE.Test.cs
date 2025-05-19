@@ -88,7 +88,7 @@ namespace Tests.EplanDevices
                 m.GetDevice("STUB") == new AI("", "", StaticHelper.CommonConst.Cap, 1, "", 1));
 
             var randomizer = new Random();
-            int value = randomizer.Next(1, 3);
+            int value = randomizer.Next(1, 4);
             switch (value)
             {
                 case 1:

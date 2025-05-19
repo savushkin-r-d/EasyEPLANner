@@ -170,7 +170,7 @@ namespace EplanDevice
         C_THLD, ///< Пороговый регулятор
 
         // LIFE_DEVICE
-        LIFEBIT = 1, // 
-        LIFECOUNTER, // 
+        LIFEBIT = 1, ///< Устройство проверки связи дискретного сигнала
+        LIFECOUNTER, ///< Устройство проверки связи аналогового сигнала
     };
 }

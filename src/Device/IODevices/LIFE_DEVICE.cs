@@ -79,23 +79,25 @@ namespace EplanDevice
 
         public override string Check()
         {
+            var res = base.Check();
+
             if (properties.TryGetValue(Property.DEV, out var dev_string) &&
                 !string.IsNullOrEmpty(dev_string?.ToString()))
             {
                 var dev = deviceManager.GetDevice(dev_string.ToString());
                 if (dev.Description is CommonConst.Cap)
-                    return $"{Name}: к свойству {Property.DEV} привязано неизвестное устройство\n";
+                    res += $"{Name}: к свойству {Property.DEV} привязано неизвестное устройство;\n";
 
-                if (dSubType is DeviceSubType.LIFEBIT &&
+                else if (dSubType is DeviceSubType.LIFEBIT &&
                     dev.DeviceType is not DeviceType.DI)
-                    return $"{Name}: к свойству {Property.DEV} привязано устройство неверного типа ({DeviceType.DI})\n";
+                    res += $"{Name}: к свойству {Property.DEV} привязано устройство неверного типа ({DeviceType.DI});\n";
 
-                if (dSubType is DeviceSubType.LIFECOUNTER &&
+                else if (dSubType is DeviceSubType.LIFECOUNTER &&
                     dev.DeviceType is not DeviceType.AI)
-                    return $"{Name}: к свойству {Property.DEV} привязано устройство неверного типа ({DeviceType.AI})\n";
+                    res += $"{Name}: к свойству {Property.DEV} привязано устройство неверного типа ({DeviceType.AI});\n";
             }
 
-            return "";
+            return res;
         }
 
         private IDeviceManager deviceManager;
