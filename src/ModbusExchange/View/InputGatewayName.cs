@@ -20,6 +20,9 @@ namespace EasyEPlanner.ModbusExchange.View
 
         public string GatewayName { get; set; }
 
+        private static readonly string InvalidFileNameChars =
+            Regex.Escape(new string(System.IO.Path.GetInvalidFileNameChars()));
+
         public InputGatewayName(IExchange exchange)
         {
             this.exchange = exchange;
@@ -34,7 +37,8 @@ namespace EasyEPlanner.ModbusExchange.View
             if (exchange.Models.Select(m => m.Name).Contains(NameTextBox.Text))
                 return;
 
-            if (Regex.IsMatch(NameTextBox.Text, @"\p{IsCyrillic}",
+            if (Regex.IsMatch(NameTextBox.Text,
+                @$"[{InvalidFileNameChars}]|\.|\p{{IsCyrillic}}",
                 RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                 return;
 
