@@ -118,29 +118,35 @@ namespace EplanDevice
         {
             string res = base.Check();
 
+            bool propertyChanged = false;
             var propertiesToCheck = new[] { Property.IN_VALUE, Property.OUT_VALUE };
             foreach (var property in propertiesToCheck)
             {
-                res += CheckDeviceProperty(property);
+                propertyChanged |= CheckDeviceProperty(property, out var r);
+                res += r;
             }
+
+            if (propertyChanged)
+                UpdateProperties();
 
             return res;
         }
 
         [ExcludeFromCodeCoverage]
-        private string CheckDeviceProperty(string property)
+        private bool CheckDeviceProperty(string property, out string res)
         {
+            res = string.Empty;
             if (properties.TryGetValue(property, out var value) &&
                 value is string dev &&
                 dev != string.Empty &&
                 DeviceManager.GetInstance().GetDevice(dev).Description is CommonConst.Cap)
             {
                 properties[property] = string.Empty;
-                UpdateProperties();
-                return $"{Name}: в свойстве {property} сброшено несуществующее устройство {dev}.\n";
+                res = $"{Name}: в свойстве {property} сброшено несуществующее устройство {dev}.\n";
+                return true;
             }
 
-            return string.Empty;
+            return false;
         }
 
         #region сохранение в Lua
