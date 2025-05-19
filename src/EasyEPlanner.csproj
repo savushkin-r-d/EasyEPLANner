@@ -149,11 +149,48 @@
     <Compile Include="IO\View\IOViewControl.Designer.cs">
       <DependentUpon>IOViewControl.cs</DependentUpon>
     </Compile>
+    <None Include="Lua\sys_modbus_exchange.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
+    <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
     <Compile Include="Main\ShowPlcAction.cs" />
+    <Compile Include="ModbusExchange\CsvImporter.cs" />
+    <Compile Include="ModbusExchange\ModbusExchangeLoader.cs" />
+    <Compile Include="ModbusExchange\ModbusExchangeSaver.cs" />
+    <Compile Include="ModbusExchange\Model\Exchange.cs" />
+    <Compile Include="ModbusExchange\Model\Gateway.cs" />
+    <Compile Include="ModbusExchange\Model\Group.cs" />
+    <Compile Include="ModbusExchange\Model\IExchange.cs" />
+    <Compile Include="ModbusExchange\Model\IGateway.cs" />
+    <Compile Include="ModbusExchange\Model\IGatewayViewItem.cs" />
+    <Compile Include="ModbusExchange\Model\IGroup.cs" />
+    <Compile Include="ModbusExchange\Model\ISignal.cs" />
+    <Compile Include="ModbusExchange\Model\Signal.cs" />
+    <Compile Include="ModbusExchange\Model\SignalBinder.cs" />
+    <Compile Include="ModbusExchange\Model\SignalsListBuilder.cs" />
+    <Compile Include="ModbusExchange\Model\SignalsSizeCalculator.cs" />
+    <Compile Include="ModbusExchange\View\InputGatewayName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModbusExchange\View\InputGatewayName.Designer.cs">
+      <DependentUpon>InputGatewayName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModbusExchange\View\ModbusExchangeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
+      <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StaticHelper\SaveAndCloseDialog.Designer.cs">
+      <DependentUpon>SaveAndCloseDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
     <Compile Include="ProjectImportICP\DeviceNameMatchingSaver.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
@@ -496,6 +533,15 @@
       <DependentUpon>LogFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ModbusExchange\View\InputGatewayName.resx">
+      <DependentUpon>InputGatewayName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModbusExchange\View\ModbusExchangeView.resx">
+      <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaticHelper\SaveAndCloseDialog.resx">
+      <DependentUpon>SaveAndCloseDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ModeFrm.resx">
       <DependentUpon>ModeFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -515,6 +561,9 @@
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
     <None Include="Lua\mainPattern.plua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\modbus_exchange_pattern.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys.lua">
