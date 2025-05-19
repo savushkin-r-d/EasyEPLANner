@@ -100,6 +100,6 @@ namespace EplanDevice
             return res;
         }
 
-        private IDeviceManager deviceManager;
+        private readonly IDeviceManager deviceManager;
     }
 }
