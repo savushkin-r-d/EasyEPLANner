@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Настраиваемое действие
     /// </summary>
-    public class ActionCustom : GroupableAction
+    public class ActionCustom : BaseActionCustom
     {
         /// <summary>
         /// Создание нового действия

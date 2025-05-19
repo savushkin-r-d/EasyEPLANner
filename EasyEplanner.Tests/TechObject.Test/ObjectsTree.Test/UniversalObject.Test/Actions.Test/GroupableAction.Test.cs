@@ -106,5 +106,47 @@ namespace TechObjectTests
             };
         }
 
+
+        [Test]
+        public void MoveItems()
+        {
+            var groupableAction = new ActionGroupCustom("action_custom_group", null, "", () =>
+            {
+                var action = new ActionCustom("action_custom", null, "");
+                
+                action.CreateAction(new Action("action_1", null, ""));
+                action.CreateAction(new Action("action_2", null, ""));
+
+                return action;
+            });
+
+            var first = groupableAction.SubActions.FirstOrDefault();
+            var second = groupableAction.Insert();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsFalse(groupableAction.CanMoveUp(first));
+                Assert.IsTrue(groupableAction.CanMoveDown(first));
+
+                Assert.IsTrue(groupableAction.CanMoveUp(second));
+                Assert.IsFalse(groupableAction.CanMoveDown(second));
+
+                Assert.AreSame(first, groupableAction.SubActions[0]);
+                
+                groupableAction.MoveDown(first);
+                Assert.AreSame(first, groupableAction.SubActions[1]);
+                
+                groupableAction.MoveUp(first);
+                Assert.AreSame(first, groupableAction.SubActions[0]);
+
+                Assert.IsNull(groupableAction.MoveUp(first));
+                Assert.IsNull(groupableAction.MoveDown(second));
+
+                Assert.IsFalse(groupableAction.CanMoveDown(0));
+                Assert.IsFalse(groupableAction.CanMoveUp(0));
+                Assert.IsNull(groupableAction.MoveDown(0));
+                Assert.IsNull(groupableAction.MoveUp(0));
+            });
+        }
     }
 }
