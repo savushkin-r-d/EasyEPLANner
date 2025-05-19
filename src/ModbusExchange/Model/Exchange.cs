@@ -26,7 +26,9 @@ namespace EasyEPlanner.ModbusExchange.Model
 
         public void SelectModel(string modelName)
         {
-            SelectedModel = models.Find(m => m.Name == modelName);
+            var model = models.Find(m => m.Name == modelName);
+            if (model is not null)
+                SelectedModel = model;
         }
     }
 }
