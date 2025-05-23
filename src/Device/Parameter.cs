@@ -26,117 +26,172 @@ namespace EplanDevice
         /// <summary>
         /// Описание параметров устройства.
         /// </summary>
-        public class Parameter
+        public class Parameter : ITag
         {
             /// <summary> Номинальная нагрузка в кг. </summary>
-            public static readonly Parameter P_NOMINAL_W = new Parameter("P_NOMINAL_W", "Номинальная нагрузка", UnitFormat.Kilograms);
+            public static readonly Parameter P_NOMINAL_W = 
+                new(nameof(P_NOMINAL_W), "Номинальная нагрузка",
+                    UnitFormat.Kilograms);
 
             /// <summary> Рабочий коэффициент передачи </summary>
-            public static readonly Parameter P_RKP = new Parameter("P_RKP", "Рабочий коэффициент передачи", UnitFormat.RKP);
+            public static readonly Parameter P_RKP = 
+                new(nameof(P_RKP), "Рабочий коэффициент передачи",
+                    UnitFormat.RKP);
 
             /// <summary> Сдвиг нуля. </summary>
-            public static readonly Parameter P_C0 = new Parameter("P_C0", "Сдвиг нуля");
+            public static readonly Parameter P_C0 = 
+                new(nameof(P_C0), "Сдвиг нуля");
 
             /// <summary> Время порогового фильтра. </summary>
-            public static readonly Parameter P_DT = new Parameter("P_DT", "Время порогового фильтра", UnitFormat.Milliseconds);
+            public static readonly Parameter P_DT = 
+                new(nameof(P_DT), "Время порогового фильтра",
+                    UnitFormat.Milliseconds);
 
             /// <summary> Время включения. </summary>
-            public static readonly Parameter P_ON_TIME = new Parameter("P_ON_TIME", "Время включения", UnitFormat.Milliseconds);
+            public static readonly Parameter P_ON_TIME = 
+                new(nameof(P_ON_TIME), "Время включения", 
+                    UnitFormat.Milliseconds);
 
-            public static readonly Parameter P_OFF_TIME = new Parameter(nameof(P_OFF_TIME), "Время выключения", UnitFormat.Milliseconds);
+            public static readonly Parameter P_OFF_TIME = 
+                new(nameof(P_OFF_TIME), "Время выключения",
+                    UnitFormat.Milliseconds);
 
             /// <summary> Обратная связь, 1/0 (Да/Нет) </summary>
-            public static readonly Parameter P_FB = new Parameter("P_FB", "Обратная связь", UnitFormat.Boolean);
+            public static readonly Parameter P_FB = 
+                new(nameof(P_FB), "Обратная связь", 
+                    UnitFormat.Boolean);
 
             /// <summary> Аварийное значение. </summary>
-            public static readonly Parameter P_ERR = new Parameter("P_ERR", "Аварийное значение");
+            public static readonly Parameter P_ERR = 
+                new(nameof(P_ERR), "Аварийное значение");
 
             /// <summary> Минимальное значение. </summary>
-            public static readonly Parameter P_MIN_V = new Parameter("P_MIN_V", "Мин. значение");
+            public static readonly Parameter P_MIN_V = 
+                new(nameof(P_MIN_V), "Мин. значение");
 
             /// <summary> Максимальное значение. </summary>
-            public static readonly Parameter P_MAX_V = new Parameter("P_MAX_V", "Мак. значение");
+            public static readonly Parameter P_MAX_V = 
+                new(nameof(P_MAX_V), "Мак. значение");
 
             /// <summary> Давление, на которое настроен датчик. </summary>
-            public static readonly Parameter P_MAX_P = new Parameter("P_MAX_P", "Давление датчика", UnitFormat.Bars);
+            public static readonly Parameter P_MAX_P = 
+                new(nameof(P_MAX_P), "Давление датчика",
+                    UnitFormat.Bars);
 
             /// <summary> Радиус танка. </summary>
-            public static readonly Parameter P_R = new Parameter("P_R", "Радиус танка", UnitFormat.Meters);
+            public static readonly Parameter P_R = 
+                new(nameof(P_R), "Радиус танка",
+                    UnitFormat.Meters);
 
             /// <summary> Высота конической части танка. </summary>
-            public static readonly Parameter P_H_CONE = new Parameter("P_H_CONE", "Высота конической части танка", UnitFormat.Meters);
+            public static readonly Parameter P_H_CONE = 
+                new(nameof(P_H_CONE), "Высота конической части танка",
+                    UnitFormat.Meters);
 
             /// <summary> Высота усеченной части танка. </summary>
-            public static readonly Parameter P_H_TRUNC = new Parameter("P_H_TRUNC", "Высота усеченной части танка", UnitFormat.Meters);
+            public static readonly Parameter P_H_TRUNC = 
+                new(nameof(P_H_TRUNC), "Высота усеченной части танка",
+                    UnitFormat.Meters);
 
             /// <summary> Минимальное значение для потока. </summary>
-            public static readonly Parameter P_MIN_F = new Parameter("P_MIN_F", "Мин. значение для потока");
+            public static readonly Parameter P_MIN_F = 
+                new(nameof(P_MIN_F), "Мин. значение для потока");
 
             /// <summary> Максимальное значение для потока. </summary>
-            public static readonly Parameter P_MAX_F = new Parameter("P_MAX_F", "Макс. значение для потока");
+            public static readonly Parameter P_MAX_F = 
+                new(nameof(P_MAX_F), "Макс. значение для потока");
 
             /// <summary> Коэффициент усиления. </summary>
-            public static readonly Parameter P_k = new Parameter("P_k", "Коэффициент усиления");
+            public static readonly Parameter P_k = 
+                new(nameof(P_k), "Коэффициент усиления");
 
             /// <summary> Время интегрирования. </summary>
-            public static readonly Parameter P_Ti = new Parameter("P_Ti", "Время интегрирования");
+            public static readonly Parameter P_Ti = 
+                new(nameof(P_Ti), "Время интегрирования");
 
             /// <summary> Время дифференцирования. </summary>
-            public static readonly Parameter P_Td = new Parameter("P_Td", "Время дифференцирования");
+            public static readonly Parameter P_Td = 
+                new(nameof(P_Td), "Время дифференцирования");
 
             /// <summary> Интервал расчёта. </summary>
-            public static readonly Parameter P_dt = new Parameter("P_dt", "Интервал расчета", UnitFormat.Milliseconds);
+            public static readonly Parameter P_dt = 
+                new(nameof(P_dt), "Интервал расчета", 
+                    UnitFormat.Milliseconds);
 
             /// <summary> Максимальное значение входной величины. </summary>
-            public static readonly Parameter P_max = new Parameter("P_max", "Макс. входное значение");
+            public static readonly Parameter P_max = 
+                new(nameof(P_max), "Макс. входное значение");
 
             /// <summary> Минимальное значение входной величины. </summary>
-            public static readonly Parameter P_min = new Parameter("P_min", "Мин. входное значение");
+            public static readonly Parameter P_min = 
+                new(nameof(P_min), "Мин. входное значение");
 
             /// <summary> Время выхода на режим регулирования. </summary>
-            public static readonly Parameter P_acceleration_time = new Parameter("P_acceleration_time", "Время выхода", UnitFormat.Seconds);
+            public static readonly Parameter P_acceleration_time = 
+                new(nameof(P_acceleration_time), "Время выхода",
+                    UnitFormat.Seconds);
 
             /// <summary> Ручной режим, 0 - авто, 1 - ручной. </summary>
-            public static readonly Parameter P_is_manual_mode = new Parameter("P_is_manual_mode", "Ручной режим", UnitFormat.Boolean);
+            public static readonly Parameter P_is_manual_mode = 
+                new(nameof(P_is_manual_mode), "Ручной режим",
+                    UnitFormat.Boolean);
 
             /// <summary> Заданное ручное значение выходного сигнала. </summary>
-            public static readonly Parameter P_U_manual = new Parameter("P_U_manual", "Заданное ручное значение", UnitFormat.Percentages);
+            public static readonly Parameter P_U_manual = 
+                new(nameof(P_U_manual), "Заданное ручное значение",
+                    UnitFormat.Percentages);
 
             /// <summary> Коэффициент усиления 2. </summary>
-            public static readonly Parameter P_k2 = new Parameter("P_k2", "Коэффициент усиления 2");
+            public static readonly Parameter P_k2 = 
+                new(nameof(P_k2), "Коэффициент усиления 2");
 
             /// <summary> Время интегрирования 2. </summary>
-            public static readonly Parameter P_Ti2 = new Parameter("P_Ti2", "Время интегрирования 2");
+            public static readonly Parameter P_Ti2 = 
+                new(nameof(P_Ti2), "Время интегрирования 2");
 
             /// <summary> Время дифференцирования 2 </summary>
-            public static readonly Parameter P_Td2 = new Parameter("P_Td2", "Время дифференцирования 2");
+            public static readonly Parameter P_Td2 = 
+                new(nameof(P_Td2), "Время дифференцирования 2");
 
             /// <summary> Максимальное значение выходной величины. </summary>
-            public static readonly Parameter P_out_max = new Parameter("P_out_max", "Макс. выходное значение");
+            public static readonly Parameter P_out_max = 
+                new(nameof(P_out_max), "Макс. выходное значение");
 
             /// <summary> Минимальное значение выходной величины. </summary>
-            public static readonly Parameter P_out_min = new Parameter("P_out_min", "Мин. выходное значение");
+            public static readonly Parameter P_out_min = 
+                new(nameof(P_out_min), "Мин. выходное значение");
 
             /// <summary> Обратного (реверсивного) действия, 0 - false, 1 - true. </summary>
-            public static readonly Parameter P_is_reverse = new Parameter("P_is_reverse", "Выход обратного действия 100-0", UnitFormat.Boolean);
+            public static readonly Parameter P_is_reverse = 
+                new(nameof(P_is_reverse), "Выход обратного действия 100-0", 
+                    UnitFormat.Boolean);
 
             /// <summary> Нулевое стартовое значение, 0 - false, 1 - true. </summary>
-            public static readonly Parameter P_is_zero_start = new Parameter("P_is_zero_start", "Нулевое стартовое значение", UnitFormat.Boolean);
+            public static readonly Parameter P_is_zero_start = 
+                new(nameof(P_is_zero_start), "Нулевое стартовое значение",
+                    UnitFormat.Boolean);
 
             /// <summary> Диаметр вала, м. </summary>
-            public static readonly Parameter P_SHAFT_DIAMETER = new Parameter("P_SHAFT_DIAMETER", "Диаметр вала", UnitFormat.Meters);
+            public static readonly Parameter P_SHAFT_DIAMETER = 
+                new(nameof(P_SHAFT_DIAMETER), "Диаметр вала",
+                    UnitFormat.Meters);
 
             /// <summary> Передаточное число </summary>
-            public static readonly Parameter P_TRANSFER_RATIO = new Parameter("P_TRANSFER_RATIO", "Передаточное число");
+            public static readonly Parameter P_TRANSFER_RATIO = 
+                new(nameof(P_TRANSFER_RATIO), "Передаточное число");
 
             /// <summary> Предельное время отсутствия готовности к работе, секунд. </summary>
-            public static readonly Parameter P_READY_TIME = new Parameter("P_READY_TIME", "Предельное время отсутсвя готовности к работе", UnitFormat.Seconds);
+            public static readonly Parameter P_READY_TIME = 
+                new(nameof(P_READY_TIME), "Предельное время отсутствия готовности к работе",
+                    UnitFormat.Seconds);
 
             /// <summary> Параметр для обработки ошибки счета импульсов. </summary>
-            public static readonly Parameter P_ERR_MIN_FLOW = new Parameter("P_ERR_MIN_FLOW", "Ошибка счета импульсов");
+            public static readonly Parameter P_ERR_MIN_FLOW = 
+                new(nameof(P_ERR_MIN_FLOW), "Ошибка счета импульсов");
 
             /// <summary> Дельта значение </summary>
-            public static readonly Parameter P_delta = new Parameter(nameof(P_delta), "Дельта срабатывания");
+            public static readonly Parameter P_delta = 
+                new(nameof(P_delta), "Дельта срабатывания");
 
             protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters = InitParameters();
 
@@ -160,7 +215,7 @@ namespace EplanDevice
             /// <param name="name">Название параметра (CAD-name)</param>
             /// <param name="description">Описание параметра</param>
             /// <param name="">Формат string.() (единицы измерения) </param>
-            public Parameter(string name, string description = "", string format = UnitFormat.Empty)
+            private Parameter(string name, string description = "", string format = UnitFormat.Empty)
             {
                 this.name = name;
                 this.description = description;
@@ -169,7 +224,7 @@ namespace EplanDevice
 
             /// <summary>
             /// Неявное преобразование названия в параметр по его названию
-            /// Если парметр не найден, возвращатся новый параметр с неверным названиемю
+            /// Если параметр не найден, возвращается новый параметр с неверным названием
             /// </summary>
             /// <param name="parameterName">Название параметра</param>
             public static implicit operator Parameter(string parameterName)

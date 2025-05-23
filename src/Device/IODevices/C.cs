@@ -96,13 +96,13 @@ namespace EplanDevice
             return errStr;
         }
 
-        public override Dictionary<string, int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
                 case DeviceType.C:
-                    return new Dictionary<string, int>()
+                    return new Dictionary<ITag, int>()
                     {
                         {Tag.ST, 1},
                         {Tag.M, 1},
@@ -181,11 +181,10 @@ namespace EplanDevice
         #region сохранение базы каналов
         public override void GenerateDeviceTags(TreeNode rootNode)
         {
-            var devTagsNames = GetDeviceProperties(DeviceType, DeviceSubType)
-                .Keys;
-            var devParameters = new List<string>();
-            devParameters.AddRange(devTagsNames);
-            devParameters.AddRange(parameters.Select(parameter => parameter.Key.Name));
+            var devTags = GetDeviceProperties(DeviceType, DeviceSubType).Keys;
+            var devParameters = new List<(string name, string description)>();
+            devParameters.AddRange(devTags.Select(t => (t.Name, t.Description)));
+            devParameters.AddRange(parameters.Select(parameter => (parameter.Key.Name, parameter.Key.Description)));
 
             TreeNode newNode;
             if (!rootNode.Nodes.ContainsKey(Name))
@@ -199,9 +198,9 @@ namespace EplanDevice
                     .First();
             }
 
-            foreach (var parName in devParameters)
+            foreach (var par in devParameters)
             {
-                newNode.Nodes.Add($"{Name}.{parName}", $"{Name}.{parName}");
+                newNode.Nodes.Add($"{Name}.{par.name} -- {par.description}", $"{Name}.{par.name} -- {par.description}");
             }
         }
         #endregion

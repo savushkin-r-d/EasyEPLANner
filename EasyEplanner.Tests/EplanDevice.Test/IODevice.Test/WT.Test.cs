@@ -103,7 +103,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -119,7 +119,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForWT = new Dictionary<string, int>()
+            var exportForWT = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -130,22 +130,14 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.P_CZ, 1},
             };
 
-            var exportForWTVirt = new Dictionary<string, int>()
+            var exportForWTVirt = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
             };
 
-            var exportForWTRS232 = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.ST, 1},
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_CZ, 1},
-            };
-
-            var exportForWTETH = new Dictionary<string, int>()
+            var exportForWTRS232 = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -153,7 +145,15 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.P_CZ, 1},
             };
 
-            var exportForWTAXL = new Dictionary<string, int>()
+            var exportForWTETH = new Dictionary<ITag, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_CZ, 1},
+            };
+
+            var exportForWTAXL = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
