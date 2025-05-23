@@ -545,6 +545,8 @@ namespace TechObject
             return paramsManager;
         }
 
+        public SystemParams SystemParams => systemParams; 
+
         public int TechNumber
         {
             get
