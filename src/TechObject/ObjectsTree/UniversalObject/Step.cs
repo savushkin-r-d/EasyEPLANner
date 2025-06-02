@@ -811,7 +811,9 @@ namespace TechObject
             items.RemoveAt(index);
             items.Insert(index, newActionAsITreeViewItem);
 
-            targetAction.ModifyDevNames(new DevModifyOptions(Owner.TechObject, copyAction.Owner.TechObject.NameEplan, copyAction.Owner.TechObject.TechNumber));
+            newAction.ModifyDevNames(new DevModifyOptions(Owner.TechObject,
+                copyAction.Owner.TechObject.NameEplan,
+                copyAction.Owner.TechObject.TechNumber));
 
             return newAction as ITreeViewItem;
         }

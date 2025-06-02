@@ -1,5 +1,6 @@
 ﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Editor;
+using EplanDevice;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -697,12 +698,21 @@ namespace TechObjectTests
         public void InsertCopy()
         {
             var deviceManager = DeviceManagerMock.DeviceManager;
+            Mock.Get(deviceManager)
+                .Setup(m => m.GetModifiedDevice(It.IsAny<IDevice>(), It.IsAny<IDevModifyOptions>()))
+                .Returns<IDevice, IDevModifyOptions>((dev, options) => dev);
+
             typeof(Action).GetField("deviceManager",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(null, deviceManager);
 
-            var action1 = new Action("Устройства", null, "devs", null, null, null);
-            var action2 = new Action("Устройства", null, "_devs_", null, null, null);
+            var step = new Step("", getN => 1,
+                Mock.Of<IState>(
+                    s => s.TechObject == new TechObject.TechObject(
+                        "", getN => 1, 1, 1, "", 1, "", "", new BaseTechObject(null))));
+
+            var action1 = new Action("Устройства", step, "devs", null, null, null);
+            var action2 = new Action("Устройства", step, "_devs_", null, null, null);
 
             Assert.Multiple(() =>
             {
@@ -1277,15 +1287,22 @@ namespace TechObjectTests
                 .Returns(stubDev);
             devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<string>()))
                 .Returns(-1);
+            devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<IDevice>()))
+                .Returns(-1);
             devManagerMock
                 .Setup(x => x.GetDeviceByEplanName(It.IsAny<string>()))
                 .Returns(stubDev);
+            devManagerMock
+                .Setup(m => m.GetModifiedDevice(It.IsAny<IDevice>(), It.IsAny<IDevModifyOptions>()))
+                .Returns<IDevice, IDevModifyOptions>((dev, options) => dev);
             foreach (var devDescr in devicesDescription)
             {
                 devManagerMock.Setup(x => x.GetDeviceByIndex(devDescr.Id))
                     .Returns(devDescr.Dev);
                 devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Dev.Name))
                     .Returns(devDescr.Id);
+                devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Dev))
+                   .Returns(devDescr.Id);
                 devManagerMock.Setup(x => x.GetDeviceByEplanName(
                     devDescr.Dev.Name)).Returns(devDescr.Dev);
             }

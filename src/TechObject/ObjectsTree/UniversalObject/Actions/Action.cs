@@ -676,6 +676,9 @@ namespace TechObject
             if (obj is Action copiedAction)
             {
                 SetNewValue(copiedAction.ToString());
+                ModifyDevNames(new DevModifyOptions(Owner.TechObject,
+                    copiedAction.Owner.TechObject.NameEplan,
+                    copiedAction.Owner.TechObject.TechNumber));
                 return this;
             }
             return null;
