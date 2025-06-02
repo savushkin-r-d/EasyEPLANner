@@ -253,7 +253,7 @@ namespace Tests.TechObject
                 };
             }
 
-            Assert.AreEqual(expectedDisplayText, param.DisplayText);
+            CollectionAssert.AreEqual(expectedDisplayText, param.DisplayText);
         }
 
         [TestCase(true, true, "")]

@@ -132,7 +132,11 @@ namespace Editor
         /// <returns></returns>
         bool SetNewValue(string newValue, bool isExtraValue);
 
-
+        /// <summary>
+        /// Установка нового значения после редактированию в указанную колонку
+        /// </summary>
+        /// <param name="newValue">Новое значение</param>
+        /// <param name="column">Индекс колонки</param>
         bool SetNewValue(string newValue, int column);
 
         /// <summary>    
