@@ -1529,7 +1529,7 @@ namespace Editor
             else
             {
                 editorTView.Controls.Remove(textBoxCellEditor);
-                isModified = item.SetNewValue(e.NewValue.ToString());
+                isModified = item.SetNewValue(e.NewValue.ToString(), e.Column.Index);
             }
 
             if (isModified)

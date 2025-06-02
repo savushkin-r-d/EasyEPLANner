@@ -132,6 +132,9 @@ namespace Editor
         /// <returns></returns>
         bool SetNewValue(string newValue, bool isExtraValue);
 
+
+        bool SetNewValue(string newValue, int column);
+
         /// <summary>    
         /// Признак возможности добавления.
         /// </summary>

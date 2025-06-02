@@ -16,12 +16,11 @@ namespace TechObject
         {
             this.par = par;
 
-            items = new List<ITreeViewItem>()
-            {
+            items =
+            [
                 par.ValueItem,
                 par.MeterItem,
-                par.LuaNameProperty,
-            };
+            ];
         }
 
         public Param Param

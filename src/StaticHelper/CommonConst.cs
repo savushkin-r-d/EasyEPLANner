@@ -106,6 +106,11 @@ namespace StaticHelper
         public const string RangeOfIPAddresses = @"(?:^ *| *)(?:(?<ip>(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\.?\b)){4}))(?: *-? *?\b)){2}(?: *,| *$)";
 
         /// <summary>
+        /// Шаблон для Lua-названия (без кириллицы, пробелов и спецсимволов)
+        /// </summary>
+        public const string LuaNamePattern = @"^\D[^\p{IsCyrillic}|\s|\W]*$";
+
+        /// <summary>
         /// Имя конфигурационного файла приложения.
         /// </summary>
         public const string ConfigFileName = "configuration.ini";
