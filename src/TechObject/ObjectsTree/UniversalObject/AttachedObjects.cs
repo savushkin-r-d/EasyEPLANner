@@ -594,7 +594,7 @@ namespace TechObject
 
         private readonly HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
         {
-            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm.editorTView, string.Empty),
+            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm?.editorTView, string.Empty),
             FillBrush = new SolidBrush(Color.YellowGreen),
             FramePen = new Pen(Color.White),
         };
