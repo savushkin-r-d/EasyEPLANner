@@ -55,7 +55,7 @@ namespace Editor
         }
 
         public void RefreshObject(object item)
-            => EditorForm.editorTView.RefreshObject(item);
+            => EditorForm?.editorTView.RefreshObject(item);
 
         [ExcludeFromCodeCoverage]
         public DialogResult DialogResetExtraProperties()
@@ -78,7 +78,7 @@ namespace Editor
         }
 
         [ExcludeFromCodeCoverage]
-        public bool Editable => editorForm.Editable;
+        public bool Editable => editorForm?.Editable ?? false;
 
         /// <summary>
         /// Получение экземпляра класса.
