@@ -1,3 +1,4 @@
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.Graphics;
@@ -281,7 +282,7 @@ namespace EasyEPlanner.ProjectImportICP
 
         public List<ImportDevice> ImportDevices { get; private set; } = new List<ImportDevice>();
 
-        public List<ImportDefaultDeviceParamter> DefaultParameters { get; private set; } = new List<ImportDefaultDeviceParamter>();
+        public List<ImportDefaultDeviceParameter> DefaultParameters { get; private set; } = new List<ImportDefaultDeviceParameter>();
 
 
         public IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description)
@@ -321,23 +322,28 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void GenerateDevicesPages()
         {
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("DI", IODevice.Parameter.P_DT, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("LS", IODevice.Parameter.P_DT, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("DI", IODevice.Parameter.P_DT, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LS", IODevice.Parameter.P_DT, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("V", IODevice.Parameter.P_ON_TIME, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("M", IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO1_DI1_FB_OFF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO1_DI2), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO2_DI2), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_AS_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("TE", IODevice.Parameter.P_C0, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("TE", IODevice.Parameter.P_ERR, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("LT", IODevice.Parameter.P_C0, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("LT", IODevice.Parameter.P_ERR, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("M", IODevice.Parameter.P_ON_TIME, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("AO", IODevice.Parameter.P_MIN_V, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("AO", IODevice.Parameter.P_MAX_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("TE", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("TE", IODevice.Parameter.P_ERR, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LT", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LT", IODevice.Parameter.P_ERR, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("QT", IODevice.Parameter.P_MIN_V, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("QT", IODevice.Parameter.P_MAX_V, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("QT", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("AO", IODevice.Parameter.P_MIN_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("AO", IODevice.Parameter.P_MAX_V, 0));
+
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_MIN_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_MAX_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_C0, 0));
             
 
             var setupRenaming = new SetupDevicesNames();
@@ -366,12 +372,15 @@ namespace EasyEPlanner.ProjectImportICP
                     devicePair.device.EplanObjectFunction.LockObject();
                     apiHelper.SetSupplementaryFieldValue(devicePair.device.EplanObjectFunction, 10,
                         $"{devicePair.wagoDevice.WagoType}{devicePair.wagoDevice.FullNumber}");
+                    SetDefaultParametersOnExistingDevice(devicePair.wagoDevice, devicePair.device);
                 }
 
                 // Установка стандартных параметров для определенных типов устройств
                 foreach (var device in devices)
                 {
-                    foreach (var parameter in DefaultParameters.Where(p => p.DeviceType == device.Type))
+                    foreach (var parameter in DefaultParameters
+                        .Where(p => p.DeviceType == device.Type ||
+                                    p.DeviceType == device.Subtype))
                     {
                         device.Parameters.Add(parameter.Parameter, parameter.DefaultValue.ToString());
                     }
@@ -387,6 +396,34 @@ namespace EasyEPlanner.ProjectImportICP
 
                 GenerateDevicesPage(devices, Object.Key);
             }
+        }
+
+        /// <summary>
+        /// Установка параметров по умолчанию в существующие устройства на ФСА
+        /// </summary>
+        /// <remarks>
+        /// Если параметр у устройства уже заполнен, то заменяться он не будет
+        /// </remarks>
+        /// <param name="importDevice">Импортируемое устройство</param>
+        /// <param name="device">Устройство на ФСА</param>
+        [ExcludeFromCodeCoverage]
+        private void SetDefaultParametersOnExistingDevice(ImportDevice importDevice, IODevice device)
+        {
+            bool update = false;
+            foreach (var parameter in DefaultParameters
+                .Where(p => p.DeviceType == importDevice.Type ||
+                            p.DeviceType == importDevice.Subtype))
+            {
+                device.Parameters.TryGetValue(parameter.Parameter, out var value);
+                if (value is null)
+                {
+                    device.SetParameter(parameter.Parameter, parameter.DefaultValue);
+                    update = true;
+                }
+            }
+
+            if (update)
+                device.UpdateParameters();
         }
 
 

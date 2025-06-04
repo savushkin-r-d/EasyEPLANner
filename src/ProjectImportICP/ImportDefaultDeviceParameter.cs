@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace EasyEPlanner.ProjectImportICP
 {
-    public class ImportDefaultDeviceParamter
+    public class ImportDefaultDeviceParameter
     {
-        public ImportDefaultDeviceParamter(string deviceType, IODevice.Parameter parameter, int defaultValue = 0) 
+        public ImportDefaultDeviceParameter(string deviceType, IODevice.Parameter parameter, int defaultValue = 0) 
         {
             DeviceType = deviceType;
             Parameter = parameter;
