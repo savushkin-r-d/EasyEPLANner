@@ -59,6 +59,11 @@ namespace Editor
             return false;
         }
 
+        virtual public bool SetNewValue(string newValue, int column)
+        {
+            return SetNewValue(newValue);
+        }
+
         virtual public bool IsEditable
         {
             get

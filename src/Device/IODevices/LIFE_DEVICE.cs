@@ -59,7 +59,7 @@ namespace EplanDevice
             };
 
 
-        public override Dictionary<string, int> GetDeviceProperties(DeviceType dt, DeviceSubType dst)
+        public override Dictionary<ITag, int> GetDeviceProperties(DeviceType dt, DeviceSubType dst)
             => dt switch
             {
                 DeviceType.LIFE_DEVICE => dst switch

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Editor;
+using StaticHelper;
 
 namespace TechObject
 {
@@ -14,7 +16,7 @@ namespace TechObject
             double value = 0, string meter = "шт", string nameLua = "",
             bool isUseOperation = false)
         {
-            items = new List<ITreeViewItem>();
+            items = [];
 
             this.isRuntime = isRuntime;
             this.name = name;
@@ -30,22 +32,20 @@ namespace TechObject
             if (isUseOperation)
             {
                 this.oper = new ParamOperationsProperty(OperationPropertyName, -1, -1);
-                this.oper.Parent = this;
+                this.oper.AddParent(this);
                 this.oper.ValueChanged += sender => OnValueChanged(sender);
             }
 
             this.meter = new ParamProperty(MeterPropertyName, meter, string.Empty);
-            this.nameLua = new ParamProperty(NameLuaPropertyName, nameLua, string.Empty);
-            
+            luaName = nameLua;
+
             this.meter.ValueChanged += sender => OnValueChanged(sender);
-            this.nameLua.ValueChanged += sender => OnValueChanged(sender);
 
             if (!isRuntime)
                 items.Add(this.value);
             items.Add(this.meter);
             if (isUseOperation)
                 items.Add(this.oper);
-            items.Add(this.nameLua);
         }
 
         /// <summary>
@@ -55,9 +55,10 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "[ " + getN(this) + " ] =\n";
-            res += prefix + "\t{\n";
-            res += prefix + "\tname = \'" + name + "\',\n";
+            string res = 
+                $"{prefix}[ {getN(this)} ] =\n" +
+                $"{prefix}\t{{\n" +
+                $"{prefix}\tname = \'{name}\',\n";
             if (!isRuntime)
             {
                 var valueAsString = value.EditText[1].Trim();
@@ -67,15 +68,15 @@ namespace TechObject
                 }
                 res += $"{prefix}\tvalue = {valueAsString},\n";
             }
-            res += prefix + "\tmeter = \'" + meter.EditText[1] + "\',\n";
-            if (oper != null)
+            res += $"{prefix}\tmeter = \'{meter.Value}\',\n";
+            if (IsUseOperation)
             {
                 var operations = oper.EditText[1].Trim().Replace(' ', ',');
-                res += prefix + "\toper = { " + operations + " },\n";
+                res += $"{prefix}\toper = {{ {operations} }},\n";
             }
-            res += prefix + "\tnameLua = \'" + nameLua.EditText[1] + "\'\n";
-
-            res += prefix + "\t},\n";
+            res += 
+                $"{prefix}\tnameLua = \'{luaName}\'\n" +
+                $"{prefix}\t}},\n";
             return res;
         }
 
@@ -97,7 +98,7 @@ namespace TechObject
 
         public string GetOperationN()
         {
-            if (oper != null)
+            if (IsUseOperation)
             {
                 try
                 {
@@ -114,7 +115,7 @@ namespace TechObject
 
         public void ClearOperationsBinding()
         {
-            if (oper != null)
+            if (IsUseOperation)
             {
                 this.oper.SetNewValue("-1");
             }
@@ -123,106 +124,65 @@ namespace TechObject
         /// <summary>
         /// Получить глобальный номер параметра.
         /// </summary>
-        public int GetParameterNumber
-        {
-            get
-            {
-                return getN(this);
-            }
-        }
+        public int GetParameterNumber => getN(this);
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
+        override public string[] DisplayText => [DisplayedName, DisplayedLuaName];
+
+        public string DisplayedName => isRuntime switch
         {
-            get
-            {
-                string res = "";
-                if(!isRuntime)
-                {
-                    res = $"{getN(this)}. {name} - {value.EditText[1]} " +
-                        $"{meter.EditText[1]}.";
-                }
-                else
-                {
-                    res = $"{getN(this)}. {name}, {meter.EditText[1]}.";
-                }
+            true => $"{getN(this)}. {name}, {meter?.Value}.",
+            false => $"{getN(this)}. {name} - {value?.Value} {meter?.Value}."
+        };
 
-                return new string[] { res, "" };
-            }
-        }
+        public string DisplayedLuaName => (luaName is "" or "P") ? "Заглушка" : luaName;
 
-        override public ITreeViewItem[] Items
+        override public ITreeViewItem[] Items => [.. items];
+
+        override public bool SetNewValue(string newName, int column)
+        => column switch
         {
-            get
-            {
-                return items.ToArray();
-            }
-        }
+            0 => SetName(newName),
+            1 => SetLuaName(newName),
+            _ => false,
+        };
 
-        override public bool SetNewValue(string newName)
+        public bool SetName(string name)
         {
-            name = newName;
-
+            this.name = name;
             OnValueChanged(this);
+
             return true;
         }
 
-        override public bool IsEditable
+        public bool SetLuaName(string luaName)
         {
-            get
+            if (luaName == string.Empty ||
+                Regex.IsMatch(luaName, CommonConst.LuaNamePattern,
+                    RegexOptions.None, TimeSpan.FromMilliseconds(100)))
             {
+                this.luaName = luaName;
+                OnValueChanged(this);
+
                 return true;
             }
+
+            return false;
         }
 
-        override public int[] EditablePart
-        {
-            get
-            {
-                //Можем редактировать содержимое первой колонки.
-                return new int[] { 0, -1 };
-            }
-        }
+        override public bool IsEditable => true;
 
-        override public string[] EditText
-        {
-            get
-            {
-                return new string[] { name, "" };
-            }
-        }
+        override public int[] EditablePart => [0, 1];
 
-        override public bool IsCopyable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        override public string[] EditText => [name, luaName];
 
-        override public bool IsMoveable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        override public bool IsCopyable => true;
 
-        override public bool IsReplaceable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        override public bool IsMoveable => true;
 
-        override public bool IsDeletable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        override public bool IsReplaceable => true;
+
+        override public bool IsDeletable => true;
 
         public override bool Delete(object child)
         {
@@ -237,30 +197,26 @@ namespace TechObject
 
         #endregion
 
-        public string GetName()
-        {
-            return name;
-        }
+        /// <summary>
+        /// Название
+        /// </summary>
+        public string GetName() => name;
 
         /// <summary>
-        /// Возвращает объект-свойство LuaName
+        /// Lua-название
         /// </summary>
-        public ObjectProperty LuaNameProperty => nameLua;
-
-        /// <summary>
-        /// Возвращает имя параметра для Lua
-        /// </summary>
-        /// <returns></returns>
         public string GetNameLua()
         {
-            if (nameLua.EditText[1] != "")
-            {
-                return nameLua.EditText[1];
-            }
+            if (string.IsNullOrEmpty(luaName))
+                return "P";
 
-            return "P";
+            return luaName;
+
         }
 
+        /// <summary>
+        /// Значение
+        /// </summary>
         public string GetValue()
         {
             if (value != null)
@@ -271,6 +227,9 @@ namespace TechObject
             return "0";
         }
 
+        /// <summary>
+        /// Единицы измерения
+        /// </summary>
         public string GetMeter()
         {
             return meter.EditText[1];
@@ -284,18 +243,16 @@ namespace TechObject
         {
             get
             {
-                if (oper != null)
+                if (IsUseOperation)
                 {
                     return oper.EditText[1];
                 }
-                else
-                {
-                    return "";
-                }
+                
+                return "";
             }
             set
             {
-                if (oper != null)
+                if (IsUseOperation)
                 {
                     oper.EditText[1] = value;
                     OnValueChanged(this);
@@ -329,10 +286,10 @@ namespace TechObject
             }
         }
 
-        public bool IsUseOperation()
-        {
-            return oper != null;
-        }
+        /// <summary>
+        /// Параметр может использоваться в операциях
+        /// </summary>
+        public bool IsUseOperation => oper is not null;
 
         public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
         {
@@ -340,7 +297,7 @@ namespace TechObject
             if (genericParam is null) return;
 
             name = genericParam.name;
-            nameLua.SetNewValue(genericParam.nameLua.Value);
+            luaName = genericParam.luaName;
 
             if (genericParam.value.Value != "-")
                 value.SetNewValue(genericParam.value.Value);
@@ -383,15 +340,13 @@ namespace TechObject
         public const string ValuePropertyName = "Значение";
         public const string OperationPropertyName = "Операция";
         public const string MeterPropertyName = "Размерность";
-        public const string NameLuaPropertyName = "Lua имя";
-
 
         private GetN getN;
 
         private bool isRuntime;               /// Рабочий параметр или нет.
         private string name;
+        private string luaName;
         private List<ITreeViewItem> items;    ///Данные для редактирования.
-        private ParamProperty nameLua;        ///Имя в Lua.
         private ParamProperty value;          ///Значение.
         private ParamProperty meter;          ///Размерность.
 
