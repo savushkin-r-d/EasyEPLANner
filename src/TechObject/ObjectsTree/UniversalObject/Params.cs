@@ -138,7 +138,7 @@ namespace TechObject
 
                 foreach (var parId in equalParameters)
                 {
-                    parameters[parId - 1].LuaNameProperty.SetNewValue("");
+                    parameters[parId - 1].SetLuaName("");
                 }
 
                 errors.Add(errorStrBldr.ToString());
@@ -295,7 +295,7 @@ namespace TechObject
                 string newMeter = newParam.GetMeter();
                 string luaName = newParam.GetNameLua();
                 string newNameLua = HaveSameLuaName(luaName)? "P" : luaName;
-                bool useOperation = newParam.IsUseOperation();
+                bool useOperation = newParam.IsUseOperation;
 
                 var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
                     newValue, newMeter, newNameLua, useOperation);
@@ -372,7 +372,7 @@ namespace TechObject
                 double newValue = Convert.ToDouble(newValueStr);
                 string newMeter = (copyObject as Param).GetMeter();
                 string newNameLua = (copyObject as Param).GetNameLua();
-                bool useOperation = (copyObject as Param).IsUseOperation();
+                bool useOperation = (copyObject as Param).IsUseOperation;
 
                 var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
                     newValue, newMeter, newNameLua, useOperation);

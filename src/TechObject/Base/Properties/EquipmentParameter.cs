@@ -166,8 +166,7 @@ namespace TechObject
         private string GetParametersString()
         {
             var parameters = new List<string>();
-            var equipment = Owner as Equipment;
-            if (equipment != null)
+            if (Owner is Equipment equipment)
             {
                 var techObject = equipment.Owner;
                 if (techObject != null)
@@ -176,7 +175,7 @@ namespace TechObject
                     {
                         Param param = techObject.GetParamsManager()
                             .Float.GetParam(paramIndex);
-                        parameters.Add(param.LuaNameProperty.Value);
+                        parameters.Add(param.GetNameLua());
                     }
                 }
             }

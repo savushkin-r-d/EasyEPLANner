@@ -21,7 +21,7 @@ namespace Tests.TechObject
 
             var param = GetEmptyWithGetNReturns0(runtime, isUseOperation);
 
-            Assert.AreEqual(expectedIsUseOperation, param.IsUseOperation());
+            Assert.AreEqual(expectedIsUseOperation, param.IsUseOperation);
         }
 
         // -1 because we have no filled objects and we can't make full test.
@@ -119,7 +119,7 @@ namespace Tests.TechObject
                 Assert.IsTrue(param.IsReplaceable);
                 Assert.IsTrue(param.IsMoveable);
                 Assert.IsTrue(param.IsCopyable);
-                Assert.AreEqual(new int[] { 0, -1 }, param.EditablePart);
+                Assert.AreEqual(new int[] { 0, 1 }, param.EditablePart);
                 Assert.IsTrue(param.IsEditable);
             });
         }
@@ -146,7 +146,7 @@ namespace Tests.TechObject
         {
             var param = GetEmpty();
 
-            param.SetNewValue(actual);
+            param.SetName(actual);
             string name = param.GetName();
 
             Assert.AreEqual(expected, name);
@@ -156,7 +156,7 @@ namespace Tests.TechObject
         public void Items_NoRuntimeNoUseOperation_ItemsCountAndItemsSequence()
         {
             var param = GetEmptyWithGetNReturns0(false, false);
-            int expectedItemsCount = 3;
+            int expectedItemsCount = 2;
 
             var items = param.Items;
 
@@ -167,8 +167,6 @@ namespace Tests.TechObject
                     v.Name == "Значение");
                 Assert.IsTrue(items[1] is ParamProperty m &&
                     m.Name == "Размерность");
-                Assert.IsTrue(items[2] is ParamProperty n &&
-                    n.Name == "Lua имя");
             });
         }
 
@@ -176,7 +174,7 @@ namespace Tests.TechObject
         public void Items_RuntimeUseOperation_ItemsCountAndItemsSequence()
         {
             var param = GetEmptyWithGetNReturns0(true, true);
-            int expectedItemsCount = 3;
+            int expectedItemsCount = 2;
 
             var items = param.Items;
 
@@ -187,8 +185,6 @@ namespace Tests.TechObject
                     m.Name == "Размерность");
                 Assert.IsTrue(items[1] is ParamOperationsProperty o &&
                     o.Name == "Операция");
-                Assert.IsTrue(items[2] is ParamProperty n &&
-                    n.Name == "Lua имя");
             });
         }
 
@@ -196,7 +192,7 @@ namespace Tests.TechObject
         public void Items_NoRuntimeUseOperation_ItemsCountAndItemsSequence()
         {
             var param = GetEmptyWithGetNReturns0(false, true);
-            int expectedItemsCount = 4;
+            int expectedItemsCount = 3;
 
             var items = param.Items;
 
@@ -209,8 +205,6 @@ namespace Tests.TechObject
                     m.Name == "Размерность");
                 Assert.IsTrue(items[2] is ParamOperationsProperty o &&
                     o.Name == "Операция");
-                Assert.IsTrue(items[3] is ParamProperty n &&
-                    n.Name == "Lua имя");
             });
         }
 
@@ -218,7 +212,7 @@ namespace Tests.TechObject
         public void Items_RuntimeNoUseOperation_ItemsCountAndItemsSequence()
         {
             var param = GetEmptyWithGetNReturns0(true, false);
-            int expectedItemsCount = 2;
+            int expectedItemsCount = 1;
 
             var items = param.Items;
 
@@ -227,8 +221,6 @@ namespace Tests.TechObject
                 Assert.AreEqual(expectedItemsCount, param.Items.Length);
                 Assert.IsTrue(items[0] is ParamProperty m &&
                     m.Name == "Размерность");
-                Assert.IsTrue(items[1] is ParamProperty n &&
-                    n.Name == "Lua имя");
             });
         }
 
@@ -249,7 +241,7 @@ namespace Tests.TechObject
                 expectedDisplayText = new string[]
                 { 
                     $"0. {name}, {param.GetMeter()}.",
-                    string.Empty
+                    "Заглушка"
                 };
             }
             else
@@ -257,11 +249,11 @@ namespace Tests.TechObject
                 expectedDisplayText = new string[]
                 {
                     $"0. {name} - {param.GetValue()} {param.GetMeter()}.",
-                    string.Empty
+                    "Заглушка"
                 };
             }
 
-            Assert.AreEqual(expectedDisplayText, param.DisplayText);
+            CollectionAssert.AreEqual(expectedDisplayText, param.DisplayText);
         }
 
         [TestCase(true, true, "")]

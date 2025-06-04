@@ -296,6 +296,11 @@ namespace Editor
             return res;
         }
 
+        virtual public bool SetNewValue(string newValue, int column)
+        {
+            return SetNewValue(newValue);
+        }
+
         public bool IsInsertable
         {
             get

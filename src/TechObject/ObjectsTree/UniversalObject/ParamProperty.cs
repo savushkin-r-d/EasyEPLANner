@@ -27,7 +27,7 @@ namespace TechObject
                     defaultValue = "-";
                     return true;
                 }
-                
+
                 if (double.TryParse(newValue, out var newValueAsDouble))
                 {
                     value = newValueAsDouble;
@@ -38,7 +38,7 @@ namespace TechObject
 
                 return false;
             }
-            else if (Name == Param.NameLuaPropertyName 
+            else if (Name == Param?.GetNameLua() 
                 && (Param?.Params?.HaveSameLuaName(newValue) ?? false))
             { // Если уже есть параметр с таким именем, то оставляем прошлое значение
                 return false;
