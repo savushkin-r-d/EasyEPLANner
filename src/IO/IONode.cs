@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -72,11 +73,11 @@ namespace IO
         {
             if (AddressArea is null)
             {
-                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону ip-адресов:" +
+                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону адресного пространства узла:" +
                     $" {nameof(AddressArea)} is null;\n");
             }
 
-            if (position > AddressArea.ModulesPerNodeMax)
+            if (position > AddressArea.ModulesPerNodeMax + IOModules.Count(m => m.Info.IsSupportive))
             {
                 throw new ModulesPerNodeOutOfRageException($"Модуль \"{iOModule.Name}\" " +
                     $"выходит за диапазон максимального количества модулей для узла \"{name}\". ");
