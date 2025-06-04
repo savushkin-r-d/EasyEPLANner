@@ -93,21 +93,21 @@ namespace EasyEPlanner.ProjectImportICP
             var deviceType = new OLVColumn("Тип устройства", "DeviceType")
             {
                 IsEditable = false,
-                AspectGetter = obj => (obj as ImportDefaultDeviceParamter).DeviceType,
+                AspectGetter = obj => (obj as ImportDefaultDeviceParameter).DeviceType,
                 Sortable = false,
             };
 
             var parameter = new OLVColumn("Параметр", "Parameter")
             {
                 IsEditable = false,
-                AspectGetter = obj => (obj as ImportDefaultDeviceParamter).Parameter,
+                AspectGetter = obj => (obj as ImportDefaultDeviceParameter).Parameter,
                 Sortable = false,
             };
 
             var value = new OLVColumn("Значение по умолчанию", "Value")
             {
                 IsEditable = true,
-                AspectGetter = obj => (obj as ImportDefaultDeviceParamter).DefaultValue,
+                AspectGetter = obj => (obj as ImportDefaultDeviceParameter).DefaultValue,
                 Sortable = false,
             };
 
@@ -134,7 +134,7 @@ namespace EasyEPlanner.ProjectImportICP
             renameDevicesOLV.EndUpdate();
         }
 
-        public void InitDefaultParameters(List<ImportDefaultDeviceParamter> defaultParameters)
+        public void InitDefaultParameters(List<ImportDefaultDeviceParameter> defaultParameters)
         {
             defaultParametersOLV.BeginUpdate();
 
@@ -343,7 +343,7 @@ namespace EasyEPlanner.ProjectImportICP
 
         private void defaultParametersOLV_CellEditStarting(object sender, CellEditEventArgs e)
         {
-            var item = e.RowObject as ImportDefaultDeviceParamter;
+            var item = e.RowObject as ImportDefaultDeviceParameter;
 
             var editText = "";
 
@@ -371,7 +371,7 @@ namespace EasyEPlanner.ProjectImportICP
             IsCellEditing = false;
             defaultParametersOLV.LabelEdit = false;
 
-            var par = e.RowObject as ImportDefaultDeviceParamter;
+            var par = e.RowObject as ImportDefaultDeviceParameter;
 
             if (cancelChanges)
             {

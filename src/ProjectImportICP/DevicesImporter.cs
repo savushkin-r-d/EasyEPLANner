@@ -282,7 +282,7 @@ namespace EasyEPlanner.ProjectImportICP
 
         public List<ImportDevice> ImportDevices { get; private set; } = new List<ImportDevice>();
 
-        public List<ImportDefaultDeviceParamter> DefaultParameters { get; private set; } = new List<ImportDefaultDeviceParamter>();
+        public List<ImportDefaultDeviceParameter> DefaultParameters { get; private set; } = new List<ImportDefaultDeviceParameter>();
 
 
         public IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description)
@@ -322,28 +322,28 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void GenerateDevicesPages()
         {
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("DI", IODevice.Parameter.P_DT, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("LS", IODevice.Parameter.P_DT, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("DI", IODevice.Parameter.P_DT, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LS", IODevice.Parameter.P_DT, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter(nameof(DeviceSubType.V_DO1_DI1_FB_OFF), IODevice.Parameter.P_ON_TIME, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter(nameof(DeviceSubType.V_DO1_DI2), IODevice.Parameter.P_ON_TIME, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter(nameof(DeviceSubType.V_DO2_DI2), IODevice.Parameter.P_ON_TIME, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter(nameof(DeviceSubType.V_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter(nameof(DeviceSubType.V_AS_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO1_DI1_FB_OFF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO1_DI2), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO2_DI2), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_AS_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("M", IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("M", IODevice.Parameter.P_ON_TIME, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("TE", IODevice.Parameter.P_C0, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("TE", IODevice.Parameter.P_ERR, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("LT", IODevice.Parameter.P_C0, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("LT", IODevice.Parameter.P_ERR, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("TE", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("TE", IODevice.Parameter.P_ERR, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LT", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LT", IODevice.Parameter.P_ERR, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("AO", IODevice.Parameter.P_MIN_V, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("AO", IODevice.Parameter.P_MAX_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("AO", IODevice.Parameter.P_MIN_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("AO", IODevice.Parameter.P_MAX_V, 0));
 
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("QT", IODevice.Parameter.P_MIN_V, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("QT", IODevice.Parameter.P_MAX_V, 0));
-            DefaultParameters.Add(new ImportDefaultDeviceParamter("QT", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_MIN_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_MAX_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_C0, 0));
             
 
             var setupRenaming = new SetupDevicesNames();
