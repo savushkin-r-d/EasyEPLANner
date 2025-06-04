@@ -91,6 +91,12 @@ namespace IO
         string TypeName { get; set; }
 
         /// <summary>
+        /// Вспомогательный модуль 
+        /// (не имеет адресного пространства)
+        /// </summary>
+        bool IsSupportive { get; }
+
+        /// <summary>
         /// Копия
         /// </summary>
         object Clone(); 
@@ -277,6 +283,10 @@ namespace IO
         /// Модули ввода-вывода.
         /// </summary>
         public static List<IOModuleInfo> Modules => modules;
+
+        public bool IsSupportive => 
+            AOCount == 0 && AICount == 0 &&
+            DOCount == 0 && DICount == 0;
 
         /// <summary>
         /// Тип адресного пространства модуля
