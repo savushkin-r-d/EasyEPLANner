@@ -139,7 +139,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -155,14 +155,14 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForM = new Dictionary<string, int>()
+            var exportForM = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Parameter.P_ON_TIME, 1},
             };
 
-            var exportForMFreq = new Dictionary<string, int>()
+            var exportForMFreq = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -170,7 +170,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.V, 1},
             };
 
-            var exportForMRev = new Dictionary<string, int>()
+            var exportForMRev = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -179,7 +179,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.R, 1},
             };
 
-            var exportForMATV = new Dictionary<string, int>()
+            var exportForMATV = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.ST, 1},
@@ -191,7 +191,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_ON_TIME, 1},
             };
 
-            var exportForMATVLinear = new Dictionary<string, int>()
+            var exportForMATVLinear = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.ST, 1},
@@ -205,7 +205,7 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_TRANSFER_RATIO, 1},
             };
 
-            var exportForMVirt = new Dictionary<string, int>()
+            var exportForMVirt = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},

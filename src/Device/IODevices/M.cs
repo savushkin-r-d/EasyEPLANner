@@ -167,7 +167,7 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        public override Dictionary<string, int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -176,7 +176,7 @@ namespace EplanDevice
                     switch (dst)
                     {
                         case DeviceSubType.M:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -184,7 +184,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.M_FREQ:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -197,7 +197,7 @@ namespace EplanDevice
                         case DeviceSubType.M_REV_2:
                         case DeviceSubType.M_REV_FREQ_2:
                         case DeviceSubType.M_REV_2_ERROR:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -207,7 +207,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.M_ATV:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.ST, 1},
@@ -220,7 +220,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.M_ATV_LINEAR:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.ST, 1},
@@ -235,7 +235,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.M_VIRT:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.ST, 1},

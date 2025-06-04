@@ -41,7 +41,7 @@ namespace Tests.EplanDevices
             var lifecounter = Random_LIFE_DEVICE();
             lifecounter.SetSubType(nameof(DeviceSubType.LIFECOUNTER));
 
-            var expected = new Dictionary<string, int> {
+            var expected = new Dictionary<ITag, int> {
                 { IODevice.Tag.ST , 1 },
                 { IODevice.Tag.M , 1 },
                 { IODevice.Parameter.P_DT , 1 }

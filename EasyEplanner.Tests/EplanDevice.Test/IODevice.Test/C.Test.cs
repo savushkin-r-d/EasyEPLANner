@@ -59,7 +59,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewObj_ReturnsTagsArr(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -75,7 +75,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportTags = new Dictionary<string, int>()
+            var exportTags = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -239,11 +239,11 @@ namespace Tests.EplanDevices
             TreeNode expectedNode = new TreeNode(dev.Name);
             var devProps = dev.GetDeviceProperties(dev.DeviceType,
                 dev.DeviceSubType).Keys.ToList();
-            devProps.AddRange(dev.Parameters.Select(par => (string)par.Key));
+            devProps.AddRange(dev.Parameters.Select(par => par.Key));
             foreach (var property in devProps)
             {
-                expectedNode.Nodes.Add($"{dev.Name}.{property}",
-                    $"{dev.Name}.{property}");
+                expectedNode.Nodes.Add($"{dev.Name}.{property} -- {property.Description}",
+                    $"{dev.Name}.{property} -- {property.Description}");
             }
 
             for(int i = 0; i < expectedNode.Nodes.Count; i++)
