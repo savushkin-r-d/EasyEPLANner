@@ -139,7 +139,7 @@ jobs:
 
     - name: Test
       working-directory: EasyEplanner.Tests
-      run: dotnet test --configuration ${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
+      run: dotnet test --no-build --configuration ${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
       
     - name: Test coverage merge
       working-directory: EasyEplanner.Tests
