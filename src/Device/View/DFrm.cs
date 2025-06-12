@@ -6,6 +6,7 @@ using PInvoke;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
@@ -16,6 +17,7 @@ using TechObject;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -35,16 +37,9 @@ namespace EasyEPlanner
             return deviceIsShown;
         }
 
-        public static void CheckShown()
+        public void CheckShown()
         {
-            if (PI.IsWindowVisible(wndDevVisibilePtr) == true)
-            {
-                deviceIsShown = true;
-            }
-            else
-            {
-                deviceIsShown = false;
-            }
+            deviceIsShown = PI.IsWindowVisible(wndDevVisibilePtr);
         }
 
         public static void SaveCfg(bool wndState)
@@ -52,14 +47,8 @@ namespace EasyEPlanner
             string path = Environment.GetFolderPath(
                         Environment.SpecialFolder.ApplicationData);
             var ini = new IniFile(path + @"\Eplan\eplan.cfg");
-            if (wndState == true)
-            {
-                ini.WriteString("main", "show_dev_window", "true");
-            }
-            else
-            {
-                ini.WriteString("main", "show_dev_window", "false");
-            }
+
+            ini.WriteString("main", "show_dev_window", wndState ? "true" : "false");
         }
 
         static string caption = "Устройства\0";
@@ -69,7 +58,6 @@ namespace EasyEPlanner
         private IntPtr dialogHookPtr = IntPtr.Zero;
 
         private IntPtr dialogHandle = IntPtr.Zero;
-        private IntPtr wndHandle = IntPtr.Zero;
         private IntPtr panelPtr = IntPtr.Zero;
 
         /// <summary>
@@ -120,8 +108,7 @@ namespace EasyEPlanner
                         return IntPtr.Zero;
 
                     case (int)PI.WM.WINDOWPOSCHANGED:
-                        PI.WINDOWPOS p = new PI.WINDOWPOS();
-                        p = (PI.WINDOWPOS)
+                        _ = (PI.WINDOWPOS)
                             System.Runtime.InteropServices.Marshal
                             .PtrToStructure(lParam, typeof(PI.WINDOWPOS));
 
@@ -173,11 +160,11 @@ namespace EasyEPlanner
             devicesTreeViewAdv.Height = h - toolStrip.Height;
 
             if (devicesTreeViewAdv.Columns.Count > 1 &&
-                displayParamsBtn.Checked == true)
+                displayParamsBtn.Checked)
             {
                 w -= 100;
             }
-            devicesTreeViewAdv.Columns.First().Width = w;
+            devicesTreeViewAdv.Columns[0].Width = w;
         }
         #endregion
 
@@ -186,17 +173,17 @@ namespace EasyEPlanner
         /// <summary>
         /// Дескриптор окна устройств
         /// </summary>
-        public static IntPtr wndDevVisibilePtr;
+        private IntPtr wndDevVisibilePtr;
 
         /// <summary>
         /// Показано ли окно
         /// </summary>
-        public static bool deviceIsShown = false;
+        public bool deviceIsShown = false;
 
         /// <summary>
         /// Загружено ли окно
         /// </summary>
-        public static bool isLoaded = false;
+        public bool isLoaded = false;
 
         /// <summary>
         /// Показать окно в формой
@@ -210,41 +197,38 @@ namespace EasyEPlanner
             const int wndWmCommand = 35094;
             string windowName = "Клеммники";
 
-            if (isLoaded == true)
+            if (isLoaded)
             {
-                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent, 
+                GUIHelper.ShowHiddenWindow(oCurrent, 
                     wndDevVisibilePtr, wndWmCommand);
                 return;
             }
 
-            StaticHelper.GUIHelper.SearchWindowDescriptor(oCurrent, windowName,
+            GUIHelper.SearchWindowDescriptor(oCurrent, windowName,
                 wndWmCommand, ref dialogHandle, ref wndDevVisibilePtr);
             if(wndDevVisibilePtr != IntPtr.Zero)
             {
-                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
+                GUIHelper.ShowHiddenWindow(oCurrent,
                     wndDevVisibilePtr, wndWmCommand);
                 
-                if (isLoaded == false)
-                {
-                    StaticHelper.GUIHelper.ChangeWindowMainPanels(
-                        ref dialogHandle, ref panelPtr);
+                GUIHelper.ChangeWindowMainPanels(
+                    ref dialogHandle, ref panelPtr);
 
-                    Controls.Clear();
+                Controls.Clear();
 
-                    // Переносим на найденное окно свои элементы (SetParent) и
-                    // подгоняем их размеры и позицию.
-                    PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);
-                    PI.SetParent(toolStrip.Handle, dialogHandle);
-                    ChangeUISize();
+                // Переносим на найденное окно свои элементы (SetParent) и
+                // подгоняем их размеры и позицию.
+                PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);
+                PI.SetParent(toolStrip.Handle, dialogHandle);
+                ChangeUISize();
 
-                    // Устанавливаем свой хук для найденного окна
-                    // (для изменения размеров своих элементов, сохранения
-                    // изменений при закрытии и отключения хука).
-                    SetUpHook();
+                // Устанавливаем свой хук для найденного окна
+                // (для изменения размеров своих элементов, сохранения
+                // изменений при закрытии и отключения хука).
+                SetUpHook();
 
-                    deviceIsShown = true;
-                    isLoaded = true;
-                }           
+                deviceIsShown = true;
+                isLoaded = true;     
             }
             ChangeUISize();
         }
@@ -359,14 +343,14 @@ namespace EasyEPlanner
         /// <param name="checkedObj">Выбранный объект</param>
         /// <param name="checkedObjects">Полный список выбранных объектов
         /// </param>
-        private void SetUpCheckState(Node node, string checkedObj,
+        private static void SetUpCheckState(Node node, string checkedObj,
             string checkedObjects)
         {
             if (checkedObjects.Contains(checkedObj))
             {
                 node.CheckState = CheckState.Checked;
-                StaticHelper.GUIHelper.CheckCheckState(node);
-            };
+                GUIHelper.CheckCheckState(node);
+            }
         }
 
         /// <summary>
@@ -444,29 +428,13 @@ namespace EasyEPlanner
             /// </summary>
             private static void RefreshDevice(Node node, TreeNodeAdv treeNode)
             {
-                var dev = node.Tag as EplanDevice.IODevice;
+                var dev = node.Tag as IODevice;
+                node.IsHidden = !dev.Channels.Any(ch => ch.IsEmpty());
 
-                bool isDevHidden = true;
-                foreach (EplanDevice.IODevice.IOChannel ch in dev.Channels)
-                {
-                    if (ch.IsEmpty())
-                    {
-                        //Показываем каналы.
-                        isDevHidden = false;
-                    }
-                }
-
-                node.IsHidden = isDevHidden;
-
-                if (treeNode.Children.Count < 1)
-                {
-                    return;
-                }
-                else
+                if (treeNode.Children.Count >= 1)
                 {
                     RefreshChildRecursive(treeNode);
                 }
-
             }
 
             /// <summary>
@@ -475,20 +443,10 @@ namespace EasyEPlanner
             private static void RefreshChannel(Node node, TreeNodeAdv treeNode)
             {
                 var chn = node.Tag as EplanDevice.IODevice.IOChannel;
-                if (chn.IsEmpty())
-                {
-                    node.IsHidden = false;
-                }
-                else
-                {
-                    node.IsHidden = true;
-                }
+                
+                node.IsHidden = !chn.IsEmpty();
 
-                if (treeNode.Children.Count < 1)
-                {
-                    return;
-                }
-                else
+                if (treeNode.Children.Count >= 1)
                 {
                     RefreshChildRecursive(treeNode);
                 }
@@ -519,8 +477,6 @@ namespace EasyEPlanner
                 {
                     Execute(child);
                 }
-
-                return;
             }
         }
 
@@ -545,19 +501,16 @@ namespace EasyEPlanner
                     treeNode.IsHidden = true;
                     return;
                 }
-                else if (existChildren)
-                {
-                    // Проверка, есть ли устройства, которые не отображаются
-                    if (node.Text.Contains("(0)"))
+                
+                if (existChildren && node.Text.Contains("(0)"))
+                { // Проверка, есть ли устройства, которые не отображаются
+                    treeNode.IsHidden = true;
+                    List<TreeNodeAdv> childs = treeNode.Children.ToList();
+                    foreach (TreeNodeAdv child in childs)
                     {
-                        treeNode.IsHidden = true;
-                        List<TreeNodeAdv> childs = treeNode.Children.ToList();
-                        foreach (TreeNodeAdv child in childs)
-                        {
-                            Execute(child, true);
-                        }
-                        return;
+                        Execute(child, true);
                     }
+                    return;
                 }
 
                 if (treeNode.Children.Count > 0)
@@ -566,12 +519,12 @@ namespace EasyEPlanner
                     List<TreeNodeAdv> childs = treeNode.Children.ToList();
                     foreach (TreeNodeAdv child in childs)
                     {
-                        if (isHiddenNodeFull == true)
+                        if (isHiddenNodeFull)
                         {
                             Execute(child, true);
                         }
 
-                        if (child.IsHidden == false)
+                        if (!child.IsHidden)
                         {
                             isHidden = false;
                             Execute(child);
@@ -681,10 +634,8 @@ namespace EasyEPlanner
             treeModel.Nodes.Add(root);
 
             var luaNames = new List<string>();
-            foreach(TechObject.Param param in parameters.Items)
-            {
-                luaNames.Add(param.GetNameLua());
-            }
+            luaNames.AddRange(
+                parameters.Items.OfType<Param>().Select(p => p.GetNameLua()));
 
             foreach(var name in luaNames.Distinct())
             {

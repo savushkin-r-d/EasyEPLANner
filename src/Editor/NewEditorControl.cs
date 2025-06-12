@@ -1129,7 +1129,7 @@ namespace Editor
 
                 EProjectManager.GetInstance().StopEditModes();
 
-                DFrm.CheckShown();
+                DFrm.GetInstance()?.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
                     ITreeViewItem item = null;
@@ -1160,7 +1160,7 @@ namespace Editor
                 //Редактирование устройств (запуск).
                 EProjectManager.GetInstance().StartEditModesWithDelay();
 
-                DFrm.CheckShown();
+                DFrm.GetInstance()?.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
                     ITreeViewItem item = GetActiveItem();
@@ -1563,7 +1563,7 @@ namespace Editor
             if (item is IAction && Editable)
                 EProjectManager.GetInstance().StartEditModes();
 
-            DFrm.CheckShown();
+            DFrm.GetInstance()?.CheckShown();
             if (edit_toolStripButton.Checked && DFrm.GetInstance().IsVisible() == true)
             {
                 //Обновление списка устройств при его наличии.

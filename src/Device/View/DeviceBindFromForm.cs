@@ -16,6 +16,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Класс, реализующий привязку канала устройства к модулю I/O
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public sealed class DeviceBinder
     {
         IApiHelper apiHelper;
@@ -486,6 +487,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Инициализатор стартовых значений для привязки
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public sealed class StartValuesForBinding
     {
         /// <summary>

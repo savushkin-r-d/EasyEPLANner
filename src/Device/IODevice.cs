@@ -208,14 +208,7 @@ namespace EplanDevice
                     parametersList.Add($"{parameter.Key.Name}={parameter.Value}");
             }
 
-            UpdateParametersInAPI(parametersList);
-        }
-
-        [ExcludeFromCodeCoverage]
-        private void UpdateParametersInAPI(List<string> parametersList)
-        {
-            var helper = new DeviceHelper(new ApiHelper());
-            Function.Parameters = string.Join(", ", parametersList);        
+            Function.Parameters = string.Join(", ", parametersList);
         }
 
         /// <summary>

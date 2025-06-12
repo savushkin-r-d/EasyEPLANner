@@ -184,8 +184,8 @@ namespace EasyEPlanner
             // Проверка и сохранение состояний окон.
             ModeFrm.CheckShown();
             ModeFrm.SaveCfg(ModeFrm.modeIsShown);
-            DFrm.CheckShown();
-            DFrm.SaveCfg(DFrm.deviceIsShown);
+            DFrm.GetInstance()?.CheckShown();
+            DFrm.SaveCfg(DFrm.GetInstance()?.deviceIsShown ?? false);
             Editor.NewEditorControl.CheckShown();
             Editor.NewEditorControl.SaveCfg();
             IOViewControl.SaveCfg();
