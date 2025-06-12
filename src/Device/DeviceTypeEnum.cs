@@ -47,20 +47,18 @@ namespace EplanDevice
     /// </summary>
     public static class DeviceTypeExtensions
     {
-        extension(DeviceType type)
-        {
-            /// <summary>
-            /// Получить список <see cref="DeviceSubType">подтипов</see> типа
-            /// </summary>
-            public IEnumerable<DeviceSubType> SubTypes
-                => DeviceSubTypeExtensions.DeviceSubTypes
-                .Where(st => (int)st / DeviceSubTypeExtensions.TypeMultiplier == (int)type);
+        /// <summary>
+        /// Получить список <see cref="DeviceSubType">подтипов</see> типа
+        /// </summary>
+        public static IEnumerable<DeviceSubType> SubTypes(this DeviceType type)
+            => DeviceSubTypeExtensions.DeviceSubTypes
+            .Where(st => (int)st / DeviceSubTypeExtensions.TypeMultiplier == (int)type);
 
-            /// <summary>
-            /// Получить список названий <see cref="DeviceSubType">подтипов</see> типа
-            /// </summary>
-            public IEnumerable<string> SubTypeNames => type.SubTypes.Select(st => st.ToString());
-        }
+        /// <summary>
+        /// Получить список названий <see cref="DeviceSubType">подтипов</see> типа
+        /// </summary>
+        public static IEnumerable<string> SubTypeNames(this DeviceType type) => 
+            type.SubTypes().Select(st => st.ToString());
     }
 
 }

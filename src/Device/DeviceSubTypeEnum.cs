@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 
 namespace EplanDevice
 {
@@ -181,13 +182,10 @@ namespace EplanDevice
     /// </summary>
     public static class DeviceSubTypeExtensions
     {
-        extension(DeviceSubType dst)
-        {
-            /// <summary>
-            /// Получить номер подтипа
-            /// </summary>
-            public int ToInt() => (int)dst % TypeMultiplier;
-        }
+        /// <summary>
+        /// Получить номер подтипа
+        /// </summary>
+        public static int ToInt(this DeviceSubType dst) => (int)dst % TypeMultiplier;
 
         /// <summary>
         /// Коэффициент типа (q: type * q + subtype = id )

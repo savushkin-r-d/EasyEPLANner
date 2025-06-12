@@ -26,7 +26,7 @@ namespace EasyEPlanner
     {
         public override void Update(IODevice device, string newValue, string oldValue)
         {
-            if (device.DeviceType.SubTypeNames.Contains(newValue))
+            if (device.DeviceType.SubTypeNames().Contains(newValue))
             {
                 device.Function.SubType = newValue;
 
