@@ -135,6 +135,7 @@ namespace IO
 
                         res[idx, 4] = sizeInBits;
                         res[idx, 5] = sizeOutBits;
+                        res[idx, 6] = dev.ArticleName;
                     }
 
                     idx++;

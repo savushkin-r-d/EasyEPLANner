@@ -524,7 +524,7 @@ namespace EasyEPlanner
             Dictionary<string, Color> modulesColor, 
             Dictionary<string, object[,]> asInterfaceConnection)
         {
-            const int MAX_COL = 6;
+            const int MAX_COL = 7;
             int MAX_ROW = ioManager.IONodes.Count;
 
             int IndexPCMain = 0;
@@ -577,6 +577,7 @@ namespace EasyEPlanner
 
                 res[idx, 4] = "Вход, бит";
                 res[idx, 5] = "Выход, бит";
+                res[idx, 6] = "Изделие";
                 res[idx, 0] = nodeName;
                 idx++;
 
