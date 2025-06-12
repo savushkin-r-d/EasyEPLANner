@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace EplanDevice
 {
     /// Типы устройств.
@@ -38,4 +41,26 @@ namespace EplanDevice
         Y,       ///< Пневмоостров Festo
         DEV_VTUG,///< Пневмоостров Festo (совместимость со старыми проектами).
     };
+
+    /// <summary>
+    /// Методы расширения для <see cref="DeviceType"/>
+    /// </summary>
+    public static class DeviceTypeExtensions
+    {
+        extension(DeviceType type)
+        {
+            /// <summary>
+            /// Получить список <see cref="DeviceSubType">подтипов</see> типа
+            /// </summary>
+            public IEnumerable<DeviceSubType> SubTypes
+                => DeviceSubTypeExtensions.DeviceSubTypes
+                .Where(st => (int)st / DeviceSubTypeExtensions.TypeMultiplier == (int)type);
+
+            /// <summary>
+            /// Получить список названий <see cref="DeviceSubType">подтипов</see> типа
+            /// </summary>
+            public IEnumerable<string> SubTypeNames => type.SubTypes.Select(st => st.ToString());
+        }
+    }
+
 }

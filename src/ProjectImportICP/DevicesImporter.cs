@@ -369,9 +369,8 @@ namespace EasyEPlanner.ProjectImportICP
                 foreach (var devicePair in existWagoDevices.Zip(existDevices, (w, d) => new { wagoDevice = w, device = d }))
                 {
                     devicePair.wagoDevice.Description = devicePair.device.Description;
-                    devicePair.device.EplanObjectFunction.LockObject();
-                    apiHelper.SetSupplementaryFieldValue(devicePair.device.EplanObjectFunction, 10,
-                        $"{devicePair.wagoDevice.WagoType}{devicePair.wagoDevice.FullNumber}");
+                    devicePair.device.Function.OldDeviceName = 
+                        $"{devicePair.wagoDevice.WagoType}{devicePair.wagoDevice.FullNumber}";
                     SetDefaultParametersOnExistingDevice(devicePair.wagoDevice, devicePair.device);
                 }
 

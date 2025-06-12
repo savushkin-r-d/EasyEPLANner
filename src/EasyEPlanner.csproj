@@ -114,7 +114,7 @@
   <ItemGroup>
     <Compile Include="AppConfiguarationManager.cs" />
     <Compile Include="AssemblyVersion.cs" />
-    <Compile Include="ColumnNode.cs" />
+    <Compile Include="Device\View\ColumnNode.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="Device\IODevices\LIFE_DEVICE.cs" />
@@ -187,6 +187,8 @@
     <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -338,10 +340,10 @@
     <Compile Include="Device\DeviceTypeEnum.cs" />
     <Compile Include="Device\IODevices\WT.cs" />
     <Compile Include="Device\IODevices\Y%28DEV_VTUG%29.cs" />
-    <Compile Include="DFrm.cs">
+    <Compile Include="Device\View\DFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DFrm.Designer.cs">
+    <Compile Include="Device\View\DFrm.Designer.cs">
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="EProjectManager\EProjectManager.cs" />
@@ -353,7 +355,7 @@
     </Compile>
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
     <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
-    <Compile Include="DeviceBindFromForm.cs" />
+    <Compile Include="Device\View\DeviceBindFromForm.cs" />
     <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
     <Compile Include="Configuration\IOReader.cs" />
     <Compile Include="IO\IOLinkCalculator.cs" />
@@ -494,7 +496,7 @@
     <Compile Include="TechObject\TechObjectXMLMaker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DFrm.resx">
+    <EmbeddedResource Include="Device\View\DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\Controls\SearchIterator.resx">

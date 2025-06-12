@@ -109,18 +109,20 @@ namespace EasyEplannerTests
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual("Параметры", root_v.Nodes[0].Text);
-                Assert.AreEqual("Рабочие параметры", root_v.Nodes[1].Text);
-                Assert.AreEqual("P_ON_TIME Время включения", root_v.Nodes[0].Nodes[0].Text);
-                Assert.AreEqual("P_FB      Обратная связь", root_v.Nodes[0].Nodes[1].Text);
-                Assert.AreEqual("R_AS_NUMBER", root_v.Nodes[1].Nodes[0].Text);
+                Assert.AreEqual("Данные", root_v.Nodes[0].Text);
+                Assert.AreEqual("Параметры", root_v.Nodes[1].Text);
+                Assert.AreEqual("Рабочие параметры", root_v.Nodes[2].Text);
+                Assert.AreEqual("P_ON_TIME Время включения", root_v.Nodes[1].Nodes[0].Text);
+                Assert.AreEqual("P_FB      Обратная связь", root_v.Nodes[1].Nodes[1].Text);
+                Assert.AreEqual("R_AS_NUMBER", root_v.Nodes[2].Nodes[0].Text);
 
-                Assert.AreEqual("Параметры", root_wt.Nodes[0].Text);
-                Assert.AreEqual("Свойства", root_wt.Nodes[1].Text);
-                Assert.AreEqual("P_C0 Сдвиг нуля", root_wt.Nodes[0].Nodes[0].Text);
-                Assert.AreEqual("IP", root_wt.Nodes[1].Nodes[0].Text);
+                Assert.AreEqual("Данные", root_wt.Nodes[0].Text);
+                Assert.AreEqual("Параметры", root_wt.Nodes[1].Text);
+                Assert.AreEqual("Свойства", root_wt.Nodes[2].Text);
+                Assert.AreEqual("P_C0 Сдвиг нуля", root_wt.Nodes[1].Nodes[0].Text);
+                Assert.AreEqual("IP", root_wt.Nodes[2].Nodes[0].Text);
 
-                Assert.AreEqual(0, root_do.Nodes.Count);
+                Assert.AreEqual(1, root_do.Nodes.Count);
             });
         }
 
