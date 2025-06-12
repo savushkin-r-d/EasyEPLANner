@@ -5,6 +5,8 @@ using EplanDevice;
 using System.Collections.Generic;
 using System.Management.Instrumentation;
 using System;
+using Moq;
+using StaticHelper;
 
 namespace Tests.EplanDevices
 {
@@ -246,7 +248,14 @@ namespace Tests.EplanDevices
 
             dev.SetParameter("P_MIN_V", 1);
 
-            Assert.Throws<System.IO.FileNotFoundException>(() => dev.UpdateParameters());
+            var functionMock = new Mock<IEplanFunction>();
+
+            dev.Function = functionMock.Object;
+
+            dev.UpdateParameters();
+
+            functionMock.VerifySet(s => s.Parameters = "P_MIN_V=1");
+            Assert.Pass();
         }
 
         [Test]

@@ -215,8 +215,7 @@ namespace EplanDevice
         private void UpdateParametersInAPI(List<string> parametersList)
         {
             var helper = new DeviceHelper(new ApiHelper());
-            helper.SetParameters(EplanObjectFunction,
-                string.Join(", ", parametersList));
+            Function.Parameters = string.Join(", ", parametersList);        
         }
 
         /// <summary>
@@ -231,9 +230,7 @@ namespace EplanDevice
                 propertiesList.Add($"{property.Key}='{property.Value}'");
             }
 
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetProperties(EplanObjectFunction,
-                string.Join(",", propertiesList));
+            Function.Properties = string.Join(",", propertiesList);
         }
 
         /// <summary>
@@ -248,9 +245,7 @@ namespace EplanDevice
                 runtimeParametersList.Add($"{rtPar.Key}={rtPar.Value}");
             }
 
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetRuntimeParameters(EplanObjectFunction,
-                string.Join(",", runtimeParametersList));
+            Function.RuntimeParameters = string.Join(",", runtimeParametersList);
         }
 
         /// <summary>
@@ -506,11 +501,7 @@ namespace EplanDevice
         /// <summary>
         /// Связанная функция.        
         /// </summary>
-        public Eplan.EplApi.DataModel.Function EplanObjectFunction
-        {
-            get;
-            set;
-        }
+        public IEplanFunction Function { get; set; }
 
         /// <summary>
         /// Сохранение в виде массива данных (для экспорта в таблицу).
@@ -578,7 +569,7 @@ namespace EplanDevice
             res += prefix + "descr   = \'" + Description.Replace("\n", ". ") +
                 "\',\n";
             res += prefix + "dtype   = " + (int)dType + ",\n";
-            res += prefix + "subtype = " + (int)dSubType + ", -- " +
+            res += prefix + "subtype = " + dSubType.ToInt() + ", -- " +
                 GetDeviceSubTypeStr(dType, dSubType) + "\n";
             res += prefix + $"article = \'{ArticleName}\',\n";
 

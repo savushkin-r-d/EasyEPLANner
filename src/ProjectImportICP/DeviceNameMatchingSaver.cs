@@ -38,7 +38,7 @@ namespace EasyEPlanner.ProjectImportICP
         {
             var apiHelper = new ApiHelper();
             Save(path, devices.Select(d => new CsvDeviceMatchingData(
-                apiHelper.GetSupplementaryFieldValue(d.EplanObjectFunction, 10),
+                d.Function.OldDeviceName,
                 d.Name,
                 d.Description)));
         }

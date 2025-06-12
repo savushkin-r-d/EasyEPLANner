@@ -1,5 +1,5 @@
 ﻿namespace EasyEPlanner
-    {
+{
     partial class DFrm
         {
         /// <summary>
