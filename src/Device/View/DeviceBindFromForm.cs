@@ -19,8 +19,8 @@ namespace EasyEPlanner
     [ExcludeFromCodeCoverage]
     public sealed class DeviceBinder
     {
-        IApiHelper apiHelper;
-        IIOHelper ioHelper;
+        readonly IApiHelper apiHelper;
+        readonly IIOHelper ioHelper;
 
         /// <summary>
         /// Конструктор, в который передается экземпляр формы для доступа
@@ -66,8 +66,7 @@ namespace EasyEPlanner
             }
             catch
             {
-                // TODO: Errors handler
-                return;
+                // do nothing
             }
         }
 
@@ -149,84 +148,72 @@ namespace EasyEPlanner
                 }
 
                 SetDevicesChannel = NewFunctionalText;
+                return;
+            }
+
+            //Замена на "Резерв".
+            if (SelectedClampFunction.Properties.FUNC_TEXT
+                .ToString(Eplan.EplApi.Base.ISOCode.Language.L___) ==
+                NewFunctionalText.Replace("\r", ""))
+            {
+                ResetDevicesChannel = NewFunctionalText;
+                NewFunctionalText = CommonConst.Reserve;
+                return;
+            }
+
+            if ((Control.ModifierKeys & Keys.Control) != Keys.Control)
+            {
+                //Замена на новое устройство.
+                ResetDevicesChannel = oldFunctionalText;
+                SetDevicesChannel = NewFunctionalText;
+                return;
+            }
+
+            if (!(oldFunctionalText + CommonConst
+                .NewLineWithCarriageReturn)
+                .Contains(SelectedChannel.Comment +
+                CommonConst.NewLineWithCarriageReturn))
+            {
+                MessageBox.Show(
+                    $"Действие канала устройства (\"{SelectedChannel.Comment}\") отличается от действия уже привязанного канала модуля!",
+                    "EPlaner", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            
+                throw new ArgumentException();
+            }
+
+            var functionalTextContainsDevice =
+                FunctionalTextContainsDevice(oldFunctionalText,
+                SelectedDevice.EplanName);
+            if (functionalTextContainsDevice)
+            {
+                ResetDevicesChannel = NewFunctionalText;
+                NewFunctionalText = oldFunctionalText
+                    .Replace(SelectedDevice.EplanName, "")
+                    .Trim();
+
+                if (NewFunctionalText.Length > 0 && NewFunctionalText[0] != '+')
+                {
+                    //Если строка начинается не с символа "+",
+                    //заменяем ее на "Резерв".
+                    NewFunctionalText = CommonConst.Reserve;
+                }
             }
             else
             {
-                //Замена на "Резерв".
-                if (SelectedClampFunction.Properties.FUNC_TEXT
-                    .ToString(Eplan.EplApi.Base.ISOCode.Language.L___) ==
-                    NewFunctionalText.Replace("\r", ""))
+                string text = "";
+                if (oldFunctionalText == CommonConst.Reserve)
                 {
-                    ResetDevicesChannel = NewFunctionalText;
-                    NewFunctionalText = CommonConst.Reserve;
+                    oldFunctionalText = "";
+                    text = SelectedDevice.EplanName;
                 }
                 else
                 {
-                    if ((Control.ModifierKeys & Keys.Control) ==
-                        Keys.Control)
-                    {
-                        if (!(oldFunctionalText + CommonConst
-                            .NewLineWithCarriageReturn)
-                            .Contains(SelectedChannel.Comment +
-                            CommonConst.NewLineWithCarriageReturn))
-                        {
-                            MessageBox.Show(
-                                "Действие канала устройства (\"" +
-                                SelectedChannel.Comment + "\") " +
-                                "отличается от действия уже " +
-                                "привязанного канала модуля!",
-                                "EPlaner",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Exclamation);
-
-                            throw new Exception();
-                        }
-
-                        var functionalTextContainsDevice = 
-                            FunctionalTextContainsDevice(oldFunctionalText, 
-                            SelectedDevice.EplanName);
-                        if (functionalTextContainsDevice == true)
-                        {
-                            ResetDevicesChannel = NewFunctionalText;
-                            NewFunctionalText = oldFunctionalText
-                                .Replace(SelectedDevice.EplanName, "")
-                                .Trim();
-
-                            if (NewFunctionalText.Length > 0)
-                            {
-                                //Если строка начинается не с символа "+",
-                                //заменяем ее на "Резерв".
-                                if (NewFunctionalText[0] != '+')
-                                {
-                                    NewFunctionalText = CommonConst.Reserve;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            string text = "";
-                            if (oldFunctionalText == CommonConst.Reserve)
-                            {
-                                oldFunctionalText = "";
-                                text = SelectedDevice.EplanName;
-                            }
-                            else
-                            {
-                                text = CommonConst.NewLineWithCarriageReturn +
-                                SelectedDevice.EplanName;
-                            }
-
-                            SetDevicesChannel = NewFunctionalText;
-                            NewFunctionalText = oldFunctionalText + text;
-                        }
-                    }
-                    else
-                    {
-                        //Замена на новое устройство.
-                        ResetDevicesChannel = oldFunctionalText;
-                        SetDevicesChannel = NewFunctionalText;
-                    }
+                    text = CommonConst.NewLineWithCarriageReturn +
+                    SelectedDevice.EplanName;
                 }
+
+                SetDevicesChannel = NewFunctionalText;
+                NewFunctionalText = oldFunctionalText + text;
             }
         }
 
@@ -280,7 +267,7 @@ namespace EasyEPlanner
 
             var regex = new Regex(IOManager.IONamePattern);
             var match = regex.Match(SelectedIOModuleFunction.VisibleName);
-            if (match.Success == false)
+            if (!match.Success)
             {
                 return;
             }
@@ -310,12 +297,12 @@ namespace EasyEPlanner
 
             string functionalText = SelectedDevice.EplanName + 
                 CommonConst.NewLineWithCarriageReturn;
-            if (string.IsNullOrEmpty(SelectedDevice.Description) == false)
+            if (!string.IsNullOrEmpty(SelectedDevice.Description))
             {
                 functionalText += SelectedDevice.Description +
                     CommonConst.NewLineWithCarriageReturn;
             }
-            if (string.IsNullOrEmpty(SelectedChannel.Comment) == false)
+            if (!string.IsNullOrEmpty(SelectedChannel.Comment))
             {
                 functionalText += SelectedChannel.Comment +
                     CommonConst.NewLineWithCarriageReturn;
@@ -326,7 +313,7 @@ namespace EasyEPlanner
             string manufacturer = GetSelectedIOModuleArticleProperty(
                 propertyNumber);
 
-            if (isIOLink == true && 
+            if (isIOLink && 
                 manufacturer.Contains(PhoenixContact) &&
                 SelectedDevice.Channels.Count > 1)
             {
@@ -351,7 +338,7 @@ namespace EasyEPlanner
             var IOModuleMatch = Regex.Match(IOModuleFunctionName,
                 IOManager.IONamePattern);
 
-            if (IOModuleMatch.Success == false)
+            if (!IOModuleMatch.Success)
             {
                 return isIOLink;
             }
@@ -377,7 +364,7 @@ namespace EasyEPlanner
         {
             var result = "";
             if (SelectedIOModuleFunction != null &&
-                SelectedIOModuleFunction.Articles.Count() > 0 &&
+                SelectedIOModuleFunction.Articles.Any() &&
                 !SelectedIOModuleFunction.Articles[0]
                 .Properties[propetyNumber].IsEmpty)
             {
@@ -395,7 +382,7 @@ namespace EasyEPlanner
         /// <param name="functionalText">Функциональный текст с устройствами
         /// </param>
         /// <returns></returns>
-        private bool FunctionalTextContainsDevice(string functionalText,
+        private static bool FunctionalTextContainsDevice(string functionalText,
             string deviceName)
         {
             var isContains = false;

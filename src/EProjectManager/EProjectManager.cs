@@ -185,7 +185,7 @@ namespace EasyEPlanner
             ModeFrm.CheckShown();
             ModeFrm.SaveCfg(ModeFrm.modeIsShown);
             DFrm.GetInstance()?.CheckShown();
-            DFrm.SaveCfg(DFrm.GetInstance()?.deviceIsShown ?? false);
+            DFrm.SaveCfg(DFrm.GetInstance()?.IsVisible() ?? false);
             Editor.NewEditorControl.CheckShown();
             Editor.NewEditorControl.SaveCfg();
             IOViewControl.SaveCfg();
