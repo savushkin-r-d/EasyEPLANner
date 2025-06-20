@@ -163,7 +163,7 @@ namespace EplanDevice
         TS_VIRT, ///< Виртуальный сигнальный датчик температуры
 
         //G
-        G_IOL_4 = 25001, ///< Phoenix Contact 4 канала.
+        G_IOL_4 = 25001, ///< x Contact 4 канала.
         G_IOL_8, ///< Phoenix Contact 8 каналов.
 
         // LIFE_DEVICE
@@ -185,20 +185,28 @@ namespace EplanDevice
         /// <summary>
         /// Получить номер подтипа
         /// </summary>
-        public static int ToInt(this DeviceSubType dst) => (int)dst % TypeMultiplier;
+        public static int GetIndex(this DeviceSubType dst) => (int)dst % TypeMultiplier;
+
+        /// <summary>
+        /// Получить тип
+        /// </summary>
+        /// <param name="dst">Подтип</param>
+        public static DeviceType GetDeviceType(this DeviceSubType dst)
+            => DeviceTypeExtensions.DeviceTypes
+            .FirstOrDefault(t => (int)t == (int)dst / TypeMultiplier);
 
         /// <summary>
         /// Коэффициент типа (q: type * q + subtype = id )
         /// </summary>
         public const int TypeMultiplier = 1000;
 
-        private static List<DeviceSubType> deviceSubTypes;
-        
         /// <summary>
         /// Список всех подтипов
         /// </summary>
         public static List<DeviceSubType> DeviceSubTypes => deviceSubTypes ??=
             [.. Enum.GetValues(typeof(DeviceSubType)).OfType<DeviceSubType>()];
+
+        private static List<DeviceSubType> deviceSubTypes;
     }
 
 }

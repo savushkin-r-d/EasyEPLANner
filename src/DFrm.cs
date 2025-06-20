@@ -1041,10 +1041,10 @@ namespace EasyEPlanner
         /// <param name="parent">Родительский узел</param>
         /// <param name="nodeName">Имя группы</param>
         /// <param name="nodes">Узлы</param>
-        private static bool AddDeviceGroupNodes(Node parent, string nodeName, IEnumerable<Node> nodes)
+        private static void AddDeviceGroupNodes(Node parent, string nodeName, IEnumerable<Node> nodes)
         {
             if (!nodes.Any())
-                return false;
+                return;
 
             var parametersNode = new Node(nodeName);
             parent.Nodes.Add(parametersNode);
@@ -1053,8 +1053,6 @@ namespace EasyEPlanner
             {
                 parametersNode.Nodes.Add(node);
             }
-
-            return true;
         }
 
         /// <summary>

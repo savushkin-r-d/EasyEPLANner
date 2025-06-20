@@ -355,7 +355,6 @@ namespace EasyEPlanner.ProjectImportICP
                 return;
 
             var deviceManager = DeviceManager.GetInstance();
-            var apiHelper = new ApiHelper();
 
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {

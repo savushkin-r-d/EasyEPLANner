@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -59,6 +60,15 @@ namespace EplanDevice
         /// </summary>
         public static IEnumerable<string> SubTypeNames(this DeviceType type) => 
             type.SubTypes().Select(st => st.ToString());
+
+
+        /// <summary>
+        /// Список всех типов
+        /// </summary>
+        public static List<DeviceType> DeviceTypes => deviceTypes ??=
+            [.. Enum.GetValues(typeof(DeviceType)).OfType<DeviceType>()];
+
+        private static List<DeviceType> deviceTypes;
     }
 
 }
