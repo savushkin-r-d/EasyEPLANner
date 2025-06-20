@@ -579,7 +579,7 @@ namespace EasyEPlanner
             foreach (Editor.DrawInfo drawObj in objectsToDraw.Where(o => o.DrawingStyle != Editor.DrawInfo.Style.NO_DRAW ))
             {
                 Eplan.EplApi.DataModel.Function objectFunction =
-                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
+                    ((drawObj.DrawingDevice as IODevice).Function as EplanFunction).Function;
 
                 if (objectFunction == null)
                 {

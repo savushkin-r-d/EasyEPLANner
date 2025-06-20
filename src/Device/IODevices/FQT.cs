@@ -68,10 +68,8 @@ namespace EplanDevice
             return errStr;
         }
 
-        public override List<string> MultipleProperties()
-        {
-            return new List<string>() { Property.MT };
-        }
+        public override List<string> MultipleProperties => [Property.MT];
+        
 
         public override string GetRange()
         {

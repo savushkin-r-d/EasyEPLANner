@@ -473,10 +473,8 @@ namespace EplanDevice
                 rtParamStr, propStr, dLocation, out errStr, articleName,
                 iolConfProperties);
 
-            if (dev != null)
-            {
-                dev.EplanObjectFunction = oF;
-            }
+            if (dev is not null)
+                dev.Function = new EplanFunction(oF);
 
             return dev;
         }
