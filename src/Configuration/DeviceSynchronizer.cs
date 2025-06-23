@@ -65,12 +65,11 @@ namespace EasyEPlanner
             bool needSynch = false;
             int deleteDeviceIndex = -1;
             int doNothingIndex = -2;
-            const string deviceSkipSign = "1";
 
             for (int k = 0; k < prevDevicesCount; k++)                       //2
             {
                 EplanDevice.IODevice prevDevice = prevDevices[k];
-                var prevDeviceEplanFunc = prevDevice.EplanObjectFunction;
+                var prevDeviceEplanFunc = prevDevice.Function;
 
                 bool addedNewDevice = prevDeviceEplanFunc == null;
                 bool deviceNotChanged = k < deviceReader.DevicesCount &&
@@ -88,31 +87,23 @@ namespace EasyEPlanner
                 foreach (EplanDevice.IODevice newDevice in deviceReader.Devices)
                 {
                     deviceIndex++;                                         //2.1
-                    bool deviceDeleted = prevDeviceEplanFunc.IsValid == false;
-                    if (deviceDeleted)
+                    if (!prevDeviceEplanFunc.IsValid) // device deleted
                     {
                         SetDeviceIndex(indexArray, k, deleteDeviceIndex);
                         break;
                     }
                     else
                     {
-                        bool deviceOff = prevDeviceEplanFunc.Properties
-                        .FUNC_SUPPLEMENTARYFIELD[1].IsEmpty == false &&
-                        prevDeviceEplanFunc.Properties
-                        .FUNC_SUPPLEMENTARYFIELD[1]
-                        .ToString(ISOCode.Language.L___) == deviceSkipSign;
                         bool deviceMainFunctionOff =
                             prevDeviceEplanFunc.IsMainFunction == false;
-                        if (deviceOff || deviceMainFunctionOff)
+                        if (prevDeviceEplanFunc.Off || deviceMainFunctionOff)
                         {
                             SetDeviceIndex(indexArray, k, deleteDeviceIndex);
                             break;
                         }
                     }   
 
-                    bool foundNewDeviceIndex =
-                        newDevice.EplanObjectFunction == prevDeviceEplanFunc;
-                    if (foundNewDeviceIndex)                               //2.2
+                    if (newDevice.Function == prevDeviceEplanFunc)          //2.2
                     {
                         SetDeviceIndex(indexArray, k, deviceIndex);
                         break;

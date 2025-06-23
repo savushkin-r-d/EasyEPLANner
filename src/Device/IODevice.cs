@@ -208,15 +208,7 @@ namespace EplanDevice
                     parametersList.Add($"{parameter.Key.Name}={parameter.Value}");
             }
 
-            UpdateParametersInAPI(parametersList);
-        }
-
-        [ExcludeFromCodeCoverage]
-        private void UpdateParametersInAPI(List<string> parametersList)
-        {
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetParameters(EplanObjectFunction,
-                string.Join(", ", parametersList));
+            Function.Parameters = string.Join(", ", parametersList);
         }
 
         /// <summary>
@@ -231,9 +223,7 @@ namespace EplanDevice
                 propertiesList.Add($"{property.Key}='{property.Value}'");
             }
 
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetProperties(EplanObjectFunction,
-                string.Join(",", propertiesList));
+            Function.Properties = string.Join(",", propertiesList);
         }
 
         /// <summary>
@@ -248,9 +238,7 @@ namespace EplanDevice
                 runtimeParametersList.Add($"{rtPar.Key}={rtPar.Value}");
             }
 
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetRuntimeParameters(EplanObjectFunction,
-                string.Join(",", runtimeParametersList));
+            Function.RuntimeParameters = string.Join(",", runtimeParametersList);
         }
 
         /// <summary>
@@ -503,14 +491,7 @@ namespace EplanDevice
             return string.Join("", channelsErr.Concat(parametersErr).Concat(rtParametersErr).Concat(propertiesErr));
         }
 
-        /// <summary>
-        /// Связанная функция.        
-        /// </summary>
-        public Eplan.EplApi.DataModel.Function EplanObjectFunction
-        {
-            get;
-            set;
-        }
+        public IEplanFunction Function { get; set; }
 
         /// <summary>
         /// Сохранение в виде массива данных (для экспорта в таблицу).
@@ -578,7 +559,7 @@ namespace EplanDevice
             res += prefix + "descr   = \'" + Description.Replace("\n", ". ") +
                 "\',\n";
             res += prefix + "dtype   = " + (int)dType + ",\n";
-            res += prefix + "subtype = " + (int)dSubType + ", -- " +
+            res += prefix + "subtype = " + dSubType.GetIndex() + ", -- " +
                 GetDeviceSubTypeStr(dType, dSubType) + "\n";
             res += prefix + $"article = \'{ArticleName}\',\n";
 
@@ -843,15 +824,8 @@ namespace EplanDevice
                 iolConfProperties.Add(propertyName, value);
             }
         }
-        
-        /// <summary>
-        /// Список свойств устройства, для которых можно установить несколько значений
-        /// </summary>
-        /// <returns></returns>
-        public virtual List<string> MultipleProperties()
-        {
-            return new List<string>();
-        }
+
+        public virtual List<string> MultipleProperties => [];
 
         public bool AllowedType(params DeviceType[] allowed)
             => allowed.Contains(DeviceType);

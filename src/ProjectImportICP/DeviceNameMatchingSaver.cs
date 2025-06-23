@@ -36,9 +36,8 @@ namespace EasyEPlanner.ProjectImportICP
         /// <param name="devices">Устройства</param>
         public static void Save(string path, IEnumerable<IODevice> devices)
         {
-            var apiHelper = new ApiHelper();
             Save(path, devices.Select(d => new CsvDeviceMatchingData(
-                apiHelper.GetSupplementaryFieldValue(d.EplanObjectFunction, 10),
+                d.Function.OldDeviceName,
                 d.Name,
                 d.Description)));
         }
