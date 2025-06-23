@@ -174,13 +174,13 @@ namespace EasyEPlanner
                             rangeCurrent.Row - 1, rangeCurrent.Column + 1]
                             .Merge();
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 5]
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 6]
                             .BorderAround(LineStyleType.Thick);
                     }
                     else
                     {
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 5]
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 6]
                             .Borders.LineStyle = LineStyleType.None;
                     }
                     rangeStart = rangeCurrent;
