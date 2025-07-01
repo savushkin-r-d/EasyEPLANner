@@ -114,7 +114,7 @@
   <ItemGroup>
     <Compile Include="AppConfiguarationManager.cs" />
     <Compile Include="AssemblyVersion.cs" />
-    <Compile Include="ColumnNode.cs" />
+    <Compile Include="ColumnNodes.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="Device\IODevices\LIFE_DEVICE.cs" />
@@ -187,6 +187,8 @@
     <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
       <SubType>Form</SubType>
     </Compile>

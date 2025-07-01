@@ -192,10 +192,9 @@ namespace EasyEPlanner.ProjectImportICP
         /// </summary>
         private static IEnumerable<(string Name, string WagoName)> GetDevicesNames()
         {
-            var apiHelper = new ApiHelper();
             var deviceNames = DeviceManager.GetInstance().Devices.Select(d =>
             {
-                var wagoName = apiHelper.GetSupplementaryFieldValue(d.EplanObjectFunction, 10);
+                var wagoName = d.Function.OldDeviceName;
 
                 if (wagoName == string.Empty)
                 {
