@@ -140,6 +140,7 @@ namespace InterprojectExchange
             pacDTOs[pacName].Port = port;
             pacDTOs[pacName].GateEnabled = gateEnabled;
             pacDTOs[pacName].Station = station;
+            pacDTOs[pacName].ModelLoaded = Loaded;
         }
 
         /// <summary>
@@ -166,6 +167,9 @@ namespace InterprojectExchange
         {
             get
             {
+                if (SelectedAdvancedProject is null)
+                    return new DeviceSignalsInfo();
+
                 if (!sourceSignals.ContainsKey(SelectedAdvancedProject))
                 {
                     sourceSignals.Add(SelectedAdvancedProject,
@@ -182,6 +186,9 @@ namespace InterprojectExchange
         {
             get
             {
+                if (SelectedAdvancedProject is null)
+                    return new DeviceSignalsInfo();
+
                 if (!receiverSignals.ContainsKey(SelectedAdvancedProject))
                 {
                     receiverSignals.Add(SelectedAdvancedProject,

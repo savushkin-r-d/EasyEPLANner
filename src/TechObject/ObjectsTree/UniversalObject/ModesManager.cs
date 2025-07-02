@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Операции технологического объекта.
     /// </summary>
-    public class ModesManager : TreeViewItem
+    public class ModesManager : TreeViewItem, IAutocompletable
     {
         public ModesManager(TechObject owner)
         {
@@ -174,13 +174,9 @@ namespace TechObject
             return false;
         }
 
-        public TechObject Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public TechObject Owner => owner;
+
+        public TechObject TechObject => Owner;
 
         public List<Mode> Modes
         {
@@ -392,13 +388,9 @@ namespace TechObject
             Editor.Editor.GetInstance().RefreshObject(this);
         }
 
-        override public ITreeViewItem Replace(object child,
-            object copyObject)
+        override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var targetOperation = child as Mode;
-            var copiedOperation = copyObject as Mode;
-            
-            if (targetOperation is null || copiedOperation is null)
+            if (!(child is Mode targetOperation && copyObject is Mode copiedOperation))
                 return null;
 
             Mode newOperation = copiedOperation.Clone(GetModeN, this, copiedOperation.Name);
@@ -631,6 +623,14 @@ namespace TechObject
         public override void UpdateOnDeleteGeneric()
         {
             modes.ForEach(mode => mode.UpdateOnDeleteGeneric());
+        }
+
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            Owner.GetParamsManager().Float.FillWithStubs();
+            Modes.ForEach(m => m.Autocomplete());
         }
 
         /// <summary> Список операций. </summary>

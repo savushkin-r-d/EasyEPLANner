@@ -78,7 +78,7 @@ end
 init_aggregate_parameters = function(object, aggregateParameters)
     -- Добавить активные параметры агрегата
     local activeAggregateParameters = aggregateParameters.active or { }
-    init_active_parameters(object, activeAggregateParameters)
+    init_aggregate_active_parameters(object, activeAggregateParameters)
     -- Добавить булевые параметры агрегата
     local boolAggregateParameters = aggregateParameters.bool or { }
     init_active_bool_parameters(object, boolAggregateParameters)
@@ -116,6 +116,37 @@ init_operation_parameters = function(operation, params)
     -- Добавить булевы параметра операции
     local activeBoolParameters = params.bool or { }
     init_active_bool_parameters(operation, activeBoolParameters)
+
+    -- Добавить float параметры операции
+    local floatParameters = params.float or {}
+    init_float_parameters(operation, floatParameters);
+end
+
+
+-- Инициализация активных параметров агрегата
+-- object - базовый объект
+-- activeParameters - список параметров
+init_aggregate_active_parameters = function (object, activeParameters)
+    for luaName, value in pairs(activeParameters) do
+        -- Данные для добавления параметра
+        local name = value.name or ""
+        local displayObjects = value.displayObjects or { }
+        local defaultValue = value.defaultValue or ""
+
+        if type(defaultValue) == "table" then
+            -- Добавить активный параметр агрегата с float-параметром по умолчанию
+            local parameter = object:AddActiveAggregateParameter(luaName, name)
+            parameter:SetFloatParameter(defaultValue.luaName or "", defaultValue.name or "",
+                defaultValue.defaultValue or 0, defaultValue.meter or "")
+        else
+            -- Добавить активный параметр
+            local parameter = object:AddActiveParameter(luaName, name, defaultValue)
+        
+            for _, value in pairs(displayObjects) do
+                parameter:AddDisplayObject(value)
+            end
+        end
+    end
 end
 
 -- Инициализация активных параметров

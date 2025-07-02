@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "OJSC Savushkin product" )]
 [assembly: AssemblyProduct( "EPLAN project designer" )]
-[assembly: AssemblyCopyright( "Copyright ©  2012 - 2024" )]
+[assembly: AssemblyCopyright( "Copyright ©  2012 - 2025" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -26,11 +26,11 @@ using System.Runtime.InteropServices;
 //
 //      Major Version
 //      Minor Version 
-//      Build Number
+//      GetTextToSave Number
 //      Revision
 //
-// You can specify all the values or you can default the Build and Revision Numbers 
+// You can specify all the values or you can default the GetTextToSave and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2024.12.*")]
-[assembly: AssemblyFileVersion("2024.12.0.0")]
+[assembly: AssemblyVersion("2025.07.*")]
+[assembly: AssemblyFileVersion("2025.07.0.0")]

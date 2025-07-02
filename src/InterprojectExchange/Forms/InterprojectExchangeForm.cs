@@ -51,7 +51,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Индекс предыдущего выбранного проекта в <see cref="advProjNameComboBox"/>
         /// </summary>
-        private int prevSelectedIndex = 0;
+        private int advProjPrevSelectedIndex = 0;
 
         /// <summary>
         /// Шрифт для <see cref="advProjNameComboBox"/>
@@ -849,47 +849,32 @@ namespace InterprojectExchange
         {
             bool canDelete = advProjNameComboBox.Items.Count > 0 &&
                 advProjNameComboBox.SelectedIndex > -1;
-            if (canDelete)
+
+            if (!canDelete)
+                return;
+
+            string projName = advProjNameComboBox.Text;
+            string message = $"Удалить обмен с проектом \"{projName}\".";
+            
+            if (DialogResult.No == ShowWarningMessage(message, MessageBoxButtons.YesNo))
+                return;
+
+            try
             {
-                string projName = advProjNameComboBox.Text;
-                string message = $"Удалить обмен с проектом \"{projName}\".";
-                DialogResult delete = ShowWarningMessage(message, 
-                    MessageBoxButtons.YesNo);
-                if (delete == DialogResult.No)
-                {
-                    return;
-                }
-
-                try
-                {
-                    interprojectExchange.DeleteExchangeWithProject(projName);
-                }
-                catch (Exception exception)
-                {
-                    ShowErrorMessage(exception.Message);
-                    return;
-                }
-
-                int selectedIndex = advProjNameComboBox.Items.IndexOf(projName);
-                advProjNameComboBox.Items.Remove(projName);
-                if(advProjNameComboBox.Items.Count > 0)
-                {
-                    if(selectedIndex > 0) 
-                    {
-                        // Выбрать элемент из списка повыше
-                        advProjNameComboBox.SelectedIndex = selectedIndex - 1;
-                    }
-                    else
-                    {
-                        advProjNameComboBox.SelectedIndex = selectedIndex;
-                    }
-                }
-                else
-                {
-                    advancedProjSignalsList.Items.Clear();
-                    bindedSignalsList.Items.Clear();
-                }
+                interprojectExchange.DeleteExchangeWithProject(projName);
             }
+            catch (Exception exception)
+            {
+                ShowErrorMessage(exception.Message);
+                return;
+            }
+
+            
+            advProjNameComboBox.Items.Remove(projName);
+            advProjPrevSelectedIndex = 0;
+            advProjNameComboBox.SelectedIndex = 0;
+            
+            bindedSignalsList.Items.Clear();
         }
 
         /// <summary>
@@ -982,14 +967,24 @@ namespace InterprojectExchange
 
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[selectedIndex].ToString());
 
-            if (selectedIndex >= 0 && model?.Loaded is true)
+            if (selectedIndex == 0 && advProjPrevSelectedIndex == 0)
+            {
+                interprojectExchange.SelectModel(new AdvancedProjectModel());
+                advProjItems.Clear();
+                RefilterListViews(true);
+                return;
+            }
+
+            if (selectedIndex >= 0 &&
+                selectedIndex != advProjPrevSelectedIndex &&
+                model?.Loaded is true)
             {
                 LoadAdvProjData(advProjNameComboBox.Text);
-                prevSelectedIndex = selectedIndex;
+                advProjPrevSelectedIndex = selectedIndex;
             }
             else
             {
-                advProjNameComboBox.SelectedIndex = prevSelectedIndex;
+                advProjNameComboBox.SelectedIndex = advProjPrevSelectedIndex;
             }
         }
 
@@ -1001,26 +996,27 @@ namespace InterprojectExchange
         {
             advProjItems.Clear();
             IProjectModel model = interprojectExchange.GetModel(projName);
-            if (!model.Selected)
-            {
-                List<DeviceInfo> devices = model.Devices;
-                foreach (var devInfo in devices)
-                {
-                    var info = new string[] 
-                    { 
-                        devInfo.Name, 
-                        devInfo.Description 
-                    };
-                    var item = new ListViewItem(info);
-                    item.Tag = devInfo.Type;
-                    advProjItems.Add(item);
-                }
-                interprojectExchange.SelectModel(model);
+            
+            if (model.Selected)
+                return;
 
-                ReloadListViewWithSignals();
-                bool hardRefilter = true;
-                RefilterListViews(hardRefilter);
-            }         
+            List<DeviceInfo> devices = model.Devices;
+            foreach (var devInfo in devices)
+            {
+                var info = new string[] 
+                { 
+                    devInfo.Name, 
+                    devInfo.Description 
+                };
+                var item = new ListViewItem(info);
+                item.Tag = devInfo.Type;
+                advProjItems.Add(item);
+            }
+            interprojectExchange.SelectModel(model);
+
+            ReloadListViewWithSignals();
+            bool hardRefilter = true;
+            RefilterListViews(hardRefilter);         
         }
 
         /// <summary>
@@ -1135,6 +1131,9 @@ namespace InterprojectExchange
         /// </summary>
         private void advProjNameComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
+            if (e.Index < 0 || e.Index > advProjNameComboBox.Items.Count)
+                return;
+
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[e.Index].ToString());
 
             if (model?.Loaded is false) //We are disabling item based on Index, you can have your logic here

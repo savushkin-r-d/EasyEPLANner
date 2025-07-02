@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Editor;
 
 namespace TechObject
@@ -74,7 +75,7 @@ namespace TechObject
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : TreeViewItem, IBaseOperation
+    public class BaseOperation : TreeViewItem, IBaseOperation, IAutocompletable
     {
         public BaseOperation(Mode owner)
         {
@@ -183,6 +184,12 @@ namespace TechObject
             par.ValueChanged += (sender) => OnValueChanged(sender);
         }
 
+
+        public void AddFloatParameter(string luaName, string name, double defaultValue, string meter)
+        {
+            Parameters.Add(new BaseFloatParameter(luaName, name, defaultValue, meter));
+        }
+
         public string Name
         {
             get => operationName;
@@ -258,9 +265,8 @@ namespace TechObject
                 {
                     Name = operation.Name;
                     LuaName = operation.LuaName;
-                    Properties = operation.Properties
-                        .Select(x => x.Clone())
-                        .ToList();
+                    Properties = operation.Properties.Select(x => x.Clone()).ToList();
+                    Parameters = new List<IBaseFloatParameter>(operation.Parameters);
                     foreach(var property in Properties)
                     {
                         property.Owner = this;
@@ -378,6 +384,8 @@ namespace TechObject
             get => baseOperationProperties;
             set => baseOperationProperties = value;
         }
+
+        public List<IBaseFloatParameter> Parameters { get; set; } = new List<IBaseFloatParameter>();
 
         public Mode Owner
         {
@@ -503,29 +511,22 @@ namespace TechObject
             }
         }
 
-        public BaseOperation Clone(Mode owner)
-        {
-            var operation = Clone();
-            operation.owner = owner;
-            return operation;
-        }
-
         /// <summary>
         /// Копирование объекта
         /// </summary>
         /// <returns></returns>
-        public BaseOperation Clone()
+        public BaseOperation Clone(Mode owner)
         {
             var operation = EmptyOperation();
-            List<BaseParameter> properties = CloneProperties(operation);
-            Dictionary<string, List<BaseStep>> states = CloneStates(operation);
 
             operation.Name = operationName;
             operation.LuaName = luaOperationName;
-            operation.Properties = properties;
-            operation.states = states;
-            operation.owner = Owner;
+            operation.owner = owner ?? Owner;
             operation.DefaultPosition = DefaultPosition;
+
+            operation.Properties = CloneProperties(operation);
+            operation.states = CloneStates(operation);
+            operation.Parameters = new List<IBaseFloatParameter>(Parameters);
 
             operation.SetItems();
 
@@ -534,6 +535,8 @@ namespace TechObject
 
             return operation;
         }
+
+        public BaseOperation Clone() => Clone(null);
 
         /// <summary>
         /// Копирование доп. свойств базовой операции
@@ -544,17 +547,12 @@ namespace TechObject
         {
             var properties = new List<BaseParameter>();
 
-            for (int i = 0; i < baseOperationProperties.Count; i++)
+            foreach (BaseParameter oldProperty in baseOperationProperties)
             {
-                BaseParameter oldProperty = baseOperationProperties[i];
                 BaseParameter newProperty = oldProperty.Clone();
-                if (oldProperty.Owner is BaseTechObject)
+                if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
                 {
-                    var obj = oldProperty.Owner as BaseTechObject;
-                    if (obj.IsAttachable)
-                    {
-                        newProperty.Owner = oldProperty.Owner;
-                    }
+                    newProperty.Owner = obj.Clone(newOwner.Owner.Owner.Owner);
                 }
                 else
                 {
@@ -660,6 +658,16 @@ namespace TechObject
             return false;
         }
         #endregion
+
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            baseOperationProperties.OfType<IAutocompletable>()
+                .Where(i => i.CanExecute)
+                .ToList()
+                .ForEach(i => i.Autocomplete());
+        }
 
         private ITreeViewItem[] items = new ITreeViewItem[0];
         

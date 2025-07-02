@@ -1,4 +1,5 @@
 ﻿using Editor;
+using EplanDevice;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -15,9 +16,24 @@ namespace TechObjectTests
         public void GetObjectToDrawOnEplanPage_NewAction_ReturnsDrawInfoList(
             DrawInfo.Style drawStyle, List<int> devIdList_1, List<int> devIdList_2)
         {
-            var deviceManagerMock = new Mock<EplanDevice.IDeviceManager>();
-            deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
-                .Returns(new Mock<EplanDevice.IDevice>().Object);
+            var devices = new Dictionary<int, IDevice>()
+            {
+                [2] = Mock.Of<IDevice>(),
+                [3] = Mock.Of<IDevice>(),
+                [4] = Mock.Of<IDevice>(),
+                [6] = Mock.Of<IDevice>(),
+                [7] = Mock.Of<IDevice>(),
+                [8] = Mock.Of<IDevice>(),
+                [9] = Mock.Of<IDevice>(),
+                [22] = Mock.Of<IDevice>(),
+                [33] = Mock.Of<IDevice>(),
+                [66] = Mock.Of<IDevice>(),
+            };
+
+            var deviceManagerMock = new Mock<IDeviceManager>();
+            deviceManagerMock
+                .Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
+                .Returns<int>(x => devices[x]);
 
             typeof(Action).GetField("deviceManager",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
@@ -90,5 +106,47 @@ namespace TechObjectTests
             };
         }
 
+
+        [Test]
+        public void MoveItems()
+        {
+            var groupableAction = new ActionGroupCustom("action_custom_group", null, "", () =>
+            {
+                var action = new ActionCustom("action_custom", null, "");
+                
+                action.CreateAction(new Action("action_1", null, ""));
+                action.CreateAction(new Action("action_2", null, ""));
+
+                return action;
+            });
+
+            var first = groupableAction.SubActions.FirstOrDefault();
+            var second = groupableAction.Insert();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsFalse(groupableAction.CanMoveUp(first));
+                Assert.IsTrue(groupableAction.CanMoveDown(first));
+
+                Assert.IsTrue(groupableAction.CanMoveUp(second));
+                Assert.IsFalse(groupableAction.CanMoveDown(second));
+
+                Assert.AreSame(first, groupableAction.SubActions[0]);
+                
+                groupableAction.MoveDown(first);
+                Assert.AreSame(first, groupableAction.SubActions[1]);
+                
+                groupableAction.MoveUp(first);
+                Assert.AreSame(first, groupableAction.SubActions[0]);
+
+                Assert.IsNull(groupableAction.MoveUp(first));
+                Assert.IsNull(groupableAction.MoveDown(second));
+
+                Assert.IsFalse(groupableAction.CanMoveDown(0));
+                Assert.IsFalse(groupableAction.CanMoveUp(0));
+                Assert.IsNull(groupableAction.MoveDown(0));
+                Assert.IsNull(groupableAction.MoveUp(0));
+            });
+        }
     }
 }

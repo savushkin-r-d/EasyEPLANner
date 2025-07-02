@@ -66,6 +66,13 @@ namespace EasyEPlanner.ProjectImportICP
                 Sortable = false,
             };
 
+            var subtype = new OLVColumn("Подтип", "Subtype")
+            {
+                IsEditable = true,
+                AspectGetter = (obj) => (obj as ImportDevice).Subtype,
+                Sortable = false,
+            };
+
             var descriptionColumn = new OLVColumn("Описание", "Description")
             {
                 IsEditable = true,
@@ -74,33 +81,113 @@ namespace EasyEPlanner.ProjectImportICP
             };
 
 
-            objectListView.Columns.Add(oldNameColumn);
-            objectListView.Columns.Add(toColumn);
-            objectListView.Columns.Add(newObjectColumn);
-            objectListView.Columns.Add(typeColumn);
-            objectListView.Columns.Add(newNameColumn);
-            objectListView.Columns.Add(descriptionColumn);
+            renameDevicesOLV.Columns.Add(oldNameColumn);
+            renameDevicesOLV.Columns.Add(toColumn);
+            renameDevicesOLV.Columns.Add(newObjectColumn);
+            renameDevicesOLV.Columns.Add(typeColumn);
+            renameDevicesOLV.Columns.Add(newNameColumn);
+            renameDevicesOLV.Columns.Add(subtype);
+            renameDevicesOLV.Columns.Add(descriptionColumn);
+
+
+            var deviceType = new OLVColumn("Тип устройства", "DeviceType")
+            {
+                IsEditable = false,
+                AspectGetter = obj => (obj as ImportDefaultDeviceParameter).DeviceType,
+                Sortable = false,
+            };
+
+            var parameter = new OLVColumn("Параметр", "Parameter")
+            {
+                IsEditable = false,
+                AspectGetter = obj => (obj as ImportDefaultDeviceParameter).Parameter,
+                Sortable = false,
+            };
+
+            var value = new OLVColumn("Значение по умолчанию", "Value")
+            {
+                IsEditable = true,
+                AspectGetter = obj => (obj as ImportDefaultDeviceParameter).DefaultValue,
+                Sortable = false,
+            };
+
+            defaultParametersOLV.Columns.Add(deviceType);
+            defaultParametersOLV.Columns.Add(parameter);
+            defaultParametersOLV.Columns.Add(value);
         }
 
-        public void Init(List<ImportDevice> devices)
+        public void InitRenamingDevices(List<ImportDevice> devices)
         {
-            objectListView.BeginUpdate();
+            renameDevicesOLV.BeginUpdate();
 
-            objectListView.Objects = devices;
+            renameDevicesOLV.Objects = devices;
 
-            objectListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            objectListView.Columns[0].Width = 70;  // old name
-            objectListView.Columns[1].Width = 25;  // ->
-            objectListView.Columns[2].Width = 60;  // Object
-            objectListView.Columns[3].Width = 40;  // Type
-            objectListView.Columns[4].Width = 50;  // Number
-            objectListView.Columns[5].Width = 250; // Description 
+            renameDevicesOLV.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            renameDevicesOLV.Columns[0].Width = 70;  // old name
+            renameDevicesOLV.Columns[1].Width = 25;  // ->
+            renameDevicesOLV.Columns[2].Width = 60;  // Object
+            renameDevicesOLV.Columns[3].Width = 40;  // Type
+            renameDevicesOLV.Columns[4].Width = 50;  // Number
+            renameDevicesOLV.Columns[5].Width = 50;  // Subtype
+            renameDevicesOLV.Columns[6].Width = 250; // Description 
 
-            objectListView.EndUpdate();
-
+            renameDevicesOLV.EndUpdate();
         }
 
-        private void objectListView_CellEditStarting(object sender, CellEditEventArgs e)
+        public void InitDefaultParameters(List<ImportDefaultDeviceParameter> defaultParameters)
+        {
+            defaultParametersOLV.BeginUpdate();
+
+            defaultParametersOLV.Objects = defaultParameters;
+
+            defaultParametersOLV.Columns[0].Width = 100;
+            defaultParametersOLV.Columns[1].Width = 75;
+            defaultParametersOLV.Columns[2].Width = 150;
+
+            defaultParametersOLV.EndUpdate();
+        }
+
+        void InitTextBoxCellEditor(ObjectListView olv)
+        {
+            textBoxCellEditor = new TextBox();
+            textBoxCellEditor.Enabled = true;
+            textBoxCellEditor.Visible = true;
+            textBoxCellEditor.LostFocus += textBoxCellEditor_LostFocus;
+            textBoxCellEditor.KeyDown += CellEditor_KeyDown;
+            olv.Controls.Add(textBoxCellEditor);
+        }
+
+        private void textBoxCellEditor_LostFocus(object sender, EventArgs e)
+        {
+            if (IsCellEditing)
+            {
+                cancelChanges = true;
+                (textBoxCellEditor.Parent as ObjectListView).FinishCellEdit();
+            }
+        }
+
+        private void CellEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter:
+                    renameDevicesOLV.FinishCellEdit();
+                    break;
+
+                case Keys.Escape:
+                    cancelChanges = true;
+                    renameDevicesOLV.FinishCellEdit();
+                    break;
+
+                default:
+                    return; // exit without e.Handled
+            }
+
+            e.Handled = true;
+        }
+
+
+        private void renameDevicesOLV_CellEditStarting(object sender, CellEditEventArgs e)
         {
             var item = e.RowObject as ImportDevice;
 
@@ -116,11 +203,15 @@ namespace EasyEPlanner.ProjectImportICP
                     editText = item.Type;
                     break;
 
-                case 4: 
+                case 4:
                     editText = item.Number.ToString();
                     break;
 
                 case 5:
+                    editText = item.Subtype;
+                    break;
+
+                case 6:
                     editText = item.Description;
                     break;
 
@@ -129,59 +220,19 @@ namespace EasyEPlanner.ProjectImportICP
             }
 
             IsCellEditing = true;
-            InitTextBoxCellEditor();
+            InitTextBoxCellEditor(renameDevicesOLV);
             textBoxCellEditor.Text = editText;
             textBoxCellEditor.Bounds = e.CellBounds;
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
-            objectListView.Freeze();
-        }
-
-        void InitTextBoxCellEditor()
-        {
-            textBoxCellEditor = new TextBox();
-            textBoxCellEditor.Enabled = true;
-            textBoxCellEditor.Visible = true;
-            textBoxCellEditor.LostFocus += editorTView_LostFocus;
-            textBoxCellEditor.KeyDown += CellEditor_KeyDown;
-            objectListView.Controls.Add(textBoxCellEditor);
-        }
-
-        private void editorTView_LostFocus(object sender, EventArgs e)
-        {
-            if (IsCellEditing)
-            {
-                cancelChanges = true;
-                objectListView.FinishCellEdit();
-            }
-        }
-
-        private void CellEditor_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Enter:
-                    objectListView.FinishCellEdit();
-                    break;
-
-                case Keys.Escape:
-                    cancelChanges = true;
-                    objectListView.FinishCellEdit();
-                    break;
-
-                default:
-                    return; // exit without e.Handled
-            }
-
-            e.Handled = true;
+            renameDevicesOLV.Freeze();
         }
 
 
-
-        private void objectListView_CellEditFinishing(object sender, CellEditEventArgs e)
+        private void renameDevicesOLV_CellEditFinishing(object sender, CellEditEventArgs e)
         {
             IsCellEditing = false;
-            objectListView.LabelEdit = false;
+            renameDevicesOLV.LabelEdit = false;
 
             var device = e.RowObject as ImportDevice;
 
@@ -189,11 +240,11 @@ namespace EasyEPlanner.ProjectImportICP
             {
                 e.Cancel = true;
                 cancelChanges = false;
-                objectListView.Unfreeze();
+                renameDevicesOLV.Unfreeze();
                 return;
             }
 
-            objectListView.Controls.Remove(textBoxCellEditor);
+            renameDevicesOLV.Controls.Remove(textBoxCellEditor);
 
             switch (e.Column.Index)
             {
@@ -218,13 +269,17 @@ namespace EasyEPlanner.ProjectImportICP
                     break;
 
                 case 5:
+                    device.Subtype = e.NewValue.ToString();
+                    break;
+
+                case 6:
                     device.Description = e.NewValue.ToString();
                     break;
             }
 
-            objectListView.Refresh();
+            renameDevicesOLV.Refresh();
             e.Cancel = true;
-            objectListView.Unfreeze();
+            renameDevicesOLV.Unfreeze();
         }
 
         private void OkBttn_Click(object sender, EventArgs e)
@@ -254,7 +309,7 @@ namespace EasyEPlanner.ProjectImportICP
             }
 
             var matches = Regex.Matches(data,
-                @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*\|\s*\'(?<description>[\w\W]*?)\'\s*",
+                @"\s*(?<wago_name>[\w]*?)(?<wago_number>[\d]*)\s*=>\s*(?<object>[\w]*)\s*\|\s*(?<type>[\w]*)\s*\|\s*(?<number>[\d]*)\s*\|\s*(?<subtype>[\w]*)\s*\|\s*\'(?<description>[\w\W]*?)\'\s*",
                 RegexOptions.None, 
                 TimeSpan.FromMilliseconds(100));
 
@@ -268,9 +323,10 @@ namespace EasyEPlanner.ProjectImportICP
                 var obj = match.Groups["object"].Value;
                 var type = match.Groups["type"].Value;
                 var number = int.Parse(match.Groups["number"].Value);
+                var subtype = match.Groups["subtype"].Value;
                 var description = match.Groups["description"].Value;
 
-                var dev = objectListView.Objects.OfType<ImportDevice>().FirstOrDefault(d => d.FullNumber == wagoNumber && d.WagoType == wagoType);
+                var dev = renameDevicesOLV.Objects.OfType<ImportDevice>().FirstOrDefault(d => d.FullNumber == wagoNumber && d.WagoType == wagoType);
 
                 if (dev is null)
                     continue;
@@ -278,10 +334,73 @@ namespace EasyEPlanner.ProjectImportICP
                 dev.Object = obj.ToUpper();
                 dev.Type = type.ToUpper();
                 dev.Number = number;
+                dev.Subtype = subtype.ToUpper();
                 dev.Description = description;
 
-                objectListView.RefreshObject(dev);
+                renameDevicesOLV.RefreshObject(dev);
             }
+        }
+
+        private void defaultParametersOLV_CellEditStarting(object sender, CellEditEventArgs e)
+        {
+            var item = e.RowObject as ImportDefaultDeviceParameter;
+
+            var editText = "";
+
+            switch (e.Column.Index)
+            {
+                case 2:
+                    editText = item.DefaultValue.ToString();
+                    break;
+
+                default:
+                    return;
+            }
+
+            IsCellEditing = true;
+            InitTextBoxCellEditor(defaultParametersOLV);
+            textBoxCellEditor.Text = editText;
+            textBoxCellEditor.Bounds = e.CellBounds;
+            e.Control = textBoxCellEditor;
+            textBoxCellEditor.Focus();
+            defaultParametersOLV.Freeze();
+        }
+
+        private void defaultParametersOLV_CellEditFinishing(object sender, CellEditEventArgs e)
+        {
+            IsCellEditing = false;
+            defaultParametersOLV.LabelEdit = false;
+
+            var par = e.RowObject as ImportDefaultDeviceParameter;
+
+            if (cancelChanges)
+            {
+                e.Cancel = true;
+                cancelChanges = false;
+                defaultParametersOLV.Unfreeze();
+                return;
+            }
+
+            defaultParametersOLV.Controls.Remove(textBoxCellEditor);
+
+            switch (e.Column.Index)
+            {
+                case 2:
+                    if (int.TryParse(e.NewValue.ToString(), out var number))
+                    {
+                        par.DefaultValue = number;
+                    }
+                    else
+                    {
+                        cancelChanges = false;
+                    }
+
+                    break;
+            }
+
+            defaultParametersOLV.Refresh();
+            e.Cancel = true;
+            defaultParametersOLV.Unfreeze();
         }
     }
 }

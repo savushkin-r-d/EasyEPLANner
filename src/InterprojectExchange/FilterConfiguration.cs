@@ -51,6 +51,11 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Настройка фильтра сигналов по умолчанию
+        /// </summary>
+        private readonly List<string> DefaultDevicesFilter = new List<string>() { "DI", "DO", "AI", "AO" };
+
+        /// <summary>
         /// Прочитать конфигурацию фильтрации из .ini
         /// </summary>
         public void Read() 
@@ -65,8 +70,6 @@ namespace InterprojectExchange
             var newFilterParameters = 
                 new Dictionary<string, Dictionary<string, bool>>();
             var iniFile = new IniFile(pathToConfig);
-            // Стандартное значение ключа параметра в .ini
-            string defaultValue = "false";
 
             foreach (var section in FilterParameters.Keys)
             {
@@ -76,7 +79,13 @@ namespace InterprojectExchange
                 foreach (var keyValuePair in parameters)
                 {
                     string readValue = iniFile.ReadString(section, 
-                        keyValuePair.Key, defaultValue);
+                        keyValuePair.Key, "-");
+
+                    if (readValue == "-")
+                    {
+                        readValue = DefaultDevicesFilter.Contains(keyValuePair.Key).ToString();
+                    }
+
                     bool.TryParse(readValue, out bool isEnabled);
                     itemParameters.Add(keyValuePair.Key, isEnabled);
                 }

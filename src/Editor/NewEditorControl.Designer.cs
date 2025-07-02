@@ -66,6 +66,7 @@ namespace Editor
             this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uniteToGenericToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createGenericToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autocompleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -484,6 +485,7 @@ namespace Editor
             this.editorTView.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.editorTView_CellEditFinishing);
             this.editorTView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.editorTView_CellEditStarting);
             this.editorTView.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.editorTView_FormatCell);
+            this.editorTView.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.editorTView_FormatRow);
             this.editorTView.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.editorTView_ColumnWidthChanging);
             this.editorTView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.editorTView_ItemSelectionChanged);
             this.editorTView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.editorTView_KeyDown);
@@ -497,6 +499,7 @@ namespace Editor
             this.createToolStripMenuItem,
             this.uniteToGenericToolStripMenuItem,
             this.createGenericToolStripMenuItem,
+            this.autocompleteToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripSeparator5,
             this.cutToolStripMenuItem,
@@ -507,7 +510,7 @@ namespace Editor
             this.moveUpToolStripMenuItem,
             this.moveDownToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(225, 236);
+            this.contextMenuStrip.Size = new System.Drawing.Size(225, 258);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // createToolStripMenuItem
@@ -541,6 +544,15 @@ namespace Editor
             this.createGenericToolStripMenuItem.ToolTipText = "Создать типовой объект";
             this.createGenericToolStripMenuItem.Visible = false;
             this.createGenericToolStripMenuItem.Click += new System.EventHandler(this.createGenericToolStripMenuItem_Click);
+            // 
+            // autocompleteToolStripMenuItem
+            // 
+            this.autocompleteToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.autocomplete;
+            this.autocompleteToolStripMenuItem.Name = "autocompleteToolStripMenuItem";
+            this.autocompleteToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + A";
+            this.autocompleteToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.autocompleteToolStripMenuItem.Text = "Автозаполнение";
+            this.autocompleteToolStripMenuItem.Click += new System.EventHandler(this.autocompleteToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -1097,5 +1109,6 @@ namespace Editor
         private EditorControls.SearchIterator searchIterator;
         private ToolStripButton reorderObjectsBtn;
         private ToolStripMenuItem settingMenuItem_reorderObjects;
+        private ToolStripMenuItem autocompleteToolStripMenuItem;
     }
     }

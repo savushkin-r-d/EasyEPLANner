@@ -47,7 +47,7 @@ function ImportDevices(importer)
         local commentDO = {}
         local commentDI = {}
 
-        local typeComment = ChannelComments[device.type]
+        local typeComment = ChannelComments[device.dtype]
         if ( typeComment ~= nil ) then
             local subtypeComment = typeComment[device.subtype]
             if ( subtypeComment ~= nil ) then

@@ -482,7 +482,7 @@ namespace TechObject
 
         private readonly HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
         {
-            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm.editorTView, string.Empty),
+            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm?.editorTView, string.Empty),
             FillBrush = new SolidBrush(Color.YellowGreen),
             FramePen = new Pen(Color.White),
         };
@@ -676,6 +676,9 @@ namespace TechObject
             if (obj is Action copiedAction)
             {
                 SetNewValue(copiedAction.ToString());
+                ModifyDevNames(new DevModifyOptions(Owner.TechObject,
+                    copiedAction.Owner.TechObject.NameEplan,
+                    copiedAction.Owner.TechObject.TechNumber));
                 return this;
             }
             return null;
@@ -730,6 +733,8 @@ namespace TechObject
         {
             OnValueChanged(sender);
         }
+
+        public override bool IsMoveable => true;
 
         public override string SystemIdentifier => "process_action";
 

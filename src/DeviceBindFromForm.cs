@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using EplanDevice;
 using IO;
 using StaticHelper;
+using IO.View;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -49,6 +51,7 @@ namespace EasyEPlanner
                 if (!string.IsNullOrEmpty(ResetDevicesChannel))
                 {
                     ResetChannel();
+                    SelectedClamp?.Reset();
                 }
 
                 SetFunctionalTextInClamp();
@@ -97,28 +100,31 @@ namespace EasyEPlanner
         /// Инициализация базовых значений переменных
         /// необходимых для привязки
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void InitStartValues()
         {
+            SelectedNode = startValues.GetSelectedNode();
+            SelectedClamp = IOViewControl.DataContext?.SelectedClamp;
+            NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
+            SelectedChannel = startValues.GetChannel(NodeFromSelectedNode);
+            SelectedDevice = startValues.GetDevice(NodeFromSelectedNode);
+            
             try
             {
-                SelectedNode = startValues.GetSelectedNode();
-                NodeFromSelectedNode = startValues
-                    .GetNodeFromSelectedNode(SelectedNode);
-                SelectedChannel = startValues
-                    .GetChannel(NodeFromSelectedNode);
-                SelectedDevice = startValues
-                    .GetDevice(NodeFromSelectedNode);
+                // Пробуем получить выбранную клемму на ФСА
                 SelectedObject = apiHelper.GetSelectedObject();
-                SelectedClampFunction = ioHelper.GetClampFunction(
-                    SelectedObject);
-                SelectedIOModuleFunction = ioHelper
-                    .GetIOModuleFunction(SelectedClampFunction);
+                SelectedClampFunction = ioHelper.GetClampFunction(SelectedObject);
+                SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
             catch
             {
-                const string Message = "Ошибка при инициализации " +
-                    "базовых значений";
-                throw new Exception(Message);
+                // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
+                // (если таковой нет, то генерируем исключение)
+                SelectedClampFunction = 
+                    (IOViewControl.DataContext?.SelectedClampFunction as EplanFunction)
+                        ?.Function ?? throw new ArgumentNullException();
+                    
+                SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
         }
 
@@ -263,6 +269,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Привязать канал
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void BindChannel()
         {
             if (SelectedIOModuleFunction == null)
@@ -277,45 +284,18 @@ namespace EasyEPlanner
                 return;
             }
 
-            int propertyNumber = (int) Eplan.EplApi.DataModel
-                .Properties.Article.ARTICLE_TYPENR;
-            string name = GetSelectedIOModuleArticleProperty(propertyNumber);
+            var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
 
-            var deviceNumber = Convert.ToInt32(match.Groups["n"].Value);
-            var moduleNumber = deviceNumber % 100;
-            int nodeNumber;
-            var clampNumber = SelectedClampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt();
-
-            // Есть ли PXC A1 в проекте
-            if (IOManager.GetInstance().IONodes[0].NodeNumber == 1)
-            {
-                // Если есть "A1", то учитываем, что он первый
-                nodeNumber = deviceNumber / 100;
-            }
-            else
-            {
-                // Если нету, оставляем как было
-                nodeNumber = deviceNumber / 100 - 1;
-            }
-
-            var moduleInfo = IOModuleInfo.GetModuleInfo(name, out _);
-            var logicalPort = Array.IndexOf(moduleInfo.ChannelClamps,
-                clampNumber) + 1;
-            var moduleOffset = IOManager.GetInstance()
-                .IONodes[nodeNumber].
-                IOModules[moduleNumber - 1].InOffset;
-
-            SelectedChannel.SetChannel(nodeNumber, moduleNumber,
-                clampNumber, deviceNumber, logicalPort, moduleOffset);
+            reader.ReadModuleClampBinding(new EplanFunction(SelectedClampFunction));
         }
 
         /// <summary>
-        /// Обновление дерева устройств после привязки
+        /// Обновление дерева устройств и модулей после привязки
         /// </summary>
         private void RefreshTree()
         {
             DevicesForm.RefreshTreeAfterBinding();
+            IOViewControl.Instance?.RefreshTreeAfterBinding();
         }
 
         /// <summary>
@@ -435,6 +415,12 @@ namespace EasyEPlanner
         }
 
         #region Закрытые поля
+        
+        /// <summary>
+        /// Выбранная клемма в <see cref="IO.View.IOViewControl">окне модулей</see>
+        /// </summary>
+        private IO.ViewModel.IClamp SelectedClamp { get; set; }
+
         /// <summary>
         /// Выбранный узел на дереве
         /// </summary>

@@ -115,8 +115,8 @@ namespace IO
         /// <param name="type">Тип (например 750-352).</param>
         /// <param name="IP">IP-адрес.</param>
         [ExcludeFromCodeCoverage]
-        public void AddNode(int n, int nodeNumber, string type, string IP,
-            string name, string location)
+        public IONode AddNode(int n, int nodeNumber, string type, string IP,
+            string name, string location, string locationDescription)
         {
             int voidNodeNumber = nodeNumber - 100;
             if (iONodes.Count < n)
@@ -125,9 +125,7 @@ namespace IO
                 {
                     if (voidNodeNumber == 0)
                         voidNodeNumber = 1;
-                    iONodes.Add(new IONode("750-xxx", i + 1,
-                        voidNodeNumber,
-                        "", "", ""));
+                    iONodes.Add(new IONode("750-xxx", i + 1, voidNodeNumber, "", "", "", ""));
                     voidNodeNumber -= 100;
                 }
             }
@@ -143,7 +141,10 @@ namespace IO
                 Logs.AddMessage($"IP-адрес узла '{name}' совпадает с адресом узла '{nodeWithSameIp.Name}': ({IP});");
             }
 
-            iONodes[n - 1] = new IONode(type, n, nodeNumber, IP, name, location);
+            var node = new IONode(type, n, nodeNumber, IP, name, location, locationDescription);
+            iONodes[n - 1] = node;
+
+            return node;
         }
 
         /// <summary>

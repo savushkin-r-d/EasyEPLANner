@@ -93,7 +93,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -109,7 +109,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForG_IOL_4 = new Dictionary<string, int>()
+            var exportForG_IOL_4 = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
@@ -123,7 +123,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.OUT_POWER_90, 1},
             };
 
-            var exportForG_IOL_8 = new Dictionary<string, int>()
+            var exportForG_IOL_8 = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},

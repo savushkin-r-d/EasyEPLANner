@@ -1,3 +1,4 @@
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.DataModel.Graphics;
@@ -12,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -280,6 +282,8 @@ namespace EasyEPlanner.ProjectImportICP
 
         public List<ImportDevice> ImportDevices { get; private set; } = new List<ImportDevice>();
 
+        public List<ImportDefaultDeviceParameter> DefaultParameters { get; private set; } = new List<ImportDefaultDeviceParameter>();
+
 
         public IImportDevice ImportDevice(string type, string wagoType, int number, string subtype, string description)
         {
@@ -292,36 +296,6 @@ namespace EasyEPlanner.ProjectImportICP
                 Subtype = subtype,
                 Description = description
             };
-
-            // Установка стандартных параметров для определенных типов устройств
-            switch (type)
-            {
-                case "DI":
-                    dev.Parameters.Add(IODevice.Parameter.P_DT, "0");
-                    break;
-
-                case "V":
-                case "M":
-                    dev.Parameters.Add(IODevice.Parameter.P_ON_TIME, "0");
-                    break;
-
-                case "TE":
-                case "LT":
-                    dev.Parameters.Add(IODevice.Parameter.P_C0, "0");
-                    dev.Parameters.Add(IODevice.Parameter.P_ERR, "0");
-                    break;
-
-                case "AO":
-                    dev.Parameters.Add(IODevice.Parameter.P_MIN_V, "0");
-                    dev.Parameters.Add(IODevice.Parameter.P_MAX_V, "0");
-                    break;
-
-                case "QT":
-                    dev.Parameters.Add(IODevice.Parameter.P_MIN_V, "0");
-                    dev.Parameters.Add(IODevice.Parameter.P_MAX_V, "0");
-                    dev.Parameters.Add(IODevice.Parameter.P_C0, "0");
-                    break;
-            }
 
             // Если в проекте есть подходящий номеру танк
             if (tanks.Contains(number / 100))
@@ -348,16 +322,69 @@ namespace EasyEPlanner.ProjectImportICP
 
         public void GenerateDevicesPages()
         {
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("DI", IODevice.Parameter.P_DT, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LS", IODevice.Parameter.P_DT, 0));
+
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO1_DI1_FB_OFF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO1_DI2), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_DO2_DI2), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter(nameof(DeviceSubType.V_AS_MIXPROOF), IODevice.Parameter.P_ON_TIME, 0));
+
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("M", IODevice.Parameter.P_ON_TIME, 0));
+
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("TE", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("TE", IODevice.Parameter.P_ERR, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LT", IODevice.Parameter.P_C0, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("LT", IODevice.Parameter.P_ERR, 0));
+
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("AO", IODevice.Parameter.P_MIN_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("AO", IODevice.Parameter.P_MAX_V, 0));
+
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_MIN_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_MAX_V, 0));
+            DefaultParameters.Add(new ImportDefaultDeviceParameter("QT", IODevice.Parameter.P_C0, 0));
+            
+
             var setupRenaming = new SetupDevicesNames();
-            setupRenaming.Init(ImportDevices);
+            setupRenaming.InitRenamingDevices(ImportDevices);
+            setupRenaming.InitDefaultParameters(DefaultParameters);
             setupRenaming.ShowDialog();
 
             if (!generatePages)
                 return;
 
+            var deviceManager = DeviceManager.GetInstance();
+            var apiHelper = new ApiHelper();
+
             foreach (var Object in ImportDevices.GroupBy(d => d.Object))
             {
-                var devices = Object.ToList();
+                var devices = Object.Where(dev => deviceManager.GetDevice(dev.Object + dev.Type + dev.Number).Description == CommonConst.Cap).ToList();
+                
+                // Для уже существующих устройств в проекте:
+                //   Переносим описание для последующей привязки
+                //   Устанавливаем доп.поле [10] со старым названием
+                var existWagoDevices = Object.Except(devices);
+                var existDevices = existWagoDevices.Select(dev => deviceManager.GetDevice(dev.Object + dev.Type + dev.Number));
+                foreach (var devicePair in existWagoDevices.Zip(existDevices, (w, d) => new { wagoDevice = w, device = d }))
+                {
+                    devicePair.wagoDevice.Description = devicePair.device.Description;
+                    devicePair.device.EplanObjectFunction.LockObject();
+                    apiHelper.SetSupplementaryFieldValue(devicePair.device.EplanObjectFunction, 10,
+                        $"{devicePair.wagoDevice.WagoType}{devicePair.wagoDevice.FullNumber}");
+                    SetDefaultParametersOnExistingDevice(devicePair.wagoDevice, devicePair.device);
+                }
+
+                // Установка стандартных параметров для определенных типов устройств
+                foreach (var device in devices)
+                {
+                    foreach (var parameter in DefaultParameters
+                        .Where(p => p.DeviceType == device.Type ||
+                                    p.DeviceType == device.Subtype))
+                    {
+                        device.Parameters.Add(parameter.Parameter, parameter.DefaultValue.ToString());
+                    }
+                }
 
                 if (string.IsNullOrEmpty(Object.Key))
                 { // Генерация страницы с сигналами DO/DO без объекта
@@ -369,6 +396,34 @@ namespace EasyEPlanner.ProjectImportICP
 
                 GenerateDevicesPage(devices, Object.Key);
             }
+        }
+
+        /// <summary>
+        /// Установка параметров по умолчанию в существующие устройства на ФСА
+        /// </summary>
+        /// <remarks>
+        /// Если параметр у устройства уже заполнен, то заменяться он не будет
+        /// </remarks>
+        /// <param name="importDevice">Импортируемое устройство</param>
+        /// <param name="device">Устройство на ФСА</param>
+        [ExcludeFromCodeCoverage]
+        private void SetDefaultParametersOnExistingDevice(ImportDevice importDevice, IODevice device)
+        {
+            bool update = false;
+            foreach (var parameter in DefaultParameters
+                .Where(p => p.DeviceType == importDevice.Type ||
+                            p.DeviceType == importDevice.Subtype))
+            {
+                device.Parameters.TryGetValue(parameter.Parameter, out var value);
+                if (value is null)
+                {
+                    device.SetParameter(parameter.Parameter, parameter.DefaultValue);
+                    update = true;
+                }
+            }
+
+            if (update)
+                device.UpdateParameters();
         }
 
 

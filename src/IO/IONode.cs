@@ -1,7 +1,9 @@
-﻿using System;
+﻿using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -19,7 +21,7 @@ namespace IO
         /// <param name="ip">IP-адрес.</param>
         /// <param name="name">Имя на схеме (А100 и др.).</param>
         public IONode(string typeStr, int n, int nodeNumber , string ip,
-            string name, string location)
+            string name, string location, string locationDescription)
         {
             this.typeStr = typeStr;
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
@@ -33,6 +35,7 @@ namespace IO
             this.nodeNumber = nodeNumber;
             this.name = name;
             this.location = location;
+            LocationDescription = locationDescription;
 
             iOModules = new List<IIOModule>();
 
@@ -70,11 +73,11 @@ namespace IO
         {
             if (AddressArea is null)
             {
-                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону ip-адресов:" +
+                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону адресного пространства узла:" +
                     $" {nameof(AddressArea)} is null;\n");
             }
 
-            if (position > AddressArea.ModulesPerNodeMax)
+            if (position > AddressArea.ModulesPerNodeMax + IOModules.Count(m => m.Info.IsSupportive))
             {
                 throw new ModulesPerNodeOutOfRageException($"Модуль \"{iOModule.Name}\" " +
                     $"выходит за диапазон максимального количества модулей для узла \"{name}\". ");
@@ -287,8 +290,21 @@ namespace IO
                 return location;
             }
         }
+        
+        public string LocationDescription { get; private set; }
 
         public bool IsCoupler { get; private set; } = false;
+
+        /// <summary>
+        /// Установить функцию для узла
+        /// </summary>
+        /// <param name="function"></param>
+        public void SetEplanFunction(IEplanFunction functin)
+        {
+            Function = functin;
+        }
+
+        public IEplanFunction Function { get; private set; }
 
         #region Закрытые поля.
         /// <summary>

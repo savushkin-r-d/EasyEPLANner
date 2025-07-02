@@ -151,7 +151,7 @@ namespace EasyEPlanner
         /// Сохранить привязку объектов к объектам в prg.lua
         /// </summary>
         /// <param name="attachedObjectsDict">Словарь привязанных объектов.
-        /// Key: номер технологического объекта. Value: номера связанных 
+        /// Key: номер технологического объекта. DisplayedLuaName: номера связанных 
         /// объектов в строке с разделителем в виде пробела.</param>
         /// <returns></returns>
         private static string SaveObjectsBindingToPrgLua(
@@ -213,7 +213,7 @@ namespace EasyEPlanner
         /// Получить список привязанных к технологическому объекту объектов.
         /// </summary>
         /// <param name="techObjectPair">Key: номер технологического объекта.
-        /// Value: номера связанных объектов в строке с разделителем
+        /// DisplayedLuaName: номера связанных объектов в строке с разделителем
         /// в виде пробела.</param>
         /// <returns></returns>
         private static List<TechObject.TechObject> GetBindedObjectsList(

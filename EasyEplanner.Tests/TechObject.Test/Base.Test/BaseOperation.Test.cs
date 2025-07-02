@@ -615,7 +615,9 @@ namespace EasyEplanner.Tests
                 };
             operation.AddProperties(objParams, baseTechObj);
 
-            BaseOperation cloned = operation.Clone();
+            var mode = new Mode("", getN => 1, new ModesManager(null));
+
+            BaseOperation cloned = operation.Clone(mode);
 
             Assert.Multiple(() =>
             {
@@ -623,7 +625,7 @@ namespace EasyEplanner.Tests
                     cloned.DefaultPosition);
                 Assert.AreEqual(operation.Name, cloned.Name);
                 Assert.AreEqual(operation.LuaName, cloned.LuaName);
-                Assert.IsNull(cloned.Owner);
+                Assert.AreEqual(mode, cloned.Owner);
 
                 foreach (var property in operation.Properties)
                 {
@@ -721,6 +723,21 @@ namespace EasyEplanner.Tests
                 Assert.IsTrue(baseOperation_1.IsInsertableCopy);
                 Assert.IsTrue(copy is BaseOperation);
                 Assert.AreEqual("value", baseOperation_2.Properties.ElementAt(0).Value);
+            });
+        }
+
+        [Test]
+        public void Autocomplete()
+        {
+            var baseOperation = new BaseOperation(string.Empty, "base_operation",
+                new List<BaseParameter>() 
+                { 
+                    new MainAggregateParameter(string.Empty, "parameter", "value") 
+                }, null);
+
+            Assert.Multiple(() => 
+            {
+                Assert.IsTrue((baseOperation as IAutocompletable).CanExecute);
             });
         }
     }

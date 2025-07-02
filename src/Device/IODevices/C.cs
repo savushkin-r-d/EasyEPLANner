@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Eplan.EplApi.DataModel;
+using EplanDevice;
+using StaticHelper;
+using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -92,13 +96,13 @@ namespace EplanDevice
             return errStr;
         }
 
-        public override Dictionary<string, int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
                 case DeviceType.C:
-                    return new Dictionary<string, int>()
+                    return new Dictionary<ITag, int>()
                     {
                         {Tag.ST, 1},
                         {Tag.M, 1},
@@ -108,6 +112,41 @@ namespace EplanDevice
             }
 
             return null;
+        }
+
+        public override string Check()
+        {
+            string res = base.Check();
+
+            bool propertyChanged = false;
+            var propertiesToCheck = new[] { Property.IN_VALUE, Property.OUT_VALUE };
+            foreach (var property in propertiesToCheck)
+            {
+                propertyChanged |= CheckDeviceProperty(property, out var r);
+                res += r;
+            }
+
+            if (propertyChanged)
+                UpdateProperties();
+
+            return res;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private bool CheckDeviceProperty(string property, out string res)
+        {
+            res = string.Empty;
+            if (properties.TryGetValue(property, out var value) &&
+                value is string dev &&
+                dev != string.Empty &&
+                DeviceManager.GetInstance().GetDevice(dev).Description is CommonConst.Cap)
+            {
+                properties[property] = string.Empty;
+                res = $"{Name}: в свойстве {property} сброшено несуществующее устройство {dev}.\n";
+                return true;
+            }
+
+            return false;
         }
 
         #region сохранение в Lua
@@ -142,11 +181,10 @@ namespace EplanDevice
         #region сохранение базы каналов
         public override void GenerateDeviceTags(TreeNode rootNode)
         {
-            var devTagsNames = GetDeviceProperties(DeviceType, DeviceSubType)
-                .Keys;
-            var devParameters = new List<string>();
-            devParameters.AddRange(devTagsNames);
-            devParameters.AddRange(parameters.Select(parameter => parameter.Key.Name));
+            var devTags = GetDeviceProperties(DeviceType, DeviceSubType).Keys;
+            var devParameters = new List<(string name, string description)>();
+            devParameters.AddRange(devTags.Select(t => (t.Name, t.Description)));
+            devParameters.AddRange(parameters.Select(parameter => (parameter.Key.Name, parameter.Key.Description)));
 
             TreeNode newNode;
             if (!rootNode.Nodes.ContainsKey(Name))
@@ -160,9 +198,9 @@ namespace EplanDevice
                     .First();
             }
 
-            foreach (var parName in devParameters)
+            foreach (var par in devParameters)
             {
-                newNode.Nodes.Add($"{Name}.{parName}", $"{Name}.{parName}");
+                newNode.Nodes.Add($"{Name}.{par.name} -- {par.description}", $"{Name}.{par.name} -- {par.description}");
             }
         }
         #endregion

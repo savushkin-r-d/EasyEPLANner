@@ -12,7 +12,30 @@ namespace TechObject
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : TreeViewItem
+    public interface IMode : ITreeViewItem
+    {
+        /// <summary>
+        /// Операции тех.объекта
+        /// </summary>
+        ModesManager Owner { get; }
+
+        /// <summary>
+        /// Тех.объект, которому принадлежит операция
+        /// </summary>
+        TechObject TechObject { get; }
+
+        /// <summary>
+        /// Базовая операция
+        /// </summary>
+        BaseOperation BaseOperation { get; }
+    }
+
+
+    /// <summary>
+    /// Операция технологического объекта. Состоит из последовательно 
+    /// (или в ином порядке) выполняемых шагов.
+    /// </summary>
+    public class Mode : TreeViewItem, IMode, IAutocompletable
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
@@ -348,7 +371,7 @@ namespace TechObject
                     objectAlreadyContainsThisOperation = true;
                 }
             }
-
+            
             return objectAlreadyContainsThisOperation;
         }
 
@@ -361,13 +384,7 @@ namespace TechObject
         /// <summary>
         /// Получить базовую операцию для этой операции
         /// </summary>
-        public BaseOperation BaseOperation
-        {
-            get
-            {
-                return baseOperation as BaseOperation;
-            }
-        }
+        public BaseOperation BaseOperation => baseOperation as BaseOperation;
 
         // Получение номера операции
         public int GetModeNumber()
@@ -375,13 +392,9 @@ namespace TechObject
             return getN(this);
         }
 
-        public ModesManager Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public ModesManager Owner => owner;
+
+        public TechObject TechObject => Owner.TechObject;
 
         public string Name
         {
@@ -753,7 +766,21 @@ namespace TechObject
             States.ForEach(state => state.UpdateOnDeleteGeneric());
         }
 
-        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            var paramsManager = Owner.Owner.GetParamsManager();
+
+            paramsManager.Float.FillWithStubs();
+
+            paramsManager.AutocompleteByOperation(this);
+            (baseOperation as IAutocompletable)?.Autocomplete();
+
+            paramsManager.Float.FillWithStubs();
+        }
+
+        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance();
 
         private GetN getN;
 

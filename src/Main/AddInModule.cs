@@ -1,3 +1,4 @@
+using EasyEPlanner.Main;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Starter;
 using System;
@@ -44,6 +45,10 @@ namespace EasyEPlanner
                 "Редактирование технологических объектов", menuID, 1, 
                 false, false);
 
+            menuID = oMenu.AddMenuItem("Структура ПЛК",
+               nameof(ShowPlcAction), "Структура ПЛК", menuID,
+               1, false, false);
+
             menuID = oMenu.AddMenuItem("Устройства, параметры объектов", 
                 "ShowDevicesAction", "Отображение устройств", menuID,
                 int.MaxValue, false, false);
@@ -56,6 +61,11 @@ namespace EasyEPlanner
             menuID = oMenu.AddMenuItem("Обмен сигналами между проектами",
                 "InterprojectExchangeAction",
                 "Настройка межпроектного обмена сигналами", menuID, 1, false, 
+                false);
+
+            menuID = oMenu.AddMenuItem("Обмен сигналами Modbus",
+                nameof(ModbusExchangeAction),
+                "Обмен сигналами Modbus", menuID, 1, false,
                 false);
 
             menuID = oMenu.AddMenuItem(
@@ -77,15 +87,15 @@ namespace EasyEPlanner
                 true, false);
 
             menuID = oMenu.AddMenuItem(
-                "Создать файл переименования старых устройств",
+                "Создать/изменить файл переименования устройств",
                 nameof(ImportIcpCreateRenamingMap),
-                "Создать файл переименования старых устройств", menuID, 1,
+                "Создать/изменить файл переименования устройств", menuID, 1,
                 false, false);
 
             menuID = oMenu.AddMenuItem(
-                "Модифицировать базу каналов",
-                nameof(ModifyIcpChbase),
-                "Модифицировать базу каналов", menuID, 1,
+                "Документ соответствия названий устройств CSV",
+                nameof(ImportIcpCreateDeviceNameMathchingFile),
+                "Документ соответствия названий устройств CSV", menuID, 1,
                 false, false);
 
             menuID = oMenu.AddMenuItem(
