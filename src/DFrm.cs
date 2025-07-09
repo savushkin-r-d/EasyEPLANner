@@ -1561,7 +1561,7 @@ namespace EasyEPlanner
         /// </summary>
         public void RefreshTreeAfterBinding()
         {
-            if (noAssigmentBtn.Checked)
+            if (noAssigmentBtn.Checked && deviceIsShown)
             {
                 devicesTreeViewAdv.BeginUpdate();
                 List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes
