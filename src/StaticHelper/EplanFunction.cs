@@ -29,8 +29,8 @@ namespace StaticHelper
 
         public string Gateway 
         { 
-            get => GetSupplemenataryField(15); 
-            set => SetSupplementaryField(15, value); 
+            get => GetSupplemenataryField(SuppField.Gateway); 
+            set => SetSupplementaryField(SuppField.Gateway, value); 
         }
 
         public int ClampNumber => int.TryParse(
@@ -90,45 +90,45 @@ namespace StaticHelper
 
         public bool Expanded 
         {
-            get => bool.TryParse(GetSupplemenataryField(13), out var res) && res;
-            set => SetSupplementaryField(13, value.ToString());
+            get => bool.TryParse(GetSupplemenataryField(SuppField.Expanded), out var res) && res;
+            set => SetSupplementaryField(SuppField.Expanded, value.ToString());
         }
 
 
         public bool Off
         {
-            get => GetSupplemenataryField(2).Trim() == "1";
-            set => SetSupplementaryField(2, value ? "1" : "");
+            get => GetSupplemenataryField(SuppField.Off).Trim() == "1";
+            set => SetSupplementaryField(SuppField.Off, value ? "1" : "");
         }
 
         public string SubType
         {
-            get => GetSupplemenataryField(2);
-            set => SetSupplementaryField(2, value);
+            get => GetSupplemenataryField(SuppField.Subtype);
+            set => SetSupplementaryField(SuppField.Subtype, value);
         }
 
         public string Parameters
         {
-            get => GetSupplemenataryField(3);
-            set => SetSupplementaryField(3, value);
+            get => GetSupplemenataryField(SuppField.Parameters);
+            set => SetSupplementaryField(SuppField.Parameters, value);
         }
 
         public string Properties
         {
-            get => GetSupplemenataryField(4);
-            set => SetSupplementaryField(4, value);
+            get => GetSupplemenataryField(SuppField.Properties);
+            set => SetSupplementaryField(SuppField.Properties, value);
         }
 
         public string RuntimeParameters
         {
-            get => GetSupplemenataryField(5);
-            set => SetSupplementaryField(5, value);
+            get => GetSupplemenataryField(SuppField.RuntimeParameters);
+            set => SetSupplementaryField(SuppField.RuntimeParameters, value);
         }
 
         public string OldDeviceName
         {
-            get => GetSupplemenataryField(10);
-            set => SetSupplementaryField(10, value);
+            get => GetSupplemenataryField(SuppField.OldDeviceName);
+            set => SetSupplementaryField(SuppField.OldDeviceName, value);
         }
 
         public string Article
