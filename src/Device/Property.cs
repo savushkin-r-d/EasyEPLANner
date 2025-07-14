@@ -31,9 +31,22 @@ namespace EplanDevice
             public static readonly Property SIGNALS_SEQUENCE = 
                 new(nameof(SIGNALS_SEQUENCE), "Последовательность сигналов");
 
-            /// <summary> Устройство. </summary>
-            public static readonly Property DEV = 
-                new(nameof(DEV), "Устройство");
+            /// <summary> Сигнал DI. </summary>
+            public static readonly Property DI_DEV = 
+                new(nameof(DI_DEV), "Сигнал DI");
+
+            /// <summary> Сигнал AI. </summary>
+            public static readonly Property AI_DEV =
+                new(nameof(AI_DEV), "Сигнал AI");
+
+            /// <summary> Сигнал DO. </summary>
+            public static readonly Property DO_DEV =
+                new(nameof(DO_DEV), "Сигнал DO");
+
+            /// <summary> Сигнал AO. </summary>
+            public static readonly Property AO_DEV =
+                new(nameof(AO_DEV), "Сигнал AO");
+
 
             /// <summary>
             /// Неявное преобразование параметра в строку с названием

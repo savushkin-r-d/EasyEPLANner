@@ -461,7 +461,7 @@ namespace EplanDevice
             "PDS",
             "TS",
             "G",
-            nameof(LIFE_DEVICE),
+            nameof(WATCHDOG),
         };
 
         public IODevice AddDeviceAndEFunction(string devName, string description,
@@ -666,8 +666,8 @@ namespace EplanDevice
                         objectName, objectNumber, articleName);
                     break;
 
-                case nameof(LIFE_DEVICE):
-                    dev = new LIFE_DEVICE(name, eplanName, description, deviceNumber,
+                case nameof(WATCHDOG):
+                    dev = new WATCHDOG(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, this);
                     break;
 

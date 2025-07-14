@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,16 +12,16 @@ namespace EplanDevice
     /// <summary>
     /// Устройство проверки связи.
     /// </summary>
-    public class LIFE_DEVICE : IODevice
+    public class WATCHDOG : IODevice
     {
-        public LIFE_DEVICE(
+        public WATCHDOG(
             string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
             IDeviceManager deviceManager) : base(
                 name, eplanName, description,
                 deviceNumber, objectName, objectNumber)
         {
-            dType = DeviceType.LIFE_DEVICE;
+            dType = DeviceType.WATCHDOG;
             dSubType = DeviceSubType.NONE;
             this.deviceManager = deviceManager;
         }
@@ -31,17 +32,21 @@ namespace EplanDevice
 
             switch (subType)
             {
-                case nameof(DeviceSubType.LIFEBIT):
-                case nameof(DeviceSubType.LIFECOUNTER):
-                    parameters.Add(Parameter.P_DT, null);
-                    properties.Add(Property.DEV, null);
+                case "":
+                case nameof(DeviceSubType.WATCHDOG):
+                    parameters.Add(Parameter.P_T_GEN, null);
+                    parameters.Add(Parameter.P_T_ERR, null);
+                    
+                    properties.Add(Property.DI_DEV, null);
+                    properties.Add(Property.AI_DEV, null);
+                    properties.Add(Property.DO_DEV, null);
+                    properties.Add(Property.AO_DEV, null);
                     break;
 
                 default:
                     return $"" +
                         $"\"{Name}\" -  неверный тип " +
-                        $"({nameof(DeviceSubType.LIFEBIT)}, " +
-                        $"{nameof(DeviceSubType.LIFECOUNTER)}).\n";
+                        $"({nameof(DeviceSubType.WATCHDOG)}).\n";
             }
             return string.Empty;
         }
@@ -49,10 +54,9 @@ namespace EplanDevice
         public override string GetDeviceSubTypeStr(DeviceType dt, DeviceSubType dst)
             => dt switch
             {
-                DeviceType.LIFE_DEVICE => dst switch
+                DeviceType.WATCHDOG => dst switch
                 {
-                    DeviceSubType.LIFEBIT => nameof(DeviceSubType.LIFEBIT),
-                    DeviceSubType.LIFECOUNTER => nameof(DeviceSubType.LIFECOUNTER),
+                    DeviceSubType.WATCHDOG => nameof(DeviceSubType.WATCHDOG),
                     _ => string.Empty,
                 },
                 _ => string.Empty,
@@ -62,15 +66,15 @@ namespace EplanDevice
         public override Dictionary<ITag, int> GetDeviceProperties(DeviceType dt, DeviceSubType dst)
             => dt switch
             {
-                DeviceType.LIFE_DEVICE => dst switch
+                DeviceType.WATCHDOG => dst switch
                 {
-                    DeviceSubType.LIFEBIT or
-                    DeviceSubType.LIFECOUNTER 
+                    DeviceSubType.WATCHDOG
                     => new()
                     {
                         { Tag.ST, 1 },
                         { Tag.M, 1 },
-                        { Parameter.P_DT, 1 },
+                        { Parameter.P_T_GEN, 1 },
+                        { Parameter.P_T_ERR, 1 },
                     },
                     _ => null,
                 },
@@ -81,24 +85,26 @@ namespace EplanDevice
         {
             var res = base.Check();
 
-            if (properties.TryGetValue(Property.DEV, out var dev_string) &&
-                !string.IsNullOrEmpty(dev_string?.ToString()))
-            {
-                var dev = deviceManager.GetDevice(dev_string.ToString());
-                if (dev.Description is CommonConst.Cap)
-                    res += $"{Name}: к свойству {Property.DEV} привязано неизвестное устройство;\n";
-
-                else if (dSubType is DeviceSubType.LIFEBIT &&
-                    dev.DeviceType is not DeviceType.DI)
-                    res += $"{Name}: к свойству {Property.DEV} привязано устройство неверного типа ({DeviceType.DI});\n";
-
-                else if (dSubType is DeviceSubType.LIFECOUNTER &&
-                    dev.DeviceType is not DeviceType.AI)
-                    res += $"{Name}: к свойству {Property.DEV} привязано устройство неверного типа ({DeviceType.AI});\n";
-            }
+            res += CheckSignal(Property.DI_DEV);
+            res += CheckSignal(Property.AI_DEV);
+            res += CheckSignal(Property.DO_DEV);
+            res += CheckSignal(Property.AO_DEV);
 
             return res;
         }
+
+        private string CheckSignal(Property property)
+        {
+            if (properties.TryGetValue(property, out var dev_string) &&
+                !string.IsNullOrEmpty(dev_string?.ToString()) &&
+                deviceManager.GetDevice(dev_string.ToString()).Description is CommonConst.Cap)
+            {
+                return $"{Name}: к свойству {property} привязано неизвестное устройство;\n";
+            }
+
+            return string.Empty;
+        }
+
 
         private readonly IDeviceManager deviceManager;
     }
