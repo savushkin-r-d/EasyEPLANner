@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace EplanDevice
 {
     /// Типы устройств.
@@ -38,4 +42,20 @@ namespace EplanDevice
         Y,       ///< Пневмоостров Festo
         DEV_VTUG,///< Пневмоостров Festo (совместимость со старыми проектами).
     };
+
+
+    /// <summary>
+    /// Методы расширения для <see cref="DeviceType"/>
+    /// </summary>
+    public static class DeviceTypeExtensions
+    {
+        /// <summary>
+        /// Список всех типов
+        /// </summary>
+        public static List<DeviceType> DeviceTypes => deviceTypes ??=
+            [.. Enum.GetValues(typeof(DeviceType)).OfType<DeviceType>()];
+
+        private static List<DeviceType> deviceTypes;
+    }
+
 }

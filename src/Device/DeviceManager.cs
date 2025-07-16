@@ -1107,38 +1107,20 @@ namespace EplanDevice
         /// <summary>
         /// Тип устройства является ПИД-ом или нет
         /// </summary>
-        /// <param name="devices">Тип устройства</param>
-        /// <returns></returns>
+        /// <param name="type">Тип устройства</param>
         private bool IsPIDControl(string type)
         {
-            bool isPID = false;
-            const int maxTypeLength = 4;
+            /// Максимальная длина типа для ПИД-регулятора
+            const int maxTypePIDLength = 4;
 
-            if (type.Length <= 1)
-            {
-                return isPID;
-            }
+            if (type.Length is <= 1 or > maxTypePIDLength)
+                return false;
 
-            const int firstChar = 0;
-            bool noPID =
-                (type[firstChar] == Convert.ToChar($"{DeviceType.V}") ||
-                type[firstChar] == Convert.ToChar($"{DeviceType.C}") ||
-                type.Contains($"{DeviceType.C}") == false);
-            if (noPID)
-            {
-                return isPID;
-            }
+            if (DeviceTypeExtensions.DeviceTypes.Select(t => $"{t}").Contains(type) ||
+                type.Contains($"{DeviceType.C}") == false)
+                return false;
 
-            for (int i = 1; i < maxTypeLength; i++)
-            {
-                if (type[i] == Convert.ToChar(DeviceType.C.ToString()))
-                {
-                    isPID = true;
-                    break;
-                }
-            }
-
-            return isPID;
+            return true;
         }
 
         private IDevice ModifyMixproof(IDevice device, IDevModifyOptions options)
