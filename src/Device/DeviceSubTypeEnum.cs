@@ -170,7 +170,7 @@ namespace EplanDevice
         WATCHDOG = 26001, ///< Устройство проверки связи
         
         //Y
-        Y = 1000001, ///< Обычный пневмоостров Festo.
+        Y =  DeviceType.Y * 1000 + 1, ///< Обычный пневмоостров Festo.
         DEV_VTUG_8, ///< Festo 16 каналов.
         DEV_VTUG_16, ///< Festo 32 канала.
         DEV_VTUG_24, ///< Festo 48 каналов.
