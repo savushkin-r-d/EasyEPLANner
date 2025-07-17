@@ -43,12 +43,25 @@ namespace EplanDevice
         DEV_VTUG,///< Пневмоостров Festo (совместимость со старыми проектами).
     };
 
-
     /// <summary>
     /// Методы расширения для <see cref="DeviceType"/>
     /// </summary>
     public static class DeviceTypeExtensions
     {
+        /// <summary>
+        /// Получить список <see cref="DeviceSubType">подтипов</see> типа
+        /// </summary>
+        public static IEnumerable<DeviceSubType> SubTypes(this DeviceType type)
+            => DeviceSubTypeExtensions.DeviceSubTypes
+            .Where(st => (int)st / DeviceSubTypeExtensions.TypeMultiplier == (int)type);
+
+        /// <summary>
+        /// Получить список названий <see cref="DeviceSubType">подтипов</see> типа
+        /// </summary>
+        public static IEnumerable<string> SubTypeNames(this DeviceType type) => 
+            type.SubTypes().Select(st => st.ToString());
+
+
         /// <summary>
         /// Список всех типов
         /// </summary>

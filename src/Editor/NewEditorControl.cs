@@ -599,6 +599,24 @@ namespace Editor
 
         private bool noOnChange = default;
 
+        private void TextBox_Commands_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.V when e.Control:
+                    (sender as TextBox).Paste();
+                    break;
+
+                case Keys.C when e.Control:
+                    (sender as TextBox).Copy();
+                    break;
+
+                case Keys.X when e.Control:
+                    (sender as TextBox).Cut();
+                    break;
+            }
+        }
+
         /// <summary>
         /// Обработка нажатий клавиш клавиатуры.
         /// </summary>

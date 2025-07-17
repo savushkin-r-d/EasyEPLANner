@@ -948,11 +948,13 @@ namespace Editor
             this.textBox_search.MaximumSize = new System.Drawing.Size(110, 0);
             this.textBox_search.MinimumSize = new System.Drawing.Size(110, 0);
             this.textBox_search.Name = "textBox_search";
+            this.textBox_search.ShortcutsEnabled = false;
             this.textBox_search.Size = new System.Drawing.Size(110, 13);
             this.textBox_search.TabIndex = 0;
             this.textBox_search.Text = "Поиск...";
             this.textBox_search.TextChanged += new System.EventHandler(this.textBox_search_TextChanged);
             this.textBox_search.GotFocus += new System.EventHandler(this.textBox_search_Enter);
+            this.textBox_search.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox_Commands_KeyUp);
             this.textBox_search.LostFocus += new System.EventHandler(this.textBox_search_Leave);
             // 
             // searchButtonToolStrip
