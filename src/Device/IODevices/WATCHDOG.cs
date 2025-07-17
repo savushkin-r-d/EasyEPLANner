@@ -37,10 +37,10 @@ namespace EplanDevice
                     parameters.Add(Parameter.P_T_GEN, null);
                     parameters.Add(Parameter.P_T_ERR, null);
                     
-                    properties.Add(Property.DI_DEV, null);
-                    properties.Add(Property.AI_DEV, null);
-                    properties.Add(Property.DO_DEV, null);
-                    properties.Add(Property.AO_DEV, null);
+                    properties.Add(Property.DI_dev, null);
+                    properties.Add(Property.AI_dev, null);
+                    properties.Add(Property.DO_dev, null);
+                    properties.Add(Property.AO_dev, null);
                     break;
 
                 default:
@@ -83,23 +83,43 @@ namespace EplanDevice
 
         public override string Check()
         {
-            var res = base.Check();
+            string res = string.Empty;
 
-            res += CheckSignal(Property.DI_DEV);
-            res += CheckSignal(Property.AI_DEV);
-            res += CheckSignal(Property.DO_DEV);
-            res += CheckSignal(Property.AO_DEV);
+            res += string.Join("", Parameters.Where(par => par.Value is null)
+                .Select(par => $"{name} : не задан параметр (доп. поле 3) \"{par.Key.Name}\".\n"));
+
+            res += CheckSignalsPair(Property.AI_dev, Property.DI_dev);
+            res += CheckSignalsPair(Property.AO_dev, Property.DO_dev);
+
+            res += CheckValidSignal(Property.DI_dev);
+            res += CheckValidSignal(Property.AI_dev);
+            res += CheckValidSignal(Property.DO_dev);
+            res += CheckValidSignal(Property.AO_dev);
 
             return res;
         }
 
-        private string CheckSignal(Property property)
+        private string CheckSignalsPair(Property firstProperty, Property secondProperty)
+        {
+            if (properties.TryGetValue(firstProperty, out var first_string) &&
+                properties.TryGetValue(secondProperty, out var second_string) &&
+                string.IsNullOrEmpty(first_string?.ToString()) &&
+                string.IsNullOrEmpty(second_string?.ToString()))
+            {
+                return $"{Name}: к свойствам {firstProperty} и {secondProperty} (доп. поле 4) не привязано устройство;\n";
+            }
+
+            return string.Empty;
+        }
+
+        private string CheckValidSignal(Property property)
         {
             if (properties.TryGetValue(property, out var dev_string) &&
+                dev_string?.ToString() != string.Empty &&
                 !string.IsNullOrEmpty(dev_string?.ToString()) &&
                 deviceManager.GetDevice(dev_string.ToString()).Description is CommonConst.Cap)
             {
-                return $"{Name}: к свойству {property} привязано неизвестное устройство;\n";
+                return $"{Name}: к свойству {property} (доп. поле 4) привязано неизвестное устройство;\n";
             }
 
             return string.Empty;

@@ -32,20 +32,20 @@ namespace EplanDevice
                 new(nameof(SIGNALS_SEQUENCE), "Последовательность сигналов");
 
             /// <summary> Сигнал DI. </summary>
-            public static readonly Property DI_DEV = 
-                new(nameof(DI_DEV), "Сигнал DI");
+            public static readonly Property DI_dev = 
+                new(nameof(DI_dev), "Сигнал DI");
 
             /// <summary> Сигнал AI. </summary>
-            public static readonly Property AI_DEV =
-                new(nameof(AI_DEV), "Сигнал AI");
+            public static readonly Property AI_dev =
+                new(nameof(AI_dev), "Сигнал AI");
 
             /// <summary> Сигнал DO. </summary>
-            public static readonly Property DO_DEV =
-                new(nameof(DO_DEV), "Сигнал DO");
+            public static readonly Property DO_dev =
+                new(nameof(DO_dev), "Сигнал DO");
 
             /// <summary> Сигнал AO. </summary>
-            public static readonly Property AO_DEV =
-                new(nameof(AO_DEV), "Сигнал AO");
+            public static readonly Property AO_dev =
+                new(nameof(AO_dev), "Сигнал AO");
 
 
             /// <summary>
@@ -64,6 +64,8 @@ namespace EplanDevice
             public string Name { get; private set; }
 
             public string Description { get; private set; }
+
+            public override string ToString() => Name;
         }
     }
 }

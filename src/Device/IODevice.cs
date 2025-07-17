@@ -497,7 +497,7 @@ namespace EplanDevice
 
             // Свойства
             var propertiesErr = Properties.Where(prop => prop.Value is null)
-                .Select(prop => $"{name} : не задан параметр (доп. поле 4) \"{prop.Key}\".\n");
+                .Select(prop => $"{name} : не задано свойство (доп. поле 4) \"{prop.Key}\".\n");
 
 
             return string.Join("", channelsErr.Concat(parametersErr).Concat(rtParametersErr).Concat(propertiesErr));

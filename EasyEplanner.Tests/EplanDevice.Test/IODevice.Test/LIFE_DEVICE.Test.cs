@@ -56,7 +56,7 @@ namespace Tests.EplanDevices
         public void Check(IODevice device, string subtype, string dev, string expected)
         {
             device.SetSubType(subtype);
-            device.Properties[IODevice.Property.AO_DEV] = dev;
+            device.Properties[IODevice.Property.AO_dev] = dev;
             
             Assert.IsTrue(device.Check().Contains(expected));
         }
