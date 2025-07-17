@@ -25,12 +25,12 @@ namespace StaticHelper
 
         /// <summary>
         /// Свойства (Доп поле [4])
-        /// </summary
+        /// </summary>
         string Properties { get; set; }
 
         /// <summary>
         /// Свойства (Доп поле [5])
-        /// </summary
+        /// </summary>
         string RuntimeParameters { get; set; }
 
         /// <summary>

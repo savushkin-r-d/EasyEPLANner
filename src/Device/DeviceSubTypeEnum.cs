@@ -163,7 +163,7 @@ namespace EplanDevice
         TS_VIRT, ///< Виртуальный сигнальный датчик температуры
 
         //G
-        G_IOL_4 = 25001, ///< x Contact 4 канала.
+        G_IOL_4 = 25001, ///< Phoenix Contact 4 канала.
         G_IOL_8, ///< Phoenix Contact 8 каналов.
 
         // LIFE_DEVICE

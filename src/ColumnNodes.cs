@@ -76,7 +76,7 @@ namespace EasyEPlanner
     {
         public override void Update(IIODevice device, string newValue, string oldValue)
         {
-            /// не редактируется в <see cref="DFrm"/>
+            /// Не редактируется в <see cref="DFrm"/>
             Value = oldValue;
         }
     }
@@ -112,7 +112,7 @@ namespace EasyEPlanner
             if (oldValue == newValue)
                 return;
 
-            /// К свойство нельзя привязать несколько значений и в значении есть запятая
+            /// К свойству нельзя привязать несколько значений и в значении есть запятая
             if (device.MultipleProperties.Contains(Name) ||
                 !newValue.Contains(","))
             {
