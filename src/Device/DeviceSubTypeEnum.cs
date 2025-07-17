@@ -204,5 +204,7 @@ namespace EplanDevice
         /// </summary>
         public static List<DeviceSubType> DeviceSubTypes => deviceSubTypes ??=
             [.. Enum.GetValues(typeof(DeviceSubType)).OfType<DeviceSubType>()];
+
+        private static List<DeviceSubType> deviceSubTypes;
     };
 }
