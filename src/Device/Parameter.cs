@@ -193,6 +193,14 @@ namespace EplanDevice
             public static readonly Parameter P_delta = 
                 new(nameof(P_delta), "Дельта срабатывания");
 
+            public static readonly Parameter P_T_GEN =
+                new(nameof(P_T_GEN), "Интервал генерации выходных импульсов", 
+                    UnitFormat.Milliseconds);
+
+            public static readonly Parameter P_T_ERR =
+                new(nameof(P_T_ERR), "Интервал ожидания изменения входа",
+                    UnitFormat.Milliseconds);
+
             protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters = InitParameters();
 
             private static Lazy<Dictionary<string, Parameter>> InitParameters()

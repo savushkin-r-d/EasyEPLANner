@@ -166,12 +166,11 @@ namespace EplanDevice
         G_IOL_4 = 25001, ///< Phoenix Contact 4 канала.
         G_IOL_8, ///< Phoenix Contact 8 каналов.
 
-        // LIFE_DEVICE
-        LIFEBIT = 26001, ///< Устройство проверки связи дискретного сигнала
-        LIFECOUNTER, ///< Устройство проверки связи аналогового сигнала
-
+        // WATCHDOG
+        WATCHDOG = 26001, ///< Устройство проверки связи
+        
         //Y
-        Y = 1000001, ///< Обычный пневмоостров Festo.
+        Y =  DeviceType.Y * 1000 + 1, ///< Обычный пневмоостров Festo.
         DEV_VTUG_8, ///< Festo 16 каналов.
         DEV_VTUG_16, ///< Festo 32 канала.
         DEV_VTUG_24, ///< Festo 48 каналов.
@@ -207,6 +206,5 @@ namespace EplanDevice
             [.. Enum.GetValues(typeof(DeviceSubType)).OfType<DeviceSubType>()];
 
         private static List<DeviceSubType> deviceSubTypes;
-    }
-
+    };
 }

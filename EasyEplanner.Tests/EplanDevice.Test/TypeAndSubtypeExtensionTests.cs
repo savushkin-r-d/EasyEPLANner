@@ -14,12 +14,19 @@ namespace EasyEplannerTests.EplanDeviceTest
         public void DeviceSubTypeExtensionsTest()
         {
             var st = DeviceSubType.FQT_F;
+            var yst = DeviceSubType.Y;
+
 
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(7002, (int)st);
                 Assert.AreEqual(2, st.GetIndex());
+
+                Assert.AreEqual((int)DeviceType.Y * 1000 + 1, (int)yst);
+                Assert.AreEqual(1, yst.GetIndex());
+
                 Assert.AreEqual(DeviceType.FQT, st.GetDeviceType());
+                Assert.AreEqual(DeviceType.Y, yst.GetDeviceType());
             });
         }
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Tests.EplanDevices
 {
-    public class LIFE_DEVICETest
+    public class WATCHDOGTest
     {
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsDevType(
@@ -26,31 +26,28 @@ namespace Tests.EplanDevices
         {
             return new object[]
             {
-                new object[] { nameof(DeviceSubType.LIFEBIT), nameof(DeviceSubType.LIFEBIT), Random_LIFE_DEVICE() },
-                new object[] { nameof(DeviceSubType.LIFECOUNTER), nameof(DeviceSubType.LIFECOUNTER), Random_LIFE_DEVICE() },
-                new object[] { string.Empty, "Incorrect", Random_LIFE_DEVICE() },
+                new object[] { nameof(DeviceSubType.WATCHDOG), nameof(DeviceSubType.WATCHDOG), Random_WATCHDOG() },
+                new object[] { string.Empty, "Incorrect", Random_WATCHDOG() },
             };
         }
 
         [Test]
         public void GetDeviceProperties()
         {
-            var lifebit = Random_LIFE_DEVICE();
-            lifebit.SetSubType(nameof(DeviceSubType.LIFEBIT));
-
-            var lifecounter = Random_LIFE_DEVICE();
-            lifecounter.SetSubType(nameof(DeviceSubType.LIFECOUNTER));
+            var watchcdog = Random_WATCHDOG();
+            watchcdog.SetSubType(nameof(DeviceSubType.WATCHDOG));
 
             var expected = new Dictionary<ITag, int> {
                 { IODevice.Tag.ST , 1 },
                 { IODevice.Tag.M , 1 },
-                { IODevice.Parameter.P_DT , 1 }
+                { IODevice.Parameter.P_T_GEN , 1 },
+                { IODevice.Parameter.P_T_ERR , 1 },
             };
+
 
             Assert.Multiple(() =>
             {
-                CollectionAssert.AreEqual(expected, lifebit.GetDeviceProperties(lifebit.DeviceType, lifebit.DeviceSubType));
-                CollectionAssert.AreEqual(expected, lifecounter.GetDeviceProperties(lifecounter.DeviceType, lifecounter.DeviceSubType));
+                CollectionAssert.AreEqual(expected, watchcdog.GetDeviceProperties(watchcdog.DeviceType, watchcdog.DeviceSubType));
             });
         }
 
@@ -59,7 +56,7 @@ namespace Tests.EplanDevices
         public void Check(IODevice device, string subtype, string dev, string expected)
         {
             device.SetSubType(subtype);
-            device.Properties[IODevice.Property.DEV] = dev;
+            device.Properties[IODevice.Property.AO_dev] = dev;
             
             Assert.IsTrue(device.Check().Contains(expected));
         }
@@ -68,19 +65,14 @@ namespace Tests.EplanDevices
         {
             return new object[]
             {
-                new object[] { Random_LIFE_DEVICE(), nameof(DeviceSubType.LIFEBIT), "DI1", string.Empty },
-                new object[] { Random_LIFE_DEVICE(), nameof(DeviceSubType.LIFECOUNTER), "AI1", string.Empty },
-
-                new object[] { Random_LIFE_DEVICE(), nameof(DeviceSubType.LIFEBIT), "AI1", "привязано устройство неверного типа"},
-                new object[] { Random_LIFE_DEVICE(), nameof(DeviceSubType.LIFECOUNTER), "DI1", "привязано устройство неверного типа" },
-
-                new object[] { Random_LIFE_DEVICE(), nameof(DeviceSubType.LIFEBIT), "STUB", "привязано неизвестное устройство" },
-                new object[] { Random_LIFE_DEVICE(), nameof(DeviceSubType.LIFEBIT), "", string.Empty },
+                new object[] { Random_WATCHDOG(), nameof(DeviceSubType.WATCHDOG), "DI1", string.Empty },
+                new object[] { Random_WATCHDOG(), nameof(DeviceSubType.WATCHDOG), "AI1", string.Empty },
+                new object[] { Random_WATCHDOG(), nameof(DeviceSubType.WATCHDOG), "STUB", "привязано неизвестное устройство" },
             };
         }
 
 
-        private static IODevice Random_LIFE_DEVICE()
+        private static IODevice Random_WATCHDOG()
         {
             var dmanager = Mock.Of<IDeviceManager>(m =>
                 m.GetDevice("DI1") == new DI("", "", "", 1, "", 1) &&
@@ -92,16 +84,16 @@ namespace Tests.EplanDevices
             switch (value)
             {
                 case 1:
-                    return new LIFE_DEVICE("KOAG4LIFE_DEVICE1", "+KOAG4-LIFE_DEVICE1",
+                    return new WATCHDOG("KOAG4WATCHDOG1", "+KOAG4-WATCHDOG1",
                         "Test device", 1, "KOAG", 4, dmanager);
                 case 2:
-                    return new LIFE_DEVICE("LINE1G2", "+LINE1-G2",
+                    return new WATCHDOG("LINE1G2", "+LINE1-G2",
                         "Test device", 2, "LINE", 1, dmanager);
                 case 3:
-                    return new LIFE_DEVICE("TANK2LIFE_DEVICE1", "+TANK2-LIFE_DEVICE1",
+                    return new WATCHDOG("TANK2WATCHDOG1", "+TANK2-WATCHDOG1",
                         "Test device", 1, "TANK", 2, dmanager);
                 default:
-                    return new LIFE_DEVICE("CW_TANK3LIFE_DEVICE3", "+CW_TANK3-LIFE_DEVICE3",
+                    return new WATCHDOG("CW_TANK3WATCHDOG3", "+CW_TANK3-WATCHDOG3",
                         "Test device", 3, "CW_TANK", 3, dmanager);
             }
         }
