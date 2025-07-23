@@ -36,6 +36,14 @@ namespace EplanDevice
                     SetIOLinkSizes(ArticleName);
                     break;
 
+                case nameof(DeviceSubType.VC_EY):
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+                    goto case nameof(DeviceSubType.VC);
+
+                case nameof(DeviceSubType.VC_IOLINK_EY):
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+                    goto case nameof(DeviceSubType.VC_IOLINK);
+
                 case "VC_VIRT":
                     break;
 
@@ -46,7 +54,7 @@ namespace EplanDevice
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (VC, VC_IOLINK, VC_VIRT).\n", Name);
+                        $" ({string.Join(", ", DeviceType.VC.SubTypeNames())}).\n", Name);
                     break;
             }
 
@@ -67,6 +75,10 @@ namespace EplanDevice
                             return "VC_IOLINK";
                         case DeviceSubType.VC_VIRT:
                             return "VC_VIRT";
+                        case DeviceSubType.VC_EY:
+                            return nameof(DeviceSubType.VC_EY);
+                        case DeviceSubType.VC_IOLINK_EY:
+                            return nameof(DeviceSubType.VC_IOLINK_EY);
                     }
                     break;
             }
@@ -90,6 +102,15 @@ namespace EplanDevice
                                 {Tag.V, 1},
                             };
 
+                        case DeviceSubType.VC_EY:
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ERR, 1}
+                            };
+
                         case DeviceSubType.VC_IOLINK:
                             return new Dictionary<ITag, int>()
                             {
@@ -100,6 +121,19 @@ namespace EplanDevice
                                 {Tag.NAMUR_ST, 1},
                                 {Tag.OPENED, 1},
                                 {Tag.CLOSED, 1},
+                            };
+
+                        case DeviceSubType.VC_IOLINK_EY:
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.BLINK, 1},
+                                {Tag.NAMUR_ST, 1},
+                                {Tag.OPENED, 1},
+                                {Tag.CLOSED, 1},
+                                {Tag.ERR, 1}
                             };
 
                         case DeviceSubType.VC_VIRT:
