@@ -36,6 +36,10 @@ namespace EplanDevice
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
+                case nameof(DeviceSubType.AO_EY):
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+                    goto case nameof(DeviceSubType.AO);
+
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
                         " (пустая строка, AO, AO_VIRT).\n",
@@ -71,6 +75,8 @@ namespace EplanDevice
                             return "AO";
                         case DeviceSubType.AO_VIRT:
                             return "AO_VIRT";
+                        case DeviceSubType.AO_EY:
+                            return nameof(DeviceSubType.AO_EY);
                     }
                     break;
             }
@@ -95,12 +101,24 @@ namespace EplanDevice
                                 {Parameter.P_MAX_V, 1},
                             };
 
+                        case DeviceSubType.AO_EY:
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Tag.ERR, 1}
+                            };
+
                         case DeviceSubType.AO_VIRT:
                             return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                             };
+
+
                     }
                     break;
             }

@@ -36,7 +36,7 @@ namespace EplanDevice
         TS, ///< Сигнальный датчик температуры
         G, ///< Блок питания с автоматическим выключателем.
         WATCHDOG, ///< Устройство проверки связи
-
+        EY, ///< Преобразователь IO-Link
 
         // Эти устройства всегда в конце т.к их нет в контроллере.
         Y,       ///< Пневмоостров Festo
@@ -52,8 +52,8 @@ namespace EplanDevice
         /// Получить список <see cref="DeviceSubType">подтипов</see> типа
         /// </summary>
         public static IEnumerable<DeviceSubType> SubTypes(this DeviceType type)
-            => DeviceSubTypeExtensions.DeviceSubTypes
-            .Where(st => (int)st / DeviceSubTypeExtensions.TypeMultiplier == (int)type);
+            => DSTExt.DeviceSubTypes
+            .Where(st => (int)st / DSTExt.TypeMultiplier == (int)type);
 
         /// <summary>
         /// Получить список названий <see cref="DeviceSubType">подтипов</see> типа
