@@ -71,7 +71,7 @@ jobs:
       shell: powershell
       run: Set-Timezone -Id 'Belarus Standard Time'
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         submodules: 'recursive'
         ref: ${{ github.event.pull_request.head.sha }}
@@ -201,7 +201,7 @@ jobs:
         $version=[System.Reflection.Assembly]::LoadFrom("./EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         path: ./EasyEPLANner
         submodules: 'recursive'
