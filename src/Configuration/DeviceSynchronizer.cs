@@ -94,16 +94,14 @@ namespace EasyEPlanner
                     }
                     else
                     {
-                        bool deviceMainFunctionOff =
-                            prevDeviceEplanFunc.IsMainFunction == false;
-                        if (prevDeviceEplanFunc.Off || deviceMainFunctionOff)
+                        if (prevDeviceEplanFunc.Off || !prevDeviceEplanFunc.IsMainFunction)
                         {
                             SetDeviceIndex(indexArray, k, deleteDeviceIndex);
                             break;
                         }
                     }   
 
-                    if (newDevice.Function == prevDeviceEplanFunc)          //2.2
+                    if (newDevice.Function.Equals(prevDeviceEplanFunc))          //2.2
                     {
                         SetDeviceIndex(indexArray, k, deviceIndex);
                         break;
