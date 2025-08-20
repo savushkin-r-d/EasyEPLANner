@@ -135,6 +135,8 @@ namespace TechObjectTests
                             EplanDevice.DeviceSubType.VC,
                             EplanDevice.DeviceSubType.VC_IOLINK,
                             EplanDevice.DeviceSubType.VC_VIRT,
+                            EplanDevice.DeviceSubType.C_PID,
+                            EplanDevice.DeviceSubType.C_THLD,
                             EplanDevice.DeviceSubType.NONE
                         },
                         new EplanDevice.DeviceSubType[]
