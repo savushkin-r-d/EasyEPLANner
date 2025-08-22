@@ -468,6 +468,8 @@ namespace Editor
         }
 
         public virtual string SystemIdentifier => "";
+
+        public bool Visibility { get; set; } = true;
         #endregion
     }
 
