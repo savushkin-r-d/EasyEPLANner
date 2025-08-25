@@ -4,6 +4,7 @@ using Editor;
 using Eplan.EplApi.Scripting;
 using IO.ViewModel;
 using PInvoke;
+using StaticHelper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -350,6 +351,14 @@ namespace IO.View
             e.Handled = true;
             RefreshTree();
             DFrm.GetInstance().RefreshTreeAfterBinding();
+        }
+
+        private void StructPLC_FormatCell(object sender, FormatCellEventArgs e)
+        {
+            if (e.Model is IClamp clamp && !clamp.Binded)
+            {
+                e.Item.SubItems[1].ForeColor = Color.LightSlateGray;
+            }
         }
     }
 }

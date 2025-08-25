@@ -17,7 +17,7 @@ namespace IO.ViewModel
 
         public string Description => string.Join(" || ",
             Module.GetClampBinding(clamp)?
-                .Select(g => ChannelBinding(g.Item1, g.Item2)) ?? []);
+                .Select(g => ChannelBinding(g.Item1, g.Item2)) ?? [ Value ]);
 
         /// <summary>
         /// Генерация текста привязки канала устройства к клемме
@@ -56,9 +56,11 @@ namespace IO.ViewModel
 
         Icon IHasIcon.Icon => Icon.Clamp;
 
-        Icon IHasDescriptionIcon.Icon => (Module.Devices[clamp]?.Any() ?? false)? Icon.Cable : Icon.None;
+        Icon IHasDescriptionIcon.Icon => Binded? Icon.Cable : Icon.None;
 
         public string Value => ClampFunction.FunctionalText;
+
+        public bool Binded => Module.Devices[clamp]?.Any() ?? false;
 
         public void Reset()
         {
