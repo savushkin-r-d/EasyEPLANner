@@ -355,7 +355,7 @@ namespace IO.View
 
         private void StructPLC_FormatCell(object sender, FormatCellEventArgs e)
         {
-            if (e.Model is IClamp clamp && !clamp.Binded)
+            if (e.Model is IClamp clamp && !clamp.Bound)
             {
                 e.Item.SubItems[1].ForeColor = Color.LightSlateGray;
             }
