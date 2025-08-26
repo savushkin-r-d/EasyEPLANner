@@ -35,6 +35,6 @@ namespace IO.ViewModel
         /// <summary>
         /// К клемме привязано устройство
         /// </summary>
-        bool Binded { get; }
+        bool Bound { get; }
     }
 }

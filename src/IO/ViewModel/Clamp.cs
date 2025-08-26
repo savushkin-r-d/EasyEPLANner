@@ -56,11 +56,11 @@ namespace IO.ViewModel
 
         Icon IHasIcon.Icon => Icon.Clamp;
 
-        Icon IHasDescriptionIcon.Icon => Binded? Icon.Cable : Icon.None;
+        Icon IHasDescriptionIcon.Icon => Bound? Icon.Cable : Icon.None;
 
         public string Value => ClampFunction.FunctionalText;
 
-        public bool Binded => Module.Devices[clamp]?.Any() ?? false;
+        public bool Bound => Module.Devices[clamp]?.Any() ?? false;
 
         public void Reset()
         {
