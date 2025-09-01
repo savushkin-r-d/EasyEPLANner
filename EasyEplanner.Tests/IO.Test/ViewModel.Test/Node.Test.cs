@@ -18,6 +18,7 @@ namespace IOTests
             var expanded = true;
 
             var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
                 n.Name == "A100" &&
                 n.TypeStr == "AO" &&
                 n.IOModules == new List<IIOModule>() &&
@@ -32,7 +33,7 @@ namespace IOTests
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual("A100", node.Name);
+                Assert.AreEqual("1. A100", node.Name);
                 Assert.AreEqual("AO", node.Description);
                 Assert.IsTrue(node.Expanded);
 
