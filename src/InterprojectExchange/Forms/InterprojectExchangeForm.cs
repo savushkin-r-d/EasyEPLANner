@@ -217,36 +217,36 @@ namespace InterprojectExchange
                 return;
             }
 
-            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
-            if (needAddNewElement)
+            var selectedBind = bindedSignalsList.SelectedItems[0];
+            var editBind = !filterConfiguration.HideBindedSignals;
+
+            if (editBind)
             {
-                string currProjDev = currProjDevs[0].SubItems[1].Text;
-                string currProjDevType = currProjDevs[0].Tag.ToString();
-                string advProjDevType = e.Item.Tag.ToString();
-                AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
-                    advProjDev);
-            }
-            else
-            {
-                ListViewItem selectedRow = bindedSignalsList.SelectedItems[0];
-                bool notIgnoreEdit = !filterConfiguration.HideBindedSignals;
-                if (selectedRow != null && notIgnoreEdit)
+                if (selectedBind is not null)
                 {
                     bool mainProject = false;
-                    string groupName = selectedRow.Group.Name;
+                    string groupName = selectedBind.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedRow.SubItems[1].Text, advProjDev,
+                        groupName, selectedBind.SubItems[1].Text, advProjDev,
                         mainProject, out bool needSwap);
                     if (success)
                     {
-                        ReplaceSignal(needSwap, advProjDev, selectedRow, 1);
+                        ReplaceSignal(needSwap, advProjDev, selectedBind, 1);
                     }
                     else
                     {
                         ShowErrorMessage("Ошибка изменения связи");
                     }
                 }
+                return;
             }
+
+
+            string currProjDev = currProjDevs[0].SubItems[1].Text;
+            string currProjDevType = currProjDevs[0].Tag.ToString();
+            string advProjDevType = e.Item.Tag.ToString();
+            AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
+                advProjDev);
         }
 
         /// <summary>
@@ -267,38 +267,39 @@ namespace InterprojectExchange
                 return;
             }
 
-            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
-            if (needAddNewElement)
-            {
-                string currProjDevType = e.Item.Tag.ToString();
-                string advProjDev = advProjDevs[0].SubItems[0].Text;
-                string advProjDevType = advProjDevs[0].Tag.ToString();
-                AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
-                    advProjDev);
-            }
-            else
-            {
-                var selectedRow = bindedSignalsList.SelectedItems[0];
-                bool notIgnoreEdit = !filterConfiguration.HideBindedSignals;
-                if (selectedRow != null && notIgnoreEdit)
+
+            var selectedBind = bindedSignalsList.SelectedItems[0];
+            var editBind = !filterConfiguration.HideBindedSignals;
+
+            if (editBind)
+            { 
+                if (selectedBind is not null)
                 {
+
                     bool mainProject = true;
-                    string groupName = selectedRow.Group.Name;
+                    string groupName = selectedBind.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedRow.SubItems[0].Text, currProjDev,
+                        groupName, selectedBind.SubItems[0].Text, currProjDev,
                         mainProject, out bool needSwap);
-                    if(success)
+                    if (success)
                     {
-                        ReplaceSignal(needSwap, currProjDev, selectedRow, 0);
+                        ReplaceSignal(needSwap, currProjDev, selectedBind, 0);
                     }
                     else
                     {
                         ShowErrorMessage("Ошибка изменения связи");
                     }
                 }
+                return;
             }
+
+            string currProjDevType = e.Item.Tag.ToString();
+            string advProjDev = advProjDevs[0].SubItems[0].Text;
+            string advProjDevType = advProjDevs[0].Tag.ToString();
+            AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
+                advProjDev);
         }
-        
+            
         /// <summary>
         /// Замена сигнала при редактировании пар сигналов в графическом
         /// отображении
