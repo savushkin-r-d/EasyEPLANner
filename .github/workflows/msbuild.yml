@@ -111,7 +111,7 @@ jobs:
         dotnet tool install --global dotnet-coverage
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -130,8 +130,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        PULL_REQUEST_DATA: /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
-      run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="EasyEplanner.Tests/coverage.xml" ${{ github.event_name == 'pull_request_target' && env.PULL_REQUEST_DATA || '' }}
+        PULL_REQUEST_DATA: ${{ github.event_name == 'pull_request_target' && '/d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}' || '' }}
+      run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="EasyEplanner.Tests/coverage.xml" ${{ env.PULL_REQUEST_DATA }}
       
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -228,7 +228,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
