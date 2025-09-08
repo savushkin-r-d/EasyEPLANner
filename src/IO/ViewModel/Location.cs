@@ -17,7 +17,7 @@ namespace IO.ViewModel
 
             this.nodes.AddRange(nodes.Select(n => new Node(n, this)));
 
-            Expanded = nodes.Any(n => n.Function.Expanded);
+            Expanded = nodes.Any(n => n.Function?.Expanded ?? false);
         }
 
         public IEnumerable<IViewItem> Items => nodes;
