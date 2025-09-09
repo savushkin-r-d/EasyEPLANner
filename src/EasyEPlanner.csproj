@@ -452,6 +452,7 @@
     <Compile Include="TechObject\Base\Properties\ActiveAggregateParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ComboBoxParameter.cs" />
     <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\GroupableParameters.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
     <Compile Include="TechObject\DevModifyOptions.cs" />
     <Compile Include="TechObject\ITechObjectManager.cs" />

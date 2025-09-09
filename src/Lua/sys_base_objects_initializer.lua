@@ -109,6 +109,10 @@ end
 
 -- Инициализация параметров базовой операции
 init_operation_parameters = function(operation, params)
+    local group = params.group or {}
+    init_group_parameters(operation, group)
+    --init_operation_parameters(operation, group)
+
     -- Добавить активные параметры операции
     local activeParameters = params.active or { }
     init_active_parameters(operation, activeParameters)
@@ -122,6 +126,19 @@ init_operation_parameters = function(operation, params)
     init_float_parameters(operation, floatParameters);
 end
 
+
+init_group_parameters = function (object, groups)
+    for key, group in pairs(groups) do
+        local lua_name = group.luaName or key
+        if type(lua_name) == "number" then return end
+
+        local name = group.name or ""
+        local main = group.main or false
+
+        local group_parameter = object:AddGroupParameter(lua_name, name, main)
+        init_operation_parameters(group_parameter, group)
+    end
+end
 
 -- Инициализация активных параметров агрегата
 -- object - базовый объект
@@ -161,7 +178,7 @@ init_active_parameters = function(object, activeParameters)
         -- Добавить активный параметр
         local parameter = object:AddActiveParameter(luaName, name, defaultValue)
 
-        for showProperty, value in pairs(displayObjects) do
+       for showProperty, value in pairs(displayObjects) do
             parameter:AddDisplayObject(value)
         end
 

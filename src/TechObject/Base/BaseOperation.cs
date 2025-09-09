@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using Aga.Controls.Tree;
 using Editor;
 
 namespace TechObject
@@ -21,6 +22,11 @@ namespace TechObject
         /// Получить свойства базовой операции
         /// </summary>
         List<BaseParameter> Properties { get; set; }
+
+        /// <summary>
+        /// Коренвые свойства базовой операции (поддержка вложенных параметров)
+        /// </summary>
+        List<BaseParameter> RootProperties { get; set; }
 
         /// <summary>
         /// Инициализация базовой операции по имени
@@ -75,7 +81,7 @@ namespace TechObject
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : TreeViewItem, IBaseOperation, IAutocompletable
+    public class BaseOperation : TreeViewItem , IBaseOperation, IAutocompletable
     {
         public BaseOperation(Mode owner)
         {
@@ -150,6 +156,14 @@ namespace TechObject
             }
         }
 
+        public GroupableParameters AddGroupParameter(string luaName,
+            string name, bool main)
+        {
+            var par = new GroupableParameters(luaName, name, main);
+            InitParameter(par);
+            return par;
+        }
+
         /// <summary>
         /// Добавить активный параметр
         /// </summary>
@@ -161,9 +175,7 @@ namespace TechObject
             string defaultValue)
         {
             var par = new ActiveParameter(luaName, name, defaultValue);
-            par.Owner = this;
-            Properties.Add(par);
-            par.ValueChanged += (sender) => OnValueChanged(sender);
+            InitParameter(par);
             return par;
         }
         
@@ -176,14 +188,21 @@ namespace TechObject
         public void AddActiveBoolParameter(string luaName, string name,
             string defaultValue)
         {
-            var par = new ActiveBoolParameter(luaName, name,
-                defaultValue);
-            par.Owner = this;
-            Properties.Add(par);
-
-            par.ValueChanged += (sender) => OnValueChanged(sender);
+            var par = new ActiveBoolParameter(luaName, name, defaultValue);
+            InitParameter(par);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void InitParameter(BaseParameter parameter)
+        {
+            parameter.Owner = this;
+            Properties.Add(parameter);
+            RootProperties.Add(parameter);
+            parameter.ValueChanged += OnValueChanged;
+        }
 
         public void AddFloatParameter(string luaName, string name, double defaultValue, string meter)
         {
@@ -266,6 +285,7 @@ namespace TechObject
                     Name = operation.Name;
                     LuaName = operation.LuaName;
                     Properties = operation.Properties.Select(x => x.Clone()).ToList();
+                    RootProperties = [.. operation.RootProperties.Select(x => x.Clone())];
                     Parameters = new List<IBaseFloatParameter>(operation.Parameters);
                     foreach(var property in Properties)
                     {
@@ -319,12 +339,7 @@ namespace TechObject
         /// </summary>
         private void SetItems()
         {
-            var showedParameters = new List<BaseParameter>();
-            foreach (var parameter in Properties)
-            {
-                showedParameters.Add(parameter);
-            }
-            items = showedParameters.ToArray();
+            //items = [.. RootProperties];
         }
 
         public string SaveAsLuaTable(string prefix)
@@ -385,6 +400,8 @@ namespace TechObject
             set => baseOperationProperties = value;
         }
 
+        public List<BaseParameter> RootProperties { get; set; } = [];
+
         public List<IBaseFloatParameter> Parameters { get; set; } = new List<IBaseFloatParameter>();
 
         public Mode Owner
@@ -417,6 +434,7 @@ namespace TechObject
                     newProperty.Owner = owner;
                     newProperty.Parent = this;
                     Properties.Add(newProperty);
+                    RootProperties.Add(newProperty);
 
                     newProperty.ValueChanged += (sender) => OnValueChanged(sender);
                 }
@@ -525,6 +543,8 @@ namespace TechObject
             operation.DefaultPosition = DefaultPosition;
 
             operation.Properties = CloneProperties(operation);
+            operation.RootProperties = [.. operation.Properties.Where(p => RootProperties.Any(r => r.LuaName == p.LuaName))];
+
             operation.states = CloneStates(operation);
             operation.Parameters = new List<IBaseFloatParameter>(Parameters);
 
@@ -601,23 +621,11 @@ namespace TechObject
         #endregion
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                if (items.Count() > 0)
-                {
-                    string res = string.Format("Доп. свойства ({0})", 
-                        items.Count());
-                    return new string[] { res, string.Empty };
-                }
-                else
-                {
-                    string res = string.Format("Доп. свойства");
-                    return new string[] { res, string.Empty };
-                }
-            }
-        }
+        override public string[] DisplayText => [ 
+            $"Доп. свойства" +
+                (baseOperationProperties.Any() ?
+                $" ({baseOperationProperties.Count})" : ""),
+            string.Empty];
 
         public override bool IsCopyable => true;
 
@@ -639,13 +647,7 @@ namespace TechObject
             return this;
         }
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items;
-            }
-        }
+        override public ITreeViewItem[] Items => [.. RootProperties];
 
         public override bool Delete(object child)
         {
@@ -669,9 +671,10 @@ namespace TechObject
                 .ForEach(i => i.Autocomplete());
         }
 
-        private ITreeViewItem[] items = new ITreeViewItem[0];
+        private ITreeViewItem[] items = [];
         
         private List<BaseParameter> baseOperationProperties;
+
         private string operationName;
         private string luaOperationName;
         private Dictionary<string, List<BaseStep>> states;

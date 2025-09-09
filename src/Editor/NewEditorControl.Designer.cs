@@ -510,7 +510,7 @@ namespace Editor
             this.moveUpToolStripMenuItem,
             this.moveDownToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(225, 258);
+            this.contextMenuStrip.Size = new System.Drawing.Size(254, 258);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // createToolStripMenuItem
@@ -519,7 +519,7 @@ namespace Editor
             this.createToolStripMenuItem.Name = "createToolStripMenuItem";
             this.createToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.createToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Insert;
-            this.createToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.createToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.createToolStripMenuItem.Text = "Создать";
             this.createToolStripMenuItem.Click += new System.EventHandler(this.insertButton_Click);
             // 
@@ -528,7 +528,7 @@ namespace Editor
             this.uniteToGenericToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.group;
             this.uniteToGenericToolStripMenuItem.Name = "uniteToGenericToolStripMenuItem";
             this.uniteToGenericToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.uniteToGenericToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.uniteToGenericToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.uniteToGenericToolStripMenuItem.Text = "Сгруппировать";
             this.uniteToGenericToolStripMenuItem.ToolTipText = "Сгруппировать";
             this.uniteToGenericToolStripMenuItem.Visible = false;
@@ -539,7 +539,7 @@ namespace Editor
             this.createGenericToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.generic;
             this.createGenericToolStripMenuItem.Name = "createGenericToolStripMenuItem";
             this.createGenericToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Insert)));
-            this.createGenericToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.createGenericToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.createGenericToolStripMenuItem.Text = "Создать типовой...";
             this.createGenericToolStripMenuItem.ToolTipText = "Создать типовой объект";
             this.createGenericToolStripMenuItem.Visible = false;
@@ -550,7 +550,7 @@ namespace Editor
             this.autocompleteToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.autocomplete;
             this.autocompleteToolStripMenuItem.Name = "autocompleteToolStripMenuItem";
             this.autocompleteToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + A";
-            this.autocompleteToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.autocompleteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.autocompleteToolStripMenuItem.Text = "Автозаполнение";
             this.autocompleteToolStripMenuItem.Click += new System.EventHandler(this.autocompleteToolStripMenuItem_Click);
             // 
@@ -560,21 +560,21 @@ namespace Editor
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.deleteToolStripMenuItem.Text = "Удалить";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(221, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(250, 6);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.cut;
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.cutToolStripMenuItem.Text = "Вырезать";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutButton_Click);
             // 
@@ -583,7 +583,7 @@ namespace Editor
             this.copyToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.copy;
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.copyToolStripMenuItem.Text = "Копировать";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyButton_Click);
             // 
@@ -592,7 +592,7 @@ namespace Editor
             this.pasteToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.paste;
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.pasteToolStripMenuItem.Text = "Вставить";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteButton_Click);
             // 
@@ -601,21 +601,21 @@ namespace Editor
             this.replaceToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.replace;
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
             this.replaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.replaceToolStripMenuItem.Text = "Заменить";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceButton_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(221, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(250, 6);
             // 
             // moveUpToolStripMenuItem
             // 
             this.moveUpToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.moveup;
             this.moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
             this.moveUpToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + ↑";
-            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.moveUpToolStripMenuItem.Text = "Переместить";
             this.moveUpToolStripMenuItem.ToolTipText = "Переместить вверх";
             this.moveUpToolStripMenuItem.Click += new System.EventHandler(this.moveUpButton_Click);
@@ -625,7 +625,7 @@ namespace Editor
             this.moveDownToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.movedown;
             this.moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
             this.moveDownToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + ↓";
-            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.moveDownToolStripMenuItem.Text = "Переместить";
             this.moveDownToolStripMenuItem.ToolTipText = "Переместить вниз";
             this.moveDownToolStripMenuItem.Click += new System.EventHandler(this.moveDownButton_Click);
