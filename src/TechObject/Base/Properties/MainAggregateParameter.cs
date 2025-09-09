@@ -53,6 +53,7 @@ namespace TechObject
                 if (foundProperty != null)
                 {
                     foundProperty.NeedDisable = Value == "false";
+                    foundProperty.Visibility = Value == "true";
                 }
             }
         }
