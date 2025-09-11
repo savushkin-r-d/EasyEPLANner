@@ -150,6 +150,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Базовая операция - владелец параметра
+        /// </summary>
+        public BaseOperation BaseOperation { get; set; }
+
         #region синхронизация устройств
         public virtual void Synch(int[] array)
         {
@@ -521,8 +526,7 @@ namespace TechObject
         {
             if (Owner is BaseTechObject)
             {
-                var operation = Parent as BaseOperation;
-                return operation.Owner.Owner.Owner;
+                return BaseOperation.Owner.Owner.Owner;
             }
             else if (Owner is BaseOperation operation)
             {

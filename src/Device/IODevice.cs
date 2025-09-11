@@ -99,7 +99,7 @@ namespace EplanDevice
         /// <param name="name">Имя устройства (формат - А1V12).</param>
         /// <param name="eplanName">Имя устройства в Eplan (+A1-V12)</param>
         /// <param name="description">Описание устройства.</param>
-        /// <param name="deviceType">Тип устройства (V для А1V12).</param>
+        /// <param name="deviceType">Тип устройства (Enabled для А1V12).</param>
         /// <param name="deviceNumber">Номер устройства (12 для А1V12).</param>
         /// <param name="objectName">Объект устройства (А для А1V12).</param>
         /// <param name="objectNumber">Номер объекта устройства (1 для А1V12).

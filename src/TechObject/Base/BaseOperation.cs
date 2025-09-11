@@ -6,6 +6,29 @@ using Editor;
 
 namespace TechObject
 {
+    /// <summary>
+    /// Базовая операция технологического объекта
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// Изначально, базовая операция одна, иницилизируется из базового описания. <br/>
+    /// Когда в техобъекта создается операция и ей присваивается
+    /// базовая операция, тогда создается ее <see cref="Clone(Mode)">Копия</see>. <br/>
+    ///
+    /// <br/> <br/>
+    /// 
+    /// Сам объект базовой операции выступает полем "Доп. свойства", <br/>
+    /// хотя и содержит другие операции.
+    /// 
+    /// <br/> <br/>
+    /// 
+    /// Содержит два свойства: <br/>
+    /// <see cref="Properties"/> - список всех параметров <br/>
+    /// <see cref="RootProperties"/> - список корневых параметров 
+    /// для отображения параметров в виде иерархии <br/>
+    /// Это понадобилос при изменении иерархии в параметрах, <br/>
+    /// но сохранения старой логики работы с параметрами.
+    /// </remarks>
     public interface IBaseOperation
     {
         /// <summary>
@@ -199,6 +222,7 @@ namespace TechObject
         private void InitParameter(BaseParameter parameter)
         {
             parameter.Owner = this;
+            parameter.BaseOperation = this;
             Properties.Add(parameter);
             RootProperties.Add(parameter);
             parameter.ValueChanged += OnValueChanged;
@@ -318,7 +342,6 @@ namespace TechObject
             }
 
             techObject.AttachedObjects.CheckInit();
-            SetItems();
 
             Properties.ForEach(prop => prop.ValueChanged += (sender) => OnValueChanged(sender));
         }
@@ -332,14 +355,6 @@ namespace TechObject
                     step.SetNewValue(string.Empty, true);
                 }
             }
-        }
-
-        /// <summary>
-        /// Добавление полей в массив для отображения на дереве
-        /// </summary>
-        private void SetItems()
-        {
-            //items = [.. RootProperties];
         }
 
         public string SaveAsLuaTable(string prefix)
@@ -424,23 +439,45 @@ namespace TechObject
         /// <param name="owner">Объект первоначальный владелец свойств</param>
         public void AddProperties(List<BaseParameter> properties, object owner)
         {
-            foreach(var property in properties)
-            {
-                var equalPropertiesCount = Properties
-                    .Where(x => x.LuaName == property.LuaName).Count();
-                if (equalPropertiesCount == 0)
-                {
-                    var newProperty = property.Clone();
-                    newProperty.Owner = owner;
-                    newProperty.Parent = this;
-                    Properties.Add(newProperty);
-                    RootProperties.Add(newProperty);
+            var main = (MainAggregateParameter)
+                properties.Find(p => p is MainAggregateParameter);
 
-                    newProperty.ValueChanged += (sender) => OnValueChanged(sender);
-                }
+            if (main is not null && !Properties.Any(p => p.LuaName == main.LuaName))
+            {
+                main = main.Clone() as MainAggregateParameter;
+                main.Owner = owner;
+                main.BaseOperation = this;
+                main.Parent = this;
+                Properties.Add(main);
+                RootProperties.Add(main);
             }
 
-            SetItems();
+            foreach (var property in properties)
+            { 
+                /// Если свойство с таким именем уже добавленно - пропускаем
+                if (Properties.Any(x => x.LuaName == property.LuaName)
+                    || property.LuaName == main?.LuaName)
+                    continue;
+
+                var newProperty = property.Clone();
+                newProperty.Owner = owner;
+                newProperty.BaseOperation = this;
+
+                Properties.Add(newProperty);
+
+                if (main is not null)
+                {
+                    main.Parameters.Add(newProperty);
+                    newProperty.Parent = main;
+                }
+                else
+                {
+                    RootProperties.Add(newProperty);
+                    newProperty.Parent = this;
+                }
+
+                newProperty.ValueChanged += OnValueChanged;
+            }
         }
 
         /// <summary>
@@ -457,9 +494,9 @@ namespace TechObject
                 if (deletingProperty != null)
                 {
                     Properties.Remove(deletingProperty);
+                    RootProperties.Remove(deletingProperty);
                 }
             }
-            SetItems();
         }
 
         /// <summary>
@@ -547,8 +584,6 @@ namespace TechObject
 
             operation.states = CloneStates(operation);
             operation.Parameters = new List<IBaseFloatParameter>(Parameters);
-
-            operation.SetItems();
 
             Properties.ForEach(prop => prop.ValueChanged +=
                 (sender) => OnValueChanged(sender));

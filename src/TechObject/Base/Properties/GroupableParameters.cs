@@ -18,10 +18,37 @@ namespace TechObject
             Main = main;
         }
 
+        public GroupableParameters(string luaName, string name,
+            string defaultValue, List<DisplayObject> displayObjects, bool main)
+            : base(luaName, name, defaultValue, displayObjects)
+        {
+            Main = main;
+        }
+
         public bool Main { get; set; }
 
         public override string[] DisplayText => 
             Main ? base.DisplayText : [Name, ""];
+
+        public override bool IsEditable => Main;
+
+        public override bool SetNewValue(string newValue)
+        {
+            var succes = base.SetNewValue(newValue);
+            SetUpParametersVisibility();
+
+            return succes;
+        }
+
+        private bool Enabled => Value is trueLogicValue || !Main;
+
+        public virtual void SetUpParametersVisibility()
+        {
+            foreach (var item in Items)
+            {
+                item.Visibility = Enabled;
+            }
+        }
 
         public override BaseParameter Clone()
         {
@@ -68,6 +95,7 @@ namespace TechObject
         private void InitParameter(BaseParameter parameter, bool main = true)
         {
             parameter.Owner = this;
+            parameter.BaseOperation = BaseOperation;
 
             Parameters.Add(parameter);
 
@@ -93,7 +121,7 @@ namespace TechObject
         }
 
 
-        public override ITreeViewItem[] Items => [.. Parameters];
+        public override ITreeViewItem[] Items => Enabled ? [.. Parameters] : [];
 
         public List<BaseParameter> Parameters { get; set; } = [];
     }

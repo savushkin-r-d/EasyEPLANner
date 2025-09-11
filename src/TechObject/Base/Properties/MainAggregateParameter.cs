@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class MainAggregateParameter : ActiveBoolParameter, IAutocompletable
+    public class MainAggregateParameter : GroupableParameters, IAutocompletable
     {
         public MainAggregateParameter(string luaName, string name,
             string defaultValue, List<DisplayObject> displayObjects = null)
-            : base(luaName, name, defaultValue, displayObjects) { }
+            : base(luaName, name, defaultValue, displayObjects, true) { }
 
         public override BaseParameter Clone()
         {
@@ -36,14 +36,14 @@ namespace TechObject
             return succes;
         }
 
-        public override bool NeedDisable => needDisable;
+        public override bool NeedDisable  => needDisable;
 
         /// <summary>
         /// Установка видимости параметров агрегата-объекта-владельца в аппарате
         /// </summary>
-        private void SetUpParametersVisibility()
+        public override void SetUpParametersVisibility()
         {
-            var properties = (Parent as BaseOperation).Properties;
+            var properties = BaseOperation.Properties;
             var aggregateParameters = (Owner as BaseTechObject).AggregateParameters;
 
             foreach (var parameter in aggregateParameters)

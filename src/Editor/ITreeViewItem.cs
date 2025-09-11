@@ -97,7 +97,7 @@ namespace Editor
         bool IsInsertableCopy { get; }
 
         /// <summary>    
-        /// Вставка ранее скопированного объекта. Ctrl + V
+        /// Вставка ранее скопированного объекта. Ctrl + Enabled
         /// </summary>
         ITreeViewItem InsertCopy(object obj);
 
