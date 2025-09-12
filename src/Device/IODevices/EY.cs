@@ -8,16 +8,15 @@ namespace EplanDevice
 {
     public class EY : IODevice
     {
-        protected internal EY(
+        public EY(
             string name, string eplanName, string description,
-            string deviceType, int deviceNumber, string objectName,
-            int objectNumber) 
-            : base(name, eplanName, description, deviceType,
+            int deviceNumber, string objectName, int objectNumber) 
+            : base(name, eplanName, description,
                   deviceNumber, objectName, objectNumber)
         {
 
             dSubType = DeviceSubType.NONE;
-            dType = DeviceType.DO;
+            dType = DeviceType.EY;
         }
 
         public override string SetSubType(string subType)
@@ -28,6 +27,8 @@ namespace EplanDevice
             {
                 case "":
                 case nameof(DeviceSubType.DEV_CONV_AO2):
+                    dSubType = DeviceSubType.DEV_CONV_AO2;
+
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
