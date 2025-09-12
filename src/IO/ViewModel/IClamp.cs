@@ -31,5 +31,10 @@ namespace IO.ViewModel
         /// Сброс привязки клеммы в программе (не функционального текста)
         /// </summary>
         void Reset();
+
+        /// <summary>
+        /// К клемме привязано устройство
+        /// </summary>
+        bool Bound { get; }
     }
 }

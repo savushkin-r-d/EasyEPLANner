@@ -13,7 +13,7 @@ jobs:
     name: Auto-update version
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           token: ${{ secrets.BOT_ACCESS_TO_EPLAN }}
       - id: date

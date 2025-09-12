@@ -50,4 +50,5 @@ add_devices = function(model)
         local descr = value.descr or ""
         model:AddDeviceData(name, descr)
     end
+    model:SortDeviceData()
 end 

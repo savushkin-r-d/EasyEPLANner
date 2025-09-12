@@ -105,6 +105,7 @@ namespace IO.View
             this.StructPLC.Collapsed += new System.EventHandler<BrightIdeasSoftware.TreeBranchCollapsedEventArgs>(this.ItemCollapsed);
             this.StructPLC.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.CellEditFinishing);
             this.StructPLC.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.CellEditStarting);
+            this.StructPLC.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.StructPLC_FormatCell);
             this.StructPLC.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.SelectionChanged);
             this.StructPLC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDownHandler);
             this.StructPLC.MouseEnter += new System.EventHandler(this.StructPLC_MouseEnter);

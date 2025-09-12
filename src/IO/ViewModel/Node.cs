@@ -16,7 +16,10 @@ namespace IO.ViewModel
         public Node(IIONode node, ILocation owner)
         {
             IONode = node;
-            
+
+            if (node.Type is IO.IONode.TYPES.T_EMPTY)
+                return;
+
             var ip = new Property("IP-адрес",
                 () => IONode.Function.IP,
                 ip => IONode.Function.IP = ip);
@@ -41,13 +44,13 @@ namespace IO.ViewModel
 
         public IEnumerable<IViewItem> Items => items;
 
-        public string Name => IONode.Name;
+        public string Name => IONode.Type is IO.IONode.TYPES.T_EMPTY ? $"{IONode.N}. Заглушка" : $"{IONode.N}. {IONode.Name}";
 
         public string Description => IONode.TypeStr;
 
         public bool Expanded 
         {
-            get => IONode.Function.Expanded;
+            get => IONode.Function?.Expanded ?? false;
             set => IONode.Function.Expanded = value;
         }
 

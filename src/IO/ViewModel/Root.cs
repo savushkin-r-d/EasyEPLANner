@@ -8,18 +8,21 @@ namespace IO.ViewModel
 {
     public class Root : IRoot, IExpandable
     {
-        private readonly List<ILocation> locations = [];
+        private readonly List<IViewItem> items = [];
 
         public Root(IIOViewModel context)
         {
             Context = context;
 
+            /// stub_id - индекс заглушки
+            /// если узел не определен - у него нет location - группируем его отдельно
+            var stub_id = 0;
             var locs = context.IOManager?.IONodes
-                .GroupBy(n => (n.Location, n.LocationDescription))
-                .Select(g => new Location(g.Key.Location, g.Key.LocationDescription, [.. g]))
+                .GroupBy(n => ((string location, string description)) (n.Type is IONode.TYPES.T_EMPTY ? ("", $"{stub_id++}") : (n.Location, n.LocationDescription)))
+                .Select(g =>  (IViewItem) (g.Key.location is "" ? new Node(g.First(), null) : new Location(g.Key.location, g.Key.description, [.. g])))
                 ?? [];
 
-            locations.AddRange(locs);
+            items.AddRange(locs);
         }
 
         public IIOViewModel Context { get; private set; } 
@@ -28,7 +31,7 @@ namespace IO.ViewModel
 
         public string Description => string.Empty;
 
-        public IEnumerable<IViewItem> Items => locations;
+        public IEnumerable<IViewItem> Items => items;
 
         public bool Expanded { get; set; } = true;
     }
