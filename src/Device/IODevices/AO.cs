@@ -27,13 +27,13 @@ namespace EplanDevice
                 case "AO_VIRT":
                     break;
 
+                case "": return SetSubType(DeviceSubType.AO.ToString());
+
                 case nameof(DeviceSubType.AO_EY):
                 case nameof(DeviceSubType.AO):
-                case "":
                     if (subtype is nameof(DeviceSubType.AO_EY) )
                         RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
 
-                    dSubType = DeviceSubType.AO;
                     parameters.Add(Parameter.P_MIN_V, null);
                     parameters.Add(Parameter.P_MAX_V, null);
 
