@@ -127,7 +127,7 @@ jobs:
 
     - name: Prepare PULL_REQUEST_DATA
       if: github.event_name == 'pull_request_target'
-      run: echo "PULL_REQUEST_DATA='/d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}'" >> $env:GITHUB_ENV
+      run: echo "PULL_REQUEST_DATA=/d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
 
     - name: Sonar scanner begin
       working-directory: ${{env.GITHUB_WORKSPACE}}
