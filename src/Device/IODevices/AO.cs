@@ -27,18 +27,18 @@ namespace EplanDevice
                 case "AO_VIRT":
                     break;
 
-                case "AO":
+                case nameof(DeviceSubType.AO_EY):
+                case nameof(DeviceSubType.AO):
                 case "":
+                    if (subtype is nameof(DeviceSubType.AO_EY) )
+                        RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+
                     dSubType = DeviceSubType.AO;
                     parameters.Add(Parameter.P_MIN_V, null);
                     parameters.Add(Parameter.P_MAX_V, null);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
-
-                case nameof(DeviceSubType.AO_EY):
-                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
-                    goto case nameof(DeviceSubType.AO);
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +

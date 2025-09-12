@@ -26,23 +26,23 @@ namespace EplanDevice
             string errStr = string.Empty;
             switch (subType)
             {
-                case "VC":
+                case nameof(DeviceSubType.VC_EY):
+                case nameof(DeviceSubType.VC):
+                    if (subType is nameof(DeviceSubType.VC_EY))
+                        RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
-                case "VC_IOLINK":
+                case nameof(DeviceSubType.VC_IOLINK_EY):
+                case nameof(DeviceSubType.VC_IOLINK):
+                    if (subType is nameof(DeviceSubType.VC_IOLINK_EY))
+                        RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
                     break;
-
-                case nameof(DeviceSubType.VC_EY):
-                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
-                    goto case nameof(DeviceSubType.VC);
-
-                case nameof(DeviceSubType.VC_IOLINK_EY):
-                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
-                    goto case nameof(DeviceSubType.VC_IOLINK);
 
                 case "VC_VIRT":
                     break;
