@@ -10,6 +10,7 @@ namespace Tests.EplanDevices
     {
         const string Incorrect = "Incorrect";
         const string AOSubType = "AO";
+         const string AOEYSubType = "AO_EY";
         const string AO_VIRT = "AO_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
@@ -51,6 +52,8 @@ namespace Tests.EplanDevices
                 new object[] { DeviceSubType.AO, string.Empty,
                     GetRandomAODevice() },
                 new object[] { DeviceSubType.AO, AOSubType,
+                    GetRandomAODevice() },
+                new object[] { DeviceSubType.AO_EY, AOEYSubType,
                     GetRandomAODevice() },
                 new object[] { DeviceSubType.AO_VIRT, AO_VIRT,
                     GetRandomAODevice() },

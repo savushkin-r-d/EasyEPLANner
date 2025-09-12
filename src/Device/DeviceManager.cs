@@ -462,6 +462,7 @@ namespace EplanDevice
             "TS",
             "G",
             nameof(WATCHDOG),
+            nameof(EY),
         };
 
         public IODevice AddDeviceAndEFunction(string devName, string description,
@@ -667,6 +668,11 @@ namespace EplanDevice
                 case nameof(WATCHDOG):
                     dev = new WATCHDOG(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, this);
+                    break;
+
+                case nameof(EY):
+                    dev = new EY(name, eplanName, description, deviceNumber, 
+                        objectName, objectNumber);
                     break;
 
                 default:
