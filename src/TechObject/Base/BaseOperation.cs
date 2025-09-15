@@ -142,6 +142,7 @@ namespace TechObject
             Name = name;
             LuaName = luaName;
             states = baseStates;
+            RootProperties = baseOperationProperties;
 
             foreach (var property in Properties ?? new List<BaseParameter>())
             {
@@ -408,7 +409,7 @@ namespace TechObject
                 .ToDictionary(prop => prop.LuaName, prop => prop.Value));
         }
 
-        public List<BaseParameter> Properties => [.. RootProperties.SelectMany(r => r.GetDescendants())];
+        public List<BaseParameter> Properties => [.. RootProperties?.SelectMany(r => r.GetDescendants()) ?? []];
 
         public List<BaseParameter> RootProperties { get; set; } = [];
 

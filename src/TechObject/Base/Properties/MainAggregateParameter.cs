@@ -73,16 +73,15 @@ namespace TechObject
                 if (aggregateParameter is null)
                     continue;
 
-                var baseOperation = aggregateParameter.Parent as BaseOperation;
-                var paramsManager = baseOperation.Owner.Owner.Owner.GetParamsManager();
+                var paramsManager = BaseOperation.Owner.Owner.Owner.GetParamsManager();
 
                 if (aggregateParameter is IActiveAggregateParameter activeAggregateParameter &&
                     !paramsManager.Float.HaveSameLuaName(aggregateParameter.Value))
                 {
                     var baseFloatParameter = activeAggregateParameter.Parameter;
   
-                    var paramLuaName = $"{baseOperation.LuaName}_{baseFloatParameter.LuaName}";
-                    var paramName = $"{baseOperation.Name}. {baseFloatParameter.Name}";
+                    var paramLuaName = $"{BaseOperation.LuaName}_{baseFloatParameter.LuaName}";
+                    var paramName = $"{BaseOperation.Name}. {baseFloatParameter.Name}";
 
                     aggregateParameter.SetValue(paramLuaName);
 
@@ -91,7 +90,7 @@ namespace TechObject
 
                     var param = paramsManager.AddFloatParam(paramName,
                         baseFloatParameter.DefaultValue, baseFloatParameter.Meter, paramLuaName);
-                    param.SetOperationN(baseOperation.Owner.GetModeNumber());
+                    param.SetOperationN(BaseOperation.Owner.GetModeNumber());
                 }
             }
         }
