@@ -89,6 +89,7 @@ namespace Tests.EplanDevices
             {
                 new object[] { AOSubType, string.Empty, GetRandomAODevice() },
                 new object[] { AOSubType, AOSubType, GetRandomAODevice() },
+                new object[] { "AO_EY", "AO_EY", GetRandomAODevice() },
                 new object[] { AO_VIRT, AO_VIRT, GetRandomAODevice() },
                 new object[] { string.Empty, Incorrect, GetRandomAODevice() },
             };
@@ -126,6 +127,15 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_MAX_V, 1},
             };
 
+            var exportForAO_EY = new Dictionary<ITag, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
+                {IODevice.Tag.ERR, 1},
+            };
+
             var exportForVirtAO = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
@@ -136,6 +146,7 @@ namespace Tests.EplanDevices
             {
                 new object[] {exportForAO, string.Empty, GetRandomAODevice()},
                 new object[] {exportForAO, AOSubType, GetRandomAODevice()},
+                new object[] {exportForAO_EY, "AO_EY", GetRandomAODevice()},
                 new object[] {exportForVirtAO, AO_VIRT, GetRandomAODevice()},
                 new object[] {null, Incorrect, GetRandomAODevice()},
             };
