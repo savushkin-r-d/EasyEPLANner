@@ -25,7 +25,7 @@ namespace EplanDevice
 
             switch (subType)
             {
-                case "": return SetSubType(DeviceSubType.DEV_CONV_AO2.ToString());
+                case "": return SetSubType(nameof(DeviceSubType.DEV_CONV_AO2));
 
                 case nameof(DeviceSubType.DEV_CONV_AO2):
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));

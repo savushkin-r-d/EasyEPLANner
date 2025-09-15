@@ -27,7 +27,7 @@ namespace EplanDevice
                 case "AO_VIRT":
                     break;
 
-                case "": return SetSubType(DeviceSubType.AO.ToString());
+                case "": return SetSubType(nameof(DeviceSubType.AO));
 
                 case nameof(DeviceSubType.AO_EY):
                 case nameof(DeviceSubType.AO):
@@ -117,8 +117,6 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                             };
-
-
                     }
                     break;
             }
