@@ -36,7 +36,7 @@ namespace EplanDevice
                 default:
                     return $"" +
                         $"\"{Name}\" -  неверный тип " +
-                        $"({nameof(DeviceSubType.WATCHDOG)}).\n";
+                        $"({nameof(DeviceSubType.DEV_CONV_AO2)}).\n";
             }
             return string.Empty;
         }

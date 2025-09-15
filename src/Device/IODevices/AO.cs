@@ -31,7 +31,7 @@ namespace EplanDevice
 
                 case nameof(DeviceSubType.AO_EY):
                 case nameof(DeviceSubType.AO):
-                    if (subtype is nameof(DeviceSubType.AO_EY) )
+                    if (subtype is nameof(DeviceSubType.AO_EY))
                         RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
 
                     parameters.Add(Parameter.P_MIN_V, null);
