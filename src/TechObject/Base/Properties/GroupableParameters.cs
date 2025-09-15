@@ -7,15 +7,17 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace TechObject
 {
     public class GroupableParameters : ActiveBoolParameter
     {
-        public GroupableParameters(string luaName, string name, bool main)
+        public GroupableParameters(string luaName, string name, bool main, bool ignoreCompoundName)
             : base(luaName, name, "false", null)
         {
             Main = main;
+            IgnoreCompoundName = ignoreCompoundName;
         }
 
         public GroupableParameters(string luaName, string name,
@@ -23,9 +25,12 @@ namespace TechObject
             : base(luaName, name, defaultValue, displayObjects)
         {
             Main = main;
+            IgnoreCompoundName = true;
         }
 
-        public bool Main { get; set; }
+        public bool Main { get; private set; }
+
+        public bool IgnoreCompoundName { get; private set; }
 
         public override string[] DisplayText => 
             Main ? base.DisplayText : [Name, ""];
@@ -52,7 +57,7 @@ namespace TechObject
 
         public override BaseParameter Clone()
         {
-            var clone = new GroupableParameters(LuaName, Name, Main)
+            var clone = new GroupableParameters(LuaName, Name, Main, IgnoreCompoundName)
             {   
                 NeedDisable = NeedDisable,
             };
@@ -69,9 +74,9 @@ namespace TechObject
         }
 
         public GroupableParameters AddGroupParameter(string luaName,
-            string name, bool main)
+            string name, bool main, bool ignoreCompoundName)
         {
-            var par = new GroupableParameters(luaName, name, main);
+            var par = new GroupableParameters(luaName, name, main, ignoreCompoundName);
             InitParameter(par, main);
             return par;
         }
@@ -107,6 +112,10 @@ namespace TechObject
 
         public void AddParameter(BaseParameter parameter)
         {
+            if (IgnoreCompoundName is false)
+
+                parameter.LuaName = $"{LuaName}_{parameter.LuaName}";
+
             if (Owner is GroupableParameters group)
                 group.AddParameter(parameter);
 
@@ -118,6 +127,16 @@ namespace TechObject
             double value, string meter)
         {
             // do nothing
+        }
+
+        public override List<BaseParameter> GetDescendants()
+        {
+            var r = new List<BaseParameter>();
+            if (Main)
+                r.Add(this);
+
+            r.AddRange(Parameters.SelectMany(p => p.GetDescendants()));
+            return r;
         }
 
 

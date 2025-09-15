@@ -129,13 +129,14 @@ end
 
 init_group_parameters = function (object, groups)
     for key, group in pairs(groups) do
-        local lua_name = group.luaName or key
-        if type(lua_name) == "number" then return end
+        local luaName = group.luaName or key
+        if type(luaName) == "number" then return end
 
         local name = group.name or ""
         local main = group.main or false
+        local ignoreCompoundName = group.ignoreCompoundName or false
 
-        local group_parameter = object:AddGroupParameter(lua_name, name, main)
+        local group_parameter = object:AddGroupParameter(luaName, name, main, ignoreCompoundName)
         init_operation_parameters(group_parameter, group)
     end
 end
@@ -144,8 +145,11 @@ end
 -- object - базовый объект
 -- activeParameters - список параметров
 init_aggregate_active_parameters = function (object, activeParameters)
-    for luaName, value in pairs(activeParameters) do
+    for key, value in pairs(activeParameters) do
         -- Данные для добавления параметра
+        local luaName = value.luaName or key
+        if type(luaName) == "number" then return end
+
         local name = value.name or ""
         local displayObjects = value.displayObjects or { }
         local defaultValue = value.defaultValue or ""
@@ -169,8 +173,11 @@ end
 -- Инициализация активных параметров
 -- object - базовая операция или базовый объект
 init_active_parameters = function(object, activeParameters)
-	for luaName, value in pairs(activeParameters) do
+	for key, value in pairs(activeParameters) do
         -- Данные для добавления параметра
+        local luaName = value.luaName or key
+        if type(luaName) == "number" then return end
+
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
         local displayObjects = value.displayObjects or { }
@@ -188,8 +195,11 @@ end
 -- Инициализация булевых параметров
 -- object - базовая операция или базовый объект
 init_active_bool_parameters = function(object, activeBoolParameters)
-	for luaName, value in pairs(activeBoolParameters) do
+	for key, value in pairs(activeBoolParameters) do
         -- Данные для добавления параметра
+        local luaName = value.luaName or key
+        if type(luaName) == "number" then return end
+
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
@@ -200,7 +210,10 @@ end
 
 -- Инициализация главного параметра агрегата
 init_main_aggregate_parameter = function(object, tableWithParameter)
-    for luaName, value in pairs(tableWithParameter) do
+    for key, value in pairs(tableWithParameter) do
+        local luaName = value.luaName or key
+        if type(luaName) == "number" then return end
+        
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
         object:AddMainAggregateParameter(luaName, name, defaultValue)

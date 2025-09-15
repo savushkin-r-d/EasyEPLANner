@@ -23,7 +23,7 @@ namespace TechObject
             string defaultValue = "", List<DisplayObject> displayObjects = null) 
             : base(name, defaultValue, defaultValue)
         {
-            this.luaName = luaName;
+            LuaName = luaName;
             currentValueType = ValueType.None;
             devicesIndexes = new List<int>();
 
@@ -114,13 +114,7 @@ namespace TechObject
         /// <summary>
         /// Lua имя свойства.
         /// </summary>
-        public string LuaName
-        {
-            get
-            {
-                return luaName;
-            }
-        }
+        public string LuaName { get; set; }
 
         override public bool IsUseDevList
         {
@@ -242,13 +236,7 @@ namespace TechObject
             return indexes;
         }
 
-        override public string[] EditText
-        {
-            get
-            {
-                return new string[] { luaName, Value };
-            }
-        }
+        override public string[] EditText => [LuaName, Value];
 
         override public string[] DisplayText
         {
@@ -394,7 +382,7 @@ namespace TechObject
                         var operation = baseOperation.Owner;
                         var techObject = operation.Owner.Owner;
                         SetNewValue(string.Empty);
-                        Logs.AddMessage($"{techObject.DisplayText}: {operation.DisplayText}:" +
+                        Logs.AddMessage($"{techObject.DisplayText[0]}: {operation.DisplayText[0]}:" +
                             $" в доп.свойствах сброшен неверно указанный параметр \"{Name}\"");
                         return SaveToPrgLua(prefix);
                     }
@@ -439,8 +427,7 @@ namespace TechObject
                 baseTechObject = aggregateBaseTechObject;
                 modes = baseTechObject.Owner.ModesManager.Modes;
                 
-                var baseOperation = Parent as BaseOperation;
-                mainMode = baseOperation.Owner;
+                mainMode = BaseOperation.Owner;
             }
             else if (Owner is BaseOperation baseOperation)
             {
@@ -574,6 +561,9 @@ namespace TechObject
             SetNewValue(string.Join(" ", newValues));
         }
 
+
+        public virtual List<BaseParameter> GetDescendants() => [ this ]; 
+
         /// <summary>
         /// Текущий тип значений, принимаемый параметром
         /// </summary>
@@ -611,7 +601,6 @@ namespace TechObject
         protected static readonly IDeviceManager deviceManager = DeviceManager.GetInstance();
 
         private object owner;
-        private string luaName;
         private List<DisplayObject> displayObjectsFlags;
         private ValueType currentValueType;
         protected List<int> devicesIndexes;

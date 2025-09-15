@@ -15,6 +15,9 @@ namespace TechObject
     /// Когда в техобъекта создается операция и ей присваивается
     /// базовая операция, тогда создается ее <see cref="Clone(Mode)">Копия</see>. <br/>
     ///
+    /// Помимо первого клонирования, клонирование почему-то происходит второй раз в
+    /// <see cref="Init(string, Mode)"/>...
+    /// 
     /// <br/> <br/>
     /// 
     /// Сам объект базовой операции выступает полем "Доп. свойства", <br/>
@@ -44,7 +47,7 @@ namespace TechObject
         /// <summary>
         /// Получить свойства базовой операции
         /// </summary>
-        List<BaseParameter> Properties { get; set; }
+        List<BaseParameter> Properties { get; }
 
         /// <summary>
         /// Коренвые свойства базовой операции (поддержка вложенных параметров)
@@ -110,7 +113,6 @@ namespace TechObject
         {
             Name = string.Empty;
             LuaName = string.Empty;
-            Properties = new List<BaseParameter>();
             states = new Dictionary<string, List<BaseStep>>();
             this.owner = owner;
         }
@@ -139,7 +141,6 @@ namespace TechObject
         {
             Name = name;
             LuaName = luaName;
-            Properties = baseOperationProperties;
             states = baseStates;
 
             foreach (var property in Properties ?? new List<BaseParameter>())
@@ -180,9 +181,9 @@ namespace TechObject
         }
 
         public GroupableParameters AddGroupParameter(string luaName,
-            string name, bool main)
+            string name, bool main, bool ignoreCompoundName)
         {
-            var par = new GroupableParameters(luaName, name, main);
+            var par = new GroupableParameters(luaName, name, main, ignoreCompoundName);
             InitParameter(par);
             return par;
         }
@@ -308,7 +309,6 @@ namespace TechObject
                 {
                     Name = operation.Name;
                     LuaName = operation.LuaName;
-                    Properties = operation.Properties.Select(x => x.Clone()).ToList();
                     RootProperties = [.. operation.RootProperties.Select(x => x.Clone())];
                     Parameters = new List<IBaseFloatParameter>(operation.Parameters);
                     foreach(var property in Properties)
@@ -337,7 +337,6 @@ namespace TechObject
             {
                 Name = string.Empty;
                 LuaName = string.Empty;
-                baseOperationProperties = new List<BaseParameter>();
                 states = new Dictionary<string, List<BaseStep>>();
             }
 
@@ -409,11 +408,7 @@ namespace TechObject
                 .ToDictionary(prop => prop.LuaName, prop => prop.Value));
         }
 
-        public List<BaseParameter> Properties
-        {
-            get => baseOperationProperties;
-            set => baseOperationProperties = value;
-        }
+        public List<BaseParameter> Properties => [.. RootProperties.SelectMany(r => r.GetDescendants())];
 
         public List<BaseParameter> RootProperties { get; set; } = [];
 
@@ -568,7 +563,7 @@ namespace TechObject
 
         /// <summary>
         /// Копирование объекта
-        /// </summary>
+        /// </summary> 
         /// <returns></returns>
         public BaseOperation Clone(Mode owner)
         {
@@ -579,8 +574,7 @@ namespace TechObject
             operation.owner = owner ?? Owner;
             operation.DefaultPosition = DefaultPosition;
 
-            operation.Properties = CloneProperties(operation);
-            operation.RootProperties = [.. operation.Properties.Where(p => RootProperties.Any(r => r.LuaName == p.LuaName))];
+            operation.RootProperties = CloneProperties(operation);
 
             operation.states = CloneStates(operation);
             operation.Parameters = new List<IBaseFloatParameter>(Parameters);
@@ -602,7 +596,7 @@ namespace TechObject
         {
             var properties = new List<BaseParameter>();
 
-            foreach (BaseParameter oldProperty in baseOperationProperties)
+            foreach (BaseParameter oldProperty in RootProperties)
             {
                 BaseParameter newProperty = oldProperty.Clone();
                 if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
@@ -648,7 +642,7 @@ namespace TechObject
         #region синхронизация устройств
         public void Synch(int[] array)
         {
-            foreach(var property in baseOperationProperties)
+            foreach(var property in Properties)
             {
                 property.Synch(array);
             }
@@ -658,8 +652,8 @@ namespace TechObject
         #region Реализация ITreeViewItem
         override public string[] DisplayText => [ 
             $"Доп. свойства" +
-                (baseOperationProperties.Any() ?
-                $" ({baseOperationProperties.Count})" : ""),
+                (Properties.Any() ?
+                $" ({Properties.Count})" : ""),
             string.Empty];
 
         public override bool IsCopyable => true;
@@ -676,7 +670,7 @@ namespace TechObject
         {
             if (obj is BaseOperation baseOperation)
             {
-                SetExtraProperties(baseOperation.baseOperationProperties);
+                SetExtraProperties(baseOperation.Properties);
             }
 
             return this;
@@ -700,15 +694,11 @@ namespace TechObject
 
         public void Autocomplete()
         {
-            baseOperationProperties.OfType<IAutocompletable>()
+            Properties.OfType<IAutocompletable>()
                 .Where(i => i.CanExecute)
                 .ToList()
                 .ForEach(i => i.Autocomplete());
         }
-
-        private ITreeViewItem[] items = [];
-        
-        private List<BaseParameter> baseOperationProperties;
 
         private string operationName;
         private string luaOperationName;
