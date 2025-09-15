@@ -53,6 +53,10 @@ namespace Tests.EplanDevices
                     GetRandomVCDevice() },
                 new object[] { DeviceSubType.VC_IOLINK, VC_IOLINK,
                     GetRandomVCDevice() },
+                new object[] { DeviceSubType.VC_EY, VC + "_EY",
+                    GetRandomVCDevice() },
+                new object[] { DeviceSubType.VC_IOLINK_EY, VC_IOLINK + "_EY",
+                    GetRandomVCDevice() },
                 new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomVCDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
@@ -88,7 +92,9 @@ namespace Tests.EplanDevices
             return new object[]
             {
                 new object[] { VC, VC, GetRandomVCDevice() },
+                new object[] { "VC_EY", "VC_EY", GetRandomVCDevice() },
                 new object[] { VC_IOLINK, VC_IOLINK, GetRandomVCDevice() },
+                new object[] { "VC_IOLINK_EY", "VC_IOLINK_EY", GetRandomVCDevice() },
                 new object[] { string.Empty, string.Empty,
                     GetRandomVCDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomVCDevice() },

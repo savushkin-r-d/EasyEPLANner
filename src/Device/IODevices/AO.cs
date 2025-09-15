@@ -27,9 +27,13 @@ namespace EplanDevice
                 case "AO_VIRT":
                     break;
 
-                case "AO":
-                case "":
-                    dSubType = DeviceSubType.AO;
+                case "": return SetSubType(nameof(DeviceSubType.AO));
+
+                case nameof(DeviceSubType.AO_EY):
+                case nameof(DeviceSubType.AO):
+                    if (subtype is nameof(DeviceSubType.AO_EY))
+                        RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+
                     parameters.Add(Parameter.P_MIN_V, null);
                     parameters.Add(Parameter.P_MAX_V, null);
 
@@ -71,6 +75,8 @@ namespace EplanDevice
                             return "AO";
                         case DeviceSubType.AO_VIRT:
                             return "AO_VIRT";
+                        case DeviceSubType.AO_EY:
+                            return nameof(DeviceSubType.AO_EY);
                     }
                     break;
             }
@@ -93,6 +99,16 @@ namespace EplanDevice
                                 {Tag.V, 1},
                                 {Parameter.P_MIN_V, 1},
                                 {Parameter.P_MAX_V, 1},
+                            };
+
+                        case DeviceSubType.AO_EY:
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Tag.ERR, 1}
                             };
 
                         case DeviceSubType.AO_VIRT:
