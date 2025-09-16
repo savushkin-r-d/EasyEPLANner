@@ -75,7 +75,7 @@ namespace TechObject
         /// <param name="owner">Владелец состояния (Операция)</param>
         public State(StateType stateType, IMode owner, bool needMainStep = false)
         {
-            name = stateStr[(int)stateType];
+            name = stateType.Name();
             Type = stateType;
             this.owner = owner;
             steps = new List<Step>();
@@ -673,22 +673,42 @@ namespace TechObject
             STOPPING,   // Останавливается
         }
 
-        public static readonly ReadOnlyDictionary<int, string> stateStr = new ReadOnlyDictionary<int, string>
-            (new Dictionary<int, string>()
+        public static readonly ReadOnlyDictionary<StateType, string> StateNames = 
+            new(new Dictionary<StateType, string>()
             {
-                [0] = "Простой",
-                [1] = "Выполнение",
-                [2] = "Пауза",
-                [3] = "Остановка",
-                [10] = "Запускается",
-                [11] = "Становится в паузу",
-                [12] = "Выходит из паузы",
-                [13] = "Останавливается",
+                [StateType.IDLE] = "Простой",
+                [StateType.RUN] = "Выполнение",
+                [StateType.PAUSE] = "Пауза",
+                [StateType.STOP] = "Остановка",
+                [StateType.STARTING] = "Запускается",
+                [StateType.PAUSING] = "Становится в паузу",
+                [StateType.UNPAUSING] = "Выходит из паузы",
+                [StateType.STOPPING] = "Останавливается",
             });
 
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
         private IMode owner;///< Владелец элемента
+    }
+
+
+    public static class StateTransitionMapExtension
+    {
+        public static string Name(this State.StateType type) 
+            => State.StateNames[type];
+
+        public static List<State.StateType> StateTransition(this State.StateType type) => type switch
+        {
+            State.StateType.IDLE => [State.StateType.RUN],
+            State.StateType.RUN => [State.StateType.IDLE, State.StateType.PAUSE, State.StateType.STOP],
+            State.StateType.PAUSE => [State.StateType.RUN, State.StateType.IDLE, State.StateType.STOP],
+            State.StateType.STOP => [State.StateType.IDLE],
+            State.StateType.STARTING => [State.StateType.RUN],
+            State.StateType.PAUSING => [State.StateType.PAUSE],
+            State.StateType.UNPAUSING => [State.StateType.RUN],
+            State.StateType.STOPPING => [State.StateType.STOP],
+            _ => []
+        };
     }
 }
