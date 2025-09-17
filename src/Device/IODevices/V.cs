@@ -6,7 +6,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство - клапан.
     /// </summary>
-    sealed public class V : IODevice
+    sealed public class V : IODevice, ISetupTerminal
     {
         public V(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -404,6 +404,26 @@ namespace EplanDevice
             }
 
             return null;
+        }
+
+        public void SetupTerminal(string terminal, string action, int clamp)
+        {
+            if (DeviceSubType is DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
+            {
+                var rtParName = action switch
+                {
+                    "Открыть" => RuntimeParameter.R_ID_ON,
+                    "Открыть ВС" => RuntimeParameter.R_ID_UPPER_SEAT,
+                    "Открыть НС" => RuntimeParameter.R_ID_LOWER_SEAT,
+                    _ => ""
+                };
+
+                SetRuntimeParameter(rtParName, clamp);
+            }
+            else
+            {
+                SetRuntimeParameter(RuntimeParameter.R_VTUG_NUMBER, clamp);
+            }
         }
     }
 }

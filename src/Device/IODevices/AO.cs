@@ -5,7 +5,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство - аналоговый выход.
     /// </summary>
-    sealed public class AO : IODevice
+    sealed public class AO : IODevice, ISetupTerminal
     {
         public AO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,
@@ -29,10 +29,19 @@ namespace EplanDevice
 
                 case "": return SetSubType(nameof(DeviceSubType.AO));
 
-                case nameof(DeviceSubType.AO_EY):
                 case nameof(DeviceSubType.AO):
                     if (subtype is nameof(DeviceSubType.AO_EY))
                         RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
+
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    break;
+
+                case nameof(DeviceSubType.AO_EY):
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+                    properties.Add(Property.TERMINAL, null);
 
                     parameters.Add(Parameter.P_MIN_V, null);
                     parameters.Add(Parameter.P_MAX_V, null);
@@ -122,6 +131,15 @@ namespace EplanDevice
             }
 
             return null;
+        }
+
+        public void SetupTerminal(string terminal, string action, int clamp)
+        {
+            if (DeviceSubType is not DeviceSubType.AO_EY)
+                return;
+
+            SetProperty(Property.TERMINAL, terminal);
+            SetRuntimeParameter(RuntimeParameter.R_EY_NUMBER, clamp);
         }
     }
 }
