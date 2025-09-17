@@ -877,6 +877,22 @@ namespace Tests.EplanDevices
             };
         }
 
+
+        [TestCase(nameof(DeviceSubType.V_IOLINK_VTUG_DO1), "", 1, nameof(IODevice.RuntimeParameter.R_VTUG_NUMBER))]
+        [TestCase(nameof(DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3), "Открыть", 2, nameof(IODevice.RuntimeParameter.R_ID_ON))]
+        [TestCase(nameof(DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3), "Открыть ВС", 3, nameof(IODevice.RuntimeParameter.R_ID_UPPER_SEAT))]
+        [TestCase(nameof(DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3), "Открыть НС", 4, nameof(IODevice.RuntimeParameter.R_ID_LOWER_SEAT))]
+        public void SetupTerminal(string subtype, string action, int vtugNumber, string parameter)
+        {
+            var dev = (V)GetRandomVDevice();
+
+            dev.SetSubType(subtype);
+
+            dev.SetupTerminal("", action, vtugNumber);
+
+            Assert.AreEqual(vtugNumber, dev.RuntimeParameters[parameter]);
+        }
+
         /// <summary>
         /// Генератор V устройств
         /// </summary>

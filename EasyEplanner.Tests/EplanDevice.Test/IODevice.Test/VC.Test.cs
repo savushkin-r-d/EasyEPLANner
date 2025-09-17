@@ -297,6 +297,20 @@ namespace Tests.EplanDevices
             };
         }
 
+        [Test]
+        public void SetupTerminal()
+        {
+            var dev = (VC)GetRandomVCDevice();
+
+            dev.SetSubType("VC_EY");
+
+            dev.SetupTerminal("OBJ1EY1", "", 1);
+
+            Assert.AreEqual(1, dev.RuntimeParameters[IODevice.RuntimeParameter.R_EY_NUMBER]);
+            Assert.AreEqual("OBJ1EY1", dev.Properties[IODevice.Property.TERMINAL]);
+        }
+
+
         /// <summary>
         /// Генератор VC устройств
         /// </summary>
