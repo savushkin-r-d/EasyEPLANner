@@ -26,14 +26,12 @@ namespace EplanDevice
             string errStr = string.Empty;
             switch (subType)
             {
-               
                 case nameof(DeviceSubType.VC):
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
                 case nameof(DeviceSubType.VC_EY):
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
-                    
                     RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER, null);
                     properties.Add(Property.TERMINAL, null);
                     break;

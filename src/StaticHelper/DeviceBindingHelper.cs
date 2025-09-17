@@ -43,11 +43,11 @@ namespace StaticHelper
             string clampNumberAsString = deviceClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
 
-            bool haveValveTerminalOrCoverter = 
+            bool haveValveTerminalOrConverter = 
                 deviceClampFunction.Name.Contains(DeviceManager.ValveTerminalName) ||
                 deviceClampFunction.Name.Contains("-EY");
 
-            if (haveValveTerminalOrCoverter)
+            if (haveValveTerminalOrConverter)
             {
                 Function IOModuleFunction =
                     ioHelper.GetIOModuleFunction(deviceClampFunction);
