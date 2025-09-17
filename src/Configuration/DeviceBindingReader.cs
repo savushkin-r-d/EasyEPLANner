@@ -96,7 +96,7 @@ namespace EasyEPlanner
         [ExcludeFromCodeCoverage]
         public void ReadModuleClampBinding(IEplanFunction clampFunction)
         {
-            if (Regex.Match(clampFunction.Name, @"=*-Y(?<n>\d+)", RegexOptions.None, TimeSpan.FromMilliseconds(100))
+            if (Regex.Match(clampFunction.Name, @"=*-E?Y(?<n>\d+)", RegexOptions.None, TimeSpan.FromMilliseconds(100))
                 .Success)
             {
                 // чтение привязки к пневмоострову 
@@ -137,6 +137,7 @@ namespace EasyEPlanner
         /// <param name="node">Узел</param>
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
+        [ExcludeFromCodeCoverage]
         public void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
             IEplanFunction clampFunction)
         {
@@ -155,12 +156,16 @@ namespace EasyEPlanner
             List<string> comments = null;
             List<string> actions = null;
 
-            const string ValveTerminalNamePattern = @"=*-Y(?<n>\d+)";
+            const string ValveTerminalNamePattern = @"=*-E?Y(?<n>\d+)";
             var valveTerminalRegex = new Regex(ValveTerminalNamePattern);
             var valveTerminalMatch = valveTerminalRegex.Match(description);
             if (valveTerminalMatch.Success && descriptionMatches.Count == 1)
             {
-                description = ReadValveTerminalBinding(description);
+                var terminal = description.Split(["\n", "\r\n"], StringSplitOptions.None)[0];
+                var subFunctions = functionsForSearching.FirstOrDefault(f => f.Name.Contains(terminal))?.SubFunctions ?? [];
+
+                description = terminal + ReadValveTerminalClampsBinding(subFunctions, terminal);
+
                 CorrectDataMultipleBindingToValveTerminal(ref description,
                     out actions, out comments);
             }
@@ -261,160 +266,58 @@ namespace EasyEPlanner
         private readonly Dictionary<int, string> CurrentReadingModuleClampsDescription = new Dictionary<int, string>();
 
         /// <summary>
-        /// Чтение привязки пневмоострова.
-        /// </summary>
-        private string ReadValveTerminalBinding(string description)
-        {
-            description = GetValveTerminalNameFromDescription(description);
-            Function[] subFunctions = GetClampsByValveTerminalName(
-                description);
-            description += ReadValveTerminalClampsBinding(subFunctions);
-
-            return description;
-        }
-
-        /// <summary>
-        /// Получить ОУ пневмоострова из его описания.
-        /// </summary>
-        /// <param name="description">Описание</param>
-        /// <returns></returns>
-        private string GetValveTerminalNameFromDescription(string description)
-        {
-            int eplanNameLength;
-
-            if (description.Contains(CommonConst.NewLineWithCarriageReturn) ==
-                true)
-            {
-                eplanNameLength = description.IndexOf(CommonConst
-                    .NewLineWithCarriageReturn);
-                if (eplanNameLength > 0)
-                {
-                    description = description.Substring(0, eplanNameLength);
-                }
-            }
-            else
-            {
-                eplanNameLength = description.IndexOf(CommonConst.NewLine);
-                if (eplanNameLength > 0)
-                {
-                    description = description.Substring(0, eplanNameLength);
-                }
-            }
-
-            return description;
-        }
-
-        /// <summary>
-        /// Получить функции клемм пневмоострова по его ОУ.
-        /// </summary>
-        /// <param name="name">ОУ пневмоострова</param>
-        /// <returns></returns>
-        private Function[] GetClampsByValveTerminalName(string description)
-        {
-            var subFunctions = new Function[0];
-            foreach (var valveTerminalFunction in functionsForSearching)
-            {
-                if (valveTerminalFunction.Name.Contains(description))
-                {
-                    subFunctions = valveTerminalFunction.SubFunctions;
-                    break;
-                }
-            }
-
-            return subFunctions;
-        }
-
-        /// <summary>
         /// Чтение привязки клемм пневмоострова.
         /// </summary>
         /// <param name="subFunctions">Функции клемм пневмоострова</param>
         /// <returns></returns>
-        private string ReadValveTerminalClampsBinding(Function[] subFunctions)
+        [ExcludeFromCodeCoverage]
+        private string ReadValveTerminalClampsBinding(Function[] subFunctions, string terminal)
         {
             var descriptionBuilder = new StringBuilder();
-            foreach (var function in subFunctions)
+            foreach (var function in subFunctions.Where(f => f.Category is Function.Enums.Category.PLCTerminal))
             {
-                if (function.Category != Function.Enums.Category.PLCTerminal)
-                {
-                    continue;
-                }
-
                 string clampNumber = function.Properties.
                 FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
                 string clampBindedDevice = apiHelper.GetFunctionalText(
                     function);
 
                 bool isInt = int.TryParse(clampNumber, out _);
-                if (isInt == true &&
-                    clampBindedDevice.Length != 0 &&
-                    clampBindedDevice != CommonConst.Reserve)
+                if (isInt != true ||
+                    clampBindedDevice.Length == 0 ||
+                    clampBindedDevice == CommonConst.Reserve)
                 {
-                    var deviceMatch = Regex.Match(clampBindedDevice,
-                        DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
-                    while (deviceMatch.Success)
+                    continue;
+                }
+
+                var deviceMatch = Regex.Match(clampBindedDevice,
+                    DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                while (deviceMatch.Success)
+                {
+                    string deviceName = deviceMatch.Groups["name"].Value;
+                    var actionMatch = DeviceBindingHelper.FindCorrectClampCommentMatch(clampBindedDevice);
+                    var action = actionMatch.Value;
+
+                    descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
+                        .Append(deviceName);
+                    if (action != string.Empty)
                     {
-                        string deviceName = deviceMatch.Groups["name"].Value;
-                        var actionMatch = DeviceBindingHelper.FindCorrectClampCommentMatch(clampBindedDevice);
-                        var action = actionMatch.Value;
-
                         descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
-                            .Append(deviceName);
-                        if (action != string.Empty)
-                        {
-                            descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
-                                .Append(action);
-                        }
-                        descriptionBuilder.Append("\t");
-
-
-                        int vtugNumber = Convert.ToInt32(clampNumber);
-                        var device = DeviceManager.GetInstance().GetDevice(deviceName);
-
-                        SetValveRTParameters(device, action, vtugNumber);
-
-                        deviceMatch = deviceMatch.NextMatch();
+                            .Append(action);
                     }
+                    descriptionBuilder.Append("\t");
+
+
+                    int vtugNumber = Convert.ToInt32(clampNumber);
+                    terminal = DeviceManager.GetInstance().GetDevice(terminal)?.Name;
+
+                    var device = DeviceManager.GetInstance().GetDevice(deviceName);
+                    (device as ISetupTerminal)?.SetupTerminal(terminal, action, vtugNumber);
+
+                    deviceMatch = deviceMatch.NextMatch();
                 }
             }
 
             return descriptionBuilder.ToString().TrimEnd('\t');
-        }
-
-        /// <summary>
-        /// Установка номера клемы пневмоострова в рабочие параметры для клапана  
-        /// </summary>
-        /// <param name="device">Клапан</param>
-        /// <param name="action">Действие клеммы</param>
-        /// <param name="vtugNumber">Номер клеммы пневмоострова</param>
-        private void SetValveRTParameters(IODevice device, string action, int vtugNumber)
-        {
-            if (!(device != null && device.DeviceType == DeviceType.V))
-                return;
-
-            if (device.DeviceSubType == DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
-            {
-                string rtParName = string.Empty;
-
-
-                switch (action)
-                {
-                    case "Открыть":
-                        rtParName = "R_ID_ON";
-                        break;
-                    case "Открыть ВС":
-                        rtParName = "R_ID_UPPER_SEAT";
-                        break;
-                    case "Открыть НС":
-                        rtParName = "R_ID_LOWER_SEAT";
-                        break;
-                }
-
-                device.SetRuntimeParameter(rtParName, vtugNumber);
-            }
-            else
-            {
-                device.SetRuntimeParameter("R_VTUG_NUMBER", vtugNumber);
-            }
         }
 
         /// <summary>

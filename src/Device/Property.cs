@@ -47,6 +47,9 @@ namespace EplanDevice
             public static readonly Property AO_dev =
                 new(nameof(AO_dev), "Сигнал AO");
 
+            /// <summary> Терминал. </summary>
+            public static readonly Property TERMINAL =
+                new(nameof(TERMINAL), "Терминал");
 
             /// <summary>
             /// Неявное преобразование параметра в строку с названием

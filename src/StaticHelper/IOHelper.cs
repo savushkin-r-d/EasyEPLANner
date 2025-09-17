@@ -101,7 +101,8 @@ namespace StaticHelper
         {
             var isValveTerminalClampFunction = false;
             Function IOModuleFunction = null;
-            if (clampFunction.Name.Contains(DeviceManager.ValveTerminalName))
+            if (clampFunction.Name.Contains(DeviceManager.ValveTerminalName) ||
+                clampFunction.Name.Contains("-EY"))
             {
                 IOModuleFunction = GetValveTerminalIOModuleFunction(
                     clampFunction);
