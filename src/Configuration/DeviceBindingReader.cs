@@ -137,6 +137,7 @@ namespace EasyEPlanner
         /// <param name="node">Узел</param>
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
+        [ExcludeFromCodeCoverage]
         public void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
             IEplanFunction clampFunction)
         {
@@ -269,6 +270,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="subFunctions">Функции клемм пневмоострова</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private string ReadValveTerminalClampsBinding(Function[] subFunctions, string terminal)
         {
             var descriptionBuilder = new StringBuilder();
