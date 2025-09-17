@@ -164,7 +164,7 @@ namespace EasyEPlanner
                 var terminal = description.Split(["\n", "\r\n"], StringSplitOptions.None)[0];
                 var subFunctions = functionsForSearching.FirstOrDefault(f => f.Name.Contains(terminal))?.SubFunctions ?? [];
 
-                description += ReadValveTerminalClampsBinding(subFunctions, terminal);
+                description = terminal + ReadValveTerminalClampsBinding(subFunctions, terminal);
 
                 CorrectDataMultipleBindingToValveTerminal(ref description,
                     out actions, out comments);
