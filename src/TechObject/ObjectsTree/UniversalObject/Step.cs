@@ -346,49 +346,8 @@ namespace TechObject
 
         public void SetJumpToStateIf()
         {
-            var IDLE = (int)State.StateType.IDLE;
-            var RUN = (int)State.StateType.RUN;
-            var PAUSE = (int)State.StateType.PAUSE;
-            var STOP = (int)State.StateType.STOP;
-
-            var CBParameterValues = new Dictionary<string, string>();
-
-            if (Owner.Type == State.StateType.RUN)
-            {
-                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
-                CBParameterValues.Add(State.stateStr[PAUSE], PAUSE.ToString());
-                CBParameterValues.Add(State.stateStr[STOP], STOP.ToString());
-            }
-            else if (Owner.Type == State.StateType.IDLE)
-            {
-                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
-            }
-            else if (Owner.Type == State.StateType.STARTING)
-            {
-                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
-            }
-            else if (Owner.Type == State.StateType.PAUSING)
-            {
-                CBParameterValues.Add( State.stateStr[PAUSE], PAUSE.ToString());
-            }
-            else if (Owner.Type == State.StateType.PAUSE)
-            {
-                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
-                CBParameterValues.Add(State.stateStr[STOP], STOP.ToString());
-            }
-            else if (Owner.Type == State.StateType.UNPAUSING)
-            {
-                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
-            }
-            else if (Owner.Type == State.StateType.STOPPING)
-            {
-                CBParameterValues.Add( State.stateStr[STOP], STOP.ToString());
-            }
-            else if (Owner.Type == State.StateType.STOP)
-            {
-                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
-            }
-            else return;
+            var CBParameterValues = Owner.Type.StateTransition()
+                .ToDictionary(t => t.Name(), t => t.ToString());
 
             var toStateByConditionAction = new ActionGroupCustom(
             "Переход к состоянию по условию", this, "jump_if",

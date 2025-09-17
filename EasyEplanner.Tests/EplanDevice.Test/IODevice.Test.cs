@@ -268,5 +268,18 @@ namespace Tests.EplanDevices
 
             Assert.AreEqual(expectedResult, dev.Check());
         }
+
+
+        [Test]
+        public void Check_NameLimit()
+        {
+            IODevice dev = new DO("QWERTYUIOP123456789DO1234567890", "+QWERTYUIOP123456789-DO1234567890", "Test device", 1234567890, "QWERTYUIOP", 123456789);
+            dev.SetSubType("DO");
+
+            string expectedResult = $"QWERTYUIOP123456789DO1234567890 : превышена длина названия устройства ({IODevice.DeviceNameLimit} символов).\n" +
+                "QWERTYUIOP123456789DO1234567890 : не привязанный канал DO \"\".\n";
+
+            Assert.AreEqual(expectedResult, dev.Check());
+        }
     }
 }
