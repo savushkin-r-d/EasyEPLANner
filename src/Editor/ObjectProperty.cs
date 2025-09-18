@@ -222,13 +222,7 @@ namespace Editor
             return null;
         }
 
-        public ITreeViewItem[] Items
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public virtual ITreeViewItem[] Items => null;
 
         public virtual int[] EditablePart
         {
@@ -535,6 +529,8 @@ namespace Editor
         }
 
         public virtual string SystemIdentifier => "";
+
+        public virtual bool Visibility { get; set; } = true;
         #endregion
 
         public virtual void UpdateOnGenericTechObject(ObjectProperty genericProperty)

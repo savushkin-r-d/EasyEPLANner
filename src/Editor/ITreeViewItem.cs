@@ -97,7 +97,7 @@ namespace Editor
         bool IsInsertableCopy { get; }
 
         /// <summary>    
-        /// Вставка ранее скопированного объекта. Ctrl + V
+        /// Вставка ранее скопированного объекта. Ctrl + Enabled
         /// </summary>
         ITreeViewItem InsertCopy(object obj);
 
@@ -296,6 +296,11 @@ namespace Editor
         /// Помечен на вырезание
         /// </summary>
         bool MarkToCut { get; set; }
+
+        /// <summary>
+        /// Элемент скрыт
+        /// </summary>
+        bool Visibility { get; set; }
 
         /// <summary>
         /// Визуализатор для ячеек

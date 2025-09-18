@@ -102,7 +102,8 @@ namespace Editor
                 };
 
             // Делегат получения дочерних элементов
-            editorTView.ChildrenGetter = obj => (obj as ITreeViewItem).Items;
+            editorTView.ChildrenGetter = obj => (obj as ITreeViewItem)?.Items
+                ?.Where(i => i.Visibility);
 
             // Настройка и добавление колонок
             var firstColumn = new OLVColumn("Название", "DisplayText[0]");
