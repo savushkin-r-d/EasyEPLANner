@@ -70,12 +70,17 @@ namespace TechObject
             }
         }
 
+        public override bool ShowWarningBeforeDelete => true;
+
         override public void Clear()
         {
             foreach (IAction subAction in SubActions)
             {
                 subAction.Clear();
             }
+
+            if (Parent is Step)
+                SubActions = [.. SubActions.Take(1)];
         }
 
         override public string[] DisplayText

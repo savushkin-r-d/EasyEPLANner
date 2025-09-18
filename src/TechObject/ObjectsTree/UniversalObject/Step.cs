@@ -808,15 +808,13 @@ namespace TechObject
 
         override public bool Delete(object child)
         {
-            var action = child as IAction;
-            if (action != null)
+            if (child is IAction action)
             {
                 action.Clear();
             }
 
-            if (child.GetType() == typeof(ObjectProperty))
+            if (child is ObjectProperty objectProperty)
             {
-                var objectProperty = child as ObjectProperty;
                 objectProperty.Delete(this);
             }
 
