@@ -535,6 +535,8 @@ namespace Editor
         }
 
         public virtual string SystemIdentifier => "";
+
+        public virtual bool Visibility { get; set; } = true;
         #endregion
 
         public virtual void UpdateOnGenericTechObject(ObjectProperty genericProperty)

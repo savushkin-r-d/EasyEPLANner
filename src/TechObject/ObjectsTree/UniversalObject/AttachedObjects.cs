@@ -259,16 +259,17 @@ namespace TechObject
                     .AggregateParameters;
 
                 var addingProperties = new List<BaseParameter>();
-                if (properties.Count != 0)
-                {
-                    addingProperties.AddRange(properties);
-                }
-
                 if (attachedBaseTechObject.MainAggregateParameter != null)
                 {
                     addingProperties.Add(attachedBaseTechObject
                         .MainAggregateParameter);
                 }
+
+                if (properties.Count != 0)
+                {
+                    addingProperties.AddRange(properties);
+                }
+
                 TechObject thisThechObject = owner;
                 List<Mode> modes = thisThechObject.ModesManager.Modes;
                 foreach (var mode in modes)

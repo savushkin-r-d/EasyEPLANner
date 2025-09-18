@@ -298,6 +298,11 @@ namespace Editor
         bool MarkToCut { get; set; }
 
         /// <summary>
+        /// Элемент скрыт
+        /// </summary>
+        bool Visibility { get; set; }
+
+        /// <summary>
         /// Визуализатор для ячеек
         /// </summary>
         IRenderer[] CellRenderer { get; }
