@@ -158,6 +158,8 @@ namespace TechObject
 
         public int Count => parameters.Count;
 
+        public List<SystemParam> Parameters => parameters;
+
         private string name;
         private string nameLua;
         private List<SystemParam> parameters;
