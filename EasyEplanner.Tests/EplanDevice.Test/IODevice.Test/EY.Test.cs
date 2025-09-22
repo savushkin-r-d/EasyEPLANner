@@ -59,6 +59,6 @@ namespace Tests.EplanDevices
         }
 
 
-        private static IODevice GetEY() =>  new EY("OBJ1EY1", "+OBJ1-EY1", "descr", 1, "OBJ", 1);
+        private static IODevice GetEY() =>  new EY("OBJ1EY1", "+OBJ1-EY1", "descr", 1, "OBJ", 1, "");
     }
 }
