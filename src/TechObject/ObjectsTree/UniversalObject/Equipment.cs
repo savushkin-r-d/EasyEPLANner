@@ -504,7 +504,7 @@ namespace TechObject
             var techObj = owner.NameEplan;
             var techN = owner.TechNumber;
 
-            foreach(var item in Items.OfType<BaseParameter>())
+            foreach (var item in Items.OfType<BaseParameter>())
             {
                 if (item.Value == item.DefaultValue && item.Value != string.Empty ||
                     item.Value == string.Empty && item.DefaultValue != string.Empty)
