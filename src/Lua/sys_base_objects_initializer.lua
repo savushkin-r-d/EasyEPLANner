@@ -126,7 +126,9 @@ init_operation_parameters = function(operation, params)
     init_float_parameters(operation, floatParameters);
 end
 
-
+---Инициализация групповых параметров
+---@param object table объект для инициализация параметра
+---@param groups table описание групповых параметров
 init_group_parameters = function (object, groups)
     for key, group in pairs(groups) do
         local luaName = group.luaName or key

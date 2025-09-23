@@ -112,8 +112,7 @@ namespace TechObject
 
         public void AddParameter(BaseParameter parameter)
         {
-            if (IgnoreCompoundName is false)
-
+            if (!IgnoreCompoundName)
                 parameter.LuaName = $"{LuaName}_{parameter.LuaName}";
 
             if (Owner is GroupableParameters group)
@@ -121,12 +120,6 @@ namespace TechObject
 
             if (Owner is BaseOperation baseOperation)        
                 baseOperation.Properties.Add(parameter);
-        }
-
-        public void AddFloatParameter(string luaName, string name,
-            double value, string meter)
-        {
-            // do nothing
         }
 
         public override List<BaseParameter> GetDescendants()
