@@ -55,8 +55,6 @@ namespace Tests.EplanDevices
                     GetRandomVCDevice() },
                 new object[] { DeviceSubType.VC_EY, VC + "_EY",
                     GetRandomVCDevice() },
-                new object[] { DeviceSubType.VC_IOLINK_EY, VC_IOLINK + "_EY",
-                    GetRandomVCDevice() },
                 new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomVCDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
@@ -94,7 +92,6 @@ namespace Tests.EplanDevices
                 new object[] { VC, VC, GetRandomVCDevice() },
                 new object[] { "VC_EY", "VC_EY", GetRandomVCDevice() },
                 new object[] { VC_IOLINK, VC_IOLINK, GetRandomVCDevice() },
-                new object[] { "VC_IOLINK_EY", "VC_IOLINK_EY", GetRandomVCDevice() },
                 new object[] { string.Empty, string.Empty,
                     GetRandomVCDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomVCDevice() },
@@ -299,6 +296,20 @@ namespace Tests.EplanDevices
                 }
             };
         }
+
+        [Test]
+        public void SetupTerminal()
+        {
+            var dev = (VC)GetRandomVCDevice();
+
+            dev.SetSubType("VC_EY");
+
+            dev.SetupTerminal("OBJ1EY1", "", 1);
+
+            Assert.AreEqual(1, dev.RuntimeParameters[IODevice.RuntimeParameter.R_EY_NUMBER]);
+            Assert.AreEqual("OBJ1EY1", dev.Properties[IODevice.Property.TERMINAL]);
+        }
+
 
         /// <summary>
         /// Генератор VC устройств

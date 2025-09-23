@@ -18,7 +18,7 @@ namespace EasyEplanner.Tests
         {
             var state = new State(State.StateType.STOP, null, needMainStep);
 
-            foreach(var stepName in stepNames)
+            foreach (var stepName in stepNames)
             {
                 state.AddStep(stepName, string.Empty);
             }
@@ -28,7 +28,7 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual(expectedStepsCount, state.Steps.Count);
                 Assert.IsTrue(state.Steps.First().GetStepName()
                     .Equals(Step.MainStepName));
-                foreach(var stepName in stepNames)
+                foreach (var stepName in stepNames)
                 {
                     Assert.IsTrue(state.Steps
                         .Any(x => x.GetStepName() == stepName));
@@ -50,7 +50,7 @@ namespace EasyEplanner.Tests
                 {
                     { "IDLE", new List<BaseStep>() { new BaseStep(baseStep, baseStep) } },
                 }));
-           
+
 
             var state = new State(State.StateType.IDLE, mode);
             var genericState = new State(State.StateType.IDLE, mode);
@@ -140,10 +140,10 @@ namespace EasyEplanner.Tests
                     }
                 );
 
-            var operation = Mock.Of<IMode>(m => 
+            var operation = Mock.Of<IMode>(m =>
                 m.TechObject == techObject &&
                 m.BaseOperation == baseOperation);
-           
+
 
             var state = new State(State.StateType.RUN, operation, true);
 
@@ -193,6 +193,20 @@ namespace EasyEplanner.Tests
                 var replacedStep_null = state.Replace(null, null) as Step;
                 Assert.IsNull(replacedStep_null);
             });
+        }
+
+
+        [TestCase(State.StateType.IDLE, State.StateType.RUN)]
+        [TestCase(State.StateType.RUN, State.StateType.IDLE, State.StateType.PAUSE, State.StateType.STOP)]
+        [TestCase(State.StateType.PAUSE, State.StateType.RUN, State.StateType.IDLE, State.StateType.STOP)]
+        [TestCase(State.StateType.STOP, State.StateType.IDLE)]
+        [TestCase(State.StateType.STARTING, State.StateType.RUN)]
+        [TestCase(State.StateType.PAUSING, State.StateType.PAUSE)]
+        [TestCase(State.StateType.UNPAUSING, State.StateType.RUN)]
+        [TestCase(State.StateType.STOPPING, State.StateType.STOP)]
+        public void TransitionsTest(State.StateType state, params State.StateType[] expectedMap)
+        {
+            CollectionAssert.AreEqual(expectedMap, state.StateTransition());
         }
     }
 }

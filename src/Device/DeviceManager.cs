@@ -672,7 +672,7 @@ namespace EplanDevice
 
                 case nameof(EY):
                     dev = new EY(name, eplanName, description, deviceNumber, 
-                        objectName, objectNumber);
+                        objectName, objectNumber, articleName);
                     break;
 
                 default:
@@ -1208,7 +1208,7 @@ namespace EplanDevice
         /// <summary>
         /// Шаблон для разбора ОУ пневмоострова
         /// </summary>
-        public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
+        public const string valveTerminalPattern = @"([A-Z0-9]+\-E?[Y0-9]+)";
 
         private static IODevice cap =
             new IODevice(StaticHelper.CommonConst.Cap, string.Empty,
