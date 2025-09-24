@@ -42,37 +42,6 @@ namespace TechObject
             return res;
         }
 
-        override public bool SetNewValue(string newName, int column)
-        => column switch
-        {
-            0 => SetName(newName),
-            1 => SetLuaName(newName),
-            _ => false,
-        };
-
-        public bool SetName(string name)
-        {
-            this.name = name;
-            OnValueChanged(this);
-
-            return true;
-        }
-
-        public bool SetLuaName(string luaName)
-        {
-            if (luaName == string.Empty ||
-                Regex.IsMatch(luaName, CommonConst.LuaNamePattern,
-                    RegexOptions.None, TimeSpan.FromMilliseconds(100)))
-            {
-                LuaName = luaName;
-                OnValueChanged(this);
-
-                return true;
-            }
-
-            return false;
-        }
-
         #region Реализация ITreeViewItem
         override public string[] DisplayText => [
             $"{getN(this)}. {name} - {value.Value} {meter.Value}.",
