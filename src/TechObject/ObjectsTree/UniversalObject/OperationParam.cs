@@ -40,13 +40,13 @@ namespace TechObject
             }
         }
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items.ToArray();
-            }
-        }
+        public override bool IsEditable => true;
+
+        public override string[] EditText => par.EditText;
+
+        public override int[] EditablePart => [ -1, 1 ];
+
+        override public ITreeViewItem[] Items => [.. items];
         #endregion
 
         private List<ITreeViewItem> items;
