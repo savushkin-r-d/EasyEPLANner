@@ -217,7 +217,8 @@ namespace InterprojectExchange
                 return;
             }
 
-            var selectedBind = bindedSignalsList.SelectedItems[0];
+            var selectedBind = bindedSignalsList.SelectedItems
+                .OfType<ListViewItem>().FirstOrDefault();
             var editBind = !filterConfiguration.HideBindedSignals;
 
             if (editBind)
@@ -237,8 +238,8 @@ namespace InterprojectExchange
                     {
                         ShowErrorMessage("Ошибка изменения связи");
                     }
+                    return;
                 }
-                return;
             }
 
 
@@ -268,7 +269,8 @@ namespace InterprojectExchange
             }
 
 
-            var selectedBind = bindedSignalsList.SelectedItems[0];
+            var selectedBind = bindedSignalsList.SelectedItems
+                 .OfType<ListViewItem>().FirstOrDefault();
             var editBind = !filterConfiguration.HideBindedSignals;
 
             if (editBind)
@@ -289,8 +291,8 @@ namespace InterprojectExchange
                     {
                         ShowErrorMessage("Ошибка изменения связи");
                     }
+                    return;
                 }
-                return;
             }
 
             string currProjDevType = e.Item.Tag.ToString();
