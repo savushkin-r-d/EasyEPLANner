@@ -221,25 +221,22 @@ namespace InterprojectExchange
                 .OfType<ListViewItem>().FirstOrDefault();
             var editBind = !filterConfiguration.HideBindedSignals;
 
-            if (editBind)
+            if (editBind && selectedBind is not null)
             {
-                if (selectedBind is not null)
+                bool mainProject = false;
+                string groupName = selectedBind.Group.Name;
+                bool success = interprojectExchange.UpdateProjectBinding(
+                    groupName, selectedBind.SubItems[1].Text, advProjDev,
+                    mainProject, out bool needSwap);
+                if (success)
                 {
-                    bool mainProject = false;
-                    string groupName = selectedBind.Group.Name;
-                    bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedBind.SubItems[1].Text, advProjDev,
-                        mainProject, out bool needSwap);
-                    if (success)
-                    {
-                        ReplaceSignal(needSwap, advProjDev, selectedBind, 1);
-                    }
-                    else
-                    {
-                        ShowErrorMessage("Ошибка изменения связи");
-                    }
-                    return;
+                    ReplaceSignal(needSwap, advProjDev, selectedBind, 1);
                 }
+                else
+                {
+                    ShowErrorMessage("Ошибка изменения связи");
+                }
+                return;
             }
 
 
@@ -273,26 +270,22 @@ namespace InterprojectExchange
                  .OfType<ListViewItem>().FirstOrDefault();
             var editBind = !filterConfiguration.HideBindedSignals;
 
-            if (editBind)
-            { 
-                if (selectedBind is not null)
+            if (editBind && selectedBind is not null)
+            {
+                bool mainProject = true;
+                string groupName = selectedBind.Group.Name;
+                bool success = interprojectExchange.UpdateProjectBinding(
+                    groupName, selectedBind.SubItems[0].Text, currProjDev,
+                    mainProject, out bool needSwap);
+                if (success)
                 {
-
-                    bool mainProject = true;
-                    string groupName = selectedBind.Group.Name;
-                    bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedBind.SubItems[0].Text, currProjDev,
-                        mainProject, out bool needSwap);
-                    if (success)
-                    {
-                        ReplaceSignal(needSwap, currProjDev, selectedBind, 0);
-                    }
-                    else
-                    {
-                        ShowErrorMessage("Ошибка изменения связи");
-                    }
-                    return;
+                    ReplaceSignal(needSwap, currProjDev, selectedBind, 0);
                 }
+                else
+                {
+                    ShowErrorMessage("Ошибка изменения связи");
+                }
+                return;
             }
 
             string currProjDevType = e.Item.Tag.ToString();
