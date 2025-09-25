@@ -25,7 +25,7 @@ namespace TechObject
 
             items = [this.value, this.meter];
 
-            LuaName = nameLua ?? "";
+            LuaName = nameLua ?? string.Empty;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace TechObject
 
         public override int[] EditablePart => [0, 1];
 
-        public override string[] EditText => [name, LuaName];
+        public override string[] EditText => [Name, LuaName];
 
         override public ITreeViewItem[] Items => [.. items];
         #endregion
