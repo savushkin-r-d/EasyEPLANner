@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Editor;
+using NUnit.Framework;
 using TechObject;
 
 namespace Tests.TechObject
@@ -103,6 +104,18 @@ namespace Tests.TechObject
         public void LuaName_DefaultParam_ReturnsEmptyValue()
         {
             Assert.IsEmpty(GetDefault().LuaName);
+        }
+
+        [Test]
+        public void PropertiesTest()
+        {
+            var param = GetDefault();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(param.IsEditable);
+                CollectionAssert.AreEqual(new int[] { 0, 1 }, param.EditablePart);
+            });
         }
 
         private SystemParam GetDefault()

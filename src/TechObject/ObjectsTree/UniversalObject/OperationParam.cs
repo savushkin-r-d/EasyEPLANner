@@ -23,28 +23,16 @@ namespace TechObject
             ];
         }
 
-        public Param Param
-        {
-            get
-            {
-                return par;
-            }
-        }
+        public Param Param => par;
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                return par.DisplayText;
-            }
-        }
+        override public string[] DisplayText => par.DisplayText;
 
         public override bool IsEditable => true;
 
         public override string[] EditText => par.EditText;
 
-        public override int[] EditablePart => [ -1, 1 ];
+        public override int[] EditablePart => [0, 1];
 
         override public ITreeViewItem[] Items => [.. items];
         #endregion
