@@ -111,7 +111,6 @@ end
 init_operation_parameters = function(operation, params)
     local group = params.group or {}
     init_group_parameters(operation, group)
-    --init_operation_parameters(operation, group)
 
     -- Добавить активные параметры операции
     local activeParameters = params.active or { }

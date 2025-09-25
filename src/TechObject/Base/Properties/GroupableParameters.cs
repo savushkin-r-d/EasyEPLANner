@@ -39,10 +39,10 @@ namespace TechObject
 
         public override bool SetNewValue(string newValue)
         {
-            var succes = base.SetNewValue(newValue);
+            var success = base.SetNewValue(newValue);
             SetUpParametersVisibility();
 
-            return succes;
+            return success;
         }
 
         private bool Enabled => Value is trueLogicValue || !Main;

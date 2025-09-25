@@ -218,7 +218,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// 
+        /// Инициализация добавленного из Lua параметра
         /// </summary>
         /// <param name="parameter"></param>
         private void InitParameter(BaseParameter parameter)
@@ -450,7 +450,7 @@ namespace TechObject
 
             foreach (var property in properties)
             { 
-                /// Если свойство с таким именем уже добавленно - пропускаем
+                /// Если свойство с таким именем уже добавлено - пропускаем
                 if (Properties.Any(x => x.LuaName == property.LuaName)
                     || property.LuaName == main?.LuaName)
                     continue;
