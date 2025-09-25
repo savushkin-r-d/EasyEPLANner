@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TechObject;
 using Moq;
 using System.Reflection;
+using EplanDevice;
+using System;
 
 namespace EasyEplanner.Tests
 {
@@ -251,6 +253,24 @@ namespace EasyEplanner.Tests
                     false,
                 },
             };
+        }
+
+
+        [TestCase("NORM1DEV1", true)]
+        [TestCase("STUB1DEV1", false)]
+        public void Highlight(string devname, bool expected)
+        {
+            string name = "Name";
+            string luaName = "LuaName";
+
+            var parameter = new BaseParameterImplementation(luaName, name, stub, new List<BaseParameter.DisplayObject>() { BaseParameter.DisplayObject.Signals });
+
+            parameter.SetNewValue(devname);
+
+            var rslt = parameter.GetObjectToDrawOnEplanPage();
+
+            Assert.IsTrue(parameter.IsDrawOnEplanPage);
+            Assert.AreEqual(expected, rslt.Count > 0);
         }
 
         [TestCaseSource(nameof(SetValueAndSetNewValueTestCaseSource))]
