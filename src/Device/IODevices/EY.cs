@@ -10,11 +10,12 @@ namespace EplanDevice
     {
         public EY(
             string name, string eplanName, string description,
-            int deviceNumber, string objectName, int objectNumber) 
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) 
             : base(name, eplanName, description,
                   deviceNumber, objectName, objectNumber)
         {
-
+            ArticleName = articleName;
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.EY;
         }

@@ -672,7 +672,7 @@ namespace EplanDevice
 
                 case nameof(EY):
                     dev = new EY(name, eplanName, description, deviceNumber, 
-                        objectName, objectNumber);
+                        objectName, objectNumber, articleName);
                     break;
 
                 default:
