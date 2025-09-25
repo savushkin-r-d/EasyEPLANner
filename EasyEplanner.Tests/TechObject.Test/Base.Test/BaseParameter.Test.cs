@@ -239,14 +239,14 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Parameters
                     },
-                    new EplanDevice.DeviceType[0],
+                    null,
                     null,
                     true,
                 },
                 new object[]
                 {
                     null,
-                    new EplanDevice.DeviceType[0],
+                    null,
                     null,
                     false,
                 },
