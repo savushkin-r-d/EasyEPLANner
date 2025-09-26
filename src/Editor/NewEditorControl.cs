@@ -1576,9 +1576,9 @@ namespace Editor
 
             var item = GetActiveItem();
 
-            // Активировать режим редактирования при выборе IAction: 
+            // Активировать режим редактирования при выборе элемента: 
             // Раньше активировался только при изменении страницы в EPLAN
-            if (item is IAction && Editable)
+            if (item.IsUseDevList && Editable)
                 EProjectManager.GetInstance().StartEditModes();
 
             DFrm.CheckShown();
