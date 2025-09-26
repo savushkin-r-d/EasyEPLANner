@@ -5,7 +5,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство - управляемый клапан.
     /// </summary>
-    sealed public class VC : IODevice
+    sealed public class VC : IODevice, ISetupTerminal
     {
         public VC(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -26,11 +26,17 @@ namespace EplanDevice
             string errStr = string.Empty;
             switch (subType)
             {
-                case "VC":
+                case nameof(DeviceSubType.VC):
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
-                case "VC_IOLINK":
+                case nameof(DeviceSubType.VC_EY):
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER, null);
+                    properties.Add(Property.TERMINAL, null);
+                    break;
+
+                case nameof(DeviceSubType.VC_IOLINK):
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
@@ -46,7 +52,7 @@ namespace EplanDevice
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (VC, VC_IOLINK, VC_VIRT).\n", Name);
+                        $" ({string.Join(", ", DeviceType.VC.SubTypeNames())}).\n", Name);
                     break;
             }
 
@@ -67,6 +73,8 @@ namespace EplanDevice
                             return "VC_IOLINK";
                         case DeviceSubType.VC_VIRT:
                             return "VC_VIRT";
+                        case DeviceSubType.VC_EY:
+                            return nameof(DeviceSubType.VC_EY);
                     }
                     break;
             }
@@ -88,6 +96,15 @@ namespace EplanDevice
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
+                            };
+
+                        case DeviceSubType.VC_EY:
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ERR, 1}
                             };
 
                         case DeviceSubType.VC_IOLINK:
@@ -128,6 +145,15 @@ namespace EplanDevice
             }
 
             return res;
+        }
+
+        public void SetupTerminal(string terminal, string action, int clamp)
+        {
+            if (DeviceSubType is not DeviceSubType.VC_EY)
+                return;
+
+            SetProperty(Property.TERMINAL, terminal);
+            SetRuntimeParameter(RuntimeParameter.R_EY_NUMBER, clamp);
         }
     }
 }

@@ -38,6 +38,7 @@ namespace EplanDevice
         VC = 1001, ///< Аналоговый клапан.
         VC_IOLINK, ///< IO-Link аналоговый клапан.
         VC_VIRT, ///< Виртуальный аналоговый клапан (без привязки к модулям).
+        VC_EY, /// EY аналоговый клапан.
 
         //M,
         M = 2001, ///< Мотор без управления частотой вращения.
@@ -122,6 +123,7 @@ namespace EplanDevice
         //AO
         AO = 16001, ///< Аналоговый выход с привязкой к модулям ввода-вывода.
         AO_VIRT, ///< Виртуальный аналоговый выход (без привязки к модулям).
+        AO_EY, ///< EY Аналоговый выход.
 
         //WT
         WT = 17001, ///< Весы.
@@ -168,9 +170,12 @@ namespace EplanDevice
 
         // WATCHDOG
         WATCHDOG = 26001, ///< Устройство проверки связи
-        
+
+        // EY
+        DEV_CONV_AO2 = DeviceType.EY * DSTExt.TypeMultiplier + 1, ///< Конвертер IO-Link -> AO (2 канала).
+
         //Y
-        Y =  DeviceType.Y * 1000 + 1, ///< Обычный пневмоостров Festo.
+        Y =  DeviceType.Y * DSTExt.TypeMultiplier + 1, ///< Обычный пневмоостров Festo.
         DEV_VTUG_8, ///< Festo 16 каналов.
         DEV_VTUG_16, ///< Festo 32 канала.
         DEV_VTUG_24, ///< Festo 48 каналов.
@@ -179,7 +184,7 @@ namespace EplanDevice
     /// <summary>
     /// Методы расширения для <see cref="DeviceSubType"/>
     /// </summary>
-    public static class DeviceSubTypeExtensions
+    public static class DSTExt
     {
         /// <summary>
         /// Получить номер подтипа

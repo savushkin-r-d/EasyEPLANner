@@ -117,7 +117,9 @@
     <Compile Include="ColumnNodes.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
+    <Compile Include="Device\IODevices\EY.cs" />
     <Compile Include="Device\IODevices\WATCHDOG.cs" />
+    <Compile Include="Device\ISetupTerminal.cs" />
     <Compile Include="Device\ITag.cs" />
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />

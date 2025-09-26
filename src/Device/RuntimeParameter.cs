@@ -72,6 +72,12 @@ namespace EplanDevice
                 new(nameof(R_EXTRA_OFFSET),
                     "Смещение адресного пространства для клапана" , true);
 
+            /// <summary>
+            /// Номер устройства в <see cref="EY">преобразователе</see>
+            /// </summary>
+            public static readonly RuntimeParameter R_EY_NUMBER =
+                new(nameof(R_EY_NUMBER), "Номер устройства в преобразователе");
+
 
             /// <param name="name">Название параметра</param>
             /// <param name="description">Описание параметр</param>

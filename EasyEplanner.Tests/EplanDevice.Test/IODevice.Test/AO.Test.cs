@@ -10,6 +10,7 @@ namespace Tests.EplanDevices
     {
         const string Incorrect = "Incorrect";
         const string AOSubType = "AO";
+         const string AOEYSubType = "AO_EY";
         const string AO_VIRT = "AO_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
@@ -52,6 +53,8 @@ namespace Tests.EplanDevices
                     GetRandomAODevice() },
                 new object[] { DeviceSubType.AO, AOSubType,
                     GetRandomAODevice() },
+                new object[] { DeviceSubType.AO_EY, AOEYSubType,
+                    GetRandomAODevice() },
                 new object[] { DeviceSubType.AO_VIRT, AO_VIRT,
                     GetRandomAODevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
@@ -86,6 +89,7 @@ namespace Tests.EplanDevices
             {
                 new object[] { AOSubType, string.Empty, GetRandomAODevice() },
                 new object[] { AOSubType, AOSubType, GetRandomAODevice() },
+                new object[] { "AO_EY", "AO_EY", GetRandomAODevice() },
                 new object[] { AO_VIRT, AO_VIRT, GetRandomAODevice() },
                 new object[] { string.Empty, Incorrect, GetRandomAODevice() },
             };
@@ -123,6 +127,15 @@ namespace Tests.EplanDevices
                 {IODevice.Parameter.P_MAX_V, 1},
             };
 
+            var exportForAO_EY = new Dictionary<ITag, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
+                {IODevice.Tag.ERR, 1},
+            };
+
             var exportForVirtAO = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.M, 1},
@@ -133,6 +146,7 @@ namespace Tests.EplanDevices
             {
                 new object[] {exportForAO, string.Empty, GetRandomAODevice()},
                 new object[] {exportForAO, AOSubType, GetRandomAODevice()},
+                new object[] {exportForAO_EY, "AO_EY", GetRandomAODevice()},
                 new object[] {exportForVirtAO, AO_VIRT, GetRandomAODevice()},
                 new object[] {null, Incorrect, GetRandomAODevice()},
             };
@@ -314,6 +328,21 @@ namespace Tests.EplanDevices
                 },
             };
         }
+
+
+        [Test]
+        public void SetupTerminal()
+        {
+            var dev = (AO)GetRandomAODevice();
+
+            dev.SetSubType("AO_EY");
+
+            dev.SetupTerminal("OBJ1EY1", "", 1);
+
+            Assert.AreEqual(1, dev.RuntimeParameters[IODevice.RuntimeParameter.R_EY_NUMBER]);
+            Assert.AreEqual("OBJ1EY1", dev.Properties[IODevice.Property.TERMINAL]);
+        }
+
 
         /// <summary>
         /// Генератор AO устройств

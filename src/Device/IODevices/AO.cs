@@ -5,7 +5,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство - аналоговый выход.
     /// </summary>
-    sealed public class AO : IODevice
+    sealed public class AO : IODevice, ISetupTerminal
     {
         public AO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,
@@ -27,9 +27,19 @@ namespace EplanDevice
                 case "AO_VIRT":
                     break;
 
-                case "AO":
-                case "":
-                    dSubType = DeviceSubType.AO;
+                case "": return SetSubType(nameof(DeviceSubType.AO));
+
+                case nameof(DeviceSubType.AO):
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
+
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    break;
+
+                case nameof(DeviceSubType.AO_EY):
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+                    properties.Add(Property.TERMINAL, null);
+
                     parameters.Add(Parameter.P_MIN_V, null);
                     parameters.Add(Parameter.P_MAX_V, null);
 
@@ -71,6 +81,8 @@ namespace EplanDevice
                             return "AO";
                         case DeviceSubType.AO_VIRT:
                             return "AO_VIRT";
+                        case DeviceSubType.AO_EY:
+                            return nameof(DeviceSubType.AO_EY);
                     }
                     break;
             }
@@ -95,6 +107,16 @@ namespace EplanDevice
                                 {Parameter.P_MAX_V, 1},
                             };
 
+                        case DeviceSubType.AO_EY:
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Tag.ERR, 1}
+                            };
+
                         case DeviceSubType.AO_VIRT:
                             return new Dictionary<ITag, int>()
                             {
@@ -106,6 +128,15 @@ namespace EplanDevice
             }
 
             return null;
+        }
+
+        public void SetupTerminal(string terminal, string action, int clamp)
+        {
+            if (DeviceSubType is not DeviceSubType.AO_EY)
+                return;
+
+            SetProperty(Property.TERMINAL, terminal);
+            SetRuntimeParameter(RuntimeParameter.R_EY_NUMBER, clamp);
         }
     }
 }
