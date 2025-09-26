@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
-using Editor;
+﻿using Editor;
+using StaticHelper;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace TechObject
 {
@@ -19,13 +22,10 @@ namespace TechObject
             this.value = new ParamProperty("Значение", value);
             this.meter = new ParamProperty("Размерность", meter,
                 string.Empty, editable);
-            this.nameLua = new ParamProperty("Lua имя",
-                nameLua, string.Empty, editable);
 
-            items = new List<ITreeViewItem>();
-            items.Add(this.value);
-            items.Add(this.meter);
-            items.Add(this.nameLua);
+            items = [this.value, this.meter];
+
+            LuaName = nameLua ?? string.Empty;
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + $"{nameLua.Value} =\n";
+            string res = prefix + $"{LuaName} =\n";
             res += prefix + "\t{\n";
             res += prefix + "\tvalue = " + value.Value + ",\n";
             res += prefix + "\t},\n";
@@ -43,30 +43,22 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = "";
-                res = $"{getN(this)}. {name} - {value.Value} " +
-                    $"{meter.Value}.";
+        override public string[] DisplayText => [
+            $"{getN(this)}. {name} - {value.Value} {meter.Value}.",
+            LuaName];
 
-                return new string[] { res, "" };
-            }
-        }
+        public override bool IsEditable => true;
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items.ToArray();
-            }
-        }
+        public override int[] EditablePart => [0, 1];
+
+        public override string[] EditText => [Name, LuaName];
+
+        override public ITreeViewItem[] Items => [.. items];
         #endregion
 
         public string Name => name;
 
-        public string LuaName => nameLua.Value;
+        public string LuaName { get; private set; }
 
         public string Meter => meter.Value;
 
@@ -76,7 +68,6 @@ namespace TechObject
 
         private string name;
         private List<ITreeViewItem> items;    ///Данные для редактирования.
-        private ParamProperty nameLua;        ///Имя в Lua.
         private ParamProperty value;          ///Значение.
         private ParamProperty meter;          ///Размерность.
     }
