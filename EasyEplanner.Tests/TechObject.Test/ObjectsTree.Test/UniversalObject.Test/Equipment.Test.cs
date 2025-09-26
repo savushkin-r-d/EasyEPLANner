@@ -68,5 +68,44 @@ namespace TechObjectTests
 
             Assert.AreEqual($"{nameof(OBJ3V1)} {nameof(OBJ3V2)} {nameof(OBJ3V3)}", equipmentParameter.Value);
         }
+
+        [Test]
+        public void Autocomplete()
+        {
+            var stubDevice = new LS("", "", "", 1, "", 1, "");
+
+            var deviceManager = Mock.Of<IDeviceManager>(m =>
+                m.GetDevice("OBJ1LS1") == stubDevice
+            );
+
+            var equipment = new Equipment(
+                new TechObject.TechObject(string.Empty, GetN => 1, 1, 2,
+                "OBJ", -1, string.Empty, string.Empty, new BaseTechObject()));
+
+            typeof(Equipment).GetProperty("deviceManager",
+               System.Reflection.BindingFlags.NonPublic |
+               System.Reflection.BindingFlags.Static)
+               .SetValue(null, deviceManager);
+
+            var p1 = new ActiveParameter("P1", "P1", "");
+            var p2 = new ActiveParameter("P2", "P2", "");
+            p2.SetNewValue("LS1");
+            var p3 = new ActiveParameter("P3", "P3", "LS1");
+            p3.SetNewValue("LS1");
+            var p4 = new ActiveParameter("P4", "P4", "LS1");
+            p4.SetNewValue("LS2");
+            var p5 = new ActiveParameter("P4", "P4", "LS1");
+
+            equipment.AddItems(new List<BaseParameter>()
+            {
+                p1, p2, p3, p4, p5
+            });
+
+            equipment.Autocomplete();
+
+            CollectionAssert.AreEqual(
+                new List<string>() { "", "LS1", "OBJ1LS1", "LS2", "OBJ1LS1" },
+                equipment.Items.OfType<BaseParameter>().Select(p => p.Value));
+        }
     }
 }

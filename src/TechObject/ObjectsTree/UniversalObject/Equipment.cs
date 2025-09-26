@@ -11,7 +11,7 @@ namespace TechObject
     /// <summary>
     /// Класс, содержащий оборудование технологического объекта
     /// </summary>
-    public class Equipment : TreeViewItem
+    public class Equipment : TreeViewItem, IAutocompletable
     {
         /// <summary>
         /// Конструктор
@@ -499,9 +499,28 @@ namespace TechObject
 
         public void Clear() => items.Clear();
 
+        public void Autocomplete()
+        {
+            var techObj = owner.NameEplan;
+            var techN = owner.TechNumber;
+
+            foreach (var item in Items.OfType<BaseParameter>())
+            {
+                if (item.Value == item.DefaultValue && item.Value != string.Empty ||
+                    item.Value == string.Empty && item.DefaultValue != string.Empty)
+                {
+                    var dev = $"{techObj}{techN}{item.DefaultValue}";
+                    if (deviceManager.GetDevice(dev).Description is not CommonConst.Cap)
+                        item.SetNewValue($"{techObj}{techN}{item.DefaultValue}");
+                }
+            }
+        }
+
         private TechObject owner;
         private List<ITreeViewItem> items;
 
         private static IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
+
+        bool IAutocompletable.CanExecute => true;
     }
 }

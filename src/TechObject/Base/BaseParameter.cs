@@ -1,10 +1,11 @@
-﻿using System;
+﻿using EasyEPlanner;
+using Editor;
+using EplanDevice;
+using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using EasyEPlanner;
-using EplanDevice;
-using StaticHelper;
 
 namespace TechObject
 {
@@ -49,7 +50,7 @@ namespace TechObject
         /// </summary>
         private void SetUpDisplayObjects()
         {
-            deviceTypes = new DeviceType[0];
+            deviceTypes = null;
             displayParameters = false;
             foreach (var displayObject in DisplayObjects)
             {
@@ -60,13 +61,13 @@ namespace TechObject
                         break;
 
                     case DisplayObject.Signals:
-                        deviceTypes = new DeviceType[]
-                        {
+                        deviceTypes =
+                        [
                             DeviceType.AI,
                             DeviceType.AO,
                             DeviceType.DI,
                             DeviceType.DO
-                        };
+                        ];
                         break;
                 }
             }
@@ -285,6 +286,27 @@ namespace TechObject
             devTypes = deviceTypes;
             displayParameters = this.displayParameters;
         }
+
+        public override bool IsDrawOnEplanPage => true;
+
+        virtual public DrawInfo.Style DrawStyle { get; set; } = DrawInfo.Style
+            .GREEN_BOX;
+
+        override public List<DrawInfo> GetObjectToDrawOnEplanPage()
+        {
+            if (!OnlyDevicesInParameter)
+                return [];
+
+            var devToDraw = new List<DrawInfo>();
+            foreach (int index in devicesIndexes)
+            {
+                devToDraw.Add(new DrawInfo(DrawStyle,
+                    deviceManager.GetDeviceByIndex(index)));
+            }
+
+            return devToDraw;
+        }
+
         #endregion
 
         /// <summary>
