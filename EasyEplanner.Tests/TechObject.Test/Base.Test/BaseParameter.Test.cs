@@ -412,7 +412,8 @@ namespace EasyEplanner.Tests
             modes[1].BaseOperation.Name = "baseOperationName2";
             modes[1].BaseOperation.LuaName = "baseOperationLuaName2";
 
-            parameter.Parent = new BaseOperation(modes[0]);
+            parameter.BaseOperation = new BaseOperation(modes[0]);
+            parameter.Parent = parameter.BaseOperation;
 
             modesManager.Modes.AddRange(modes);
         }

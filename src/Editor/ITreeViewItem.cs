@@ -99,7 +99,7 @@ namespace Editor
         /// <summary>    
         /// Вставка ранее скопированного объекта. Ctrl + V
         /// </summary>
-        ITreeViewItem InsertCopy(object obj);
+        ITreeViewItem InsertCopy(object obj); 
 
         /// <summary>    
         /// Получение составляющих объектов.
@@ -296,6 +296,11 @@ namespace Editor
         /// Помечен на вырезание
         /// </summary>
         bool MarkToCut { get; set; }
+
+        /// <summary>
+        /// Элемент скрыт
+        /// </summary>
+        bool Visibility { get; set; }
 
         /// <summary>
         /// Визуализатор для ячеек
