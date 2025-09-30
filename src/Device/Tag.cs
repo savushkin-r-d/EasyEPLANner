@@ -16,9 +16,6 @@ namespace EplanDevice
             /// <summary> Аналоговое значение. </summary>
             public static readonly Tag V = new Tag(nameof(V), "Аналоговое значение");
 
-            /// <summary> Аналоговое значение. </summary>
-            public static readonly Tag V2 = new Tag(nameof(V2), "Аналоговое значение 2");
-
             /// <summary> Сдвиг нуля. </summary>
             public static readonly Tag P_CZ = new Tag(nameof(P_CZ), "Сдвиг нуля");
 
