@@ -617,38 +617,28 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            var devToDraw = new List<DrawInfo>();
-            foreach (State stpMngr in stepsMngr)
             {
-                List<DrawInfo> devToDrawTmp = stpMngr
-                    .GetObjectToDrawOnEplanPage();
-                foreach (DrawInfo dinfo in devToDrawTmp)
+                List<DrawInfo> devToDraw = [.. States.SelectMany(a => a.GetObjectToDrawOnEplanPage())];
+
+                var groups = from drawInfo in devToDraw
+                             group drawInfo by drawInfo.DrawingDevice.Name into g
+                             select g;
+
+                return [.. groups.Select(g =>
                 {
-                    bool isSetFlag = false;
-                    for (int i = 0; i < devToDraw.Count; i++)
+                    var styles = g.Select(p => p.DrawingStyle);
+
+                    if (styles.Contains(DrawInfo.Style.RED_BOX))
+                        return new DrawInfo(DrawInfo.Style.RED_BOX, g.First().DrawingDevice);
+
+                    if (styles.Distinct().Where(s => s != DrawInfo.Style.NO_DRAW).Count() > 1)
                     {
-                        if (devToDraw[i].DrawingDevice.Name == 
-                            dinfo.DrawingDevice.Name)
-                        {
-                            isSetFlag = true;
-                            if (devToDraw[i].DrawingStyle != dinfo.DrawingStyle)
-                            {
-                                devToDraw.Add(new DrawInfo(
-                                    DrawInfo.Style.GREEN_RED_BOX,
-                                    devToDraw[i].DrawingDevice));
-                                devToDraw.RemoveAt(i);
-                            }
-                        }
+                        return new DrawInfo(DrawInfo.Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
                     }
 
-                    if (isSetFlag == false)
-                    {
-                        devToDraw.Add(dinfo);
-                    }
-                }
+                    return g.First();
+                })];
             }
-
-            return devToDraw;
         }
 
         public override IEnumerable<string> BaseObjectsList

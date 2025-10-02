@@ -103,6 +103,11 @@ namespace TechObject
         DrawInfo.Style DrawStyle { get; set; }
 
         /// <summary>
+        /// Тип действия для подсветки
+        /// </summary>
+        DrawInfo.ActionType ActionType { get; set; }
+
+        /// <summary>
         /// Добавление параметра к действию.
         /// </summary>
         /// <param name="val">Значение параметра.</param>
@@ -636,8 +641,11 @@ namespace TechObject
             }
         }
 
-        virtual public DrawInfo.Style DrawStyle { get; set; } = DrawInfo.Style
-            .GREEN_BOX;
+        virtual public DrawInfo.Style DrawStyle { get; set; } 
+            = DrawInfo.Style.GREEN_BOX;
+
+        virtual public DrawInfo.ActionType ActionType { get; set; } 
+            = DrawInfo.ActionType.OTHER;
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
@@ -645,7 +653,10 @@ namespace TechObject
             foreach (int index in deviceIndex)
             {
                 devToDraw.Add(new DrawInfo(DrawStyle,
-                    deviceManager.GetDeviceByIndex(index)));
+                    deviceManager.GetDeviceByIndex(index))
+                {
+                    Action = ActionType
+                });
             }
 
             return devToDraw;

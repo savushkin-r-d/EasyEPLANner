@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Aga.Controls.Tree;
 using Editor;
 
 namespace TechObject
@@ -519,38 +520,26 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            var devToDraw = new List<DrawInfo>();
-            foreach (Step step in steps)
+            List<DrawInfo> devToDraw = [.. steps.SelectMany(a => a.GetObjectToDrawOnEplanPage())];
+
+            var groups = from drawInfo in devToDraw
+                         group drawInfo by drawInfo.DrawingDevice.Name into g
+                         select g;
+
+            return [.. groups.Select(g =>
             {
-                List<DrawInfo> devToDrawTmp = step
-                    .GetObjectToDrawOnEplanPage();
-                foreach (DrawInfo dinfo in devToDrawTmp)
+                var styles = g.Select(p => p.DrawingStyle);
+                
+                if (styles.Contains(DrawInfo.Style.RED_BOX))
+                    return new DrawInfo(DrawInfo.Style.RED_BOX, g.First().DrawingDevice);
+
+                if (styles.Distinct().Where(s => s != DrawInfo.Style.NO_DRAW).Count() > 1)
                 {
-                    bool isSetFlag = false;
-                    for (int i = 0; i < devToDraw.Count; i++)
-                    {
-                        if (devToDraw[i].DrawingDevice.Name == 
-                            dinfo.DrawingDevice.Name)
-                        {
-                            isSetFlag = true;
-                            if (devToDraw[i].DrawingStyle != dinfo.DrawingStyle)
-                            {
-                                devToDraw.Add(new DrawInfo(
-                                    DrawInfo.Style.GREEN_RED_BOX,
-                                    devToDraw[i].DrawingDevice));
-                                devToDraw.RemoveAt(i);
-                            }
-                        }
-                    }
-
-                    if (isSetFlag == false)
-                    {
-                        devToDraw.Add(dinfo);
-                    }
+                    return new DrawInfo(DrawInfo.Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
                 }
-            }
 
-            return devToDraw;
+                return g.First();
+            })];
         }
         #endregion
 

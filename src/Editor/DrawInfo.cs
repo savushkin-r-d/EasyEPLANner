@@ -51,13 +51,24 @@
         {
             NO_DRAW,
 
-            RED_BOX,
+            GRAY_BOX,
             GREEN_BOX,
 
             GREEN_UPPER_BOX,
             GREEN_LOWER_BOX,
 
-            GREEN_RED_BOX,
+            GREEN_GRAY_BOX,
+
+            RED_BOX, // WRONG BINDING
+        }
+
+        public ActionType Action { get; set; } = ActionType.OTHER;
+
+        public enum ActionType
+        {
+            ON_DEVICE,
+            OFF_DEVICE,
+            OTHER,
         }
 
         private EplanDevice.IDevice dev;

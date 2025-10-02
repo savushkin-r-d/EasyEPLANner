@@ -64,6 +64,7 @@ namespace TechObject
                     EplanDevice.DeviceType.M
                 });
             openDevices.ImageIndex = ImageIndexEnum.ActionON;
+            openDevices.ActionType = DrawInfo.ActionType.ON_DEVICE;
             actions.Add(openDevices);
 
 
@@ -114,7 +115,8 @@ namespace TechObject
                     EplanDevice.DeviceType.DO,
                     EplanDevice.DeviceType.M
                 });
-            closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevices.DrawStyle = DrawInfo.Style.GRAY_BOX;
+            closeDevices.ActionType = DrawInfo.ActionType.OFF_DEVICE;
             closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
             actions.Add(closeDevices);
 
@@ -137,7 +139,7 @@ namespace TechObject
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
-            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.GRAY_BOX;
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
@@ -828,13 +830,30 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            List<DrawInfo> devToDraw = new List<DrawInfo>();
-            foreach (IAction action in actions)
-            {
-                devToDraw.AddRange(action.GetObjectToDrawOnEplanPage());
-            }
+            List<DrawInfo> devToDraw = [.. actions.SelectMany(a => a.GetObjectToDrawOnEplanPage())];
 
-            return devToDraw;
+            var groups = from drawInfo in devToDraw
+                    group drawInfo by drawInfo.DrawingDevice.Name into g
+                    select g;
+
+            return [.. groups.Select(g => 
+            {
+                var styles = g.Select(p => p.DrawingStyle);
+                var actions = g.Select(p => p.Action);
+
+                if (actions.Contains(DrawInfo.ActionType.ON_DEVICE) &&
+                    actions.Contains(DrawInfo.ActionType.OFF_DEVICE))
+                {
+                    return new DrawInfo(DrawInfo.Style.RED_BOX, g.First().DrawingDevice);
+                }
+
+                if (styles.Distinct().Where(s => s != DrawInfo.Style.NO_DRAW).Count() > 1)
+                {
+                    return new DrawInfo(DrawInfo.Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
+                }
+
+                return g.First();
+            })];
         }
 
         public override IEnumerable<string> BaseObjectsList
