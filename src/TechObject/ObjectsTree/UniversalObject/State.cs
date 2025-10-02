@@ -698,6 +698,9 @@ namespace TechObject
         public static string Name(this State.StateType type) 
             => State.StateNames[type];
 
+        public static int Index(this State.StateType type)
+            => (int)type;
+
         public static List<State.StateType> StateTransition(this State.StateType type) => type switch
         {
             State.StateType.IDLE => [State.StateType.RUN],
