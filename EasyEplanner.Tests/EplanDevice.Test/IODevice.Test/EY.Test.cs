@@ -53,7 +53,7 @@ namespace Tests.EplanDevices
             CollectionAssert.AreEqual(new Dictionary<ITag, int>() {
                 { Tag.ST, 1 },
                 { Tag.V, 1 },
-                { Tag.V2, 1 },
+                { Tag.CH, 2 },
                 { Tag.ERR, 1 },
             }, properties);
         }

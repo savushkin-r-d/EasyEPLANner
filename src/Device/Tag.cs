@@ -16,9 +16,6 @@ namespace EplanDevice
             /// <summary> Аналоговое значение. </summary>
             public static readonly Tag V = new Tag(nameof(V), "Аналоговое значение");
 
-            /// <summary> Аналоговое значение. </summary>
-            public static readonly Tag V2 = new Tag(nameof(V2), "Аналоговое значение 2");
-
             /// <summary> Сдвиг нуля. </summary>
             public static readonly Tag P_CZ = new Tag(nameof(P_CZ), "Сдвиг нуля");
 
@@ -136,6 +133,8 @@ namespace EplanDevice
             /// <summary> Вчера, счетчик 2. </summary>
             public static readonly Tag PREV_DAY_T2 = new Tag(nameof(PREV_DAY_T2), "Вчера, счетчик 2");
 
+            /// <summary> Канал. </summary>
+            public static readonly Tag CH = new(nameof(CH), "Канал");
 
             /// <summary>
             /// Неявное преобразование параметра в строку с названием
