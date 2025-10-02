@@ -349,7 +349,7 @@ namespace TechObject
         public void SetJumpToStateIf()
         {
             var CBParameterValues = Owner.Type.StateTransition()
-                .ToDictionary(t => t.Name(), t => t.ToString());
+                .ToDictionary(t => t.Name(), t => t.Index().ToString());
 
             var toStateByConditionAction = new ActionGroupCustom(
             "Переход к состоянию по условию", this, "jump_if",
