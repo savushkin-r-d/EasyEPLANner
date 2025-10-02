@@ -24,7 +24,7 @@ namespace Editor
                 if (styles.Contains(Style.RED_BOX))
                     return new DrawInfo(Style.RED_BOX, g.First().DrawingDevice);
 
-                if (styles.Distinct().Where(s => s != Style.NO_DRAW).Count() > 1)
+                if (styles.Distinct().Count(s => s != Style.NO_DRAW) > 1)
                     return new DrawInfo(Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
 
                 return g.First();
@@ -49,7 +49,7 @@ namespace Editor
                     actions.Contains(ActionType.OFF_DEVICE))
                     return new DrawInfo(Style.RED_BOX, g.First().DrawingDevice);
 
-                if (styles.Distinct().Where(s => s != Style.NO_DRAW).Count() > 1)
+                if (styles.Distinct().Count(s => s != Style.NO_DRAW) > 1)
                     return new DrawInfo(Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
 
                 return g.First();
