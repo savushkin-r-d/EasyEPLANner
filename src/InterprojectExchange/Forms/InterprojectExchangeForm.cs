@@ -949,6 +949,7 @@ namespace InterprojectExchange
         {
             advProjNameComboBox.Items.Add(dirInfo.Name);
             int selectItem = advProjNameComboBox.Items.IndexOf(dirInfo.Name);
+            advProjPrevSelectedIndex = 0;
             advProjNameComboBox.SelectedIndex = selectItem;
         }
 
