@@ -616,30 +616,7 @@ namespace TechObject
         }
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            {
-                List<DrawInfo> devToDraw = [.. States.SelectMany(a => a.GetObjectToDrawOnEplanPage())];
-
-                var groups = from drawInfo in devToDraw
-                             group drawInfo by drawInfo.DrawingDevice.Name into g
-                             select g;
-
-                return [.. groups.Select(g =>
-                {
-                    var styles = g.Select(p => p.DrawingStyle);
-
-                    if (styles.Contains(DrawInfo.Style.RED_BOX))
-                        return new DrawInfo(DrawInfo.Style.RED_BOX, g.First().DrawingDevice);
-
-                    if (styles.Distinct().Where(s => s != DrawInfo.Style.NO_DRAW).Count() > 1)
-                    {
-                        return new DrawInfo(DrawInfo.Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
-                    }
-
-                    return g.First();
-                })];
-            }
-        }
+        => DrawInfo.Filter([.. States.SelectMany(a => a.GetObjectToDrawOnEplanPage())]);
 
         public override IEnumerable<string> BaseObjectsList
         {

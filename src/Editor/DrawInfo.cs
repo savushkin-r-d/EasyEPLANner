@@ -1,10 +1,62 @@
-﻿namespace Editor
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Editor
 {
     /// <summary>
     /// Класс для настройки цвета отображения на странице.
     /// </summary>
     public struct DrawInfo
     {
+        /// <summary>
+        /// Фильтр устройств для подсветки
+        /// </summary>
+        public static List<DrawInfo> Filter(List<DrawInfo> draw)
+        {
+            var groups = from drawInfo in draw
+                         group drawInfo by drawInfo.DrawingDevice.Name into g
+                         select g;
+
+            return [.. groups.Select(g =>
+            {
+                var styles = g.Select(p => p.DrawingStyle);
+
+                if (styles.Contains(Style.RED_BOX))
+                    return new DrawInfo(Style.RED_BOX, g.First().DrawingDevice);
+
+                if (styles.Distinct().Where(s => s != Style.NO_DRAW).Count() > 1)
+                    return new DrawInfo(Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
+
+                return g.First();
+            })];
+        }
+
+        /// <summary>
+        /// Фильтр устройств для подсветки с проверкойц конфликтов действий
+        /// </summary>
+        public static List<DrawInfo> FilterByActions(List<DrawInfo> draw)
+        {
+            var groups = from drawInfo in draw
+                         group drawInfo by drawInfo.DrawingDevice.Name into g
+                         select g;
+
+            return [..groups.Select(g =>
+            {
+                var styles = g.Select(p => p.DrawingStyle);
+                var actions = g.Select(p => p.Action);
+
+                if (actions.Contains(ActionType.ON_DEVICE) &&
+                    actions.Contains(ActionType.OFF_DEVICE))
+                    return new DrawInfo(Style.RED_BOX, g.First().DrawingDevice);
+
+                if (styles.Distinct().Where(s => s != Style.NO_DRAW).Count() > 1)
+                    return new DrawInfo(Style.GREEN_GRAY_BOX, g.First().DrawingDevice);
+
+                return g.First();
+            })];
+        }
+
+
         /// <summary>
         /// Создание экземпляра класса DrawInfo
         /// </summary>
