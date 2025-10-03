@@ -45,8 +45,7 @@ namespace Editor
                 var styles = g.Select(p => p.DrawingStyle);
                 var actions = g.Select(p => p.Action);
 
-                if (actions.Contains(ActionType.ON_DEVICE) &&
-                    actions.Contains(ActionType.OFF_DEVICE))
+                if (actions.Aggregate((f, s) => f & s) == 0)
                     return new DrawInfo(Style.RED_BOX, g.First().DrawingDevice);
 
                 if (styles.Distinct().Count(s => s != Style.NO_DRAW) > 1)
@@ -116,11 +115,20 @@ namespace Editor
 
         public ActionType Action { get; set; } = ActionType.OTHER;
 
+        /// <summary>
+        /// Тип действия
+        /// </summary>
+        /// <remarks>
+        /// Указаны битовые флаги пересечений, если сумма побитового "и" 
+        /// равна 0, тогда пересечение действий неверно 
+        /// </remarks>
         public enum ActionType
         {
-            ON_DEVICE,
-            OFF_DEVICE,
-            OTHER,
+            OTHER = 0b1111,
+            ON_DEVICE = 0b0001,
+            OFF_DEVICE = 0b0010,
+            DELAYED_ON_DEVICE = 0b0110,
+            DELAYED_OFF_DEVICE = 0b0101,
         }
 
         private EplanDevice.IDevice dev;

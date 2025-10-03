@@ -74,18 +74,19 @@ namespace TechObject
                 {
                     var openedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    openedDeviceAction.CreateAction(new Action("Включать",
+                    var opened = openedDeviceAction.CreateAction(new Action("Включать",
                         this,"",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.M
-                        }));
+                        [
+                            DeviceType.V,
+                            DeviceType.DO,
+                            DeviceType.M
+                        ]));
+                    opened.ActionType = DrawInfo.ActionType.DELAYED_ON_DEVICE;
                     openedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка включения"));
                     return openedDeviceAction;
                 });
+            openDevicesActionGroup.ActionType = DrawInfo.ActionType.DELAYED_ON_DEVICE;
             actions.Add(openDevicesActionGroup);
 
 
@@ -126,20 +127,21 @@ namespace TechObject
                 {
                     var closedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    closedDeviceAction.CreateAction(new Action("Выключать",
+                    var closeed = closedDeviceAction.CreateAction(new Action("Выключать",
                         this, "",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.M
-                        }));
+                        [
+                            DeviceType.V,
+                            DeviceType.DO,
+                            DeviceType.M
+                        ]));
+                    closeed.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
                     closedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка выключения"));
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
             closeDevicesActionGroup.DrawStyle = DrawInfo.Style.GRAY_BOX;
+            closeDevicesActionGroup.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
