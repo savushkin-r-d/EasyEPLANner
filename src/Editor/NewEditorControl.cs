@@ -602,17 +602,17 @@ namespace Editor
 
         private void TextBox_Commands_KeyUp(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
+            switch (e.KeyData)
             {
-                case Keys.V when e.Control:
+                case Keys.V | Keys.Control:
                     (sender as TextBox).Paste();
                     break;
 
-                case Keys.C when e.Control:
+                case Keys.C | Keys.Control:
                     (sender as TextBox).Copy();
                     break;
 
-                case Keys.X when e.Control:
+                case Keys.X | Keys.Control:
                     (sender as TextBox).Cut();
                     break;
             }
