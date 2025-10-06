@@ -114,7 +114,6 @@ namespace EplanDevice
                                 {Tag.V, 1},
                                 {Parameter.P_MIN_V, 1},
                                 {Parameter.P_MAX_V, 1},
-                                {Tag.ERR, 1}
                             };
 
                         case DeviceSubType.AO_VIRT:
