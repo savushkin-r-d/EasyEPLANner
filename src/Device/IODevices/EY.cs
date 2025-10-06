@@ -64,8 +64,7 @@ namespace EplanDevice
                     {
                         { Tag.ST, 1 },
                         { Tag.V, 1 },
-                        { Tag.CH, 2 },
-                        { Tag.ERR, 1 },
+                        { Tag.CH, 2 }
                     },
                     _ => null,
                 },
