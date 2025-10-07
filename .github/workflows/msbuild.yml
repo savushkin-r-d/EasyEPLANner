@@ -126,8 +126,10 @@ jobs:
         cp src/bin/${{env.BUILD_CONFIGURATION}}/* submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
 
     - name: Prepare PULL_REQUEST_DATA
+      env:
+        PR_BRANCH: ${{ github.event.pull_request.head.ref }}
       if: github.event_name == 'pull_request_target'
-      run: echo "PULL_REQUEST_DATA=/d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
+      run: echo "PULL_REQUEST_DATA=/d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=$PR_BRANCH /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
 
     - name: Sonar scanner begin
       working-directory: ${{env.GITHUB_WORKSPACE}}
