@@ -104,7 +104,6 @@ namespace EplanDevice
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.ERR, 1}
                             };
 
                         case DeviceSubType.VC_IOLINK:
