@@ -127,14 +127,14 @@ namespace TechObject
                 {
                     var closedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    var closeed = closedDeviceAction.CreateAction(new Action("Выключать",
+                    var closed = closedDeviceAction.CreateAction(new Action("Выключать",
                         this, "",
                         [
                             DeviceType.V,
                             DeviceType.DO,
                             DeviceType.M
                         ]));
-                    closeed.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
+                    closed.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
                     closedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка выключения"));
                     return closedDeviceAction;

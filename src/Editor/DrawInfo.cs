@@ -32,7 +32,7 @@ namespace Editor
         }
 
         /// <summary>
-        /// Фильтр устройств для подсветки с проверкойц конфликтов действий
+        /// Фильтр устройств для подсветки с проверкой конфликтов действий
         /// </summary>
         public static List<DrawInfo> FilterByActions(List<DrawInfo> draw)
         {
