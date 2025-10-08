@@ -251,6 +251,8 @@ namespace EasyEplanner.Tests
                 CollectionAssert.AreEqual(new string[] { $"{RUN.Name}", State.RUNPOINT}, RUN.DisplayText);
 
                 Assert.AreEqual(ImageIndexEnum.Run, RUN.DescritptionImageIndex);
+                Assert.AreEqual(ImageIndexEnum.ModesManager, modesManager.ImageIndex);
+                Assert.AreEqual(ImageIndexEnum.Run, modesManager.DescritptionImageIndex);
             });
         }
     }
