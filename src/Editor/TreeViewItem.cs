@@ -54,7 +54,7 @@ namespace Editor
             return false;
         }
 
-        virtual public bool SetNewValue(string newVal, bool isExtraValue)
+        virtual public bool SetNewValue(string newValue, bool isExtraValue)
         {
             return false;
         }

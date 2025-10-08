@@ -208,5 +208,28 @@ namespace EasyEplanner.Tests
         {
             CollectionAssert.AreEqual(expectedMap, state.StateTransition());
         }
+
+        [Test]
+        public void SetNewValue()
+        {
+            var modesManager = new ModesManager(null);
+            var mode = Mock.Of<IMode>(m => m.Owner == modesManager);
+            var RUN = new State(State.StateType.RUN, mode, true);
+            var IDLE = new State(State.StateType.IDLE, mode, true);
+
+            Assert.Multiple(() =>
+            {
+                RUN.SetNewValue(State.RUNPOINT, true);
+                Assert.AreSame(RUN, modesManager.RunPointState);
+
+                IDLE.SetNewValue(State.RUNPOINT, true);
+                Assert.AreSame(IDLE, modesManager.RunPointState);
+                Assert.IsFalse(RUN.IsRunPoint);
+
+                IDLE.SetNewValue("", true);
+                Assert.IsNull(modesManager.RunPointState);
+                Assert.IsFalse(IDLE.IsRunPoint);
+            });
+        }
     }
 }
