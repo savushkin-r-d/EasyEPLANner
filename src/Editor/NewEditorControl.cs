@@ -111,7 +111,7 @@ namespace Editor
                 IsEditable = false,
                 AspectGetter = obj => (obj as ITreeViewItem).DisplayText[0],
                 Sortable = false,
-                ImageGetter = obj => (int)(obj as ITreeViewItem)?.ImageIndex,
+                ImageGetter = obj => (int)((obj as ITreeViewItem)?.ImageIndex ?? ImageIndexEnum.NONE),
             };
 
             var secondColumn = new OLVColumn("Описание", "DisplayText[1]")
@@ -119,7 +119,7 @@ namespace Editor
                 IsEditable = false,
                 AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1],
                 Sortable = false,
-                ImageGetter = obj => (int)(obj as ITreeViewItem)?.DescritptionImageIndex,
+                ImageGetter = obj => (int)((obj as ITreeViewItem)?.DescritptionImageIndex ?? ImageIndexEnum.NONE),
             };
 
             editorTView.Columns.Add(firstColumn);

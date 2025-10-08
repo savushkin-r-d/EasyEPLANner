@@ -325,12 +325,12 @@ namespace TechObject
 
         public override int[] EditablePart => [-1, 1];
 
-        public override bool SetNewValue(string newVal, bool isExtraValue)
+        public override bool SetNewValue(string newValue, bool isExtraValue)
         {
-            if (newVal is RUNPOINT && !IsRunPoint)
+            if (newValue is RUNPOINT && !IsRunPoint)
                 SetRunPoint();
 
-            if (newVal is "" && ReferenceEquals(Owner.Owner.RunPointState, this))
+            if (newValue is "" && ReferenceEquals(Owner.Owner.RunPointState, this))
                 ResetRunPoint();
 
             return true;

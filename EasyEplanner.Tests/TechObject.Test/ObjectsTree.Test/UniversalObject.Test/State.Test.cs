@@ -231,5 +231,27 @@ namespace EasyEplanner.Tests
                 Assert.IsFalse(IDLE.IsRunPoint);
             });
         }
+
+        [Test]
+        public void TestProperties()
+        {
+            var modesManager = new ModesManager(null);
+            var mode = Mock.Of<IMode>(m => m.Owner == modesManager);
+            var RUN = new State(State.StateType.RUN, mode, true);
+
+            RUN.SetNewValue(State.RUNPOINT, true);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(RUN.IsEditable);
+                Assert.IsTrue(RUN.IsBoolParameter);
+
+                CollectionAssert.AreEqual(new string[] { State.RUNPOINT, "" }, RUN.BaseObjectsList);
+                CollectionAssert.AreEqual(new int[] { -1, 1 }, RUN.EditablePart);
+                CollectionAssert.AreEqual(new string[] { $"{RUN.Name}", State.RUNPOINT}, RUN.DisplayText);
+
+                Assert.AreEqual(ImageIndexEnum.Run, RUN.DescritptionImageIndex);
+            });
+        }
     }
 }
