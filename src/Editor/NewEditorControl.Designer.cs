@@ -443,6 +443,7 @@ namespace Editor
             this.imageList1.Images.SetKeyName(13, "equipment.ico");
             this.imageList1.Images.SetKeyName(14, "generic.png");
             this.imageList1.Images.SetKeyName(15, "group.png");
+            this.imageList1.Images.SetKeyName(16, "Run.png");
             // 
             // editorTView
             // 

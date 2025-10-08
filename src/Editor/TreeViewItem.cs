@@ -374,6 +374,9 @@ namespace Editor
         public virtual ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 
+        public virtual ImageIndexEnum DescritptionImageIndex { get; set; } =
+            ImageIndexEnum.NONE;
+
         public virtual bool ContainsBaseObject
         {
             get

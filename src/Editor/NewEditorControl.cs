@@ -106,29 +106,21 @@ namespace Editor
                 ?.Where(i => i.Visibility);
 
             // Настройка и добавление колонок
-            var firstColumn = new OLVColumn("Название", "DisplayText[0]");
-            firstColumn.IsEditable = false;
-            firstColumn.AspectGetter = obj => (obj as ITreeViewItem).DisplayText[0];
-            firstColumn.Sortable = false;
-            firstColumn.ImageGetter =
-                delegate (object obj)
-                {
-                    var objTreeViewItem = obj as ITreeViewItem;
-                    int countOfImages = editorTView.SmallImageList.Images.Count;
-                    if ((int)objTreeViewItem.ImageIndex < countOfImages)
-                    {
-                        return (int)objTreeViewItem.ImageIndex;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                };
+            var firstColumn = new OLVColumn("Название", "DisplayText[0]")
+            {
+                IsEditable = false,
+                AspectGetter = obj => (obj as ITreeViewItem).DisplayText[0],
+                Sortable = false,
+                ImageGetter = obj => (int)(obj as ITreeViewItem)?.ImageIndex,
+            };
 
-            var secondColumn = new OLVColumn("Описание", "DisplayText[1]");
-            secondColumn.IsEditable = false;
-            secondColumn.AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1];
-            secondColumn.Sortable = false;
+            var secondColumn = new OLVColumn("Описание", "DisplayText[1]")
+            {
+                IsEditable = false,
+                AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1],
+                Sortable = false,
+                ImageGetter = obj => (int)(obj as ITreeViewItem)?.DescritptionImageIndex,
+            };
 
             editorTView.Columns.Add(firstColumn);
             editorTView.Columns.Add(secondColumn);

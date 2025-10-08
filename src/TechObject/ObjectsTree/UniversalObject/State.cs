@@ -25,6 +25,27 @@ namespace TechObject
         /// Тип состояния
         /// </summary>
         State.StateType Type { get; }
+
+        /// <summary>
+        /// Название
+        /// </summary>
+        string Name { get; }
+        
+        /// <summary>
+        /// Запускать состояние при старте программы
+        /// </summary>
+        bool IsRunPoint { get; }
+        
+        /// <summary>
+        /// Установить состояние как точка запуска 
+        /// (сбрасывает свойство у других состояний)
+        /// </summary>
+        void SetRunPoint();
+
+        /// <summary>
+        /// Сбросить состояние как точку запуска
+        /// </summary>
+        void ResetRunPoint();
     }
 
     /// <summary>
@@ -130,14 +151,13 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            if (steps.Count == 0) return string.Empty;
+            if (steps.Count == 0 || modeStep is null) 
+                return string.Empty;
 
             string res = string.Empty;
 
-            if (modeStep != null)
-            {
-                res += modeStep.SaveAsLuaTable(prefix, true);
-            }
+            res += IsRunPoint ? "runPoint = true," : "";
+            res += modeStep.SaveAsLuaTable(prefix, true);
 
             if (steps.Count > 1)
             {
@@ -296,19 +316,49 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = name;
-                if (steps.Count > 1)
-                {
-                    res += " (" + (steps.Count - 1) + ")";
-                }
+        override public string[] DisplayText => [
+            $"{name}{(steps.Count > 1 ? $"({steps.Count - 1})" : "")}",
+            IsRunPoint ? RUNPOINT : ""
+            ];
 
-                return new string[] { res, string.Empty };
-            }
+        public override bool IsEditable => true;
+
+        public override int[] EditablePart => [-1, 1];
+
+        public override bool SetNewValue(string newValue, bool _)
+        {
+            if (newValue is RUNPOINT && IsRunPoint is false)
+                SetRunPoint();
+
+            if (newValue is "" && ReferenceEquals(Owner.Owner.RunPointState, this))
+                ResetRunPoint();
+
+            return true;
         }
+
+        public bool IsRunPoint { get; private set; }
+
+        public void SetRunPoint()
+        {
+            IsRunPoint = true;
+            Owner.Owner.RunPointState?.ResetRunPoint();
+            Owner.Owner.RunPointState = this;
+        }
+
+        public void ResetRunPoint()
+        {
+            IsRunPoint = false;
+            Owner.Owner.RunPointState = null;
+        }
+
+        public override bool IsBoolParameter => true;
+
+        public const string RUNPOINT = "Запускать при старте программы";
+
+        public override IEnumerable<string> BaseObjectsList => [RUNPOINT, ""];
+
+        public override ImageIndexEnum DescritptionImageIndex 
+            => IsRunPoint ? ImageIndexEnum.Run : ImageIndexEnum.NONE;
 
         override public ITreeViewItem[] Items
         {
