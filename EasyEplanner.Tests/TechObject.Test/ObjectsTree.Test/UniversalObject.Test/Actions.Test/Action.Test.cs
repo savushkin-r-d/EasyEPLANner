@@ -899,17 +899,16 @@ namespace TechObjectTests
             List<int> actionDevsDefaultIds, IList<int> expectedDevsIds,
             EplanDevice.DeviceType[] allowedInputTypes)
         {
-            IAction action = ActionMock.GetAction(allowedDevTypes,
-                allowedDevSubTypes, actionDevsDefaultIds);
-            var strategy =
-                new OneInManyOutActionProcessingStrategy(allowedInputTypes);
-            strategy.Action = action;
+            IAction action = ActionMock.GetAction(allowedDevTypes, allowedDevSubTypes, actionDevsDefaultIds);
+            var strategy = new ManyInManyOutActionProcessingStrategy(allowedInputTypes)
+            {
+                Action = action
+            };
             var deviceManager = DeviceManagerMock.DeviceManager;
 
-            IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr,
-                deviceManager);
+            IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr, deviceManager);
 
-            Assert.AreEqual(expectedDevsIds, actualDevsIds);
+            CollectionAssert.AreEqual(expectedDevsIds, actualDevsIds);
         }
 
         private static object[] ProcessDevicesTestCaseSource()
@@ -992,6 +991,7 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2AI2,
                     (int)DeviceManagerMock.Devices.TANK1AI1,
                     (int)DeviceManagerMock.Devices.TANK1AO1
 
@@ -1024,6 +1024,7 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
                     (int)DeviceManagerMock.Devices.TANK1DI1,
                     (int)DeviceManagerMock.Devices.TANK1DO1,
                 },
@@ -1093,6 +1094,7 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
                     (int)DeviceManagerMock.Devices.TANK1GS1,
                     (int)DeviceManagerMock.Devices.TANK1DO1,
                     (int)DeviceManagerMock.Devices.TANK1HL1
@@ -1128,6 +1130,8 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1GS2,
                     (int)DeviceManagerMock.Devices.TANK1DO1,
                     (int)DeviceManagerMock.Devices.TANK1HL1
                 },
