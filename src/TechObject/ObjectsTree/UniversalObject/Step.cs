@@ -221,7 +221,7 @@ namespace TechObject
             // при наличии входного дискретного сигнала.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
                 "DI_DO", pairsDiDoAllowedDevTypes, null,
-                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
@@ -230,7 +230,7 @@ namespace TechObject
             // при пропадании входного дискретного сигнала.
             var groupInvertedDiDo = new ActionGroup(groupDIDOActionNameInverted,
                 this, "inverted_DI_DO", pairsDiDoAllowedDevTypes, null, 
-                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
             groupInvertedDiDo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupInvertedDiDo);
 
@@ -261,7 +261,7 @@ namespace TechObject
                     EplanDevice.DeviceType.VC
                 },
                 null,
-                new OneInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
             groupAiAo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAiAo);
 
