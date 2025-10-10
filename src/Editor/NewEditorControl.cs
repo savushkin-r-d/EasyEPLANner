@@ -1577,9 +1577,11 @@ namespace Editor
 
             var item = GetActiveItem();
 
-            // Активировать режим редактирования при выборе элемента: 
+            // Активировать режим редактирования на фСА для подсветки при выборе элемента: 
             // Раньше активировался только при изменении страницы в EPLAN
-            if (item.IsUseDevList && Editable)
+            if (drawDev_toolStripButton.Checked && 
+                item?.IsUseDevList is true &&
+                Editable)
                 EProjectManager.GetInstance().StartEditModes();
 
             DFrm.CheckShown();
