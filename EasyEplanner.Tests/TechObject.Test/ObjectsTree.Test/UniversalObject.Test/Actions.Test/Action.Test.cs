@@ -53,10 +53,10 @@ namespace TechObjectTests
 
         [TestCase(DrawInfo.Style.GREEN_BOX)]
         [TestCase(DrawInfo.Style.GREEN_LOWER_BOX)]
-        [TestCase(DrawInfo.Style.GREEN_RED_BOX)]
+        [TestCase(DrawInfo.Style.GREEN_GRAY_BOX)]
         [TestCase(DrawInfo.Style.GREEN_UPPER_BOX)]
         [TestCase(DrawInfo.Style.NO_DRAW)]
-        [TestCase(DrawInfo.Style.RED_BOX)]
+        [TestCase(DrawInfo.Style.GRAY_BOX)]
         public void DrawStyle_NewAction_GetSetNewDrawStyle(DrawInfo.Style style)
         {
             var action = new Action(string.Empty, null, string.Empty);
@@ -264,7 +264,7 @@ namespace TechObjectTests
                 new object[]
                 {
                     3,
-                    DrawInfo.Style.GREEN_RED_BOX,
+                    DrawInfo.Style.GREEN_GRAY_BOX,
                     new List<int>() { 3, 6, 9 }
                 },
                 new object[]
@@ -282,7 +282,7 @@ namespace TechObjectTests
                 new object[]
                 {
                     0,
-                    DrawInfo.Style.RED_BOX,
+                    DrawInfo.Style.GRAY_BOX,
                     new List<int>()
                 },
             };

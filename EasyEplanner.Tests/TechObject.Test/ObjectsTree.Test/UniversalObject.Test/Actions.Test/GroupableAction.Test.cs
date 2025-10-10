@@ -81,7 +81,7 @@ namespace TechObjectTests
                 },
                 new object[]
                 {
-                    DrawInfo.Style.GREEN_RED_BOX,
+                    DrawInfo.Style.GREEN_GRAY_BOX,
                     new List<int>() { 3, 6, 9 },
                     new List<int>() { 8, 3 },
                 },
@@ -99,7 +99,7 @@ namespace TechObjectTests
                 },
                 new object[]
                 {
-                    DrawInfo.Style.RED_BOX,
+                    DrawInfo.Style.GRAY_BOX,
                     new List<int>(),
                     new List<int>() { 8, 6, 4, 2, 7 },
                 },
