@@ -1,5 +1,6 @@
 ﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using Editor;
 using PInvoke;
 using System;
 using System.Collections.Generic;
@@ -250,6 +251,12 @@ namespace EasyEPlanner
 
                     modeIsShown = true;
                     isLoaded = true;
+
+                    SysLogger.WriteLog(this,
+                        $"{nameof(ShowDlg)}():",
+                        $"-{nameof(windowName)} = {windowName}",
+                        $"-{nameof(wndWmCommand)} = {wndWmCommand}",
+                        $"-{nameof(wndModeVisibilePtr)} = {wndModeVisibilePtr}");
                 }           
             }
         }
