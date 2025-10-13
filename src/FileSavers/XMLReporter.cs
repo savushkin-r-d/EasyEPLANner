@@ -830,6 +830,8 @@ namespace EasyEPlanner
             TreeNode node)
         {
             bool protocolDev = Protocol.Contains(tagName);
+            protocolDev = protocolDev ? 
+                GetWatchdogDevsProtocolability(tagName, node.Text) : false;
             bool protocolObject =
                 node.Text.Contains(DefaultNodeName) &&
                 (node.Text.Contains("ST") ||
@@ -848,6 +850,36 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Выключение протоколирования у устройств, подключенных к WATCHDOG
+        /// </summary>
+        /// <param name="tagName">Название группы тега</param>
+        /// <param name="cahnnelName">Название канала</param>
+        private bool GetWatchdogDevsProtocolability(string tagName, string cahnnelName)
+        {
+            if (tagName is "AO_V" or "AI_V" or "DO_ST" or "DI_ST" &&
+                WATCHDOG_Devices.Any(d => cahnnelName.StartsWith($"{d}.")))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Список устройств подключенных к WATCHDOG
+        /// </summary>
+        private readonly List<string> WATCHDOG_Devices = [.. deviceManager.Devices
+            .Where(d => d.DeviceType is DeviceType.WATCHDOG)
+            .SelectMany<IODevice, string>(d => [
+                d.Properties[IODevice.Property.DO_dev]?.ToString(),
+                d.Properties[IODevice.Property.DI_dev]?.ToString(),
+                d.Properties[IODevice.Property.AO_dev]?.ToString(),
+                d.Properties[IODevice.Property.AI_dev]?.ToString()])
+            .Where(devName => 
+                devName != null && devName != "" &&
+                deviceManager.GetDevice(devName).Description is not StaticHelper.CommonConst.Cap)];
+            
         /// <summary>
         /// Получить протоколируемость ПИД-регулятора
         /// </summary>
@@ -913,7 +945,8 @@ namespace EasyEPlanner
                 "HL_ST",
                 "HA_ST",
                 "AO_V",
-                "AI_V"
+                "AI_V",
+                "WATCHDOG_ST",
             });
 
         private static HashSet<string> ProtocolPID =
