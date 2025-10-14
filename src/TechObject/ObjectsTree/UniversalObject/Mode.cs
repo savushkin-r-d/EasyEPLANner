@@ -28,6 +28,11 @@ namespace TechObject
         /// Базовая операция
         /// </summary>
         BaseOperation BaseOperation { get; }
+
+        /// <summary>
+        /// Название операции
+        /// </summary>
+        string Name { get; }
     }
 
 
