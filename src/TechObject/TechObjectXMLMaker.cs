@@ -57,13 +57,9 @@ namespace TechObject
                 GenerateSingleStepsTags(item, objName, objNode,
                     objSingleStepsNode);
 
-                foreach(Params paramsGroup in item.GetParamsManager().Items)
+                foreach (var paramsGroup in item.GetParamsManager().Items.OfType<Params>())
                 {
-                    string groupName = $"{objName}." +
-                        $"{paramsGroup.NameForChannelBase}";
-                    int count = paramsGroup.Items.Length;
-                    GenerateParametersTags(count, objNode, objParamsNode,
-                        groupName);
+                    GenerateParametersTags(objName, paramsGroup, objNode, objParamsNode);
                 }
 
                 var singleNodes = new TreeNode[] { objModesNode,
@@ -115,13 +111,13 @@ namespace TechObject
         /// <param name="node">Системный узел дерева</param>
         private void GenerateIONodesEnablingTags(TreeNode node)
         {
-            int nodesCount = IO.IOManager.GetInstance().IONodes.Count;
+            var nodes = IO.IOManager.GetInstance().IONodes;
+            
             // Первый узел - контроллер, его опускаем.
-            int startValue = 2;
-            for(int i = startValue; i <= nodesCount; i++)
+            for(int i = 1; i < nodes.Count; i++)
             {
-                node.Nodes.Add($"SYSTEM.NODEENABLED[ {i} ]",
-                    $"SYSTEM.NODEENABLED[ {i} ]");
+                var text = $"SYSTEM.NODEENABLED[ {i + 1} ] -- {nodes[i].Name} {nodes[i].TypeStr}";
+                node.Nodes.Add(text, text);
             }
         }
 
@@ -199,22 +195,28 @@ namespace TechObject
             string step = mode + "_STEPS";
             string oper = obj + ".OPERATIONS";
             string av = obj + ".AVAILABILITY";
-            for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
+
+            var modes = item.ModesManager.Modes;
+            for (int i = 0; i < modes.Count; ++i)
             {
-                string number = "[ " + i.ToString() + " ]";
-                if (cdbxTagView == true)
+                string number = $"[ {i + 1} ]";
+                string modesTag = $"{mode}{number} -- {modes[i].Name}";
+                string operationsTag = $"{oper}{number} -- {modes[i].Name}";
+                string availabilityTag = $"{av}{number} -- {modes[i].Name}";
+                string stepsTag = $"{step}{number} -- {modes[i].Name}";
+                if (cdbxTagView)
                 {
-                    objNode.Nodes.Add(mode + number, mode + number);
-                    objNode.Nodes.Add(oper + number, oper + number);
-                    objNode.Nodes.Add(av + number, av + number);
-                    objNode.Nodes.Add(step + number, step + number);
+                    objNode.Nodes.Add(modesTag, modesTag);
+                    objNode.Nodes.Add(operationsTag, operationsTag);
+                    objNode.Nodes.Add(availabilityTag, availabilityTag);
+                    objNode.Nodes.Add(stepsTag, stepsTag);
                 }
                 else
                 {
-                    objModesNode.Nodes.Add(mode + number, mode + number);
-                    objOperStateNode.Nodes.Add(oper + number, oper + number);
-                    objAvOperNode.Nodes.Add(av + number, av + number);
-                    objStepsNode.Nodes.Add(step + number, step + number);
+                    objModesNode.Nodes.Add(modesTag, modesTag);
+                    objOperStateNode.Nodes.Add(operationsTag, operationsTag);
+                    objAvOperNode.Nodes.Add(availabilityTag, availabilityTag);
+                    objStepsNode.Nodes.Add(stepsTag, stepsTag);
                 }
             }
         }
@@ -230,16 +232,15 @@ namespace TechObject
         private void GenerateSingleStepsTags(TechObject techObject,
             string objName, TreeNode objNode, TreeNode objSingleStepsNode)
         {
-            List<Mode> modes = techObject.ModesManager.Modes;
-            for (int modeNum = 1; modeNum <= modes.Count; modeNum++)
+            var modes = techObject.ModesManager.Modes;
+            for (int modeIdx = 0; modeIdx < modes.Count; ++modeIdx)
             {
-                foreach(var state in modes[modeNum - 1].States)
+                foreach(var state in modes[modeIdx].States)
                 {
-                    int stepsCount = state.Steps.Count;
-                    for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
+                    var steps = state.Steps;
+                    for (int stepIdx = 0; stepIdx < steps.Count; ++stepIdx)
                     {
-                        string stepTag = $"{objName}." +
-                            $"{state.Type}_STEPS{modeNum}[ {stepNum} ]";
+                        string stepTag = $"{objName}.{state.Type}_STEPS{modeIdx + 1}[ {stepIdx + 1} ] -- {modes[modeIdx].Name} - {state.Name} - {steps[stepIdx].GetStepName()}";
                         if (cdbxTagView)
                         {
                             objNode.Nodes.Add(stepTag, stepTag);
@@ -259,20 +260,24 @@ namespace TechObject
         /// <param name="paramsCount">Количество параметров</param>
         /// <param name="objNode"></param>
         /// <param name="tagName">Имя тэга</param>
-        private void GenerateParametersTags(int paramsCount, TreeNode objNode,
-            TreeNode objParamsNode, string tagName)
+        private void GenerateParametersTags(string objName, Params parametersGroup, TreeNode objNode,
+            TreeNode objParamsNode)
         {
-            for (int i = 1; i <= paramsCount; i++)
+            string tagPrefix = $"{objName}.{parametersGroup.NameForChannelBase}";
+            var parameters = parametersGroup.Items.OfType<Param>().ToList();
+            for (int i = 0; i < parameters.Count; ++i)
             {
-                string number = "[ " + i.ToString() + " ]";
-                string fullTagName = tagName + number;
-                if (cdbxTagView == true)
+                string tag = $"{tagPrefix}[ {i + 1} ]";
+                if (!parameters[i].IsStub)
+                    tag += $" -- { parameters[i].GetName()}";
+
+                if (cdbxTagView)
                 {
-                    objNode.Nodes.Add(fullTagName, fullTagName);
+                    objNode.Nodes.Add(tag, tag);
                 }
                 else
                 {
-                    objParamsNode.Nodes.Add(fullTagName, fullTagName);
+                    objParamsNode.Nodes.Add(tag, tag);
                 }
             }
         }
