@@ -99,11 +99,11 @@ namespace Editor
             this.searchBoxTLP = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textBox_search = new System.Windows.Forms.TextBox();
-            this.searchIterator = new EditorControls.SearchIterator();
             this.searchButtonToolStrip = new System.Windows.Forms.ToolStrip();
             this.searchTSButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.searchIterator = new EditorControls.SearchIterator();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -958,18 +958,6 @@ namespace Editor
             this.textBox_search.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox_Commands_KeyUp);
             this.textBox_search.LostFocus += new System.EventHandler(this.textBox_search_Leave);
             // 
-            // searchIterator
-            // 
-            this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.searchIterator.Index = 0;
-            this.searchIterator.Location = new System.Drawing.Point(131, 2);
-            this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
-            this.searchIterator.Maximum = 0;
-            this.searchIterator.Name = "searchIterator";
-            this.searchIterator.Size = new System.Drawing.Size(84, 22);
-            this.searchIterator.TabIndex = 7;
-            // 
             // searchButtonToolStrip
             // 
             this.searchButtonToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1014,6 +1002,18 @@ namespace Editor
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainTableLayoutPanel.Size = new System.Drawing.Size(867, 500);
             this.mainTableLayoutPanel.TabIndex = 6;
+            // 
+            // searchIterator
+            // 
+            this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.searchIterator.Index = 0;
+            this.searchIterator.Location = new System.Drawing.Point(131, 2);
+            this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
+            this.searchIterator.Maximum = 0;
+            this.searchIterator.Name = "searchIterator";
+            this.searchIterator.Size = new System.Drawing.Size(84, 22);
+            this.searchIterator.TabIndex = 7;
             // 
             // NewEditorControl
             // 

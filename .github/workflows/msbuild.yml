@@ -126,8 +126,12 @@ jobs:
         cp src/bin/${{env.BUILD_CONFIGURATION}}/* submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
 
     - name: Prepare PULL_REQUEST_DATA
+      env:
+        PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_SHA: ${{ github.event.pull_request.head.sha }}
       if: github.event_name == 'pull_request_target'
-      run: echo "PULL_REQUEST_DATA=/d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}" >> $env:GITHUB_ENV
+      run: echo "PULL_REQUEST_DATA=/d:sonar.pullrequest.key=$env:PR_NUMBER /d:sonar.pullrequest.branch=$env:PR_BRANCH /d:sonar.scm.revision=$env:PR_SHA" >> $env:GITHUB_ENV
 
     - name: Sonar scanner begin
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -231,7 +235,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
+      uses: softprops/action-gh-release@62c96d0c4e8a889135c1f3a25910db8dbe0e85f7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
