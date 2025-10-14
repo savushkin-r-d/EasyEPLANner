@@ -602,17 +602,17 @@ namespace Editor
 
         private void TextBox_Commands_KeyUp(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
+            switch (e.KeyData)
             {
-                case Keys.V when e.Control:
+                case Keys.V | Keys.Control:
                     (sender as TextBox).Paste();
                     break;
 
-                case Keys.C when e.Control:
+                case Keys.C | Keys.Control:
                     (sender as TextBox).Copy();
                     break;
 
-                case Keys.X when e.Control:
+                case Keys.X | Keys.Control:
                     (sender as TextBox).Cut();
                     break;
             }
@@ -1577,9 +1577,11 @@ namespace Editor
 
             var item = GetActiveItem();
 
-            // Активировать режим редактирования при выборе элемента: 
+            // Активировать режим редактирования на фСА для подсветки при выборе элемента: 
             // Раньше активировался только при изменении страницы в EPLAN
-            if (item.IsUseDevList && Editable)
+            if (drawDev_toolStripButton.Checked && 
+                item?.IsUseDevList is true &&
+                Editable)
                 EProjectManager.GetInstance().StartEditModes();
 
             DFrm.CheckShown();
