@@ -357,7 +357,7 @@ namespace TechObject
 
         public override IEnumerable<string> BaseObjectsList => [RUNPOINT, ""];
 
-        public override ImageIndexEnum DescritptionImageIndex 
+        public override ImageIndexEnum DescriptionImageIndex 
             => IsRunPoint ? ImageIndexEnum.Run : ImageIndexEnum.NONE;
 
         override public ITreeViewItem[] Items

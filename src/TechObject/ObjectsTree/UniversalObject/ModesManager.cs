@@ -500,7 +500,7 @@ namespace TechObject
 
         public override ImageIndexEnum ImageIndex => ImageIndexEnum.ModesManager;
 
-        public override ImageIndexEnum DescritptionImageIndex 
+        public override ImageIndexEnum DescriptionImageIndex 
             => RunPointState is null ? ImageIndexEnum.NONE : ImageIndexEnum.Run;
         #endregion
 

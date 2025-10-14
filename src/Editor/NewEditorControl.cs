@@ -119,7 +119,7 @@ namespace Editor
                 IsEditable = false,
                 AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1],
                 Sortable = false,
-                ImageGetter = obj => (int)((obj as ITreeViewItem)?.DescritptionImageIndex ?? ImageIndexEnum.NONE),
+                ImageGetter = obj => (int)((obj as ITreeViewItem)?.DescriptionImageIndex ?? ImageIndexEnum.NONE),
             };
 
             editorTView.Columns.Add(firstColumn);

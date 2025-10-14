@@ -14,7 +14,7 @@ namespace Editor
         public ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 
-        public ImageIndexEnum DescritptionImageIndex { get; set; } =
+        public ImageIndexEnum DescriptionImageIndex { get; set; } =
             ImageIndexEnum.NONE;
         
         /// <param name="name">Имя свойства.</param>

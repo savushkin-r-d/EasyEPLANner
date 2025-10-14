@@ -250,9 +250,9 @@ namespace EasyEplanner.Tests
                 CollectionAssert.AreEqual(new int[] { -1, 1 }, RUN.EditablePart);
                 CollectionAssert.AreEqual(new string[] { $"{RUN.Name}", State.RUNPOINT}, RUN.DisplayText);
 
-                Assert.AreEqual(ImageIndexEnum.Run, RUN.DescritptionImageIndex);
+                Assert.AreEqual(ImageIndexEnum.Run, RUN.DescriptionImageIndex);
                 Assert.AreEqual(ImageIndexEnum.ModesManager, modesManager.ImageIndex);
-                Assert.AreEqual(ImageIndexEnum.Run, modesManager.DescritptionImageIndex);
+                Assert.AreEqual(ImageIndexEnum.Run, modesManager.DescriptionImageIndex);
             });
         }
     }
