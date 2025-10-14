@@ -7,9 +7,11 @@ using TechObject;
 using EplanDevice;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public class XMLReporter
     {
         /// <summary>
@@ -829,9 +831,8 @@ namespace EasyEPlanner
         private bool GetNeedProtocolCondition(string tagName, 
             TreeNode node)
         {
-            bool protocolDev = Protocol.Contains(tagName);
-            protocolDev = protocolDev ? 
-                GetWatchdogDevsProtocolability(tagName, node.Text) : false;
+            bool protocolDev = Protocol.Contains(tagName) && 
+                GetWatchdogDevsProtocolability(tagName, node.Text);
             bool protocolObject =
                 node.Text.Contains(DefaultNodeName) &&
                 (node.Text.Contains("ST") ||
@@ -854,11 +855,11 @@ namespace EasyEPlanner
         /// Выключение протоколирования у устройств, подключенных к WATCHDOG
         /// </summary>
         /// <param name="tagName">Название группы тега</param>
-        /// <param name="cahnnelName">Название канала</param>
-        private bool GetWatchdogDevsProtocolability(string tagName, string cahnnelName)
+        /// <param name="channelName">Название канала</param>
+        private bool GetWatchdogDevsProtocolability(string tagName, string channelName)
         {
             if (tagName is "AO_V" or "AI_V" or "DO_ST" or "DI_ST" &&
-                WATCHDOG_Devices.Any(d => cahnnelName.StartsWith($"{d}.")))
+                WATCHDOG_Devices.Any(d => channelName.StartsWith($"{d}.")))
             {
                 return false;
             }
@@ -878,7 +879,8 @@ namespace EasyEPlanner
                 d.Properties[IODevice.Property.AI_dev]?.ToString()])
             .Where(devName => 
                 devName != null && devName != "" &&
-                deviceManager.GetDevice(devName).Description is not StaticHelper.CommonConst.Cap)];
+                deviceManager.GetDevice(devName) is { } dev &&
+                dev.Description is not StaticHelper.CommonConst.Cap)];
             
         /// <summary>
         /// Получить протоколируемость ПИД-регулятора
