@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Editor;
+using EplanDevice;
+using Moq;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
@@ -6,9 +10,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Editor;
-using Moq;
-using NUnit.Framework;
 using TechObject;
 
 namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjectTest
@@ -232,6 +233,90 @@ namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjectTest
                 
                 modesManager.AddMode("операция 2", "operation_2");
                 CollectionAssert.AreEqual(new List<string>() { "", "операция 1", "операция 3" }, mode.BaseObjectsList);
+            });
+        }
+
+        [Test]
+        public void GetDrawObjects()
+        {
+            var dev1 = Mock.Of<IDevice>(d => d.Name == "DEV1");
+            var dev2 = Mock.Of<IDevice>(d => d.Name == "DEV2");
+            var dev3 = Mock.Of<IDevice>(d => d.Name == "DEV3");
+            var dev4 = Mock.Of<IDevice>(d => d.Name == "DEV4");
+            var dev5 = Mock.Of<IDevice>(d => d.Name == "DEV5");
+
+            var actions1 = new List<IAction>()
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev1) { Action = DrawInfo.ActionType.ON_DEVICE} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev1) { Action = DrawInfo.ActionType.OFF_DEVICE} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev1) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var actions2 = new List<IAction>()
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev2) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev2) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev2) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var actions3 = new List<IAction>()
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev2) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev2) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev2) { Action = DrawInfo.ActionType.OTHER} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev5) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var actions4 = new List<IAction>()
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev3) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev3) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.NO_DRAW, dev3) { Action = DrawInfo.ActionType.OTHER} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev4) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev4) { Action = DrawInfo.ActionType.OTHER } }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.NO_DRAW, dev4) { Action = DrawInfo.ActionType.OTHER} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev5) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var step1 = new Step("", getN => 1, null);
+            var step2 = new Step("", getN => 2, null);
+            var step3 = new Step("", getN => 3, null);
+            var step4 = new Step("", getN => 4, null);
+            
+            var actionField = typeof(Step).GetField("actions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            actionField.SetValue(step1, actions1);
+            actionField.SetValue(step2, actions2);
+            actionField.SetValue(step3, actions3);
+            actionField.SetValue(step4, actions4);
+
+
+            var operation = new Mode("", getN => 1, null);
+
+            operation.States[1].Steps.Add(step1);
+            operation.States[1].Steps.Add(step2);
+            operation.States[2].Steps.Add(step3);
+            operation.States[2].Steps.Add(step4);
+
+            var draw = operation.GetObjectToDrawOnEplanPage();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(5, draw.Count);
+
+                Assert.AreEqual("DEV1", draw[0].DrawingDevice.Name);
+                Assert.AreEqual(DrawInfo.Style.RED_BOX, draw[0].DrawingStyle);
+
+                Assert.AreEqual("DEV2", draw[1].DrawingDevice.Name);
+                Assert.AreEqual(DrawInfo.Style.GREEN_GRAY_BOX, draw[1].DrawingStyle);
+
+                Assert.AreEqual("DEV5", draw[2].DrawingDevice.Name);
+                Assert.AreEqual(DrawInfo.Style.GREEN_GRAY_BOX, draw[2].DrawingStyle);
+
+                Assert.AreEqual("DEV3", draw[3].DrawingDevice.Name);
+                Assert.AreEqual(DrawInfo.Style.GREEN_BOX, draw[3].DrawingStyle);
+
+                Assert.AreEqual("DEV4", draw[4].DrawingDevice.Name);
+                Assert.AreEqual(DrawInfo.Style.GREEN_GRAY_BOX, draw[4].DrawingStyle);
             });
         }
     }
