@@ -1,4 +1,5 @@
-﻿using Eplan.EplApi.DataModel;
+﻿using EasyEPlanner.FileSavers.XML;
+using Eplan.EplApi.DataModel;
 using EplanDevice;
 using StaticHelper;
 using System.Collections.Generic;
@@ -179,28 +180,19 @@ namespace EplanDevice
         #endregion
 
         #region сохранение базы каналов
-        public override void GenerateDeviceTags(TreeNode rootNode)
+        public override void GenerateDeviceTags(IDriver root)
         {
             var devTags = GetDeviceProperties(DeviceType, DeviceSubType).Keys;
             var devParameters = new List<(string name, string description)>();
             devParameters.AddRange(devTags.Select(t => (t.Name, t.Description)));
             devParameters.AddRange(parameters.Select(parameter => (parameter.Key.Name, parameter.Key.Description)));
 
-            TreeNode newNode;
-            if (!rootNode.Nodes.ContainsKey(Name))
-            {
-                newNode = rootNode.Nodes.Add(Name, Name);
-            }
-            else
-            {
-                bool searchChildren = false;
-                newNode = rootNode.Nodes.Find(Name, searchChildren)
-                    .First();
-            }
-
             foreach (var par in devParameters)
             {
-                newNode.Nodes.Add($"{Name}.{par.name} -- {par.description}", $"{Name}.{par.name} -- {par.description}");
+                root.AddChannel(Name, new Channel($"{Name}.{par.name}") 
+                { 
+                    Comment = par.description 
+                });
             }
         }
         #endregion

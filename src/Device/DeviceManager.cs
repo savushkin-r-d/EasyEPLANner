@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using TechObject;
 using StaticHelper;
 using static System.Windows.Forms.Design.AxImporter;
+using EasyEPlanner.FileSavers.XML;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -50,7 +51,7 @@ namespace EplanDevice
         /// Генерация тегов устройств для экспорта в базу каналов.
         /// </summary>
         /// <param name="rootNode">Корневой узел</param>
-        void GetObjectForXML(TreeNode rootNode);
+        void GetObjectForXML(IDriver rootNode);
 
         /// <summary>
         /// Является ли привязка множественной
@@ -95,14 +96,11 @@ namespace EplanDevice
     /// </summary>
     public class DeviceManager : IDeviceManager
     {
-        public void GetObjectForXML(TreeNode rootNode)
+        public void GetObjectForXML(IDriver root)
         {
             foreach (IODevice dev in devices)
             {
-                if (dev != null)
-                {
-                    dev.GenerateDeviceTags(rootNode);
-                }
+                dev?.GenerateDeviceTags(root);
             }
         }
 

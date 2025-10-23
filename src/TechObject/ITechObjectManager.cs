@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyEPlanner.FileSavers.XML;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -117,8 +118,7 @@ namespace TechObject
         /// <param name="cdbxTagView">Группировать тэги в один подтип</param>
         /// <param name="cdbxNewNames">Использовать имена объектов вместо OBJECT
         /// </param>
-        void GetObjectForXML(TreeNode rootNode, bool cdbxTagView,
-            bool cdbxNewNames);
+        void GetObjectForXML(IDriver root, bool cdbxTagView, bool cdbxNewNames);
 
         /// <summary>
         /// Вставить базовый объект в редактор

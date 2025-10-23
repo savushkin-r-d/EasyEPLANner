@@ -122,6 +122,12 @@
     <Compile Include="Device\ISetupTerminal.cs" />
     <Compile Include="Device\ITag.cs" />
     <Compile Include="EProjectManager\IEProjectManager.cs" />
+    <Compile Include="FileSavers\XML\Channel.cs" />
+    <Compile Include="FileSavers\XML\Driver.cs" />
+    <Compile Include="FileSavers\XML\IChannel.cs" />
+    <Compile Include="FileSavers\XML\IDriver.cs" />
+    <Compile Include="FileSavers\XML\ISubtype.cs" />
+    <Compile Include="FileSavers\XML\Subtype.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />

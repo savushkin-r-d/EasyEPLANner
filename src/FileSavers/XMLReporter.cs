@@ -7,6 +7,7 @@ using TechObject;
 using EplanDevice;
 using System.Text.RegularExpressions;
 using System.Threading;
+using EasyEPlanner.FileSavers.XML;
 
 namespace EasyEPlanner
 {
@@ -102,10 +103,9 @@ namespace EasyEPlanner
         {
             projectConfig.SynchronizeDevices();
 
-            var rootNode = new TreeNode("subtypes");
-            techObjectManager.GetObjectForXML(rootNode, cdbxTagView,
-                cdbxNewNames);
-            deviceManager.GetObjectForXML(rootNode);
+            var root = new Driver();
+            techObjectManager.GetObjectForXML(root, cdbxTagView, cdbxNewNames);
+            deviceManager.GetObjectForXML(root);
 
             var xmlDoc = new XmlDocument();
             bool createNewChannelBase = !File.Exists(path) || rewrite == true;
@@ -117,7 +117,7 @@ namespace EasyEPlanner
                     File.Delete(path);
                 }
 
-                CreateNewChannelBase(path, xmlDoc, rootNode);
+                CreateNewChannelBase(path, xmlDoc, root);
             }
             else
             {
@@ -125,24 +125,24 @@ namespace EasyEPlanner
 
                 var nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
                 nsmgr.AddNamespace("driver", "http://brestmilk.by/driver/");
-                XmlElement root = xmlDoc.DocumentElement;
-                var elm = root.SelectSingleNode("//driver:id", nsmgr) as 
+                XmlElement xmlroot = xmlDoc.DocumentElement;
+                var elm = xmlroot.SelectSingleNode("//driver:id", nsmgr) as 
                     XmlElement;
                 string baseId = elm.InnerText;
                                
                 var subTypesId = GenerateSubTypesIdsList();
 
-                elm = root.SelectSingleNode("//driver:subtypes", nsmgr) as 
+                elm = xmlroot.SelectSingleNode("//driver:subtypes", nsmgr) as 
                     XmlElement;
                 nsmgr.AddNamespace("subtypes", "http://brestmilk.by/subtypes/");
                 // Настройка элементов базы каналов
                 foreach (XmlElement item in elm.ChildNodes)
                 {
-                    SetUpExistingChannelBase(subTypesId, item, rootNode);                   
+                    SetUpExistingChannelBase(subTypesId, item, root);                   
                 }
 
                 // Вычисление свободных идентификаторов и их присвоение
-                foreach(TreeNode subtype in rootNode.Nodes)
+                foreach(ISubtype subtype in root.Subtypes)
                 {
                     CalculateIdentificatorsForChannelBase(subtype, elm, nsmgr,
                         baseId, subTypesId, xmlDoc);
@@ -158,8 +158,7 @@ namespace EasyEPlanner
         /// <param name="path">Путь к месту хранения</param>
         /// <param name="xmlDoc">XML-документ, куда писать</param>
         /// <param name="rootNode">Узел с данными</param>
-        private void CreateNewChannelBase(string path, 
-            XmlDocument xmlDoc, TreeNode rootNode)
+        private void CreateNewChannelBase(string path, XmlDocument xmlDoc, IDriver root)
         {
             var textWritter = new XmlTextWriter(path,
                 EncodingDetector.UTF8Bom);
@@ -172,7 +171,7 @@ namespace EasyEPlanner
             xmlDoc.Load(path);
 
             XmlElement subtypesNode = WriteCommonXMLPart(xmlDoc);
-            CreateNewChannels(xmlDoc, subtypesNode, rootNode.Nodes);
+            CreateNewChannels(xmlDoc, subtypesNode, root.Subtypes);
         }
 
         /// <summary>
@@ -361,21 +360,16 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание узлов и каналов в новой пустой базе каналов
         /// </summary>
-        private void CreateNewChannels(XmlDocument xmlDoc,
-            XmlElement subtypesNode, TreeNodeCollection Nodes)
+        private void CreateNewChannels(XmlDocument xmlDoc, XmlElement subtypesNode, List<ISubtype> subtypes)
         {
-            for (int i = 0; i < Nodes.Count; i++)
+            foreach (var i in Enumerable.Range(0, subtypes.Count))
             {
-                XmlElement subtypeElm = AddSubType(xmlDoc, subtypesNode,
-                    Nodes[i], i);
+                XmlElement subtypeElm = AddSubType(xmlDoc, subtypesNode, subtypes[i], i);
 
-                for (int j = 0; j < Nodes[i].Nodes.Count; j++)
+                foreach (var j in Enumerable.Range(0, subtypes[i].Channels.Count))
                 {
-                    long channelId = long.Parse(("01" + i.ToString("X2") +
-                        j.ToString("X4")),
-                        System.Globalization.NumberStyles.HexNumber);
-                    AddChannel(xmlDoc, Nodes[i].Nodes[j], subtypeElm,
-                        channelId);
+                    long channelId = long.Parse($"01{i:X2}{i:X4}", System.Globalization.NumberStyles.HexNumber);
+                    AddChannel(xmlDoc, subtypes[i].Channels[j], subtypeElm, channelId);
                 }
             }
         }
@@ -399,7 +393,7 @@ namespace EasyEPlanner
         /// Настройка существующей базы каналов
         /// </summary>
         private void SetUpExistingChannelBase(List<string> subtupesId,
-            XmlElement item, TreeNode rootNode)
+            XmlElement item, IDriver root)
         {
             const int channelLocationId = 9;
             XmlNodeList subTypeChannels = item.ChildNodes[channelLocationId]
@@ -410,25 +404,24 @@ namespace EasyEPlanner
             }
 
             string objectName = item.ChildNodes[6].InnerText;
-            TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
-                .Where(r => r.Text == objectName).ToArray();
-            SetUpChannelBaseObject(nodes, item, subTypeChannels);
+            var subtypes = root.Subtypes.Where(s => s.Description == objectName).ToList();
+            SetUpChannelBaseObject(subtypes, item, subTypeChannels);
         }
 
         /// <summary>
         /// Настройка узла базы каналов
         /// </summary>
-        /// <param name="nodes">Редактируемые узлы базы каналов</param>
+        /// <param name="subtypes">Редактируемые узлы базы каналов</param>
         /// <param name="item">Узел в XML</param>
         /// <param name="subTypeChannels">Тэги узла в XML</param>
-        private void SetUpChannelBaseObject(TreeNode[] nodes, 
+        private void SetUpChannelBaseObject(List<ISubtype> subtypes, 
             XmlElement item, XmlNodeList subTypeChannels)
         {
             const int channelDescrNum = 4;
 
-            ReplaceObjectNumber(subTypeChannels, nodes, channelDescrNum);
+            ReplaceObjectNumber(subTypeChannels, subtypes, channelDescrNum);
             ReplaceStepsToRunSteps(subTypeChannels, channelDescrNum);
-            OnOffNodesDependOnTheirState(nodes, item, subTypeChannels,
+            OnOffNodesDependOnTheirState(subtypes, item, subTypeChannels,
                 channelDescrNum);
         }
 
@@ -436,22 +429,21 @@ namespace EasyEPlanner
         /// Перезаписать номера каналов подтипа (в OBJECT).
         /// </summary>
         /// <param name="subTypeChannels">Список каналов</param>
-        /// <param name="nodes">Редактируемые узлы</param>
+        /// <param name="subtypes">Редактируемые узлы</param>
         /// <param name="channelDescrNum">Номер ячейки описания канала</param>
         private void ReplaceObjectNumber(XmlNodeList subTypeChannels,
-            TreeNode[] nodes, int channelDescrNum)
+            List<ISubtype> subtypes, int channelDescrNum)
         {
             const string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
 
             XmlNode firstChannel = subTypeChannels[0];
             XmlNode firstChannelDescr =
                 firstChannel.ChildNodes[channelDescrNum];
-            bool hasTags = nodes.Length > 0;
             if (firstChannelDescr != null &&
                 firstChannelDescr.InnerText.Contains(DefaultNodeName) &&
-                hasTags)
+                subtypes.SelectMany(st => st.Channels).Count() > 0)
             {
-                string newNodeName = nodes.First().FirstNode.Text;
+                string newNodeName = subtypes.First().Channels.First().Description;
                 string newNum = Regex.Match(newNodeName, searchPattern)
                     .Groups["n"].Value;
 
@@ -500,22 +492,21 @@ namespace EasyEPlanner
         /// Отключение и включение узлов и их тэгов в зависимости от их
         /// нового состояния (если удалены -> отключаются).
         ///</summary>
-        /// <param name="nodes">Узел базы каналов</param>
+        /// <param name="subtypes">Узел базы каналов</param>
         /// <param name="item">Узел в XML</param>
         /// <param name="subTypeChannels">Тэги узла в XML</param>
         /// <param name="channelDescrNum">Номер ячейки описания канала</param>
-        private void OnOffNodesDependOnTheirState(TreeNode[] nodes,
+        private void OnOffNodesDependOnTheirState(List<ISubtype> subtypes,
             XmlElement item, XmlNodeList subTypeChannels, int channelDescrNum)
         {
             const int channelEnabledId = 3;
             const string disable = "0";
             const string enable = "-1";
 
-            bool deletedNode = nodes.Length == 0;
-            if (deletedNode)
-            {
-                // Комментирование удаленных узлов.
-                item.ChildNodes[channelEnabledId].InnerText = disable;
+            if (subtypes.Count == 0)
+            { 
+                // Удалить узел
+                item.ChildNodes[channelEnabledId].InnerText = disable; // Комментирование удаленных узлов.
             }
             else
             {
@@ -523,12 +514,10 @@ namespace EasyEPlanner
 
                 foreach (XmlElement chan in subTypeChannels)
                 {
-                    foreach (TreeNode node in nodes)
+                    foreach (var subtype in subtypes)
                     {
-                        TreeNode[] chanNodes = node.Nodes.Find(
-                            chan.ChildNodes[channelDescrNum].InnerText.Trim(),
-                            true);
-                        if (chanNodes.Length == 0)
+                        var cahnnels = subtype.Channels.Where(ch => ch.Description == chan.ChildNodes[channelDescrNum].InnerText.Trim());
+                        if (cahnnels.Count() == 0)
                         {
                             chan.ChildNodes[channelEnabledId].InnerText = disable;
                             break;
@@ -545,25 +534,25 @@ namespace EasyEPlanner
         /// <summary>
         /// Расчет идентификаторов для базы каналов
         /// </summary>
-        private void CalculateIdentificatorsForChannelBase(TreeNode subtype,
+        private void CalculateIdentificatorsForChannelBase(ISubtype subtype,
             XmlElement elm, XmlNamespaceManager nsmgr, string baseId,
             List<string> subTypesId, XmlDocument xmlDoc)
         {
             const int maxTagsCount = 65535;
             string xpath = "//subtypes:subtype[subtypes:sdrvname='" +
-                subtype.Text + "']";
+                subtype.Description + "']";
             var subElm = elm.SelectSingleNode(xpath, nsmgr) as XmlElement;
             if (subElm != null)
             {
                 nsmgr.AddNamespace("channels", "http://brestmilk.by/channels/");
                 var channelsElm = subElm.ChildNodes[9] as XmlElement;
                 var channelsId = new List<long>();
-                foreach (TreeNode channel in subtype.Nodes)
+                foreach (IChannel channel in subtype.Channels)
                 {
                     XmlNode tagNode = null;
                     foreach(XmlNode node in channelsElm.ChildNodes)
                     {
-                        if(node.InnerText.Contains(channel.Text))
+                        if(node.InnerText.Contains(channel.Name))
                         {
                             tagNode = node;
                         }
@@ -616,11 +605,11 @@ namespace EasyEPlanner
                         subtypeId);
                     string hex = long.Parse(baseId).ToString("X2") +
                         subtypeId.ToString("X2");
-                    for (int i = 0; i < subtype.Nodes.Count; i++)
+                    for (int i = 0; i < subtype.Channels.Count; i++)
                     {
                         long channelId = long.Parse((hex + i.ToString("X4")),
                             System.Globalization.NumberStyles.HexNumber);
-                        AddChannel(xmlDoc, subtype.Nodes[i], newSubtype, 
+                        AddChannel(xmlDoc, subtype.Channels[i], newSubtype, 
                             channelId);
                     }
                 }
@@ -637,7 +626,7 @@ namespace EasyEPlanner
         /// Добавление узла в базу каналов
         /// </summary>
         private XmlElement AddSubType(XmlDocument xmlDoc,
-            XmlElement subtypesNode, TreeNode Node, long subTypeId)
+            XmlElement subtypesNode, ISubtype subtype, long subTypeId)
         {
             string ns = "http://brestmilk.by/subtypes/";
             string np = "http://brestmilk.by/parameters/";
@@ -665,7 +654,7 @@ namespace EasyEPlanner
             subtypeElm.InnerText = "Описание";
             subType.AppendChild(subtypeElm);
             subtypeElm = xmlDoc.CreateElement(prefix, "sdrvname", ns);
-            subtypeElm.InnerText = Node.Text;
+            subtypeElm.InnerText = subtype.Description;
             subType.AppendChild(subtypeElm);
             subtypeElm = xmlDoc.CreateElement(prefix, "sdrvdefname", ns);
             subtypeElm.InnerText = "Узел";
@@ -684,7 +673,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление канала с указанным адресом
         /// </summary>
-        private void AddChannel(XmlDocument xmlDoc, TreeNode node,
+        private void AddChannel(XmlDocument xmlDoc, IChannel Achannel,
             XmlElement subtypeElm, long channelId)
         {
             string prefix = "channels";
@@ -725,7 +714,7 @@ namespace EasyEPlanner
             channelElm.InnerText = "-1";
             channel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "descr", nsChannels);
-            channelElm.InnerText = node.Text;
+            channelElm.InnerText = Achannel.Description;
             channel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "delta", nsChannels);
             
@@ -744,7 +733,7 @@ namespace EasyEPlanner
             channel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "protocol", nsChannels);
 
-            bool needSetProtocol = GetNeedProtocolCondition(subtypeName, node);
+            bool needSetProtocol = GetNeedProtocolCondition(subtypeName, Achannel);
             if (needSetProtocol)
             {
                 channelElm.InnerText = "-1";
@@ -768,9 +757,9 @@ namespace EasyEPlanner
             string nsParams = "http://brestmilk.by/parameters/";
             channelElm.SetAttribute("xmlns:parameters", nsParams);
             
-            if (node.Text.Contains("UP_TIME") || 
-                node.Text.Contains("CMD_ANSWER") ||
-                node.Text.Contains("VERSION"))
+            if (Achannel.Description.Contains("UP_TIME") ||
+                Achannel.Description.Contains("CMD_ANSWER") ||
+                Achannel.Description.Contains("VERSION"))
             {
                 AddChannelAtribute(xmlDoc, channelElm, "IsString");
             
@@ -826,17 +815,16 @@ namespace EasyEPlanner
         /// <param name="tagName">Имя тэга</param>
         /// <param name="node">Имя узла</param>
         /// <returns></returns>
-        private bool GetNeedProtocolCondition(string tagName, 
-            TreeNode node)
+        private bool GetNeedProtocolCondition(string tagName,  IChannel channel)
         {
             bool protocolDev = Protocol.Contains(tagName);
             bool protocolObject =
-                node.Text.Contains(DefaultNodeName) &&
-                (node.Text.Contains("ST") ||
-                node.Text.Contains("MODES") ||
-                node.Text.Contains("OPERATIONS") ||
-                node.Text.Contains("STEPS"));
-            bool protocolPID = GetPIDProtocolability(tagName, node.Text);
+                channel.Name.Contains(DefaultNodeName) &&
+                (channel.Name.Contains("ST") ||
+                 channel.Name.Contains("MODES") ||
+                 channel.Name.Contains("OPERATIONS") ||
+                 channel.Name.Contains("STEPS"));
+            bool protocolPID = GetPIDProtocolability(tagName, channel.Name);
 
             if (protocolDev || protocolObject || protocolPID) 
             {
@@ -947,17 +935,16 @@ namespace EasyEPlanner
         /// <returns></returns>
         public static int GetTagsCount()
         {
-            var rootNode = new TreeNode("subtypes");
+            var root = new Driver();
             bool useNewNames = false;
             bool combineTags = false;
-            techObjectManager.GetObjectForXML(rootNode, combineTags,
-                useNewNames);
-            deviceManager.GetObjectForXML(rootNode);
+            techObjectManager.GetObjectForXML(root, combineTags, useNewNames);
+            deviceManager.GetObjectForXML(root);
 
             int tagsCount = 0;
-            foreach (TreeNode node in rootNode.Nodes)
+            foreach (var subtype in root.Subtypes)
             {
-                tagsCount += node.Nodes.Count;
+                tagsCount += subtype.Channels.Count;
             }
 
             return tagsCount;
