@@ -368,7 +368,7 @@ namespace EasyEPlanner
 
                 foreach (var j in Enumerable.Range(0, subtypes[i].Channels.Count))
                 {
-                    long channelId = long.Parse($"01{i:X2}{i:X4}", System.Globalization.NumberStyles.HexNumber);
+                    long channelId = long.Parse($"01{i:X2}{j:X4}", System.Globalization.NumberStyles.HexNumber);
                     AddChannel(xmlDoc, subtypes[i].Channels[j], subtypeElm, channelId);
                 }
             }
