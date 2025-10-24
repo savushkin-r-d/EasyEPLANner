@@ -189,10 +189,9 @@ namespace EplanDevice
 
             foreach (var par in devParameters)
             {
-                root.AddChannel(Name, new Channel($"{Name}.{par.name}") 
-                { 
-                    Comment = par.description 
-                });
+                var channel = root.AddChannel(Name, $"{Name}.{par.name}", par.description);
+                if (par.name is nameof(Tag.Z) or nameof(Tag.V))
+                    channel.Logged();
             }
         }
         #endregion

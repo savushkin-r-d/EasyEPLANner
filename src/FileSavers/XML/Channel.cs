@@ -25,15 +25,36 @@ namespace EasyEPlanner.FileSavers.XML
 
         public string Comment { get; set; } = "";
 
-        public bool Logged { get; set; } = false;
+        public bool IsLogged { get; set; } = false;
 
-        public IChannel GetIndexed(int index)
+        public bool IsRequestByTime { get; set; } = false;
+
+        public int RequestPeriod { get; set; } = 1;
+
+        public double Delta { get; set; } = 0;
+
+        public IChannel Logged() 
+        { 
+            IsLogged = true; 
+            return this; 
+        }
+
+        public IChannel GetIndexedCopy(int index)
         {
             return new Channel(Name + $"[ {index} ]")
             {
                 Comment = Comment + $" {index}",
-                Logged = Logged
+                IsLogged = IsLogged
             };
+        }
+
+        public IChannel RequestByTime(int requestPeriod = 5000, double delta = 0.2)
+        {
+            IsRequestByTime = true;
+            RequestPeriod = requestPeriod;
+            Delta = delta;
+
+            return this;
         }
     }
 }

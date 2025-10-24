@@ -42,16 +42,19 @@ namespace TechObject
                 root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.CMD");
                 // Операции: .ST (на 33 операции 1 .ST)
                 foreach (var i in Enumerable.Range(0, modes.Count / 33))
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.ST[{i + 1}]");
+                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.ST[{i + 1}]")
+                        .Logged();
 
-                // Операции: .Modes; .OPERATIONS; .AVAILABILITY; .Modes_Steps;
+                // Операции: .MODES; .OPERATIONS; .AVAILABILITY; .MODES_STEPS;
                 foreach (var i in Enumerable.Range(0, modes.Count))
                 {
                     string number = $"[ {i + 1} ]";
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.Modes[ {i + 1} ]");
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Состояния_Операций"), $"{objName}.OPERATIONS[ {i + 1} ]");
+                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.MODES[ {i + 1} ]")
+                        .Logged();
+                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Состояния_Операций"), $"{objName}.OPERATIONS[ {i + 1} ]")
+                        .Logged();
                     root.AddChannel(stDescription + (cdbxTagView ? "" : "_Доступность"), $"{objName}.AVAILABILITY[ {i + 1} ]"   );
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"), $"{objName}.Modes_Steps[ {i + 1} ]");
+                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"), $"{objName}.MODES_STEPS[ {i + 1} ]");
                 }
 
                 // Шаги: .STATE_STEPS;
@@ -62,7 +65,8 @@ namespace TechObject
                         foreach (var stepIdx in Enumerable.Range(0, state.Steps.Count))
                         {
                             root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"),
-                                $"{objName}.{state.Type}_STEPS{modeIdx + 1}[ {stepIdx + 1} ]");
+                                $"{objName}.{state.Type}_STEPS{modeIdx + 1}[ {stepIdx + 1} ]")
+                                .Logged();
                         }
                     }
                 }

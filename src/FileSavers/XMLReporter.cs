@@ -673,185 +673,73 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление канала с указанным адресом
         /// </summary>
-        private void AddChannel(XmlDocument xmlDoc, IChannel Achannel,
+        private void AddChannel(XmlDocument xmlDoc, IChannel channel,
             XmlElement subtypeElm, long channelId)
         {
             string prefix = "channels";
             string nsChannels = "http://brestmilk.by/channels/";
-            XmlElement channel = xmlDoc.CreateElement(prefix, "channel", 
+            XmlElement xmlChannel = xmlDoc.CreateElement(prefix, "channel", 
                 nsChannels);
-            subtypeElm.AppendChild(channel);
+            subtypeElm.AppendChild(xmlChannel);
             XmlElement channelElm = xmlDoc.CreateElement(prefix, "id", 
                 nsChannels);
             channelElm.InnerText = channelId.ToString();
-            channel.AppendChild(channelElm);
+            xmlChannel.AppendChild(channelElm);
 
-            string subtypeName = subtypeElm.ParentNode.ChildNodes[6].InnerText;
-            bool needSetPeriod = Period.Contains(subtypeName);
-            if (needSetPeriod)
-            {
-                channelElm = xmlDoc.CreateElement(prefix, "requesttype", 
-                    nsChannels);
-                channelElm.InnerText = "0";
-                channel.AppendChild(channelElm);
-                channelElm = xmlDoc.CreateElement(prefix, "requestperiod", 
-                    nsChannels);
-                channelElm.InnerText = GetRequestPeriodForTag(subtypeName);
-            }
-            else
-            {
-                channelElm = xmlDoc.CreateElement(prefix, "requesttype", 
-                    nsChannels);
-                channelElm.InnerText = "1";
-                channel.AppendChild(channelElm);
-                channelElm = xmlDoc.CreateElement(prefix, "requestperiod", 
-                    nsChannels);
-                channelElm.InnerText = "1";
-            }
+            /// Тип опроса
+            channelElm = xmlDoc.CreateElement(prefix, "requesttype",
+                nsChannels);
+            channelElm.InnerText = channel.IsRequestByTime ? "0" : "1";
+            xmlChannel.AppendChild(channelElm);
 
-            channel.AppendChild(channelElm);
+            /// Период опроса
+            channelElm = xmlDoc.CreateElement(prefix, "requestperiod",
+                nsChannels);
+            channelElm.InnerText = channel.RequestPeriod.ToString();
+            xmlChannel.AppendChild(channelElm);
+            
             channelElm = xmlDoc.CreateElement(prefix, "enabled", nsChannels);
             channelElm.InnerText = "-1";
-            channel.AppendChild(channelElm);
+            xmlChannel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "descr", nsChannels);
-            channelElm.InnerText = Achannel.Description;
-            channel.AppendChild(channelElm);
+            channelElm.InnerText = channel.Description;
+            xmlChannel.AppendChild(channelElm);
+            
+            /// Дельта
             channelElm = xmlDoc.CreateElement(prefix, "delta", nsChannels);
+            channelElm.InnerText = channel.Delta.ToString();
+            xmlChannel.AppendChild(channelElm);
             
-            if (needSetPeriod)
-            {
-                channelElm.InnerText = GetDeltaForTag(subtypeName);
-            }
-            else
-            {
-                channelElm.InnerText = "0";
-            }
-            
-            channel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "apptime", nsChannels);
             channelElm.InnerText = "0";
-            channel.AppendChild(channelElm);
+            xmlChannel.AppendChild(channelElm);
+
+            /// Протоколировать
             channelElm = xmlDoc.CreateElement(prefix, "protocol", nsChannels);
-
-            bool needSetProtocol = GetNeedProtocolCondition(subtypeName, Achannel);
-            if (needSetProtocol)
-            {
-                channelElm.InnerText = "-1";
-            }
-            else
-            {
-                channelElm.InnerText = "0";
-            }
-
-            channel.AppendChild(channelElm);
+            channelElm.InnerText = channel.IsLogged ? "-1" : "0";
+            xmlChannel.AppendChild(channelElm);
+            
             channelElm = xmlDoc.CreateElement(prefix, "transexprin", 
                 nsChannels);
             channelElm.AppendChild(xmlDoc.CreateCDataSection(""));
-            channel.AppendChild(channelElm);
+            xmlChannel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "transexprout", 
                 nsChannels);
             channelElm.AppendChild(xmlDoc.CreateCDataSection(""));
-            channel.AppendChild(channelElm);
+            xmlChannel.AppendChild(channelElm);
             channelElm = xmlDoc.CreateElement(prefix, "channel_parameters", 
                 nsChannels);
             string nsParams = "http://brestmilk.by/parameters/";
             channelElm.SetAttribute("xmlns:parameters", nsParams);
             
-            if (Achannel.Description.Contains("UP_TIME") ||
-                Achannel.Description.Contains("CMD_ANSWER") ||
-                Achannel.Description.Contains("VERSION"))
+            if (channel.Description.Contains("UP_TIME") ||
+                channel.Description.Contains("CMD_ANSWER") ||
+                channel.Description.Contains("VERSION"))
             {
                 AddChannelAtribute(xmlDoc, channelElm, "IsString");
             
             }
-            channel.AppendChild(channelElm);
-        }
-
-        /// <summary>
-        /// Получить период опроса для тэга
-        /// </summary>
-        /// <param name="tagName">Тэг</param>
-        /// <returns></returns>
-        private string GetRequestPeriodForTag(string tagName)
-        {
-            if (!tagName.Contains("LE") && !tagName.Equals("V_V"))
-            {
-                return "3000";
-            }
-            else
-            {
-                return "5000";
-            }
-        }
-
-        /// <summary>
-        /// Получить дельту для тэга
-        /// </summary>
-        /// <param name="tagName">Тэг</param>
-        /// <returns></returns>
-        private string GetDeltaForTag(string tagName)
-        {
-            if (tagName.Contains("QT"))
-            {
-                return "0.1";
-            }
-            else if (tagName.Equals("V_V"))
-            {
-                return "1";
-            }
-            else if (tagName.Equals("VC_V") || tagName.Equals("M_V"))
-            {
-                return "0.5";
-            }
-            else
-            {
-                return "0.2";
-            }
-        }
-
-        /// <summary>
-        /// Получить необходимость протоколирования тэга
-        /// </summary>
-        /// <param name="tagName">Имя тэга</param>
-        /// <param name="node">Имя узла</param>
-        /// <returns></returns>
-        private bool GetNeedProtocolCondition(string tagName,  IChannel channel)
-        {
-            bool protocolDev = Protocol.Contains(tagName);
-            bool protocolObject =
-                channel.Name.Contains(DefaultNodeName) &&
-                (channel.Name.Contains("ST") ||
-                 channel.Name.Contains("MODES") ||
-                 channel.Name.Contains("OPERATIONS") ||
-                 channel.Name.Contains("STEPS"));
-            bool protocolPID = GetPIDProtocolability(tagName, channel.Name);
-
-            if (protocolDev || protocolObject || protocolPID) 
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Получить протоколируемость ПИД-регулятора
-        /// </summary>
-        /// <param name="tagName">Имя тэга</param>
-        /// <param name="nodeText">Имя узла</param>
-        /// <returns></returns>
-        private bool GetPIDProtocolability(string tagName, string nodeText)
-        {
-            bool isPID = deviceManager
-                .GetDeviceByEplanName(tagName).DeviceType == DeviceType.C;
-            if (isPID && ProtocolPID.Any(x => nodeText.Contains(x)))
-            {
-                return true;
-            }
-
-            return false;
+            xmlChannel.AppendChild(channelElm);
         }
 
         /// <summary>
@@ -875,59 +763,6 @@ namespace EasyEPlanner
         }
 
         private const string DefaultNodeName = "OBJECT";
-
-        /// <summary>
-        /// Узлы, в которых устанавливается протоколирование элементов.
-        /// </summary>
-        private static HashSet<string> Protocol =
-            new HashSet<string>(new string[]
-            {
-                "TE_V",
-                "QT_V",
-                "FQT_F",
-                "PT_V",
-                "VC_V",
-                "M_V",
-                "M_ST",
-                "LT_CLEVEL",
-                "V_ST",
-                "LS_ST",
-                "FS_ST",
-                "GS_ST",
-                "SB_ST",
-                "DI_ST",
-                "DO_ST",
-                "SB_ST",
-                "HL_ST",
-                "HA_ST",
-                "AO_V",
-                "AI_V"
-            });
-
-        private static HashSet<string> ProtocolPID =
-            new HashSet<string>(new string[]
-            {
-                ".V",
-                ".Z"
-            });
-
-        /// <summary>
-        /// Узлы, в которых устанавливается опрос по времени.
-        /// </summary>
-        private static HashSet<string> Period =
-            new HashSet<string>(new string[] {
-                "TE_V",
-                "QT_V",
-                "LT_V",
-                "PT_V",
-                "AO_V",
-                "AI_V",
-                "FQT_F",
-                "M_V",
-                "VC_V",
-                "LT_CLEVEL",
-                "V_V"
-            });
 
         /// <summary>
         /// Получить количество тегов проекта.

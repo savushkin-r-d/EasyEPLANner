@@ -7,21 +7,100 @@ using System.Threading.Tasks;
 
 namespace EasyEPlanner.FileSavers.XML
 {
-    public class Subtype(string description) : ISubtype
+    public class Subtype : ISubtype
     {
-        public string Description { get; } = description;
+        private static readonly List<string> defaultLogged = 
+        [                
+            "TE_V",
+            "QT_V",
+            "FQT_F",
+            "PT_V",
+            "VC_V",
+            "M_V",
+            "M_ST",
+            "LT_CLEVEL",
+            "V_ST",
+            "LS_ST",
+            "FS_ST",
+            "GS_ST",
+            "SB_ST",
+            "DI_ST",
+            "DO_ST",
+            "SB_ST",
+            "HL_ST",
+            "HA_ST",
+            "AO_V",
+            "AI_V"
+        ];
 
-        public bool Logged { get; set; } = false;
+        private static readonly List<string> defaultRequestedByTime =
+        [
+            "TE_V",
+            "QT_V",
+            "LT_V",
+            "PT_V",
+            "AO_V",
+            "AI_V",
+            "FQT_F",
+            "M_V",
+            "VC_V",
+            "LT_CLEVEL",
+            "V_V"
+        ];
+
+        private int GetRequestPeriod(string description) => description switch
+        {
+            "LT_CLEVEL" or "V_V" => 3000,
+            _ => 5000,
+        };
+
+        private double GetDelta(string description) => description switch
+        {
+            _ when description.Contains("FQT") => 0.1,
+            "V_V" => 1,
+            "VC_V" or "M_V" => 0.5,
+            _ => 0.2,
+        };
+
+        public Subtype(string description)
+        {
+            Description = description;
+
+            if (defaultLogged.Contains(description))
+                IsLogged = true;
+
+            if (defaultRequestedByTime.Contains(description))
+            {
+                IsRequestByTime = true;
+                RequestPeriod = GetRequestPeriod(description);
+                Delta = GetDelta(description);
+            }
+        }
+
+        public string Description { get; private set; }
+
+        public bool IsLogged { get; set; } = false;
+
+        public bool IsRequestByTime { get; set; } = false;
+
+        public int RequestPeriod { get; set; } = 1;
+
+        public double Delta { get; set; } = 0;
 
         public List<IChannel> Channels { get; } = [];
 
         public IChannel AddChannel(IChannel channel, int count = 1)
         {
+            channel.IsLogged = IsLogged;
+            channel.IsRequestByTime = IsRequestByTime;
+            channel.RequestPeriod = RequestPeriod;
+            channel.Delta = Delta;
+
             if (count > 1)
             {
                 foreach (var index in Enumerable.Range(1, count))
                 {
-                    Channels.Add(channel.GetIndexed(index));
+                    Channels.Add(channel.GetIndexedCopy(index));
                 }
                 return channel;
             }
