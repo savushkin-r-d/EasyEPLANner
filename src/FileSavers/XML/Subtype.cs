@@ -50,15 +50,15 @@ namespace EasyEPlanner.FileSavers.XML
 
         private int GetRequestPeriod(string description) => description switch
         {
-            "LT_CLEVEL" or "V_V" => 3000,
-            _ => 5000,
+            "LT_CLEVEL" or "V_V" => 5000,
+            _ => 3000,
         };
 
         private double GetDelta(string description) => description switch
         {
-            _ when description.Contains("FQT") => 0.1,
             "V_V" => 1,
             "VC_V" or "M_V" => 0.5,
+            _ when description.StartsWith("QT_") || description.StartsWith("FQT_") => 0.1,
             _ => 0.2,
         };
 

@@ -54,7 +54,7 @@ namespace EasyEPlanner.FileSavers.XML
         /// </summary>
         /// <param name="requestPeriod">Период вопроса</param>
         /// <param name="delta">Дельта</param>
-        IChannel RequestByTime(int requestPeriod = 5000, double delta = 0.2);
+        IChannel RequestByTime(int requestPeriod = 3000, double delta = 0.2);
 
         /// <summary>
         /// Получить копию канала с индексом

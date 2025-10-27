@@ -48,7 +48,7 @@ namespace EasyEPlanner.FileSavers.XML
             };
         }
 
-        public IChannel RequestByTime(int requestPeriod = 5000, double delta = 0.2)
+        public IChannel RequestByTime(int requestPeriod = 3000, double delta = 0.2)
         {
             IsRequestByTime = true;
             RequestPeriod = requestPeriod;
