@@ -175,7 +175,7 @@ jobs:
         del Microsoft.mshtml.dll
 
     - name: Upload artifact    
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: EasyEPLANner
         path: src/bin/${{env.BUILD_CONFIGURATION}}
