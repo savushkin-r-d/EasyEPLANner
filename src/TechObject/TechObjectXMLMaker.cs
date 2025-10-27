@@ -41,20 +41,20 @@ namespace TechObject
                 // Операции: .CMD; 
                 root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.CMD");
                 // Операции: .ST (на 33 операции 1 .ST)
-                foreach (var i in Enumerable.Range(0, modes.Count / 33))
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.ST[{i + 1}]")
+                foreach (var i in Enumerable.Range(0, (modes.Count / 33) + 1))
+                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.ST[ {i + 1} ]")
                         .Logged();
 
                 // Операции: .MODES; .OPERATIONS; .AVAILABILITY; .MODES_STEPS;
                 foreach (var i in Enumerable.Range(0, modes.Count))
                 {
-                    string number = $"[ {i + 1} ]";
                     root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.MODES[ {i + 1} ]")
                         .Logged();
                     root.AddChannel(stDescription + (cdbxTagView ? "" : "_Состояния_Операций"), $"{objName}.OPERATIONS[ {i + 1} ]")
                         .Logged();
                     root.AddChannel(stDescription + (cdbxTagView ? "" : "_Доступность"), $"{objName}.AVAILABILITY[ {i + 1} ]"   );
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"), $"{objName}.MODES_STEPS[ {i + 1} ]");
+                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"), $"{objName}.MODES_STEPS[ {i + 1} ]")
+                        .Logged();
                 }
 
                 // Шаги: .STATE_STEPS;
@@ -114,6 +114,12 @@ namespace TechObject
             root.AddChannel("SYSTEM", "SYSTEM.P_RESTRICTIONS_MANUAL_TIME"   );
             root.AddChannel("SYSTEM", "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
             root.AddChannel("SYSTEM", "SYSTEM.VERSION");
+            
+            var nodes = IO.IOManager.GetInstance().IONodes;
+            foreach (var nodeNumber in Enumerable.Range(1, nodes.Count - 1))
+            {
+                root.AddChannel("SYSTEM", $"SYSTEM.NODEENABLED[ {nodeNumber + 1} ]");
+            }
         }
 
         /// <summary>
