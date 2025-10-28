@@ -355,10 +355,10 @@
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="EProjectManager\EProjectManager.cs" />
-    <Compile Include="FileSavers\XMLReporterDialog.cs">
+    <Compile Include="FileSavers\XML\XMLReporterDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileSavers\XMLReporterDialog.Designer.cs">
+    <Compile Include="FileSavers\XML\XMLReporterDialog.Designer.cs">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
@@ -443,7 +443,7 @@
     <Compile Include="StaticHelper\IPConverter.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />
-    <Compile Include="FileSavers\XMLReporter.cs" />
+    <Compile Include="FileSavers\XML\XMLReporter.cs" />
     <Compile Include="StaticHelper\ProjectHelper.cs" />
     <Compile Include="StaticHelper\SupplementaryFields.cs" />
     <Compile Include="TechObject\Base\BaseFloatParameter.cs" />
@@ -525,7 +525,7 @@
     <EmbeddedResource Include="Editor\ObjectAdder\ObjectAdder.resx">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
+    <EmbeddedResource Include="FileSavers\XML\XMLReporterDialog.resx">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">

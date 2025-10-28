@@ -116,6 +116,9 @@ namespace TechObject
             root.AddChannel("SYSTEM", "SYSTEM.VERSION");
             
             var nodes = IO.IOManager.GetInstance().IONodes;
+            if (nodes.Count is 0 or 1)
+                return;
+
             foreach (var nodeNumber in Enumerable.Range(1, nodes.Count - 1))
             {
                 root.AddChannel("SYSTEM", $"SYSTEM.NODEENABLED[ {nodeNumber + 1} ]");

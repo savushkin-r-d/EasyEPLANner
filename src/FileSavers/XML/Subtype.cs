@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LuaInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -88,6 +89,9 @@ namespace EasyEPlanner.FileSavers.XML
         public double Delta { get; set; } = 0;
 
         public List<IChannel> Channels { get; } = [];
+
+        public IChannel this[string channelName] 
+            => Channels.Find(ch => ch.Name == channelName);
 
         public IChannel AddChannel(IChannel channel, int count = 1)
         {

@@ -8,9 +8,11 @@ using EplanDevice;
 using System.Text.RegularExpressions;
 using System.Threading;
 using EasyEPlanner.FileSavers.XML;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public class XMLReporter
     {
         /// <summary>

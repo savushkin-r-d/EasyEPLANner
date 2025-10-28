@@ -44,5 +44,11 @@ namespace EasyEPlanner.FileSavers.XML
         /// <param name="channel">Канал</param>
         /// <param name="count">Количество индексированных копий</param>
         IChannel AddChannel(IChannel channel, int count = 1);
+
+        /// <summary>
+        /// Получить канал по названию
+        /// </summary>
+        /// <param name="channelName">Название канала</param>
+        IChannel this[string channelName] {  get; }
     }
 }
