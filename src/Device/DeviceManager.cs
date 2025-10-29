@@ -50,8 +50,8 @@ namespace EplanDevice
         /// <summary>
         /// Генерация тегов устройств для экспорта в базу каналов.
         /// </summary>
-        /// <param name="rootNode">Корневой узел</param>
-        void GetObjectForXML(IDriver rootNode);
+        /// <param name="root">Корневой узел</param>
+        void GetObjectForXML(IDriver root);
 
         /// <summary>
         /// Является ли привязка множественной

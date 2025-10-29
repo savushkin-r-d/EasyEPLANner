@@ -49,13 +49,13 @@ namespace EasyEPlanner.FileSavers.XML
             "V_V"
         ];
 
-        private int GetRequestPeriod(string description) => description switch
+        private static int GetRequestPeriod(string description) => description switch
         {
             "LT_CLEVEL" or "V_V" => 5000,
             _ => 3000,
         };
 
-        private double GetDelta(string description) => description switch
+        private static double GetDelta(string description) => description switch
         {
             "V_V" => 1,
             "VC_V" or "M_V" => 0.5,

@@ -33,6 +33,8 @@ namespace EasyEPlanner.FileSavers.XML
 
         public double Delta { get; set; } = 0;
 
+        public Dictionary<string, string> Parameters { get; } = [];
+
         public IChannel Logged() 
         { 
             IsLogged = true; 
@@ -54,6 +56,13 @@ namespace EasyEPlanner.FileSavers.XML
             RequestPeriod = requestPeriod;
             Delta = delta;
 
+            return this;
+        }
+
+        public IChannel WithParameter(string key, string value)
+        {
+            Parameters.Add(key, value);
+            
             return this;
         }
     }

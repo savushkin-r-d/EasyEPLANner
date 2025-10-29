@@ -114,11 +114,11 @@ namespace TechObject
         /// <summary>
         /// Получить описание объектов для базы каналов
         /// </summary>
-        /// <param name="rootNode">Дерево</param>
-        /// <param name="cdbxTagView">Группировать тэги в один подтип</param>
-        /// <param name="cdbxNewNames">Использовать имена объектов вместо OBJECT
+        /// <param name="root">Дерево</param>
+        /// <param name="combineTags">Группировать тэги в один подтип</param>
+        /// <param name="useNewNames">Использовать имена объектов вместо OBJECT
         /// </param>
-        void GetObjectForXML(IDriver root, bool cdbxTagView, bool cdbxNewNames);
+        void GetObjectForXML(IDriver root, bool combineTags, bool useNewNames);
 
         /// <summary>
         /// Вставить базовый объект в редактор

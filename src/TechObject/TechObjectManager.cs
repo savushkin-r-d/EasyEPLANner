@@ -530,7 +530,7 @@ namespace TechObject
         /// OBJECT</param>
         public void GetObjectForXML(IDriver root, bool combineTags, bool useNewNames)
         {
-            techObjectXMLMaker.GetObjectForXML(root, combineTags, useNewNames);
+            techObjectXMLMaker.BuildObjectsForXML(root, combineTags, useNewNames);
         }
 
         private void SortTreeObjectsByCustomComparer()

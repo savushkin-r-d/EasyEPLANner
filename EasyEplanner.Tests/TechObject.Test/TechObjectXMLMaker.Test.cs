@@ -13,7 +13,7 @@ namespace TechObjectTests
     public class TechObjectXMLMakerTest
     {
         [Test]
-        public void GetObjectForXML_VoidTechObjectsTest()
+        public void GetObjectForXML_Test()
         {
             var baseTank = new BaseTechObject()
             {
@@ -49,7 +49,7 @@ namespace TechObjectTests
             var xmlMaker = new TechObjectXMLMaker(manager);
             var root = new Driver();
 
-            xmlMaker.GetObjectForXML(root, true, false);
+            xmlMaker.BuildObjectsForXML(root, true, false);
 
             Assert.Multiple(() => {
                 var system = root["SYSTEM"];

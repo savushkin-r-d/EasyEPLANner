@@ -50,6 +50,11 @@ namespace EasyEPlanner.FileSavers.XML
         double Delta { get; set; }
 
         /// <summary>
+        /// Параметры канала
+        /// </summary>
+        Dictionary<string, string> Parameters { get; }
+
+        /// <summary>
         /// Включить опрос по времени
         /// </summary>
         /// <param name="requestPeriod">Период вопроса</param>
@@ -60,5 +65,12 @@ namespace EasyEPlanner.FileSavers.XML
         /// Получить копию канала с индексом
         /// </summary>
         IChannel GetIndexedCopy(int index);
+
+        /// <summary>
+        /// Добавить параметр канала
+        /// </summary>
+        /// <param name="key">Название параметра</param>
+        /// <param name="value">Значение параметра</param>
+        IChannel WithParameter(string key, string value);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EasyEPlanner;
 using EasyEPlanner.FileSavers.XML;
 using Eplan.EplApi.Base;
+using IO.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace TechObject
         /// <param name="useNewNames">Использовать новые имена объектов
         /// вместо OBJECT</param>
         /// <param name="combineTags">Комбинировать тэги в один подтип</param>
-        public void GetObjectForXML(IDriver root, bool combineTags, bool useNewNames)
+        public void BuildObjectsForXML(IDriver root, bool combineTags, bool useNewNames)
         {
             cdbxNewNames = useNewNames;
             cdbxTagView = combineTags;
@@ -33,88 +34,146 @@ namespace TechObject
             foreach (var num in Enumerable.Range(1, techObjectManager.TechObjects.Count))
             {
                 TechObject item = techObjectManager.TechObjects[num - 1];
-                List<Mode> modes = item.ModesManager.Modes;
+                GenerateObject(root, item, num);
+            }
+        }
 
-                var stDescription = $"{item.NameBC}{item.TechNumber}";
-                string objName = GenerateObjectName(item, num);
-                
-                // Операции: .CMD; 
-                root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.CMD");
-                // Операции: .ST (на 33 операции 1 .ST)
-                foreach (var i in Enumerable.Range(0, (modes.Count / 33) + 1))
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.ST[ {i + 1} ]")
-                        .Logged();
+        /// <summary>
+        /// Генерировать теги для объекта
+        /// </summary>
+        /// <param name="root">Корень базы</param>
+        /// <param name="techObject">Тех.объетк</param>
+        /// <param name="num"></param>
+        private void GenerateObject(IDriver root, TechObject techObject, int num)
+        {
+            List<Mode> modes = techObject.ModesManager.Modes;
+            var stDescription = $"{techObject.NameBC}{techObject.TechNumber}";
+            string objName = GenerateObjectName(techObject, num);
 
-                // Операции: .MODES; .OPERATIONS; .AVAILABILITY; .MODES_STEPS;
-                foreach (var i in Enumerable.Range(0, modes.Count))
+            GenerateOperations(root, modes, stDescription, objName);
+            GenerateStateSteps(root, modes, stDescription, objName);
+            GenerateParamters(root, techObject, stDescription, objName);
+
+            // Параметры ПИД (совместимость со старыми версиями)
+            if (techObject.BaseTechObject != null && techObject.BaseTechObject.IsPID)
+            {
+                foreach (var i in Enumerable.Range(1, 2))
                 {
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Операции"), $"{objName}.MODES[ {i + 1} ]")
-                        .Logged();
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Состояния_Операций"), $"{objName}.OPERATIONS[ {i + 1} ]")
-                        .Logged();
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Доступность"), $"{objName}.AVAILABILITY[ {i + 1} ]"   );
-                    root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"), $"{objName}.MODES_STEPS[ {i + 1} ]")
-                        .Logged();
+                    root.AddChannel(SubtypeName($"PID{num}", "Параметры"), $"PID{num}.RT_PAR_F[ {i} ]");
                 }
 
-                // Шаги: .STATE_STEPS;
-                foreach (var modeIdx in Enumerable.Range(0, modes.Count))
+                foreach (var i in Enumerable.Range(1, 14))
                 {
-                    foreach (var state in modes[modeIdx].States)
-                    {
-                        foreach (var stepIdx in Enumerable.Range(0, state.Steps.Count))
-                        {
-                            root.AddChannel(stDescription + (cdbxTagView ? "" : "_Одиночные_Шаги"),
-                                $"{objName}.{state.Type}_STEPS{modeIdx + 1}[ {stepIdx + 1} ]")
-                                .Logged();
-                        }
-                    }
+                    root.AddChannel(SubtypeName($"PID{num}", "Параметры"), $"PID{num}.S_PAR_F[ {i} ]");
                 }
+            }
+        }
 
-                // Параметры:
-                foreach (var paramsGroup in item.GetParamsManager().Items.OfType<Params>())
+        /// <summary>
+        /// Генерировать теги операций     <br/>
+        /// .CMD;               [ ]        <br/>
+        /// .ST;                [ logged ] <br/>
+        /// .MODES[ i ];        [ logged ] <br/>
+        /// .OPERATIONS[ i ];   [ logged ] <br/>
+        /// .AVAILABILITY[ i ]; [ ]        <br/>
+        /// .MODES_STEPS[ i ];  [ logged ] <br/>
+        /// </summary>
+        /// <param name="root">Корень базы</param>
+        /// <param name="modes">Операции</param>
+        /// <param name="subtype">Название подтипа</param>
+        /// <param name="objName">Название объекта</param>
+        private void GenerateOperations(IDriver root, List<Mode> modes, string subtype, string objName)
+        {
+            // Операции: .CMD; 
+            root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.CMD");
+            // Операции: .ST (на 33 операции 1 .ST)
+            foreach (var index in Enumerable.Range(1, (modes.Count / 33) + 1))
+            {
+                root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.ST[ {index} ]")
+                    .Logged();
+            }
+
+            // Операции: .MODES; .OPERATIONS; .AVAILABILITY; .MODES_STEPS;
+            foreach (var index in Enumerable.Range(1, modes.Count))
+            {
+                root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.MODES[ {index} ]")
+                    .Logged();
+                root.AddChannel(SubtypeName(subtype, "Состояния_Операций"), $"{objName}.OPERATIONS[ {index} ]")
+                    .Logged();
+                root.AddChannel(SubtypeName(subtype, "Доступность"), $"{objName}.AVAILABILITY[ {index} ]");
+                root.AddChannel(SubtypeName(subtype, "Одиночные_Шаги"), $"{objName}.MODES_STEPS[ {index} ]")
+                    .Logged();
+            }
+        }
+
+        /// <summary>
+        /// Генерировать теги .STATE_STEPS [logged]
+        /// </summary>
+        /// <param name="root">Корень базы</param>
+        /// <param name="modes">Операции</param>
+        /// <param name="subtype">Название подтипа</param>
+        /// <param name="objName">Название объекта</param>
+        private void GenerateStateSteps(IDriver root, List<Mode> modes, string subtype, string objName)
+        {
+            foreach (var modeIdx in Enumerable.Range(0, modes.Count))
+            {
+                foreach (var state in modes[modeIdx].States)
                 {
-                    foreach (var param in paramsGroup.Parameters)
+                    foreach (var stepIdx in Enumerable.Range(0, state.Steps.Count))
                     {
-                        root.AddChannel(stDescription + (cdbxTagView ? "" : "_Параметры"),
-                                $"{objName}.{paramsGroup.NameForChannelBase}[ {param.GetParameterNumber} ]");
-                    }
-                }
-
-                // Параметры ПИД (совместимость со старыми версиями)
-                if (item.BaseTechObject != null && item.BaseTechObject.IsPID)
-                {
-                    foreach (var i in Enumerable.Range(1, 2))
-                    {
-                        root.AddChannel($"PID{num}" + (cdbxTagView ? "" : "_Параметры"), $"PID{num}.RT_PAR_F[ {i} ]");
-                    }
-
-                    foreach (var i in Enumerable.Range(1, 14))
-                    {
-                        root.AddChannel($"PID{num}" + (cdbxTagView ? "" : "_Параметры"), $"PID{num}.S_PAR_F[ {i} ]");
+                        root.AddChannel(
+                            SubtypeName(subtype, "Одиночные_Шаги"),
+                            $"{objName}.{state.Type}_STEPS{modeIdx + 1}[ {stepIdx + 1} ]")
+                            .Logged();
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Генерация системных тегов
+        /// Генерировать теги параметров .S_PAR_F[ index ]...
+        /// </summary>
+        /// <param name="root">Корень базы</param>
+        /// <param name="techObject">Тех.объект</param>
+        /// <param name="subtype">Название подтипа</param>
+        /// <param name="objName">Название объекта</param>
+        private void GenerateParamters(IDriver root, TechObject techObject, string subtype, string objName)
+        {
+            foreach (var paramsGroup in techObject.GetParamsManager().Items.OfType<Params>())
+            {
+                foreach (var param in paramsGroup.Parameters)
+                {
+                    root.AddChannel(
+                        SubtypeName(subtype, "Параметры"),
+                        $"{objName}.{paramsGroup.NameForChannelBase}[ {param.GetParameterNumber} ]");
+                }
+            }
+        }
+
+        private string SubtypeName(string stDescription, string nonCombinedPostfix)
+            => stDescription + (cdbxTagView ? "" : $"_{nonCombinedPostfix}");
+
+        /// <summary>
+        /// Генерация системных тегов 
         /// </summary>
         /// <param name="rootNode">Узловой узел</param>
         private void GenerateSystemNode(IDriver root)
         {
-            root.AddChannel("SYSTEM", "SYSTEM.UP_TIME");
+            root.AddChannel("SYSTEM", "SYSTEM.UP_TIME")
+                .WithParameter("IsString", "1");
             root.AddChannel("SYSTEM", "SYSTEM.WASH_VALVE_SEAT_PERIOD");
             root.AddChannel("SYSTEM", "SYSTEM.P_V_OFF_DELAY_TIME"   );
             root.AddChannel("SYSTEM", "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
             root.AddChannel("SYSTEM", "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
             root.AddChannel("SYSTEM", "SYSTEM.CMD");
-            root.AddChannel("SYSTEM", "SYSTEM.CMD_ANSWER");
+            root.AddChannel("SYSTEM", "SYSTEM.CMD_ANSWER")
+                .WithParameter("IsString", "1");
             root.AddChannel("SYSTEM", "SYSTEM.P_RESTRICTIONS_MODE");
             root.AddChannel("SYSTEM", "SYSTEM.P_RESTRICTIONS_MANUAL_TIME"   );
             root.AddChannel("SYSTEM", "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
-            root.AddChannel("SYSTEM", "SYSTEM.VERSION");
-            
+            root.AddChannel("SYSTEM", "SYSTEM.VERSION")
+                .WithParameter("IsString", "1");
+
             var nodes = IO.IOManager.GetInstance().IONodes;
             if (nodes.Count is 0 or 1)
                 return;
