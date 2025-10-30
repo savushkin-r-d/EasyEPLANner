@@ -1,21 +1,36 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
-using System.Windows.Forms;
-using System.IO;
-using TechObject;
+﻿using EasyEPlanner.FileSavers.XML;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 using EplanDevice;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using EasyEPlanner.FileSavers.XML;
-using System.Diagnostics.CodeAnalysis;
-using System;
+using System.Windows.Forms;
+using System.Xml;
+using TechObject;
 
 namespace EasyEPlanner
 {
     [ExcludeFromCodeCoverage]
     public class XmlReporter
     {
+        const string prefixDriver = "driver";
+        const string prefixParam = "parameters";
+        const string prefixSubtypes = "subtypes";
+        const string prefixChannels = "channels";
+
+        const string bmk = "http://brestmilk.by/";
+        readonly string nsDriver = Path.Combine(bmk, "driver/");
+        readonly string nsSubtypes = Path.Combine(bmk, "subtypes/");
+        readonly string nsParameters = Path.Combine(bmk, "parameters/");
+        readonly string nsChannels = Path.Combine(bmk, "channels/");
+        readonly string nsCommunication = Path.Combine(bmk, "communication/");
+
+
         /// <summary>
         /// Экспорт из проекта базы каналов.
         /// </summary>
@@ -31,7 +46,7 @@ namespace EasyEPlanner
                 .CultureWithDotInsteadComma;
             t.Start(dataForSave);
         }
-
+        
         public void AwaitSaveAsCDBX(string projectName, bool combineTag = false, bool useNewNames = false, bool rewrite = false)
         {
             SaveAsXML(projectName, rewrite, combineTag, useNewNames);
@@ -123,7 +138,7 @@ namespace EasyEPlanner
                 xmlDoc.Load(path);
 
                 var nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
-                nsmgr.AddNamespace("driver", "http://brestmilk.by/driver/");
+                nsmgr.AddNamespace(prefixDriver, nsDriver);
                 XmlElement xmlroot = xmlDoc.DocumentElement;
                 var elm = xmlroot.SelectSingleNode("//driver:id", nsmgr) as 
                     XmlElement;
@@ -133,7 +148,7 @@ namespace EasyEPlanner
 
                 elm = xmlroot.SelectSingleNode("//driver:subtypes", nsmgr) as 
                     XmlElement;
-                nsmgr.AddNamespace("subtypes", "http://brestmilk.by/subtypes/");
+                nsmgr.AddNamespace(prefixSubtypes, nsSubtypes);
                 // Настройка элементов базы каналов
                 foreach (XmlElement item in elm.ChildNodes)
                 {
@@ -162,9 +177,8 @@ namespace EasyEPlanner
             var textWritter = new XmlTextWriter(path,
                 EncodingDetector.UTF8Bom);
             textWritter.WriteStartDocument();
-            textWritter.WriteStartElement("driver");
-            textWritter.WriteAttributeString("xmlns", "driver", null,
-                "http://brestmilk.by/driver/");
+            textWritter.WriteStartElement(prefixDriver);
+            textWritter.WriteAttributeString("xmlns", prefixDriver, null, nsDriver);
             textWritter.WriteEndElement();
             textWritter.Close();
             xmlDoc.Load(path);
@@ -176,184 +190,78 @@ namespace EasyEPlanner
         /// <summary>
         /// Формирование общей структуры базы каналов
         /// </summary>
-        private static XmlElement WriteCommonXMLPart(XmlDocument xmlDoc)
+        private XmlElement WriteCommonXMLPart(XmlDocument xmlDoc)
         {
-            string nsDriver = "http://brestmilk.by/driver/";
-            string prefixDriver = "driver";
-            XmlElement firstLevel = xmlDoc.CreateElement(prefixDriver, "inf", nsDriver);
-            firstLevel.InnerText = "BASE F11F3DCC-09F8-4D04-BCB7-81D5D7C48C78";
-            xmlDoc.DocumentElement.AppendChild(firstLevel);
-            firstLevel = xmlDoc.CreateElement(prefixDriver, "dbbuild", nsDriver);
-            firstLevel.InnerText = "4";
-            xmlDoc.DocumentElement.AppendChild(firstLevel);
-            firstLevel = xmlDoc.CreateElement(prefixDriver, prefixDriver, nsDriver);
-            xmlDoc.DocumentElement.AppendChild(firstLevel);
+            xmlDoc.DocumentElement.AddElement(prefixDriver, "inf", nsDriver, "BASE F11F3DCC-09F8-4D04-BCB7-81D5D7C48C78");
+            xmlDoc.DocumentElement.AddElement(prefixDriver, "dbbuild", nsDriver, "4");
+            var driverXml = xmlDoc.DocumentElement.AddElement(prefixDriver, prefixDriver, nsDriver);
 
-            XmlElement secondLevel = xmlDoc.CreateElement(prefixDriver, "id", nsDriver);
-            secondLevel.InnerText = "1";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "tid", nsDriver);
-            secondLevel.InnerText = "0";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "dllname", nsDriver);
-            secondLevel.InnerText = "PAC_easy_drv_LZ.dll";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "access", nsDriver);
-            secondLevel.InnerText = "2";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "maxsubtypescount", nsDriver);
-            secondLevel.InnerText = "10";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "enabled", nsDriver);
-            secondLevel.InnerText = "-1";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "descr", nsDriver);
-            secondLevel.InnerText = "Система PLC-X1";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "drvname", nsDriver);
-            secondLevel.InnerText = Path.GetFileNameWithoutExtension(xmlDoc.BaseURI);
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "defname", nsDriver);
-            secondLevel.InnerText = "Opc Driver";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "defdescr", nsDriver);
-            secondLevel.InnerText = "Универсальный драйвер для протоколов Modbus и SNMP";
-            firstLevel.AppendChild(secondLevel);
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "communication", nsDriver);
-            secondLevel.SetAttribute(
-                "xmlns:communication", "http://brestmilk.by/communication/");
-            firstLevel.AppendChild(secondLevel);
+            driverXml.AddElement(prefixDriver, "id", nsDriver, "1");
+            driverXml.AddElement(prefixDriver, "tid", nsDriver, "0");
+            driverXml.AddElement(prefixDriver, "dllname", nsDriver, "PAC_easy_drv_LZ.dll");
+            driverXml.AddElement(prefixDriver, "access", nsDriver, "2");
+            driverXml.AddElement(prefixDriver, "maxsubtypescount", nsDriver, "10");
+            driverXml.AddElement(prefixDriver, "enabled", nsDriver, "-1");
+            driverXml.AddElement(prefixDriver, "descr", nsDriver, "Система PLC-X1");
+            driverXml.AddElement(prefixDriver, "drvname", nsDriver, Path.GetFileNameWithoutExtension(xmlDoc.BaseURI));
+            driverXml.AddElement(prefixDriver, "defname", nsDriver, "Opc Driver");
+            driverXml.AddElement(prefixDriver, "defdescr", nsDriver, "Универсальный драйвер для протоколов Modbus и SNMP");
 
-            string nsParam = "http://brestmilk.by/parameters/";
-            string pefixParam = "parameters";
-            XmlElement thirdLevel = xmlDoc.CreateElement(
-                "communication", pefixParam, "http://brestmilk.by/communication/");
-            thirdLevel.SetAttribute("xmlns:parameters", nsParam);
-            secondLevel.AppendChild(thirdLevel);
+            var communication = driverXml.AddElement(prefixDriver, "communication", nsDriver);
+            communication.SetAttribute("xmlns:communication", nsCommunication);
+            
+            var parameters = communication.AddElement("communication", prefixParam, nsCommunication);
+            parameters.SetAttribute("xmlns:parameters", nsParameters);
+            AddParameter(parameters, "TYPE", "COM");
+            AddParameter(parameters, "PORTNAME", "COM4");
+            AddParameter(parameters, "SPEED", "12");
+            AddParameter(parameters, "PARITY", "0");
+            AddParameter(parameters, "DATABITS", "4");
+            AddParameter(parameters, "STOPBITS", "0");
 
-            XmlElement forthLevel = xmlDoc.CreateElement(
-                pefixParam, "parameter", nsParam);
-            thirdLevel.AppendChild(forthLevel);
-            XmlElement fifthLevel =
-                xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "TYPE";
-            forthLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "COM";
-            forthLevel.AppendChild(fifthLevel);
-
-            forthLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            thirdLevel.AppendChild(forthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "PORTNAME";
-            forthLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "COM4";
-            forthLevel.AppendChild(fifthLevel);
-
-            forthLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            thirdLevel.AppendChild(forthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "SPEED";
-            forthLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "12";
-            forthLevel.AppendChild(fifthLevel);
-
-            forthLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            thirdLevel.AppendChild(forthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "PARITY";
-            forthLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "0";
-            forthLevel.AppendChild(fifthLevel);
-
-            forthLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            thirdLevel.AppendChild(forthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "DATABITS";
-            forthLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "4";
-            forthLevel.AppendChild(fifthLevel);
-
-            forthLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            thirdLevel.AppendChild(forthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "STOPBITS";
-            forthLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "0";
-            forthLevel.AppendChild(fifthLevel);
-
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "init_parameters",
-                nsDriver);
-            secondLevel.SetAttribute("xmlns:parameters", nsParam);
-            firstLevel.AppendChild(secondLevel);
-
-            thirdLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            secondLevel.AppendChild(thirdLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "IP";
-            thirdLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "IP127.0.0.1";
-            thirdLevel.AppendChild(fifthLevel);
-
-            thirdLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            secondLevel.AppendChild(thirdLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "PLC_NAME";
-            thirdLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
+            var init_parameters = driverXml.AddElement(prefixDriver, "init_parameters", nsDriver);
+            init_parameters.SetAttribute("xmlns:parameters", nsParameters);
+            AddParameter(init_parameters, "IP", "IP127.0.0.1");
+            string plcName;
             if (string.IsNullOrEmpty(EProjectManager.GetInstance().GetCurrentProjectName()))
             {
                 Logs.AddMessage("Не задано PLC_NAME.");
-                fifthLevel.InnerText = "PLC_NAME";
+                plcName = "PLC_NAME";
             }
             else
             {
                 string projectName = EProjectManager.GetInstance().GetCurrentProjectName();
                 EProjectManager.GetInstance().CheckProjectName(ref projectName);
-                fifthLevel.InnerText = projectName;
+                plcName = projectName;
             }
+            AddParameter(init_parameters, "PLC_NAME", plcName);
+            AddParameter(init_parameters, "PORT", "10000");
+            AddParameter(init_parameters, "Kontroller", "LINUX");
 
-            thirdLevel.AppendChild(fifthLevel);
+            driverXml.AddElement(prefixDriver, "common_parameters", nsDriver)
+                .SetAttribute("xmlns:parameters", nsParameters);
 
-            thirdLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            secondLevel.AppendChild(thirdLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "PORT";
-            thirdLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "10000";
-            thirdLevel.AppendChild(fifthLevel);
+            driverXml.AddElement(prefixDriver, "final_parameters", nsDriver)
+                .SetAttribute("xmlns:parameters", nsParameters);
 
-            thirdLevel = xmlDoc.CreateElement(pefixParam, "parameter", nsParam);
-            secondLevel.AppendChild(thirdLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "name", nsParam);
-            fifthLevel.InnerText = "Kontroller";
-            thirdLevel.AppendChild(fifthLevel);
-            fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
-            fifthLevel.InnerText = "LINUX";
-            thirdLevel.AppendChild(fifthLevel);
+            var subtypes = driverXml.AddElement(prefixDriver, prefixSubtypes, nsDriver);
+            subtypes.SetAttribute("xmlns:subtypes", nsSubtypes);
 
-            secondLevel = xmlDoc.CreateElement(
-                prefixDriver, "common_parameters", nsDriver);
-            secondLevel.SetAttribute("xmlns:parameters", nsParam);
-            firstLevel.AppendChild(secondLevel);
+            return subtypes;
+        }
 
-            secondLevel = xmlDoc.CreateElement(
-                prefixDriver, "final_parameters", nsDriver);
-            secondLevel.SetAttribute("xmlns:parameters", nsParam);
-            firstLevel.AppendChild(secondLevel);
 
-            secondLevel = xmlDoc.CreateElement(prefixDriver, "subtypes", nsDriver);
-            secondLevel.SetAttribute("xmlns:subtypes",
-                "http://brestmilk.by/subtypes/");
-            firstLevel.AppendChild(secondLevel);
-            return secondLevel;
+        /// <summary>
+        /// Добавить параметр в элемент
+        /// </summary>
+        /// <param name="parent">Элемент для вставки параметра</param>
+        /// <param name="name">Название параметра</param>
+        /// <param name="value">Значение параметра</param>
+        private void AddParameter(XmlElement parent, string name, string value)
+        {
+            var parameter = parent.AddElement(prefixParam, "parameter", nsParameters);
+            parameter.AddElement(prefixParam, "name", nsParameters, name);
+            parameter.AddElement(prefixParam, "value", nsParameters, value);
         }
 
         /// <summary>
@@ -539,7 +447,6 @@ namespace EasyEPlanner
             XmlElement elm, XmlNamespaceManager nsmgr, string baseId,
             List<string> subTypesId, XmlDocument xmlDoc)
         {
-            const int maxTagsCount = 65535;
             string xpath = "//subtypes:subtype[subtypes:sdrvname='" +
                 subtype.Description + "']";
             var subElm = elm.SelectSingleNode(xpath, nsmgr) as XmlElement;
@@ -569,9 +476,19 @@ namespace EasyEPlanner
                 return;
             }
             
-            nsmgr.AddNamespace("channels", "http://brestmilk.by/channels/");
+            nsmgr.AddNamespace("channels", nsChannels);
+            CalculateIdentificatorsForSubtype(subtype, subElm, baseId, xmlDoc);
+        }
+
+        /// <summary>
+        /// Расчет идентификаторов для подтипа
+        /// </summary>
+        private void CalculateIdentificatorsForSubtype(ISubtype subtype, XmlElement subElm, string baseId, XmlDocument xmlDoc)
+        {
+            const int maxTagsCount = 65535;
             var channelsElm = subElm.ChildNodes[9] as XmlElement;
             var channelsId = new List<long>();
+            
             foreach (IChannel channel in subtype.Channels)
             {
                 XmlNode tagNode = null;
@@ -586,13 +503,13 @@ namespace EasyEPlanner
                 if (tagNode is not null)
                     continue;
 
-               
+
                 // Нахождение адреса канала среди свободных
                 if (channelsId.Count == 0)
                 {
                     long beginId = long.Parse(
                         long.Parse(baseId).ToString("X2") +
-                        long.Parse(subElm.ChildNodes[0].InnerText).ToString("X2") + 
+                        long.Parse(subElm.ChildNodes[0].InnerText).ToString("X2") +
                         "0000",
                         System.Globalization.NumberStyles.HexNumber);
                     for (int i = 0; i < maxTagsCount; i++)
@@ -619,28 +536,23 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление узла в базу каналов
         /// </summary>
-        private static XmlElement AddSubType(XmlDocument xmlDoc,
+        private XmlElement AddSubType(XmlDocument xmlDoc,
             XmlElement subtypesNode, ISubtype subtype, long subTypeId)
         {
-            string ns = "http://brestmilk.by/subtypes/";
-            string np = "http://brestmilk.by/parameters/";
-            string nc = "http://brestmilk.by/channels/";
-            string prefix = "subtypes";
+            var xmlSubType = subtypesNode.AddElement(prefixSubtypes, "subtype", nsSubtypes);
 
-            var xmlSubType = subtypesNode.AddElement(prefix, "subtype", ns);
-
-            xmlSubType.AddElement(prefix, "sid", ns, subTypeId.ToString());
-            xmlSubType.AddElement(prefix, "stid", ns, "0");
-            xmlSubType.AddElement(prefix, "maxchannels", ns, "0");
-            xmlSubType.AddElement(prefix, "enabled", ns, "-1");
-            xmlSubType.AddElement(prefix, "descr", ns, "Описание");
-            xmlSubType.AddElement(prefix, "defdescr", ns, "Описание");
-            xmlSubType.AddElement(prefix, "sdrvname", ns, subtype.Description);
-            xmlSubType.AddElement(prefix, "sdrvdefname", ns, "Узел");
-            xmlSubType.AddElement(prefix, "common_parameters", ns)
-                .SetAttribute("xmlns:parameters", np);
-            var channels = xmlSubType.AddElement(prefix, "channels", ns);
-            channels.SetAttribute("xmlns:channels", nc);
+            xmlSubType.AddElement(prefixSubtypes, "sid", nsSubtypes, subTypeId.ToString());
+            xmlSubType.AddElement(prefixSubtypes, "stid", nsSubtypes, "0");
+            xmlSubType.AddElement(prefixSubtypes, "maxchannels", nsSubtypes, "0");
+            xmlSubType.AddElement(prefixSubtypes, "enabled", nsSubtypes, "-1");
+            xmlSubType.AddElement(prefixSubtypes, "descr", nsSubtypes, "Описание");
+            xmlSubType.AddElement(prefixSubtypes, "defdescr", nsSubtypes, "Описание");
+            xmlSubType.AddElement(prefixSubtypes, "sdrvname", nsSubtypes, subtype.Description);
+            xmlSubType.AddElement(prefixSubtypes, "sdrvdefname", nsSubtypes, "Узел");
+            xmlSubType.AddElement(prefixSubtypes, "common_parameters", nsSubtypes)
+                .SetAttribute("xmlns:parameters", nsParameters);
+            var channels = xmlSubType.AddElement(prefixSubtypes, "channels", nsSubtypes);
+            channels.SetAttribute("xmlns:channels", nsChannels);
 
             return channels;
         }
@@ -651,47 +563,39 @@ namespace EasyEPlanner
         private void AddChannel(XmlDocument xmlDoc, IChannel channel,
             XmlElement subtypeElm, long channelId)
         {
-            string prefix = "channels";
-            string ns = "http://brestmilk.by/channels/";
+            var xmlChannel = subtypeElm.AddElement(prefixChannels, "channel", nsChannels);
+            xmlChannel.AddElement(prefixChannels, "id", nsChannels, channelId.ToString());
+            xmlChannel.AddElement(prefixChannels, "requesttype", nsChannels, channel.IsRequestByTime ? "0" : "1");
+            xmlChannel.AddElement(prefixChannels, "requestperiod", nsChannels, channel.RequestPeriod.ToString());
+            xmlChannel.AddElement(prefixChannels, "enabled", nsChannels, "-1");
+            xmlChannel.AddElement(prefixChannels, "descr", nsChannels, channel.Description);
+            xmlChannel.AddElement(prefixChannels, "delta", nsChannels, channel.Delta.ToString());
+            xmlChannel.AddElement(prefixChannels, "apptime", nsChannels, "0");
+            xmlChannel.AddElement(prefixChannels, "protocol", nsChannels, channel.IsLogged ? "-1" : "0");
 
-            var xmlChannel = subtypeElm.AddElement(prefix, "channel", ns);
-            xmlChannel.AddElement(prefix, "id", ns, channelId.ToString());
-            xmlChannel.AddElement(prefix, "requesttype", ns, channel.IsRequestByTime ? "0" : "1");
-            xmlChannel.AddElement(prefix, "requestperiod", ns, channel.RequestPeriod.ToString());
-            xmlChannel.AddElement(prefix, "enabled", ns, "-1");
-            xmlChannel.AddElement(prefix, "descr", ns, channel.Description);
-            xmlChannel.AddElement(prefix, "delta", ns, channel.Delta.ToString());
-            xmlChannel.AddElement(prefix, "apptime", ns, "0");
-            xmlChannel.AddElement(prefix, "protocol", ns, channel.IsLogged ? "-1" : "0");
-
-            xmlChannel.AddElement(prefix, "transexprin", ns)
+            xmlChannel.AddElement(prefixChannels, "transexprin", nsChannels)
                 .AppendChild(xmlDoc.CreateCDataSection(""));
 
-            xmlChannel.AddElement(prefix, "transexprout", ns)
+            xmlChannel.AddElement(prefixChannels, "transexprout", nsChannels)
                 .AppendChild(xmlDoc.CreateCDataSection(""));
 
-            var channelElm = xmlChannel.AddElement(prefix, "channel_parameters", ns);
-            channelElm.SetAttribute("xmlns:parameters", "http://brestmilk.by/parameters/");
+            var channelElm = xmlChannel.AddElement(prefixChannels, "channel_parameters", nsChannels);
+            channelElm.SetAttribute("xmlns:parameters", nsParameters);
 
             foreach (var parameter in channel.Parameters)
             {
-                AddChannelAtribute(xmlDoc, channelElm, parameter.Key, parameter.Value);
+                AddChannelAtribute(channelElm, parameter.Key, parameter.Value);
             }
         }
 
         /// <summary>
         /// Добавление атрибута канала
         /// </summary>
-        private static void AddChannelAtribute(
-            XmlDocument xmlDoc, XmlElement elm,
-            string atribute, string value)
+        private void AddChannelAtribute(XmlElement elm, string atribute, string value)
         {
-            string prefix = "parameters";
-            string nsParams = "http://brestmilk.by/parameters/";
-
-            var par = elm.AddElement(prefix, "channel", nsParams);
-            par.AddElement(prefix, "name", nsParams, atribute);
-            par.AddElement(prefix, "value", nsParams, value);
+            var par = elm.AddElement(prefixParam, "channel", nsParameters);
+            par.AddElement(prefixParam, "name", nsParameters, atribute);
+            par.AddElement(prefixParam, "value", nsParameters, value);
         }
 
         private const string DefaultNodeName = "OBJECT";
@@ -731,25 +635,5 @@ namespace EasyEPlanner
         static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
         static IDeviceManager deviceManager = DeviceManager.GetInstance();
-    }
-
-    public static class XmlExtension
-    {
-        public static XmlElement AddElement(this XmlElement xmlElement, string prefix, string attribute, string ns, string value)
-        {
-            var channelElm = xmlElement.OwnerDocument.CreateElement(prefix, attribute, ns);
-            channelElm.InnerText = value;
-            xmlElement.AppendChild(channelElm);
-
-            return channelElm;
-        }
-
-        public static XmlElement AddElement(this XmlElement xmlElement, string prefix, string attribute, string ns)
-        {
-            var channelElm = xmlElement.OwnerDocument.CreateElement(prefix, attribute, ns);
-            xmlElement.AppendChild(channelElm);
-
-            return channelElm;
-        }
     }
 }
