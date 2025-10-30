@@ -51,10 +51,11 @@ namespace TechObject
         /// Добавить действия для группы
         /// </summary>
         /// <param name="action"></param>
-        public void CreateAction(Action action)
+        public IAction CreateAction(Action action)
         {
             SubActions.Add(action);
             action.ValueChanged += sender => OnValueChanged(sender);
+            return action;
         }
 
         /// <summary>
