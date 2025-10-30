@@ -218,7 +218,7 @@ namespace TechObject
             };
 
             // Специальное действие - выдача дискретных сигналов 
-            // при наличии входного дискретного сигнала.
+            // при наличии входных дискретных сигналов.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
                 "DI_DO", pairsDiDoAllowedDevTypes, null,
                 new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
