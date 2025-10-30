@@ -227,7 +227,7 @@ namespace TechObject
 
 
             // Специальное действие - выдача дискретных сигналов 
-            // при пропадании входного дискретного сигнала.
+            // при пропадании входных дискретных сигналов.
             var groupInvertedDiDo = new ActionGroup(groupDIDOActionNameInverted,
                 this, "inverted_DI_DO", pairsDiDoAllowedDevTypes, null, 
                 new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
