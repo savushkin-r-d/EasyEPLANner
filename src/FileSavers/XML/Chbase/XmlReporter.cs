@@ -485,7 +485,6 @@ namespace EasyEPlanner
         /// </summary>
         private void CalculateIdentificatorsForSubtype(ISubtype subtype, XmlElement subElm, string baseId, XmlDocument xmlDoc)
         {
-            const int maxTagsCount = 65535;
             var channelsElm = subElm.ChildNodes[9] as XmlElement;
             var channelsId = new List<long>();
             
@@ -503,7 +502,6 @@ namespace EasyEPlanner
                 if (tagNode is not null)
                     continue;
 
-
                 // Нахождение адреса канала среди свободных
                 if (channelsId.Count == 0)
                 {
@@ -512,25 +510,40 @@ namespace EasyEPlanner
                         long.Parse(subElm.ChildNodes[0].InnerText).ToString("X2") +
                         "0000",
                         System.Globalization.NumberStyles.HexNumber);
-                    for (int i = 0; i < maxTagsCount; i++)
-                    {
-                        channelsId.Add(beginId + i);
-                    }
-
-                    foreach (XmlElement channId in channelsElm.ChildNodes)
-                    {
-                        long id = long.Parse(channId.FirstChild.InnerText);
-                        if (channelsId.Contains(id))
-                        {
-                            channelsId.Remove(id);
-                        }
-                    }
+                    channelsId = FindFreeChannel(channelsElm, beginId);
                 }
 
                 long channelId = channelsId[0];
                 channelsId.RemoveAt(0);
                 AddChannel(xmlDoc, channel, channelsElm, channelId);
             }
+        }
+
+        /// <summary>
+        /// Нахождение адреса канала среди свободных
+        /// </summary>
+        /// <param name="channelsElm">Список каналов</param>
+        /// <param name="beginId">Начальный индекс</param>
+        private List<long> FindFreeChannel(XmlElement channelsElm, long beginId)
+        {
+            const int maxTagsCount = 65535;
+            var res = new List<long>();
+
+            for (int i = 0; i < maxTagsCount; i++)
+            {
+                res.Add(beginId + i);
+            }
+
+            foreach (XmlElement channId in channelsElm.ChildNodes)
+            {
+                long id = long.Parse(channId.FirstChild.InnerText);
+                if (res.Contains(id))
+                {
+                    res.Remove(id);
+                }
+            }
+
+            return res;
         }
 
         /// <summary>
