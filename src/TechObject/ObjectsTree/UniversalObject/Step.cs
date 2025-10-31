@@ -64,6 +64,7 @@ namespace TechObject
                     EplanDevice.DeviceType.M
                 });
             openDevices.ImageIndex = ImageIndexEnum.ActionON;
+            openDevices.ActionType = DrawInfo.ActionType.ON_DEVICE;
             actions.Add(openDevices);
 
 
@@ -73,18 +74,19 @@ namespace TechObject
                 {
                     var openedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    openedDeviceAction.CreateAction(new Action("Включать",
+                    var opened = openedDeviceAction.CreateAction(new Action("Включать",
                         this,"",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.M
-                        }));
+                        [
+                            DeviceType.V,
+                            DeviceType.DO,
+                            DeviceType.M
+                        ]));
+                    opened.ActionType = DrawInfo.ActionType.DELAYED_ON_DEVICE;
                     openedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка включения"));
                     return openedDeviceAction;
                 });
+            openDevicesActionGroup.ActionType = DrawInfo.ActionType.DELAYED_ON_DEVICE;
             actions.Add(openDevicesActionGroup);
 
 
@@ -114,7 +116,8 @@ namespace TechObject
                     EplanDevice.DeviceType.DO,
                     EplanDevice.DeviceType.M
                 });
-            closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevices.DrawStyle = DrawInfo.Style.GRAY_BOX;
+            closeDevices.ActionType = DrawInfo.ActionType.OFF_DEVICE;
             closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
             actions.Add(closeDevices);
 
@@ -124,20 +127,21 @@ namespace TechObject
                 {
                     var closedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    closedDeviceAction.CreateAction(new Action("Выключать",
+                    var closed = closedDeviceAction.CreateAction(new Action("Выключать",
                         this, "",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.M
-                        }));
+                        [
+                            DeviceType.V,
+                            DeviceType.DO,
+                            DeviceType.M
+                        ]));
+                    closed.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
                     closedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка выключения"));
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
-            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.GRAY_BOX;
+            closeDevicesActionGroup.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
@@ -218,19 +222,19 @@ namespace TechObject
             };
 
             // Специальное действие - выдача дискретных сигналов 
-            // при наличии входного дискретного сигнала.
+            // при наличии входных дискретных сигналов.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
                 "DI_DO", pairsDiDoAllowedDevTypes, null,
-                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
 
             // Специальное действие - выдача дискретных сигналов 
-            // при пропадании входного дискретного сигнала.
+            // при пропадании входных дискретных сигналов.
             var groupInvertedDiDo = new ActionGroup(groupDIDOActionNameInverted,
                 this, "inverted_DI_DO", pairsDiDoAllowedDevTypes, null, 
-                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
             groupInvertedDiDo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupInvertedDiDo);
 
@@ -261,7 +265,7 @@ namespace TechObject
                     EplanDevice.DeviceType.VC
                 },
                 null,
-                new OneInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
             groupAiAo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAiAo);
 
@@ -827,15 +831,7 @@ namespace TechObject
         }
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            List<DrawInfo> devToDraw = new List<DrawInfo>();
-            foreach (IAction action in actions)
-            {
-                devToDraw.AddRange(action.GetObjectToDrawOnEplanPage());
-            }
-
-            return devToDraw;
-        }
+            => DrawInfo.FilterByActions([.. actions.SelectMany(a => a.GetObjectToDrawOnEplanPage())]);
 
         public override IEnumerable<string> BaseObjectsList
         {

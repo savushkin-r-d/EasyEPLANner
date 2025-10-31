@@ -103,6 +103,11 @@ namespace TechObject
         DrawInfo.Style DrawStyle { get; set; }
 
         /// <summary>
+        /// Тип действия для подсветки
+        /// </summary>
+        DrawInfo.ActionType ActionType { get; set; }
+
+        /// <summary>
         /// Добавление параметра к действию.
         /// </summary>
         /// <param name="val">Значение параметра.</param>
@@ -636,8 +641,11 @@ namespace TechObject
             }
         }
 
-        virtual public DrawInfo.Style DrawStyle { get; set; } = DrawInfo.Style
-            .GREEN_BOX;
+        virtual public DrawInfo.Style DrawStyle { get; set; } 
+            = DrawInfo.Style.GREEN_BOX;
+
+        virtual public DrawInfo.ActionType ActionType { get; set; } 
+            = DrawInfo.ActionType.OTHER;
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
@@ -645,7 +653,10 @@ namespace TechObject
             foreach (int index in deviceIndex)
             {
                 devToDraw.Add(new DrawInfo(DrawStyle,
-                    deviceManager.GetDeviceByIndex(index)));
+                    deviceManager.GetDeviceByIndex(index))
+                {
+                    Action = ActionType
+                });
             }
 
             return devToDraw;
@@ -824,82 +835,31 @@ namespace TechObject
             public IAction Action { get; set; }
         }
 
-        public class OneInManyOutActionProcessingStrategy :
+        public class ManyInManyOutActionProcessingStrategy(DeviceType[] allowedInputDevTypes) :
             DefaultActionProcessorStrategy
         {
-            public OneInManyOutActionProcessingStrategy(
-                EplanDevice.DeviceType[] allowedInputDevTypes)
-            {
-                this.allowedInputDevTypes = allowedInputDevTypes;
-            }
-
-            public override IList<int> ProcessDevices(string devicesStr,
-                EplanDevice.IDeviceManager deviceManager)
+            public override IList<int> ProcessDevices(string devicesStr, IDeviceManager deviceManager)
             {
                 IList<int> validatedDevicesId =
                     base.ProcessDevices(devicesStr, deviceManager);
 
-                var idDevDict = new Dictionary<int, EplanDevice.IDevice>();
-                foreach(var devId in validatedDevicesId)
-                {
-                    var dev = deviceManager.GetDeviceByIndex(devId);
-                    idDevDict.Add(devId, dev);
-                }
+                var idDevDict = validatedDevicesId.ToDictionary(
+                    index => index,
+                    deviceManager.GetDeviceByIndex);
 
-                var newInputDevs = idDevDict
-                    .Where(x => allowedInputDevTypes.Contains(
-                        x.Value.DeviceType) == true)
-                    .ToList();
-                if (newInputDevs.Count > 1)
-                {
-                    foreach (var newInputDevPair in newInputDevs)
-                    {
-                        var newInputDevId = newInputDevPair.Key;
-                        if (Action.DevicesIndex.Contains(newInputDevId))
-                        {
-                            idDevDict.Remove(newInputDevId);
-                        }
-                    }
-                }
-
-                bool incorrectCountInputDevs = idDevDict
-                    .Where(x => allowedInputDevTypes.Contains(
-                        x.Value.DeviceType))
-                    .Count() > 1;
-                List<int> devList;
-                if (incorrectCountInputDevs)
-                {
-                    devList = idDevDict.Where(x => allowedInputDevTypes
-                            .Contains(x.Value.DeviceType) == false)
-                        .Select(x => x.Key)
-                        .ToList();
-                }
-                else
-                {
-                    devList = idDevDict
-                        .ToList()
-                        .OrderBy(x => x.Value.DeviceType,
-                            new OneInManyDevicesComparer(allowedInputDevTypes))
-                        .Select(x => x.Key)
-                        .ToList();
-                }
-
-                return devList;
+                return [.. idDevDict
+                    .ToList()
+                    .OrderBy(x => x.Value.DeviceType, new ManyInManyDevicesComparer(allowedInputDevTypes))
+                    .Select(x => x.Key)];
             }
 
-            class OneInManyDevicesComparer : IComparer<EplanDevice.DeviceType>
+            class ManyInManyDevicesComparer(DeviceType[] allowedFirstPlaceDevTypes) : IComparer<DeviceType>
             {
-                public OneInManyDevicesComparer(
-                    EplanDevice.DeviceType[] allowedFirstPlaceDevTypes)
-                {
-                    this.allowedFirstPlaceDevTypes = allowedFirstPlaceDevTypes;
-                }
-
-                public int Compare(EplanDevice.DeviceType x, EplanDevice.DeviceType y)
+                public int Compare(DeviceType x, DeviceType y)
                 {
                     if (x == y) return 0;
 
-                    if(allowedFirstPlaceDevTypes.Contains(x) &&
+                    if (allowedFirstPlaceDevTypes.Contains(x) &&
                         !allowedFirstPlaceDevTypes.Contains(y))
                     {
                         return -1;
@@ -913,11 +873,7 @@ namespace TechObject
 
                     return x.ToString().CompareTo(y.ToString());
                 }
-
-                private EplanDevice.DeviceType[] allowedFirstPlaceDevTypes;
             }
-
-            private EplanDevice.DeviceType[] allowedInputDevTypes;
         }
     }
 }
