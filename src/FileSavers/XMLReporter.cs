@@ -7,9 +7,11 @@ using TechObject;
 using EplanDevice;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public class XMLReporter
     {
         /// <summary>
@@ -829,7 +831,8 @@ namespace EasyEPlanner
         private bool GetNeedProtocolCondition(string tagName, 
             TreeNode node)
         {
-            bool protocolDev = Protocol.Contains(tagName);
+            bool protocolDev = Protocol.Contains(tagName) && 
+                GetWatchdogDevsProtocolability(tagName, node.Text);
             bool protocolObject =
                 node.Text.Contains(DefaultNodeName) &&
                 (node.Text.Contains("ST") ||
@@ -848,6 +851,37 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Выключение протоколирования у устройств, подключенных к WATCHDOG
+        /// </summary>
+        /// <param name="tagName">Название группы тега</param>
+        /// <param name="channelName">Название канала</param>
+        private bool GetWatchdogDevsProtocolability(string tagName, string channelName)
+        {
+            if (tagName is "AO_V" or "AI_V" or "DO_ST" or "DI_ST" &&
+                WATCHDOG_Devices.Any(d => channelName.StartsWith($"{d}.")))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Список устройств подключенных к WATCHDOG
+        /// </summary>
+        private readonly List<string> WATCHDOG_Devices = [.. deviceManager.Devices
+            .Where(d => d.DeviceType is DeviceType.WATCHDOG)
+            .SelectMany<IODevice, string>(d => [
+                d.Properties[IODevice.Property.DO_dev]?.ToString(),
+                d.Properties[IODevice.Property.DI_dev]?.ToString(),
+                d.Properties[IODevice.Property.AO_dev]?.ToString(),
+                d.Properties[IODevice.Property.AI_dev]?.ToString()])
+            .Where(devName => 
+                devName != null && devName != "" &&
+                deviceManager.GetDevice(devName) is { } dev &&
+                dev.Description is not StaticHelper.CommonConst.Cap)];
+            
         /// <summary>
         /// Получить протоколируемость ПИД-регулятора
         /// </summary>
@@ -913,7 +947,8 @@ namespace EasyEPlanner
                 "HL_ST",
                 "HA_ST",
                 "AO_V",
-                "AI_V"
+                "AI_V",
+                "WATCHDOG_ST",
             });
 
         private static HashSet<string> ProtocolPID =
