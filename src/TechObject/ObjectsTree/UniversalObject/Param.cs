@@ -135,7 +135,9 @@ namespace TechObject
             false => $"{getN(this)}. {name} - {value?.Value} {meter?.Value}."
         };
 
-        public string DisplayedLuaName => (luaName is "" or "P") ? "Заглушка" : luaName;
+        public string DisplayedLuaName => IsStub ? "Заглушка" : luaName;
+
+        public bool IsStub => luaName is "" or "P";
 
         override public ITreeViewItem[] Items => [.. items];
 
