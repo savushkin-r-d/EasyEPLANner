@@ -300,7 +300,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Настройка существующей базы каналов
         /// </summary>
-        private void SetUpExistingChannelBase(List<string> subtupesId,
+        private static void SetUpExistingChannelBase(List<string> subtupesId,
             XmlElement item, IDriver root)
         {
             const int channelLocationId = 9;
@@ -524,7 +524,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="channelsElm">Список каналов</param>
         /// <param name="beginId">Начальный индекс</param>
-        private List<long> FindFreeChannel(XmlElement channelsElm, long beginId)
+        private static List<long> FindFreeChannel(XmlElement channelsElm, long beginId)
         {
             const int maxTagsCount = 65535;
             var res = new List<long>();
