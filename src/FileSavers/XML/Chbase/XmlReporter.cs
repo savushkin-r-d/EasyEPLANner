@@ -18,8 +18,9 @@ namespace EasyEPlanner
     [ExcludeFromCodeCoverage]
     public class XmlReporter
     {
+        const string xmlns = "xmlns";
         const string prefixDriver = "driver";
-        const string prefixParam = "parameters";
+        const string prefixParameters = "parameters";
         const string prefixSubtypes = "subtypes";
         const string prefixChannels = "channels";
 
@@ -178,7 +179,7 @@ namespace EasyEPlanner
                 EncodingDetector.UTF8Bom);
             textWritter.WriteStartDocument();
             textWritter.WriteStartElement(prefixDriver);
-            textWritter.WriteAttributeString("xmlns", prefixDriver, null, nsDriver);
+            textWritter.WriteAttributeString(xmlns, prefixDriver, null, nsDriver);
             textWritter.WriteEndElement();
             textWritter.Close();
             xmlDoc.Load(path);
@@ -208,10 +209,10 @@ namespace EasyEPlanner
             driverXml.AddElement(prefixDriver, "defdescr", nsDriver, "Универсальный драйвер для протоколов Modbus и SNMP");
 
             var communication = driverXml.AddElement(prefixDriver, "communication", nsDriver);
-            communication.SetAttribute("xmlns:communication", nsCommunication);
+            communication.SetAttribute($"{xmlns}:{prefixParameters}", nsCommunication);
             
-            var parameters = communication.AddElement("communication", prefixParam, nsCommunication);
-            parameters.SetAttribute("xmlns:parameters", nsParameters);
+            var parameters = communication.AddElement("communication", prefixParameters, nsCommunication);
+            parameters.SetAttribute($"{xmlns}:{prefixParameters}", nsParameters);
             AddParameter(parameters, "TYPE", "COM");
             AddParameter(parameters, "PORTNAME", "COM4");
             AddParameter(parameters, "SPEED", "12");
@@ -220,7 +221,7 @@ namespace EasyEPlanner
             AddParameter(parameters, "STOPBITS", "0");
 
             var init_parameters = driverXml.AddElement(prefixDriver, "init_parameters", nsDriver);
-            init_parameters.SetAttribute("xmlns:parameters", nsParameters);
+            init_parameters.SetAttribute($"{xmlns}:{prefixParameters}", nsParameters);
             AddParameter(init_parameters, "IP", "IP127.0.0.1");
             string plcName;
             if (string.IsNullOrEmpty(EProjectManager.GetInstance().GetCurrentProjectName()))
@@ -239,13 +240,13 @@ namespace EasyEPlanner
             AddParameter(init_parameters, "Kontroller", "LINUX");
 
             driverXml.AddElement(prefixDriver, "common_parameters", nsDriver)
-                .SetAttribute("xmlns:parameters", nsParameters);
+                .SetAttribute($"{xmlns}:{prefixParameters}", nsParameters);
 
             driverXml.AddElement(prefixDriver, "final_parameters", nsDriver)
-                .SetAttribute("xmlns:parameters", nsParameters);
+                .SetAttribute($"{xmlns}:{prefixParameters}", nsParameters);
 
             var subtypes = driverXml.AddElement(prefixDriver, prefixSubtypes, nsDriver);
-            subtypes.SetAttribute("xmlns:subtypes", nsSubtypes);
+            subtypes.SetAttribute($"{xmlns}:{prefixSubtypes}", nsSubtypes);
 
             return subtypes;
         }
@@ -259,9 +260,9 @@ namespace EasyEPlanner
         /// <param name="value">Значение параметра</param>
         private void AddParameter(XmlElement parent, string name, string value)
         {
-            var parameter = parent.AddElement(prefixParam, "parameter", nsParameters);
-            parameter.AddElement(prefixParam, "name", nsParameters, name);
-            parameter.AddElement(prefixParam, "value", nsParameters, value);
+            var parameter = parent.AddElement(prefixParameters, "parameter", nsParameters);
+            parameter.AddElement(prefixParameters, "name", nsParameters, name);
+            parameter.AddElement(prefixParameters, "value", nsParameters, value);
         }
 
         /// <summary>
@@ -271,7 +272,7 @@ namespace EasyEPlanner
         {
             foreach (var i in Enumerable.Range(0, subtypes.Count))
             {
-                XmlElement subtypeElm = AddSubType(xmlDoc, subtypesNode, subtypes[i], i);
+                XmlElement subtypeElm = AddSubType(subtypesNode, subtypes[i], i);
 
                 foreach (var j in Enumerable.Range(0, subtypes[i].Channels.Count))
                 {
@@ -321,7 +322,7 @@ namespace EasyEPlanner
         /// <param name="subtypes">Редактируемые узлы базы каналов</param>
         /// <param name="item">Узел в XML</param>
         /// <param name="subTypeChannels">Тэги узла в XML</param>
-        private void SetUpChannelBaseObject(List<ISubtype> subtypes, 
+        private static void SetUpChannelBaseObject(List<ISubtype> subtypes, 
             XmlElement item, XmlNodeList subTypeChannels)
         {
             const int channelDescrNum = 4;
@@ -549,8 +550,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление узла в базу каналов
         /// </summary>
-        private XmlElement AddSubType(XmlDocument xmlDoc,
-            XmlElement subtypesNode, ISubtype subtype, long subTypeId)
+        private XmlElement AddSubType(XmlElement subtypesNode, ISubtype subtype, long subTypeId)
         {
             var xmlSubType = subtypesNode.AddElement(prefixSubtypes, "subtype", nsSubtypes);
 
@@ -563,9 +563,9 @@ namespace EasyEPlanner
             xmlSubType.AddElement(prefixSubtypes, "sdrvname", nsSubtypes, subtype.Description);
             xmlSubType.AddElement(prefixSubtypes, "sdrvdefname", nsSubtypes, "Узел");
             xmlSubType.AddElement(prefixSubtypes, "common_parameters", nsSubtypes)
-                .SetAttribute("xmlns:parameters", nsParameters);
+                .SetAttribute($"{xmlns}:{prefixParameters}", nsParameters);
             var channels = xmlSubType.AddElement(prefixSubtypes, "channels", nsSubtypes);
-            channels.SetAttribute("xmlns:channels", nsChannels);
+            channels.SetAttribute($"{xmlns}:{prefixChannels}", nsChannels);
 
             return channels;
         }
@@ -593,7 +593,7 @@ namespace EasyEPlanner
                 .AppendChild(xmlDoc.CreateCDataSection(""));
 
             var channelElm = xmlChannel.AddElement(prefixChannels, "channel_parameters", nsChannels);
-            channelElm.SetAttribute("xmlns:parameters", nsParameters);
+            channelElm.SetAttribute($"{xmlns}:{prefixParameters}", nsParameters);
 
             foreach (var parameter in channel.Parameters)
             {
@@ -606,9 +606,9 @@ namespace EasyEPlanner
         /// </summary>
         private void AddChannelAtribute(XmlElement elm, string atribute, string value)
         {
-            var par = elm.AddElement(prefixParam, "channel", nsParameters);
-            par.AddElement(prefixParam, "name", nsParameters, atribute);
-            par.AddElement(prefixParam, "value", nsParameters, value);
+            var par = elm.AddElement(prefixParameters, "channel", nsParameters);
+            par.AddElement(prefixParameters, "name", nsParameters, atribute);
+            par.AddElement(prefixParameters, "value", nsParameters, value);
         }
 
         private const string DefaultNodeName = "OBJECT";

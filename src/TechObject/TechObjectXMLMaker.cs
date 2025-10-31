@@ -84,16 +84,13 @@ namespace TechObject
         /// <param name="objName">Название объекта</param>
         private void GenerateOperations(IDriver root, List<Mode> modes, string subtype, string objName)
         {
-            // Операции: .CMD; 
             root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.CMD");
-            // Операции: .ST (на 33 операции 1 .ST)
             foreach (var index in Enumerable.Range(1, (modes.Count / 33) + 1))
             {
                 root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.ST[ {index} ]")
                     .Logged();
             }
 
-            // Операции: .MODES; .OPERATIONS; .AVAILABILITY; .MODES_STEPS;
             foreach (var index in Enumerable.Range(1, modes.Count))
             {
                 root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.MODES[ {index} ]")
@@ -157,21 +154,23 @@ namespace TechObject
         /// Генерация системных тегов 
         /// </summary>
         /// <param name="rootNode">Узловой узел</param>
-        private void GenerateSystemNode(IDriver root)
+        private static void GenerateSystemNode(IDriver root)
         {
-            root.AddChannel("SYSTEM", "SYSTEM.UP_TIME")
+            const string SYSTEM = nameof(SYSTEM);
+
+            root.AddChannel(SYSTEM, $"{SYSTEM}.UP_TIME")
                 .WithParameter("IsString", "1");
-            root.AddChannel("SYSTEM", "SYSTEM.WASH_VALVE_SEAT_PERIOD");
-            root.AddChannel("SYSTEM", "SYSTEM.P_V_OFF_DELAY_TIME"   );
-            root.AddChannel("SYSTEM", "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
-            root.AddChannel("SYSTEM", "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
-            root.AddChannel("SYSTEM", "SYSTEM.CMD");
-            root.AddChannel("SYSTEM", "SYSTEM.CMD_ANSWER")
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WASH_VALVE_SEAT_PERIOD");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_V_OFF_DELAY_TIME"   );
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WASH_VALVE_UPPER_SEAT_TIME");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WASH_VALVE_LOWER_SEAT_TIME");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.CMD");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.CMD_ANSWER")
                 .WithParameter("IsString", "1");
-            root.AddChannel("SYSTEM", "SYSTEM.P_RESTRICTIONS_MODE");
-            root.AddChannel("SYSTEM", "SYSTEM.P_RESTRICTIONS_MANUAL_TIME"   );
-            root.AddChannel("SYSTEM", "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
-            root.AddChannel("SYSTEM", "SYSTEM.VERSION")
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_RESTRICTIONS_MODE");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_RESTRICTIONS_MANUAL_TIME"   );
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.VERSION")
                 .WithParameter("IsString", "1");
 
             var nodes = IO.IOManager.GetInstance().IONodes;
@@ -180,7 +179,7 @@ namespace TechObject
 
             foreach (var nodeNumber in Enumerable.Range(1, nodes.Count - 1))
             {
-                root.AddChannel("SYSTEM", $"SYSTEM.NODEENABLED[ {nodeNumber + 1} ]");
+                root.AddChannel(SYSTEM, $"{SYSTEM}.NODEENABLED[ {nodeNumber + 1} ]");
             }
         }
 

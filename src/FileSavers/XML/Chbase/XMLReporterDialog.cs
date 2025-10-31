@@ -137,8 +137,8 @@ namespace EasyEPlanner
         private void ExportBut_Click(object sender, EventArgs e)
         {
             bool pathIsValid = CheckPath();
-            bool combineTag = combineTagBut.Checked ? true : false;
-            bool useNewNames = newFormatBut.Checked ? true : false;
+            bool combineTag = combineTagBut.Checked;
+            bool useNewNames = newFormatBut.Checked;
 
             if (pathIsValid)
             {
