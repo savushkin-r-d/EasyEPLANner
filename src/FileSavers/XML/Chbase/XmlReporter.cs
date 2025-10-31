@@ -463,8 +463,7 @@ namespace EasyEPlanner
                
                 long subtypeId = long.Parse(subTypesId[0]);
                 subTypesId.RemoveAt(0);
-                XmlElement newSubtype = AddSubType(xmlDoc, elm, subtype,
-                    subtypeId);
+                XmlElement newSubtype = AddSubType(elm, subtype, subtypeId);
                 string hex = long.Parse(baseId).ToString("X2") +
                     subtypeId.ToString("X2");
                 for (int i = 0; i < subtype.Channels.Count; i++)
