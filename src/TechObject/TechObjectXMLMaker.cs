@@ -1,4 +1,8 @@
-﻿using System;
+﻿using EasyEPlanner;
+using EasyEPlanner.FileSavers.XML;
+using Eplan.EplApi.Base;
+using IO.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,111 +21,165 @@ namespace TechObject
         /// <summary>
         /// Формирование узлов для операций, шагов и параметров объектов.
         /// </summary>
-        /// <param name="rootNode">корневой узел</param>
+        /// <param name="root">корневой узел</param>
         /// <param name="useNewNames">Использовать новые имена объектов
         /// вместо OBJECT</param>
         /// <param name="combineTags">Комбинировать тэги в один подтип</param>
-        public void GetObjectForXML(TreeNode rootNode, bool combineTags,
-            bool useNewNames)
+        public void BuildObjectsForXML(IDriver root, bool combineTags, bool useNewNames)
         {
             cdbxNewNames = useNewNames;
             cdbxTagView = combineTags;
 
-            GenerateSystemNode(rootNode);
-            for (int num = 1; num <= techObjectManager.TechObjects.Count; num++)
+            GenerateSystemNode(root);
+            foreach (var num in Enumerable.Range(1, techObjectManager.TechObjects.Count))
             {
                 TechObject item = techObjectManager.TechObjects[num - 1];
+                GenerateObject(root, item, num);
+            }
+        }
 
-                var objNode = new TreeNode($"{item.NameBC}{item.TechNumber}");
+        /// <summary>
+        /// Генерировать теги для объекта
+        /// </summary>
+        /// <param name="root">Корень базы</param>
+        /// <param name="techObject">Тех.объетк</param>
+        /// <param name="num"></param>
+        private void GenerateObject(IDriver root, TechObject techObject, int num)
+        {
+            List<Mode> modes = techObject.ModesManager.Modes;
+            var stDescription = $"{techObject.NameBC}{techObject.TechNumber}";
+            string objName = GenerateObjectName(techObject, num);
 
-                var objModesNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Операции");
-                var objOperStateNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Состояния_Операций");
-                var objAvOperNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Доступность");
-                var objStepsNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Шаги");
-                var objSingleStepsNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Одиночные_Шаги");
-                var objParamsNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Параметры");
+            GenerateOperations(root, modes, stDescription, objName);
+            GenerateStateSteps(root, modes, stDescription, objName);
+            GenerateParamters(root, techObject, stDescription, objName);
 
-                string objName = GenerateObjectName(item, num);
-                GenerateCMDTags(objName, objNode, objModesNode);
-                GenerateSTTags(item, objName, objNode, objModesNode);
-                GenerateModesOpersAvsStepsTags(item, objName, objNode,
-                    objModesNode, objOperStateNode, objAvOperNode,
-                    objStepsNode);
-
-                GenerateSingleStepsTags(item, objName, objNode,
-                    objSingleStepsNode);
-
-                foreach(Params paramsGroup in item.GetParamsManager().Items)
+            // Параметры ПИД (совместимость со старыми версиями)
+            if (techObject.BaseTechObject != null && techObject.BaseTechObject.IsPID)
+            {
+                foreach (var i in Enumerable.Range(1, 2))
                 {
-                    string groupName = $"{objName}." +
-                        $"{paramsGroup.NameForChannelBase}";
-                    int count = paramsGroup.Items.Length;
-                    GenerateParametersTags(count, objNode, objParamsNode,
-                        groupName);
+                    root.AddChannel(SubtypeName($"PID{num}", "Параметры"), $"PID{num}.RT_PAR_F[ {i} ]");
                 }
 
-                var singleNodes = new TreeNode[] { objModesNode,
-                    objOperStateNode, objAvOperNode, objStepsNode,
-                    objSingleStepsNode, objParamsNode};
-                GenerateRootNode(rootNode, objNode, singleNodes);
-
-                if (item.BaseTechObject != null && item.BaseTechObject.IsPID)
+                foreach (var i in Enumerable.Range(1, 14))
                 {
-                    GeneratePIDNode(rootNode, 
-                        techObjectManager.GetTechObjectN(item));
+                    root.AddChannel(SubtypeName($"PID{num}", "Параметры"), $"PID{num}.S_PAR_F[ {i} ]");
                 }
             }
         }
 
         /// <summary>
-        /// Генерация системных тегов
+        /// Генерировать теги операций     <br/>
+        /// .CMD;               [ ]        <br/>
+        /// .ST;                [ logged ] <br/>
+        /// .MODES[ i ];        [ logged ] <br/>
+        /// .OPERATIONS[ i ];   [ logged ] <br/>
+        /// .AVAILABILITY[ i ]; [ ]        <br/>
+        /// .MODES_STEPS[ i ];  [ logged ] <br/>
         /// </summary>
-        /// <param name="rootNode">Узловой узел</param>
-        private void GenerateSystemNode(TreeNode rootNode)
+        /// <param name="root">Корень базы</param>
+        /// <param name="modes">Операции</param>
+        /// <param name="subtype">Название подтипа</param>
+        /// <param name="objName">Название объекта</param>
+        private void GenerateOperations(IDriver root, List<Mode> modes, string subtype, string objName)
         {
-            var systemNode = new TreeNode("SYSTEM");
-            systemNode.Nodes.Add("SYSTEM.UP_TIME", "SYSTEM.UP_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_SEAT_PERIOD",
-                "SYSTEM.WASH_VALVE_SEAT_PERIOD");
-            systemNode.Nodes.Add("SYSTEM.P_V_OFF_DELAY_TIME",
-                "SYSTEM.P_V_OFF_DELAY_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_UPPER_SEAT_TIME",
-                "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_LOWER_SEAT_TIME",
-                "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.CMD", "SYSTEM.CMD");
-            systemNode.Nodes.Add("SYSTEM.CMD_ANSWER", "SYSTEM.CMD_ANSWER");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MODE",
-                "SYSTEM.P_RESTRICTIONS_MODE");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MANUAL_TIME",
-                "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
-            systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR",
-                "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
-            systemNode.Nodes.Add("SYSTEM.VERSION",
-                "SYSTEM.VERSION");
-            GenerateIONodesEnablingTags(systemNode);
-            rootNode.Nodes.Add(systemNode);
+            root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.CMD");
+            foreach (var index in Enumerable.Range(1, (modes.Count / 33) + 1))
+            {
+                root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.ST[ {index} ]")
+                    .Logged();
+            }
+
+            foreach (var index in Enumerable.Range(1, modes.Count))
+            {
+                root.AddChannel(SubtypeName(subtype, "Операции"), $"{objName}.MODES[ {index} ]")
+                    .Logged();
+                root.AddChannel(SubtypeName(subtype, "Состояния_Операций"), $"{objName}.OPERATIONS[ {index} ]")
+                    .Logged();
+                root.AddChannel(SubtypeName(subtype, "Доступность"), $"{objName}.AVAILABILITY[ {index} ]");
+                root.AddChannel(SubtypeName(subtype, "Одиночные_Шаги"), $"{objName}.MODES_STEPS[ {index} ]")
+                    .Logged();
+            }
         }
 
         /// <summary>
-        /// Генерация тэгов для управления узлами контроллера
+        /// Генерировать теги .STATE_STEPS [logged]
         /// </summary>
-        /// <param name="node">Системный узел дерева</param>
-        private void GenerateIONodesEnablingTags(TreeNode node)
+        /// <param name="root">Корень базы</param>
+        /// <param name="modes">Операции</param>
+        /// <param name="subtype">Название подтипа</param>
+        /// <param name="objName">Название объекта</param>
+        private void GenerateStateSteps(IDriver root, List<Mode> modes, string subtype, string objName)
         {
-            int nodesCount = IO.IOManager.GetInstance().IONodes.Count;
-            // Первый узел - контроллер, его опускаем.
-            int startValue = 2;
-            for(int i = startValue; i <= nodesCount; i++)
+            foreach (var modeIdx in Enumerable.Range(0, modes.Count))
             {
-                node.Nodes.Add($"SYSTEM.NODEENABLED[ {i} ]",
-                    $"SYSTEM.NODEENABLED[ {i} ]");
+                foreach (var state in modes[modeIdx].States)
+                {
+                    foreach (var stepIdx in Enumerable.Range(0, state.Steps.Count))
+                    {
+                        root.AddChannel(
+                            SubtypeName(subtype, "Одиночные_Шаги"),
+                            $"{objName}.{state.Type}_STEPS{modeIdx + 1}[ {stepIdx + 1} ]")
+                            .Logged();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерировать теги параметров .S_PAR_F[ index ]...
+        /// </summary>
+        /// <param name="root">Корень базы</param>
+        /// <param name="techObject">Тех.объект</param>
+        /// <param name="subtype">Название подтипа</param>
+        /// <param name="objName">Название объекта</param>
+        private void GenerateParamters(IDriver root, TechObject techObject, string subtype, string objName)
+        {
+            foreach (var paramsGroup in techObject.GetParamsManager().Items.OfType<Params>())
+            {
+                foreach (var param in paramsGroup.Parameters)
+                {
+                    root.AddChannel(
+                        SubtypeName(subtype, "Параметры"),
+                        $"{objName}.{paramsGroup.NameForChannelBase}[ {param.GetParameterNumber} ]");
+                }
+            }
+        }
+
+        private string SubtypeName(string stDescription, string nonCombinedPostfix)
+            => stDescription + (cdbxTagView ? "" : $"_{nonCombinedPostfix}");
+
+        /// <summary>
+        /// Генерация системных тегов 
+        /// </summary>
+        /// <param name="rootNode">Узловой узел</param>
+        private static void GenerateSystemNode(IDriver root)
+        {
+            const string SYSTEM = nameof(SYSTEM);
+
+            root.AddChannel(SYSTEM, $"{SYSTEM}.UP_TIME")
+                .WithParameter("IsString", "1");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WASH_VALVE_SEAT_PERIOD");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_V_OFF_DELAY_TIME"   );
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WASH_VALVE_UPPER_SEAT_TIME");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WASH_VALVE_LOWER_SEAT_TIME");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.CMD");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.CMD_ANSWER")
+                .WithParameter("IsString", "1");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_RESTRICTIONS_MODE");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_RESTRICTIONS_MANUAL_TIME"   );
+            root.AddChannel(SYSTEM, $"{SYSTEM}.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.VERSION")
+                .WithParameter("IsString", "1");
+
+            var nodes = IO.IOManager.GetInstance().IONodes;
+            if (nodes.Count is 0 or 1)
+                return;
+
+            foreach (var nodeNumber in Enumerable.Range(1, nodes.Count - 1))
+            {
+                root.AddChannel(SYSTEM, $"{SYSTEM}.NODEENABLED[ {nodeNumber + 1} ]");
             }
         }
 
@@ -141,190 +199,6 @@ namespace TechObject
             {
                 return "OBJECT" + itemNumber.ToString();
             }
-        }
-
-        /// <summary>
-        /// Генерация CMD-тэгов для объекта
-        /// </summary>
-        /// <param name="obj">Имя объекта</param>
-        private void GenerateCMDTags(string obj, TreeNode objNode,
-            TreeNode objModesNode)
-        {
-            string tagName = obj + ".CMD";
-            if (cdbxTagView == true)
-            {
-                objNode.Nodes.Add(tagName, tagName);
-            }
-            else
-            {
-                objModesNode.Nodes.Add(tagName, tagName);
-            }
-        }
-
-        /// <summary>
-        /// Генерация ST-тегов для проекта
-        /// </summary>
-        /// <param name="item">Объект</param>
-        /// <param name="objName">Имя объекта</param>
-        private void GenerateSTTags(TechObject item, string objName,
-            TreeNode objNode, TreeNode objModesNode)
-        {
-            // 33 - Magic number
-            int stCount = item.ModesManager.Modes.Count / 33;
-            for (int i = 0; i <= stCount; i++)
-            {
-                string number = "[ " + (i + 1).ToString() + " ]";
-                string fullTagName = objName + ".ST" + number;
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(fullTagName, fullTagName);
-                }
-                else
-                {
-                    objModesNode.Nodes.Add(fullTagName, fullTagName);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация тэгов по операциям, шагам, доступности, состояниям
-        /// </summary>
-        /// <param name="item">Объект</param>
-        /// <param name="itemNumber">Глобальный номер</param>
-        private void GenerateModesOpersAvsStepsTags(TechObject item, string obj,
-            TreeNode objNode, TreeNode objModesNode, TreeNode objOperStateNode,
-            TreeNode objAvOperNode, TreeNode objStepsNode)
-        {
-            string mode = obj + ".MODES";
-            string step = mode + "_STEPS";
-            string oper = obj + ".OPERATIONS";
-            string av = obj + ".AVAILABILITY";
-            for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
-            {
-                string number = "[ " + i.ToString() + " ]";
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(mode + number, mode + number);
-                    objNode.Nodes.Add(oper + number, oper + number);
-                    objNode.Nodes.Add(av + number, av + number);
-                    objNode.Nodes.Add(step + number, step + number);
-                }
-                else
-                {
-                    objModesNode.Nodes.Add(mode + number, mode + number);
-                    objOperStateNode.Nodes.Add(oper + number, oper + number);
-                    objAvOperNode.Nodes.Add(av + number, av + number);
-                    objStepsNode.Nodes.Add(step + number, step + number);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация одиночных шагов для объекта
-        /// </summary>
-        /// <param name="techObject">Объект</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="objNode">Дерево объекта (пишется либо сюда)</param>
-        /// <param name="objSingleStepsNode">Дерево для одиночных шагов 
-        /// (либо сюда)</param>
-        private void GenerateSingleStepsTags(TechObject techObject,
-            string objName, TreeNode objNode, TreeNode objSingleStepsNode)
-        {
-            List<Mode> modes = techObject.ModesManager.Modes;
-            for (int modeNum = 1; modeNum <= modes.Count; modeNum++)
-            {
-                foreach(var state in modes[modeNum - 1].States)
-                {
-                    int stepsCount = state.Steps.Count;
-                    for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
-                    {
-                        string stepTag = $"{objName}." +
-                            $"{state.Type}_STEPS{modeNum}[ {stepNum} ]";
-                        if (cdbxTagView)
-                        {
-                            objNode.Nodes.Add(stepTag, stepTag);
-                        }
-                        else
-                        {
-                            objSingleStepsNode.Nodes.Add(stepTag, stepTag);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация тэгов параметров объекта
-        /// </summary>
-        /// <param name="paramsCount">Количество параметров</param>
-        /// <param name="objNode"></param>
-        /// <param name="tagName">Имя тэга</param>
-        private void GenerateParametersTags(int paramsCount, TreeNode objNode,
-            TreeNode objParamsNode, string tagName)
-        {
-            for (int i = 1; i <= paramsCount; i++)
-            {
-                string number = "[ " + i.ToString() + " ]";
-                string fullTagName = tagName + number;
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(fullTagName, fullTagName);
-                }
-                else
-                {
-                    objParamsNode.Nodes.Add(fullTagName, fullTagName);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация главного узла для экспорта в XML
-        /// </summary>
-        private void GenerateRootNode(TreeNode rootNode, TreeNode objNode,
-            TreeNode[] singleNodes)
-        {
-            if (cdbxTagView == true)
-            {
-                rootNode.Nodes.Add(objNode);
-            }
-            else
-            {
-                rootNode.Nodes.AddRange(singleNodes);
-            }
-        }
-
-        /// <summary>
-        /// Генерация объекта-ПИДа
-        /// </summary>
-        /// <param name="rootNode">Главный узел</param>
-        private void GeneratePIDNode(TreeNode rootNode, int num)
-        {
-            string tagName = $"PID{num}";
-            TreeNode pidNode;
-            if (cdbxTagView == true)
-            {
-                pidNode = new TreeNode($"{tagName}");
-            }
-            else
-            {
-                pidNode = new TreeNode($"{tagName}_Параметры");
-            }
-
-            const int rtParCount = 2;
-            for (int i = 1; i <= rtParCount; i++)
-            {
-                string nodeDescription = $"{tagName}.RT_PAR_F[ {i} ]";
-                pidNode.Nodes.Add(nodeDescription, nodeDescription);
-            }
-
-            const int sParCount = 14;
-            for (int i = 1; i <= sParCount; i++)
-            {
-                string nodeDescription = $"{tagName}.S_PAR_F[ {i} ]";
-                pidNode.Nodes.Add(nodeDescription, nodeDescription);
-            }
-
-            rootNode.Nodes.Add(pidNode);
         }
 
         private ITechObjectManager techObjectManager;
