@@ -7,6 +7,8 @@ using System.Management.Instrumentation;
 using System;
 using Moq;
 using StaticHelper;
+using EasyEPlanner.FileSavers.XML;
+using IO.ViewModel;
 
 namespace Tests.EplanDevices
 {
@@ -148,21 +150,22 @@ namespace Tests.EplanDevices
 
         [TestCaseSource(nameof(GenerateDeviceTagsCaseSource))]
         public void GenerateDeviceTags_DeviceAODefault_ReturnsTree(
-            IODevice dev, TreeNode expectedNode)
+            IODevice dev, IDriver expectedRoot)
         {
-            var actualNode = new TreeNode();
+            var root = new Driver();
             
-            dev.GenerateDeviceTags(actualNode);
-            
-            for(int i = 0; i < actualNode.Nodes.Count; i++)
+            dev.GenerateDeviceTags(root);
+
+            Assert.IsTrue(root.Subtypes.Count > 0);
+            for (int i = 0; i < root.Subtypes.Count; i++)
             {
-                TreeNode actualSubNode = actualNode.Nodes[i];
-                TreeNode expectedSubNode = expectedNode.Nodes[i];
-                Assert.AreEqual(expectedSubNode.Text, actualSubNode.Text);
-                for (int j = 0; j < actualNode.Nodes.Count; j++)
+                var actualSubType = root.Subtypes[i];
+                var expectedSubType = expectedRoot.Subtypes[i];
+                Assert.AreEqual(expectedSubType.Description, actualSubType.Description);
+                Assert.IsTrue(actualSubType.Channels.Count > 0);
+                for (int j = 0; j < actualSubType.Channels.Count; j++)
                 {
-                    Assert.AreEqual(expectedSubNode.Nodes[j].Text,
-                        actualSubNode.Nodes[j].Text);
+                    Assert.AreEqual(expectedSubType.Channels[j].Description, actualSubType.Channels[j].Description);
                 }
             }
         }
@@ -176,28 +179,16 @@ namespace Tests.EplanDevices
             int objNum = 1;
             int devNum = 1;
 
-            string devMTag = "M";
-            string devVTag = "V";
-            string devPMinVTag = "P_MIN_V";
-            string devPMaxVTag = "P_MAX_V";
+            var expectedRoot = new Driver();
 
-            var expectedNode = new TreeNode();
-            var mNode = new TreeNode($"AO_{devMTag}");
-            mNode.Nodes.Add($"{devName}.{devMTag}");
-            var vNode = new TreeNode($"AO_{devVTag}");
-            vNode.Nodes.Add($"{devName}.{devVTag}");
-            var pMinVNode = new TreeNode($"AO_{devPMinVTag}");
-            pMinVNode.Nodes.Add($"{devName}.{devPMinVTag}");
-            var pMaxVNode = new TreeNode($"AO_{devPMaxVTag}");
-            pMaxVNode.Nodes.Add($"{devName}.{devPMaxVTag}");
-            expectedNode.Nodes.Add(mNode);
-            expectedNode.Nodes.Add(vNode);
-            expectedNode.Nodes.Add(pMinVNode);
-            expectedNode.Nodes.Add(pMaxVNode);
+            expectedRoot.AddChannel("AO_M", new Channel($"{devName}.M") { Comment = IODevice.Tag.M.Description});
+            expectedRoot.AddChannel("AO_V", new Channel($"{devName}.V") { Comment = IODevice.Tag.V.Description });
+            expectedRoot.AddChannel("AO_P_MIN_V", new Channel($"{devName}.P_MIN_V") { Comment = IODevice.Parameter.P_MIN_V.Description });
+            expectedRoot.AddChannel("AO_P_MAX_V", new Channel($"{devName}.P_MAX_V") { Comment = IODevice.Parameter.P_MAX_V.Description });
 
-            var dev = new AO(devName, eplanName, descr, devNum, objName,
-                objNum);
-            var defaultAODev = new object[] { dev, expectedNode };
+            var dev = new AO(devName, eplanName, descr, devNum, objName, objNum);
+            dev.SetSubType("AO");
+            var defaultAODev = new object[] { dev, expectedRoot };
 
             return new object[] { defaultAODev };
         }
