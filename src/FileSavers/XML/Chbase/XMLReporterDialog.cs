@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public partial class XMLReporterDialog : Form
     {
         public XMLReporterDialog()
@@ -79,7 +81,7 @@ namespace EasyEPlanner
 
         private void newChBaseBut_CheckedChanged(object sender, EventArgs e)
         {
-            if (newChBaseBut.Checked == true)
+            if (newChBaseBut.Checked)
             {
                 pathTextBoxLabel.Text = "Укажите каталог для сохранения:";
                 oldChBaseBut.Checked = false;
@@ -88,7 +90,7 @@ namespace EasyEPlanner
 
         private void oldChBaseBut_CheckedChanged(object sender, EventArgs e)
         {
-            if (oldChBaseBut.Checked == true)
+            if (oldChBaseBut.Checked)
             {
                 pathTextBoxLabel.Text = "Укажите путь к базе каналов:";
                 newChBaseBut.Checked = false;
@@ -97,7 +99,7 @@ namespace EasyEPlanner
 
         private void NonCombineTagBut_CheckedChanged(object sender, EventArgs e)
         {
-            if (nonCombineTagBut.Checked == true)
+            if (nonCombineTagBut.Checked)
             {
                 combineTagBut.Checked = false;
             }
@@ -105,7 +107,7 @@ namespace EasyEPlanner
 
         private void combineTagBut_CheckedChanged(object sender, EventArgs e)
         {
-            if (combineTagBut.Checked == true)
+            if (combineTagBut.Checked)
             {
                 nonCombineTagBut.Checked = false;
             }
@@ -113,7 +115,7 @@ namespace EasyEPlanner
 
         private void oldFormatBut_CheckedChanged(object sender, EventArgs e)
         {
-            if (oldFormatBut.Checked == true)
+            if (oldFormatBut.Checked)
             {
                 newFormatBut.Checked = false;
             }
@@ -121,7 +123,7 @@ namespace EasyEPlanner
 
         private void newFormatBut_CheckedChanged(object sender, EventArgs e)
         {
-            if (newFormatBut.Checked == true)
+            if (newFormatBut.Checked)
             {
                 oldFormatBut.Checked = false;
             }
@@ -135,18 +137,17 @@ namespace EasyEPlanner
         private void ExportBut_Click(object sender, EventArgs e)
         {
             bool pathIsValid = CheckPath();
-            bool combineTag = combineTagBut.Checked ? true : false;
-            bool useNewNames = newFormatBut.Checked ? true : false;
+            bool combineTag = combineTagBut.Checked;
+            bool useNewNames = newFormatBut.Checked;
 
             if (pathIsValid)
             {
-                var reporter = new XMLReporter();
-                if (newChBaseBut.Checked == true)
+                var reporter = new XmlReporter();
+                if (newChBaseBut.Checked)
                 {
-                    string filePath = path + "\\" + projectName + chBaseFormat;
+                    string filePath = Path.Combine(path, $"{projectName}{chBaseFormat}");
                     bool rewrite = true;
-                    reporter.SaveAsCDBX(filePath, combineTag, useNewNames,
-                        rewrite);
+                    reporter.SaveAsCDBX(filePath, combineTag, useNewNames, rewrite);
                 }
                 else
                 {
@@ -165,16 +166,14 @@ namespace EasyEPlanner
         {
             if (oldChBaseBut.Checked)
             {
-                bool isExist = File.Exists(path);
-                if (isExist == false)
+                if (!File.Exists(path))
                 {
                     MessageBox.Show("Не найден файл базы каналов", "Ошибка",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
 
-                bool pathIsValid = path.Contains(chBaseFormat);
-                if (pathIsValid == false)
+                if (!path.Contains(chBaseFormat))
                 {
                     MessageBox.Show("Указан неправильный файл базы каналов.",
                         "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -1,4 +1,5 @@
 ﻿using EasyEPlanner;
+using EasyEPlanner.FileSavers.XML;
 using IO;
 using StaticHelper;
 using System;
@@ -55,13 +56,10 @@ namespace EplanDevice
         /// Генерация тэгов устройства.
         /// </summary>
         /// <param name="rootNode">Корневой узел</param>
-        public virtual void GenerateDeviceTags(TreeNode rootNode)
+        public virtual void GenerateDeviceTags(IDriver root)
         {
-            Dictionary<ITag, int> propertiesList = GetDeviceProperties(DeviceType, DeviceSubType);
-            if (propertiesList == null)
-            {
+            if (GetDeviceProperties(DeviceType, DeviceSubType) is not { } propertiesList)
                 return;
-            }
 
             foreach (var tagPair in propertiesList)
             {
@@ -69,32 +67,8 @@ namespace EplanDevice
                 string propDescription = tagPair.Key.Description;
                 int theSameTagsCount = tagPair.Value;
 
-                TreeNode newNode;
-                string nodeName = $"{DeviceType}_{propName}";
-                for (int i = 1; i <= theSameTagsCount; i++)
-                {
-                    if (!rootNode.Nodes.ContainsKey(nodeName))
-                    {
-                        newNode = rootNode.Nodes.Add(nodeName, nodeName);
-                    }
-                    else
-                    {
-                        bool searchChildren = false;
-                        newNode = rootNode.Nodes.Find(nodeName, searchChildren)
-                            .First();
-                    }
-
-                    if (theSameTagsCount > 1)
-                    {
-                        var descr = $"{Name}.{propName}[ {i} ] -- {propDescription} {i}";
-                        newNode.Nodes.Add(descr, descr);
-                    }
-                    else
-                    {
-                        var descr = $"{Name}.{propName} -- {propDescription}";
-                        newNode.Nodes.Add(descr, descr);
-                    }
-                }
+                root.AddChannel($"{DeviceType}_{propName}",
+                    $"{Name}.{propName}", $"{propDescription}", theSameTagsCount);
             }
         }
 
