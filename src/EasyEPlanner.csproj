@@ -122,6 +122,13 @@
     <Compile Include="Device\ISetupTerminal.cs" />
     <Compile Include="Device\ITag.cs" />
     <Compile Include="EProjectManager\IEProjectManager.cs" />
+    <Compile Include="FileSavers\XML\Chbase\Channel.cs" />
+    <Compile Include="FileSavers\XML\Chbase\Driver.cs" />
+    <Compile Include="FileSavers\XML\Chbase\IChannel.cs" />
+    <Compile Include="FileSavers\XML\Chbase\IDriver.cs" />
+    <Compile Include="FileSavers\XML\Chbase\ISubtype.cs" />
+    <Compile Include="FileSavers\XML\Chbase\Subtype.cs" />
+    <Compile Include="FileSavers\XML\XmlExtensions.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
@@ -349,10 +356,10 @@
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="EProjectManager\EProjectManager.cs" />
-    <Compile Include="FileSavers\XMLReporterDialog.cs">
+    <Compile Include="FileSavers\XML\Chbase\XMLReporterDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileSavers\XMLReporterDialog.Designer.cs">
+    <Compile Include="FileSavers\XML\Chbase\XMLReporterDialog.Designer.cs">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
@@ -437,7 +444,7 @@
     <Compile Include="StaticHelper\IPConverter.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />
-    <Compile Include="FileSavers\XMLReporter.cs" />
+    <Compile Include="FileSavers\XML\Chbase\XmlReporter.cs" />
     <Compile Include="StaticHelper\ProjectHelper.cs" />
     <Compile Include="StaticHelper\SupplementaryFields.cs" />
     <Compile Include="TechObject\Base\BaseFloatParameter.cs" />
@@ -519,7 +526,7 @@
     <EmbeddedResource Include="Editor\ObjectAdder\ObjectAdder.resx">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
+    <EmbeddedResource Include="FileSavers\XML\Chbase\XMLReporterDialog.resx">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">
