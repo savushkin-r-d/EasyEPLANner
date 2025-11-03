@@ -152,7 +152,7 @@ namespace Tests.EplanDevices
         public void GenerateDeviceTags_DeviceAODefault_ReturnsTree(
             IODevice dev, IDriver expectedRoot)
         {
-            var root = new Driver();
+            var root = new Driver(Mock.Of<IDeviceManager>());
             
             dev.GenerateDeviceTags(root);
 
@@ -179,7 +179,7 @@ namespace Tests.EplanDevices
             int objNum = 1;
             int devNum = 1;
 
-            var expectedRoot = new Driver();
+            var expectedRoot = new Driver(Mock.Of<IDeviceManager>());
 
             expectedRoot.AddChannel("AO_M", new Channel($"{devName}.M") { Comment = IODevice.Tag.M.Description});
             expectedRoot.AddChannel("AO_V", new Channel($"{devName}.V") { Comment = IODevice.Tag.V.Description });

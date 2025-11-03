@@ -1,4 +1,5 @@
 ﻿using EasyEPlanner.FileSavers.XML;
+using EplanDevice;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -47,7 +48,7 @@ namespace TechObjectTests
 
             var manager = Mock.Of<ITechObjectManager>(m => m.TechObjects == new List<TechObject.TechObject>() { techObject1, PID});
             var xmlMaker = new TechObjectXMLMaker(manager);
-            var root = new Driver();
+            var root = new Driver(Mock.Of<IDeviceManager>());
 
             xmlMaker.BuildObjectsForXML(root, true, false);
 
