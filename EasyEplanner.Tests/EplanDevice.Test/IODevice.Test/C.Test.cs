@@ -235,7 +235,7 @@ namespace Tests.EplanDevices
         {
             var dev = GetNewCDevice();
             
-            IDriver actualNode = new Driver(Mock.Of<IDeviceManager>());
+            IDriver actualNode = new Driver(Mock.Of<IDeviceManager>(dm => dm.Devices == new List<IODevice>()));
             dev.GenerateDeviceTags(actualNode);
             
             ISubtype expectedSubType = new Subtype(dev.Name);

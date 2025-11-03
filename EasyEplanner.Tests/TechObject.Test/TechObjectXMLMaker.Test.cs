@@ -48,7 +48,7 @@ namespace TechObjectTests
 
             var manager = Mock.Of<ITechObjectManager>(m => m.TechObjects == new List<TechObject.TechObject>() { techObject1, PID});
             var xmlMaker = new TechObjectXMLMaker(manager);
-            var root = new Driver(Mock.Of<IDeviceManager>());
+            var root = new Driver(Mock.Of<IDeviceManager>(dm => dm.Devices == new List<IODevice>()));
 
             xmlMaker.BuildObjectsForXML(root, true, false);
 

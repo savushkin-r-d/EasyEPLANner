@@ -19,7 +19,7 @@ namespace EasyEPlanner.FileSavers.XML
 
         private void PrepareChannelsLogg()
         {
-            var tags = deviceManager.Devices
+            var tags = deviceManager.Devices?
                 .Where(d => d.DeviceType is DeviceType.WATCHDOG)
                 .SelectMany<IODevice, string>(d => [
                     d.Properties[IODevice.Property.DO_dev]?.ToString(),
@@ -37,7 +37,7 @@ namespace EasyEPlanner.FileSavers.XML
                 })
                 .Where(tag => tag != "");
 
-            foreach (var tag in tags)
+            foreach (var tag in tags ?? [])
             {
                 Subtype.ChannelsLogging[tag] = false;
             }
