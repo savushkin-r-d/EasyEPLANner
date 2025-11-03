@@ -65,7 +65,7 @@ namespace EasyEPlanner
             const int maxTagsCount = 5000;
 
             folderPath += CountOfTagsFileName;
-            int tagsCount = XMLReporter.GetTagsCount();
+            int tagsCount = XmlReporter.GetTagsCount();
             string displayingText = $"{tagsCount}";
             string result = MakeStringForWriting(tagsCount, maxTagsCount,
                 displayingText);
