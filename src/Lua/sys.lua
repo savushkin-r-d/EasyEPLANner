@@ -155,6 +155,12 @@ function proc_operation_devices(value, mode, state_n)
     end
     local mainStep = mode[state_n][-1]
     proc_actions(mainStep, value)
+
+    local state = mode[state_n]
+    if value.runPoint == true then
+        state:SetRunPoint()
+    end
+
     if value.steps then
         for fields, value in ipairs(value.steps) do
             mode:AddStep(state_n, value.name or "Шаг ??", value.baseStep or "")

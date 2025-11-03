@@ -281,19 +281,8 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = "Операции";
-                if (modes.Count > 0)
-                {
-                    res += " (" + modes.Count + ")";
-                }
-
-                return new string[] { res, "" };
-            }
-        }
+        override public string[] DisplayText 
+            => [$"Операции ({Modes.Count})", RunPointDisplay];
 
         override public ITreeViewItem[] Items
         {
@@ -509,13 +498,10 @@ namespace TechObject
             }
         }
 
-        public override ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                return ImageIndexEnum.ModesManager;
-            }
-        }
+        public override ImageIndexEnum ImageIndex => ImageIndexEnum.ModesManager;
+
+        public override ImageIndexEnum DescriptionImageIndex 
+            => RunPointState is null ? ImageIndexEnum.NONE : ImageIndexEnum.Run;
         #endregion
 
         public override string SystemIdentifier => "operation";
@@ -632,6 +618,18 @@ namespace TechObject
             Owner.GetParamsManager().Float.FillWithStubs();
             Modes.ForEach(m => m.Autocomplete());
         }
+
+        /// <summary>
+        /// Состояние для автозапуска;
+        /// </summary>
+        public IState RunPointState { get; set; } = null;
+
+        /// <summary>
+        /// Состояние для автозапуска (Для отображения)
+        /// </summary>
+        public string RunPointDisplay 
+            => RunPointState is null ? "" :
+            $"{RunPointState.Owner.DisplayText[0]} : {RunPointState.Name}";
 
         /// <summary> Список операций. </summary>
         private List<Mode> modes;
