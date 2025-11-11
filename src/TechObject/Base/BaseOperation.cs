@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using Aga.Controls.Tree;
@@ -600,6 +600,7 @@ namespace TechObject
             foreach (BaseParameter oldProperty in RootProperties)
             {
                 BaseParameter newProperty = oldProperty.Clone();
+                newProperty.BaseOperation = this;
                 if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
                 {
                     newProperty.Owner = obj.Clone(newOwner.Owner.Owner.Owner);
