@@ -189,6 +189,14 @@
     <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="mpk\Model\Attributes.cs" />
+    <Compile Include="mpk\Model\Component.cs" />
+    <Compile Include="mpk\Model\Container.cs" />
+    <Compile Include="mpk\Model\Message.cs" />
+    <Compile Include="mpk\Model\Property.cs" />
+    <Compile Include="mpk\Saver\ComponentSerializer.cs" />
+    <Compile Include="mpk\Saver\ContainerSerializer.cs" />
+    <Compile Include="mpk\Saver\XmlSaver.cs" />
     <Compile Include="StaticHelper\EplanFunction.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
@@ -698,7 +706,9 @@
       <Name>EplanIdleTimeModule</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="mpk\Converter\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
