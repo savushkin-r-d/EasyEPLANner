@@ -159,6 +159,8 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Parameter.P_K, 1},
             };
 
             return new object[]
@@ -214,6 +216,8 @@ namespace Tests.EplanDevices
             var parametersWT_PXC_AXL = new string[]
             {
                 IODevice.Parameter.P_DT,
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_K,
             };
 
             return new object[]
