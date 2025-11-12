@@ -893,10 +893,10 @@ namespace TechObject
                     return "";
                 }
 
-                return $"{Action.Owner.TechObject.DisplayText[0]}->" +
-                    $"{Action.Owner.Owner.Owner.DisplayText[0]}->" +
-                    $"{Action.Owner.Owner.Name}->" +
-                    $"{Action.Owner.GetStepName()}->" +
+                return $"{Action?.Owner?.TechObject?.DisplayText[0]}->" +
+                    $"{Action?.Owner?.Owner?.Owner?.DisplayText[0]}->" +
+                    $"{Action?.Owner?.Owner?.Name}->" +
+                    $"{Action?.Owner?.GetStepName()}->" +
                     $"{(Action as ITreeViewItem)?.Parent.DisplayText[0]}: Неверно заполнены сигналы\n";
             }
         }

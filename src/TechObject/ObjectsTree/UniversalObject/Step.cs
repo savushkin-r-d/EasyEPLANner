@@ -877,7 +877,7 @@ namespace TechObject
             string modeName = mode.Name;
 
             errors += CheckOpenAndCloseActions(techObjName, modeName);
-            errors += CheckInOutGroupActions(techObjName, modeName);
+            errors += CheckInOutGroupActions();
             return errors;
         }
 
@@ -915,8 +915,7 @@ namespace TechObject
             return errors;
         }
 
-        private string CheckInOutGroupActions(string techObjName,
-            string modeName)
+        private string CheckInOutGroupActions()
         {
             var errors = new List<string>();
 
@@ -925,19 +924,15 @@ namespace TechObject
                 x.Name == groupDIDOActionName ||
                 x.Name == groupDIDOActionNameInverted);
 
-            foreach(var group in checkingActionsGroups)
+            foreach (var action in checkingActionsGroups.Select(g => g.SubActions).OfType<IAction>())
             {
-                var groupActions = group.SubActions;
-                foreach(IAction groupAction in groupActions)
+                if(action.Empty)
                 {
-                    if(groupAction.Empty)
-                    {
-                        continue;
-                    }
-
-                    errors.Add(groupAction.GetDeviceProcessingStrategy()
-                        .Check(deviceManager));
+                    continue;
                 }
+
+                errors.Add(action.GetDeviceProcessingStrategy()
+                    .Check(deviceManager));
             }
 
             return string.Join("", errors.Distinct());
