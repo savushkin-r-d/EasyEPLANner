@@ -918,7 +918,7 @@ namespace TechObject
         private string CheckInOutGroupActions(string techObjName,
             string modeName)
         {
-            var errors = string.Empty;
+            var errors = new List<string>();
 
             var checkingActionsGroups = actions
                 .Where(x => x.Name == groupAIAOActionName ||
@@ -927,7 +927,6 @@ namespace TechObject
 
             foreach(var group in checkingActionsGroups)
             {
-                bool hasError = false;
                 var groupActions = group.SubActions;
                 foreach(IAction groupAction in groupActions)
                 {
@@ -936,27 +935,12 @@ namespace TechObject
                         continue;
                     }
 
-                    int devsCount = groupAction.DevicesIndex.Count;
-                    if (devsCount == 1)
-                    {
-                        hasError = true;
-                    }
-                }
-
-                if (hasError)
-                {
-                    errors += $"Неправильно заполнены сигналы в " +
-                        $"действии \"{group.Name}\", " +
-                        $"шаге \"{GetStepName()}\", " +
-                        $"операции \"{modeName}\", " +
-                        $"технологического объекта " +
-                        $"\"{techObjName}\"\n";
-
-                    hasError = false;
+                    errors.Add(groupAction.GetDeviceProcessingStrategy()
+                        .Check(deviceManager));
                 }
             }
 
-            return errors;
+            return string.Join("", errors.Distinct());
         }
         #endregion
 
