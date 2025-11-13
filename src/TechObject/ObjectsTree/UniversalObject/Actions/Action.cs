@@ -780,6 +780,8 @@ namespace TechObject
             IList<int> ProcessDevices(string devicesStr,
                 EplanDevice.IDeviceManager deviceManager);
 
+            string Check(IDeviceManager deviceManager);
+
             IAction Action { get; set; }
         }
 
@@ -832,6 +834,8 @@ namespace TechObject
                     && (validSubTypes?.Contains(deviceSubType) ?? true);
             }
 
+            public virtual string Check(IDeviceManager deviceManager) => "";
+
             public IAction Action { get; set; }
         }
 
@@ -873,6 +877,27 @@ namespace TechObject
 
                     return x.ToString().CompareTo(y.ToString());
                 }
+            }
+
+            public override string Check(IDeviceManager deviceManager)
+            {
+                var devTypes = Action.DevicesIndex
+                    .Select(deviceManager.GetDeviceByIndex)
+                    .Select(d => d.DeviceType)
+                    .Distinct();
+
+                if (!devTypes.Any() ||
+                    devTypes.Except(allowedInputDevTypes).Any() &&
+                    devTypes.Any(dt => allowedInputDevTypes.Contains(dt)))
+                {
+                    return "";
+                }
+
+                return $"{Action?.Owner?.TechObject?.DisplayText[0]}->" +
+                    $"{Action?.Owner?.Owner?.Owner?.DisplayText[0]}->" +
+                    $"{Action?.Owner?.Owner?.Name}->" +
+                    $"{Action?.Owner?.GetStepName()}->" +
+                    $"{(Action as ITreeViewItem)?.Parent.DisplayText[0]}: Неверно заполнены сигналы\n";
             }
         }
     }
