@@ -924,9 +924,9 @@ namespace TechObject
                 x.Name == groupDIDOActionName ||
                 x.Name == groupDIDOActionNameInverted);
 
-            foreach (var action in checkingActionsGroups.Select(g => g.SubActions).OfType<IAction>())
+            foreach (var action in checkingActionsGroups.SelectMany(g => g.SubActions).OfType<IAction>())
             {
-                if(action.Empty)
+                if (action.Empty)
                 {
                     continue;
                 }
