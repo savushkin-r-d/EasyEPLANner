@@ -51,7 +51,7 @@ namespace EasyEPlanner.mpk.Saver
                 return new XElement("components");
 
             return new XElement("components",
-                components.Select(c => c.Name)
+                components.Select(c => new XElement("component", c.Name))
             );
         }
     }

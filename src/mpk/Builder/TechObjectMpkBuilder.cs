@@ -1,0 +1,154 @@
+﻿using EasyEPlanner.mpk.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using TechObject;
+
+namespace EasyEPlanner.mpk.Builder
+{
+    public class TechObjectMpkBuilder
+    {
+        private ITechObjectManager techObjectManager;
+
+        private string containerName;
+
+        public TechObjectMpkBuilder(ITechObjectManager techObjectManager, string containerName) 
+        {
+            this.techObjectManager = techObjectManager;
+            this.containerName = containerName;
+        }
+
+        public Container Build()
+        {
+
+            var objects = techObjectManager.TechObjects
+                .Select(to => to.NameBC)
+                .Select(bcn => Regex.Replace(bcn, @"\d+", ""))
+                .Distinct()
+                .Where(bcn => bcn != "")
+                .ToDictionary(bcn => bcn, bcn => techObjectManager.TechObjects.Find(to => to.NameBC.Contains(bcn)));
+            var container = new Container()
+            {
+                Name = containerName,
+            };
+
+            container.Components.Add(new Component()
+            {
+                Name = "SYSTEM",
+                Properties = GetSystemProperties(),
+            });
+
+            foreach (var comp in objects)
+            {
+                container.Components.Add(new Component
+                {
+                    Name = comp.Key,
+                    Properties = [
+                        .. GetBaseProperties(),
+                        .. GetTechObjectProperties(comp.Value)
+                        ]
+                });
+            }
+
+            return container;
+        }
+
+
+        public List<Property> GetTechObjectProperties(TechObject.TechObject techObject)
+        {
+            return
+            [
+                .. GetOperationProperties(techObject.ModesManager.Modes),
+                .. GetParametersProperties(techObject.GetParamsManager()?.Float, PropertyType.Float, "F"),
+            ];
+        }
+
+        public List<Property> GetOperationProperties(List<Mode> operations)
+        {
+            return [.. operations.SelectMany<Mode, Property>(op => [ 
+                new Property()
+                {
+                    Name = $"mode{op.GetModeNumber()}",
+                    Caption =  $"mode{op.GetModeNumber()} ({op.Name})",
+                    PropModel = PropertyModel.Tag,
+                    PropType = PropertyType.Integer,
+                },
+                new Property()
+                {
+                    Name = $"OPERATIONS{op.GetModeNumber()}",
+                    Caption =  $"OPERATIONS{op.GetModeNumber()}",
+                    PropModel = PropertyModel.Tag,
+                    PropType = PropertyType.Integer,
+                },
+                new Property()
+                {
+                    Name = $"step{op.GetModeNumber()}",
+                    Caption =  $"step{op.GetModeNumber()}",
+                    PropModel = PropertyModel.Tag,
+                    PropType = PropertyType.Integer,
+                },
+            ]).OrderBy(p => p.Name)];
+        }
+
+        public List<Property> GetParametersProperties(Params parameters, PropertyType type, string shortTag)
+        {
+            return [.. parameters.Parameters.Select(p => new Property()
+            {
+                Name = $"{parameters.NameForChannelBase}{p.GetParameterNumber}",
+                Caption = $"{shortTag}{p.GetParameterNumber} {p.GetName()}, {p.GetMeter()}",
+                PropModel = PropertyModel.Tag,
+                PropType = type,
+            })];
+        }
+
+        public List<Property> GetBaseProperties()
+        {
+            return [
+                new("cmd", PropertyModel.Tag, PropertyType.Integer),
+                new("Ladder", PropertyModel.Global, PropertyType.Integer) { Report = true },
+                new("Nmr", PropertyModel.Local, PropertyType.Integer),
+                new("ST", PropertyModel.Tag, PropertyType.Integer),
+                new("ST_Str", PropertyModel.Local, PropertyType.String),
+                new("STEX_STR", PropertyModel.Local, PropertyType.String),
+                new("Step_Str", PropertyModel.Local, PropertyType.String),
+                new("Step_Time_Str", PropertyModel.Local, PropertyType.String),
+                new("WorkCeneter", PropertyModel.Global, PropertyType.Integer),
+                ];
+        }
+
+        public List<Property> GetSystemProperties()
+        {
+            return [
+                new("CMD", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
+                new("CMD_ANSWER", PropertyModel.Tag, PropertyType.String),
+                new("PAUSE", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
+                new("REST_MAN_TIME", PropertyModel.Tag, PropertyType.Integer) 
+                { 
+                    Caption = "REST_MAN", 
+                    Priority = 10 
+                },
+                new("REST_MODE", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
+                new("SP1", PropertyModel.Tag, PropertyType.Integer)
+                {
+                    Caption = "SP1 Интервал промывки седел клапанов, сек",
+                },
+                new("SP2", PropertyModel.Tag, PropertyType.Integer)
+                {
+                    Caption = "SP2 Задержка выключения клапанов, мсек",
+                },
+                new("SP3", PropertyModel.Tag, PropertyType.Integer)
+                {
+                    Caption = "SP3 Время флипа верхних седел клапанов, мсек",
+                },
+                new("SP4", PropertyModel.Tag, PropertyType.Integer)
+                {
+                    Caption = "SP4 Время флипа нижних седел клапанов, мсек",
+                },
+                new("REST_MODE", PropertyModel.Tag, PropertyType.String),
+                ];
+        }
+    }
+}

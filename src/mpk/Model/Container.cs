@@ -15,8 +15,8 @@ namespace EasyEPlanner.mpk.Model
 
         public int Version { get; set; } = 1;
 
-        public Attributes Attributes { get; set; }
+        public Attributes Attributes { get; set; } = new();
 
-        public List<Component> Components { get; set; }
+        public List<Component> Components { get; set; } = [];
     }
 }

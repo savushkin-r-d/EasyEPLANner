@@ -27,26 +27,36 @@ namespace EasyEPlanner.mpk.Model
 
     public class Property
     {
+        public Property() { }
+
+        public Property(string name, PropertyModel model, PropertyType type)
+        {
+            Name = name;
+            Caption = name;
+            PropModel = model;
+            PropType = type;
+        }
+
         public string Name { get; set; }
 
         public string Caption { get; set; }
 
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
 
-        public bool Report {  get; set; }
+        public bool Report { get; set; } = false;
 
-        public bool Saved { get; set; }
+        public bool Saved { get; set; } = false;
 
-        public string TagName { get; set; }
+        public string TagName { get; set; } = "";
 
         public PropertyModel PropModel { get; set; }
 
         public PropertyType PropType { get; set; }
 
-        public int Value { get; set; }
+        public object Value { get; set; } = 0;
 
-        public int ChannelId { get; set; }
+        public int ChannelId { get; set; } = 0;
 
-        public int Priority { get; set; }
+        public int Priority { get; set; } = 5;
     }
 }

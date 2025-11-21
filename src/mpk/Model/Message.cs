@@ -21,12 +21,12 @@ namespace EasyEPlanner.mpk.Model
 
         public string Caption { get; set; }
 
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
 
-        public bool Report { get; set; }
+        public bool Report { get; set; } = false;
 
         public MessageType Type { get; set; }
 
-        public int Priority { get; set; }
+        public int Priority { get; set; } = 5;
     }
 }

@@ -161,6 +161,7 @@
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
+    <Compile Include="Main\SaveAsMpkx.cs" />
     <Compile Include="Main\ShowPlcAction.cs" />
     <Compile Include="ModbusExchange\CsvImporter.cs" />
     <Compile Include="ModbusExchange\ModbusExchangeLoader.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="mpk\Builder\TechObjectMpkBuilder.cs" />
     <Compile Include="mpk\Model\Attributes.cs" />
     <Compile Include="mpk\Model\Component.cs" />
     <Compile Include="mpk\Model\Container.cs" />
@@ -196,7 +198,8 @@
     <Compile Include="mpk\Model\Property.cs" />
     <Compile Include="mpk\Saver\ComponentSerializer.cs" />
     <Compile Include="mpk\Saver\ContainerSerializer.cs" />
-    <Compile Include="mpk\Saver\XmlSaver.cs" />
+    <Compile Include="mpk\Saver\IXmlSerializer.cs" />
+    <Compile Include="mpk\Saver\MpkxSaver.cs" />
     <Compile Include="StaticHelper\EplanFunction.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
@@ -706,9 +709,7 @@
       <Name>EplanIdleTimeModule</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="mpk\Converter\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
