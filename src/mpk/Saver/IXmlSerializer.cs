@@ -10,6 +10,6 @@ namespace EasyEPlanner.mpk.Saver
 {
     public interface IXmlSerializer
     {
-        //static void Serialize(Component component, Stream stream);
+        string Serialize();
     }
 }

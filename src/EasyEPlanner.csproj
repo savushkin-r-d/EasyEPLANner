@@ -190,10 +190,15 @@
     <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="mpk\Builder\TechObjectMpkBuilder.cs" />
+    <Compile Include="mpk\ModelBuilder\TechObjectMpkBuilder.cs" />
     <Compile Include="mpk\Model\Attributes.cs" />
     <Compile Include="mpk\Model\Component.cs" />
     <Compile Include="mpk\Model\Container.cs" />
+    <Compile Include="mpk\Model\IAttributes.cs" />
+    <Compile Include="mpk\Model\IComponent.cs" />
+    <Compile Include="mpk\Model\IContainer.cs" />
+    <Compile Include="mpk\Model\IMessage.cs" />
+    <Compile Include="mpk\Model\IProperty.cs" />
     <Compile Include="mpk\Model\Message.cs" />
     <Compile Include="mpk\Model\Property.cs" />
     <Compile Include="mpk\Saver\ComponentSerializer.cs" />

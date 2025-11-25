@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TechObject;
 
-namespace EasyEPlanner.mpk.Builder
+namespace EasyEPlanner.mpk.ModelBuilder
 {
     public class TechObjectMpkBuilder
     {
@@ -23,7 +23,6 @@ namespace EasyEPlanner.mpk.Builder
 
         public Container Build()
         {
-
             var objects = techObjectManager.TechObjects
                 .Select(to => to.NameBC)
                 .Select(bcn => Regex.Replace(bcn, @"\d+", ""))
@@ -119,35 +118,35 @@ namespace EasyEPlanner.mpk.Builder
                 ];
         }
 
-        public List<Property> GetSystemProperties()
+        public List<IProperty> GetSystemProperties()
         {
             return [
-                new("CMD", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
-                new("CMD_ANSWER", PropertyModel.Tag, PropertyType.String),
-                new("PAUSE", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
-                new("REST_MAN_TIME", PropertyModel.Tag, PropertyType.Integer) 
+                new Property("CMD", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
+                new Property("CMD_ANSWER", PropertyModel.Tag, PropertyType.String),
+                new Property("PAUSE", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
+                new Property("REST_MAN_TIME", PropertyModel.Tag, PropertyType.Integer) 
                 { 
                     Caption = "REST_MAN", 
                     Priority = 10 
                 },
-                new("REST_MODE", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
-                new("SP1", PropertyModel.Tag, PropertyType.Integer)
+                new Property("REST_MODE", PropertyModel.Tag, PropertyType.Integer) { Priority = 10 },
+                new Property("SP1", PropertyModel.Tag, PropertyType.Integer)
                 {
                     Caption = "SP1 Интервал промывки седел клапанов, сек",
                 },
-                new("SP2", PropertyModel.Tag, PropertyType.Integer)
+                new Property("SP2", PropertyModel.Tag, PropertyType.Integer)
                 {
                     Caption = "SP2 Задержка выключения клапанов, мсек",
                 },
-                new("SP3", PropertyModel.Tag, PropertyType.Integer)
+                new Property("SP3", PropertyModel.Tag, PropertyType.Integer)
                 {
                     Caption = "SP3 Время флипа верхних седел клапанов, мсек",
                 },
-                new("SP4", PropertyModel.Tag, PropertyType.Integer)
+                new Property("SP4", PropertyModel.Tag, PropertyType.Integer)
                 {
                     Caption = "SP4 Время флипа нижних седел клапанов, мсек",
                 },
-                new("REST_MODE", PropertyModel.Tag, PropertyType.String),
+                new Property("REST_MODE", PropertyModel.Tag, PropertyType.String),
                 ];
         }
     }

@@ -14,8 +14,7 @@ namespace EasyEPlanner.mpk.Model
         Request
     }
 
-
-    public class Message
+    public class Message : IMessage
     {
         public string Name { get; set; }
 

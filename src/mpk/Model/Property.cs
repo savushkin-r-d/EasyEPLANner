@@ -25,7 +25,7 @@ namespace EasyEPlanner.mpk.Model
         Date,
     }
 
-    public class Property
+    public class Property : IProperty
     {
         public Property() { }
 

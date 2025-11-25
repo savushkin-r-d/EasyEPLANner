@@ -9,17 +9,17 @@ using System.Xml.Linq;
 
 namespace EasyEPlanner.mpk.Saver
 {
-    public class ComponentSerializer
-    {
-        public static void Serialize(Component component, Stream stream)
+    public class ComponentSerializer(IComponent component) : IXmlSerializer
+    { 
+        public string Serialize()
         {
             var xDoc = new XDocument();
 
             xDoc.Add(BuildComponent(component));
-            xDoc.Save(stream);
+            return xDoc.ToString();
         }
 
-        private static XElement BuildComponent(Component component)
+        private static XElement BuildComponent(IComponent component)
         {
             return new XElement("component",
                 new XElement("imageslist",
@@ -39,7 +39,7 @@ namespace EasyEPlanner.mpk.Saver
         }
 
 
-        private static XElement BuildPropertiesList(List<Property> properties)
+        private static XElement BuildPropertiesList(List<IProperty> properties)
         {
             if (properties?.Any() is null or false)
                 return null;
@@ -49,7 +49,7 @@ namespace EasyEPlanner.mpk.Saver
             );
         }
 
-        private static XElement BuildProperty(Property property)
+        private static XElement BuildProperty(IProperty property)
         {
             return new XElement("property",
                 new XElement("name", property.Name),
@@ -66,7 +66,7 @@ namespace EasyEPlanner.mpk.Saver
             );
         }
 
-        private static XElement BuildMassagesList(List<Message> messages)
+        private static XElement BuildMassagesList(List<IMessage> messages)
         {
             if (messages?.Any() is null or false)
                 return null;
@@ -76,7 +76,7 @@ namespace EasyEPlanner.mpk.Saver
             );
         }
 
-        private static XElement BuildMessage(Message message)
+        private static XElement BuildMessage(IMessage message)
         {
             return new XElement("property",
                 new XElement("name", message.Name),

@@ -1,5 +1,5 @@
 ﻿using EasyEPlanner.ModbusExchange.View;
-using EasyEPlanner.mpk.Builder;
+using EasyEPlanner.mpk.ModelBuilder;
 using EasyEPlanner.mpk.Saver;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
@@ -34,10 +34,15 @@ namespace EasyEPlanner.Main
                     return false;
                 }
 
-                var container = new TechObjectMpkBuilder(TechObjectManager.GetInstance(), currentProject.ProjectName).Build();
-                var exchange = new MpkxSaver(container);
-                exchange.Save("C:\\Users\\asu10\\Desktop\\Генератор-mpk");
+                var folderDialog = new FolderBrowserDialog();
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFolderPath = folderDialog.SelectedPath;
 
+                    var container = new TechObjectMpkBuilder(TechObjectManager.GetInstance(), currentProject.ProjectName).Build();
+                    var exchange = new MpkxSaver(container);
+                    exchange.Save(selectedFolderPath);
+                }
             }
             catch (Exception ex)
             {

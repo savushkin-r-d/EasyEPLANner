@@ -9,14 +9,14 @@ using System.Xml.Linq;
 
 namespace EasyEPlanner.mpk.Saver
 {
-    public class ContainerSerializer
+    public class ContainerSerializer(Container container) : IXmlSerializer
     {
-        public static void Serialize(Container container, Stream stream)
+        public string Serialize()
         {
             var xDoc = new XDocument();
 
             xDoc.Add(BuildContainer(container));
-            xDoc.Save(stream);
+            return xDoc.ToString();
         }
 
         public static XElement BuildContainer(Container container)
@@ -29,7 +29,7 @@ namespace EasyEPlanner.mpk.Saver
             );
         }
 
-        public static XElement BuildAttributes(Attributes attributes)
+        public static XElement BuildAttributes(IAttributes attributes)
         {
             if (attributes is null)
                 return new XElement("attributes");
@@ -45,7 +45,7 @@ namespace EasyEPlanner.mpk.Saver
         }
 
 
-        public static XElement BuildComponentList(List<Component> components)
+        public static XElement BuildComponentList(List<IComponent> components)
         {
             if (components?.Any() is null or false)
                 return new XElement("components");

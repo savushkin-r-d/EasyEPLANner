@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EasyEPlanner.mpk.Model
 {
-    public class Attributes
+    public class Attributes : IAttributes
     {
         public string Theme { get; set; } = "";
 

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace EasyEPlanner.mpk.Model
 {
-    public class Component
+    public class Component : IComponent
     {
         public string Name { get; set; }
 
-        public List<Property> Properties { get; set; }
+        public List<IProperty> Properties { get; set; }
 
-        public List<Message> Messages { get; set; }
+        public List<IMessage> Messages { get; set; }
     }
 }
