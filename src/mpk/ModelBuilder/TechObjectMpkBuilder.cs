@@ -11,9 +11,9 @@ namespace EasyEPlanner.mpk.ModelBuilder
 {
     public class TechObjectMpkBuilder
     {
-        private ITechObjectManager techObjectManager;
+        private readonly ITechObjectManager techObjectManager;
 
-        private string containerName;
+        private readonly string containerName;
 
         public TechObjectMpkBuilder(ITechObjectManager techObjectManager, string containerName) 
         {

@@ -16,15 +16,8 @@ using System.Xml.Serialization;
 namespace EasyEPlanner.mpk.Saver
 {
     [ExcludeFromCodeCoverage]
-    public class MpkxSaver
+    public class MpkxSaver(IContainer container)
     {
-        private IContainer container;
-
-        public MpkxSaver(IContainer container)
-        {
-            this.container = container;
-        }
-
         public void Save(string folderPath)
         {
             var mpkxPath = Path.Combine(folderPath, $"{container.Name}.mpkx");
