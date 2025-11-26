@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace EasyEPlanner.mpk.Saver
 {
-    public class ContainerSerializer(Container container) : IXmlSerializer
+    public class ContainerSerializer(IContainer container) : IXmlSerializer
     {
         public string Serialize()
         {
@@ -19,7 +19,7 @@ namespace EasyEPlanner.mpk.Saver
             return xDoc.ToString();
         }
 
-        public static XElement BuildContainer(Container container)
+        public static XElement BuildContainer(IContainer container)
         {
             return new XElement("container",
                 new XElement("build", container.Build),

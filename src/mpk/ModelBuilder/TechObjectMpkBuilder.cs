@@ -21,11 +21,11 @@ namespace EasyEPlanner.mpk.ModelBuilder
             this.containerName = containerName;
         }
 
-        public Container Build()
+        public IContainer Build()
         {
             var objects = techObjectManager.TechObjects
                 .Select(to => to.NameBC)
-                .Select(bcn => Regex.Replace(bcn, @"\d+", ""))
+                .Select(bcn => Regex.Replace(bcn, @"\d+", "", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                 .Distinct()
                 .Where(bcn => bcn != "")
                 .ToDictionary(bcn => bcn, bcn => techObjectManager.TechObjects.Find(to => to.NameBC.Contains(bcn)));
@@ -56,7 +56,7 @@ namespace EasyEPlanner.mpk.ModelBuilder
         }
 
 
-        public List<Property> GetTechObjectProperties(TechObject.TechObject techObject)
+        public List<IProperty> GetTechObjectProperties(TechObject.TechObject techObject)
         {
             return
             [
@@ -65,7 +65,7 @@ namespace EasyEPlanner.mpk.ModelBuilder
             ];
         }
 
-        public List<Property> GetOperationProperties(List<Mode> operations)
+        public List<IProperty> GetOperationProperties(List<Mode> operations)
         {
             return [.. operations.SelectMany<Mode, Property>(op => [ 
                 new Property()
@@ -92,7 +92,7 @@ namespace EasyEPlanner.mpk.ModelBuilder
             ]).OrderBy(p => p.Name)];
         }
 
-        public List<Property> GetParametersProperties(Params parameters, PropertyType type, string shortTag)
+        public List<IProperty> GetParametersProperties(Params parameters, PropertyType type, string shortTag)
         {
             return [.. parameters.Parameters.Select(p => new Property()
             {
@@ -103,18 +103,19 @@ namespace EasyEPlanner.mpk.ModelBuilder
             })];
         }
 
-        public List<Property> GetBaseProperties()
+        public List<IProperty> GetBaseProperties()
         {
             return [
-                new("cmd", PropertyModel.Tag, PropertyType.Integer),
-                new("Ladder", PropertyModel.Global, PropertyType.Integer) { Report = true },
-                new("Nmr", PropertyModel.Local, PropertyType.Integer),
-                new("ST", PropertyModel.Tag, PropertyType.Integer),
-                new("ST_Str", PropertyModel.Local, PropertyType.String),
-                new("STEX_STR", PropertyModel.Local, PropertyType.String),
-                new("Step_Str", PropertyModel.Local, PropertyType.String),
-                new("Step_Time_Str", PropertyModel.Local, PropertyType.String),
-                new("WorkCeneter", PropertyModel.Global, PropertyType.Integer),
+                new Property("cmd", PropertyModel.Tag, PropertyType.Integer),
+                new Property("Ladder", PropertyModel.Global, PropertyType.Integer) { Report = true },
+                new Property("Nmr", PropertyModel.Local, PropertyType.Integer),
+                new Property("ST", PropertyModel.Tag, PropertyType.Integer),
+                new Property("ST_Str", PropertyModel.Local, PropertyType.String),
+                new Property("STEX_STR", PropertyModel.Local, PropertyType.String),
+                new Property("Step_Str", PropertyModel.Local, PropertyType.String),
+                new Property("Step_Time_Str", PropertyModel.Local, PropertyType.String),
+                new Property("Time_Str", PropertyModel.Local, PropertyType.String),
+                new Property("WorkCenter", PropertyModel.Global, PropertyType.Integer),
                 ];
         }
 
@@ -146,7 +147,7 @@ namespace EasyEPlanner.mpk.ModelBuilder
                 {
                     Caption = "SP4 Время флипа нижних седел клапанов, мсек",
                 },
-                new Property("REST_MODE", PropertyModel.Tag, PropertyType.String),
+                new Property("UP_TIME", PropertyModel.Tag, PropertyType.String),
                 ];
         }
     }

@@ -18,9 +18,9 @@ namespace EasyEPlanner.mpk.Saver
     [ExcludeFromCodeCoverage]
     public class MpkxSaver
     {
-        private Container container;
+        private IContainer container;
 
-        public MpkxSaver(Container container)
+        public MpkxSaver(IContainer container)
         {
             this.container = container;
         }
