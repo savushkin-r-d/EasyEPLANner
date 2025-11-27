@@ -26,6 +26,7 @@ namespace TechObject
         /// Тип состояния
         /// </summary>
         State.StateType Type { get; }
+        string Name { get; set; }
     }
 
     /// <summary>
