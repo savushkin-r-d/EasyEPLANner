@@ -91,10 +91,10 @@ namespace EplanDevice
             res += CheckSignalsPair(Property.AI_dev, Property.DI_dev);
             res += CheckSignalsPair(Property.AO_dev, Property.DO_dev);
 
-            res += CheckValidSignal(Property.DI_dev);
-            res += CheckValidSignal(Property.AI_dev);
-            res += CheckValidSignal(Property.DO_dev);
-            res += CheckValidSignal(Property.AO_dev);
+            res += CheckValidSignal(Property.DI_dev, DeviceType.DI);
+            res += CheckValidSignal(Property.AI_dev, DeviceType.AI);
+            res += CheckValidSignal(Property.DO_dev, DeviceType.DO);
+            res += CheckValidSignal(Property.AO_dev, DeviceType.AO);
 
             return res;
         }
@@ -112,14 +112,18 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        private string CheckValidSignal(Property property)
+        private string CheckValidSignal(Property property, DeviceType validType)
         {
             if (properties.TryGetValue(property, out var dev_string) &&
                 dev_string?.ToString() != string.Empty &&
                 !string.IsNullOrEmpty(dev_string?.ToString()) &&
-                deviceManager.GetDevice(dev_string.ToString()).Description is CommonConst.Cap)
+                deviceManager.GetDevice(dev_string.ToString()) is { } dev)
             {
-                return $"{Name}: к свойству {property} (доп. поле 4) привязано неизвестное устройство;\n";
+                if (dev.Description is CommonConst.Cap)
+                    return $"{Name}: к свойству {property} (доп. поле 4) привязано неизвестное устройство '{dev_string}';\n";
+
+                if (dev.DeviceType != validType)
+                    return $"{Name}: к свойству {property} (доп. поле 4) привязано устройство неверного типа '{dev_string}' (ожидалось {validType});\n";
             }
 
             return string.Empty;

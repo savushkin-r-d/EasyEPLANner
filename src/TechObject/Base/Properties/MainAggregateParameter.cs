@@ -16,6 +16,13 @@ namespace TechObject
         {
             var newProperty = new MainAggregateParameter(LuaName, 
                 Name, DefaultValue, DisplayObjects);
+
+            newProperty.Parameters = [.. Parameters.Select(p => {
+                var clonedParameter = p.Clone();
+                clonedParameter.Owner = newProperty;
+                return clonedParameter;
+            })];
+
             newProperty.SetValue(Value);
             return newProperty;
         }
