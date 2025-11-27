@@ -109,9 +109,6 @@ end
 
 -- Инициализация параметров базовой операции
 init_operation_parameters = function(operation, params)
-    local group = params.group or {}
-    init_group_parameters(operation, group)
-
     -- Добавить активные параметры операции
     local activeParameters = params.active or { }
     init_active_parameters(operation, activeParameters)
@@ -119,6 +116,10 @@ init_operation_parameters = function(operation, params)
     -- Добавить булевы параметра операции
     local activeBoolParameters = params.bool or { }
     init_active_bool_parameters(operation, activeBoolParameters)
+
+    -- Добавить групповые параметры
+    local group = params.group or {}
+    init_group_parameters(operation, group)
 
     -- Добавить float параметры операции
     local floatParameters = params.float or {}
