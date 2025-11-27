@@ -72,9 +72,9 @@ namespace IO
         /// <summary>
         /// Исключение переполнения адресного пространства в узле
         /// </summary>
-        public class IndefiniteModules : Exception
+        public class IndefiniteModulesException : Exception
         {
-            public IndefiniteModules(string message) : base(message) { }
+            public IndefiniteModulesException(string message) : base(message) { }
         }
 
         public void SetModule(IIOModule iOModule, int position)
