@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Moq;
 using EplanDevice;
+using TechObject.ActionProcessingStrategy;
 
 namespace EasyEplanner.Tests
 {
@@ -194,7 +195,7 @@ namespace EasyEplanner.Tests
         private static object[] CheckActionsDrawStyleTestSource()
         {
             var greenBox = DrawInfo.Style.GREEN_BOX;
-            var redBox = DrawInfo.Style.RED_BOX;
+            var redBox = DrawInfo.Style.GRAY_BOX;
             var greenUpBox = DrawInfo.Style.GREEN_UPPER_BOX;
             var greenLowBox = DrawInfo.Style.GREEN_LOWER_BOX;
 
@@ -803,6 +804,113 @@ namespace EasyEplanner.Tests
             var step = new Step("", getN => 1, null);
 
             Assert.IsNull(step.Replace(Mock.Of<IAction>(a => a.LuaName == "LuaName_1"), Mock.Of<IAction>(a => a.LuaName == "LuaName_2")));
+        }
+
+
+        [Test]
+        public void GetObjectsToDraw_RED_BOX()
+        {
+            var dev = Mock.Of<IDevice>(d => d.Name == "DEV1");
+
+            var actions = new List<IAction>() 
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev) { Action = DrawInfo.ActionType.ON_DEVICE} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev) { Action = DrawInfo.ActionType.OFF_DEVICE} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var step = new Step("", getN => 1, null);
+            typeof(Step)
+                .GetField("actions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(step, actions);
+
+            var draw = step.GetObjectToDrawOnEplanPage();
+
+            Assert.AreEqual(1, draw.Count);
+            Assert.AreEqual(DrawInfo.Style.RED_BOX, draw[0].DrawingStyle);
+        }
+
+        [Test]
+        public void GetObjectsToDraw_GREEN_GRAY_BOX()
+        {
+            var dev = Mock.Of<IDevice>(d => d.Name == "DEV1");
+
+            var actions = new List<IAction>()
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev) { Action = DrawInfo.ActionType.ON_DEVICE} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev) { Action = DrawInfo.ActionType.OTHER} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GRAY_BOX, dev) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var step = new Step("", getN => 1, null);
+            typeof(Step)
+                .GetField("actions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(step, actions);
+
+            var draw = step.GetObjectToDrawOnEplanPage();
+
+            Assert.AreEqual(1, draw.Count);
+            Assert.AreEqual(DrawInfo.Style.GREEN_GRAY_BOX, draw[0].DrawingStyle);
+        }
+
+        [Test]
+        public void GetObjectsToDraw_GREEN_BOX()
+        {
+            var dev = Mock.Of<IDevice>(d => d.Name == "DEV1");
+
+            var actions = new List<IAction>()
+            {
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev) { Action = DrawInfo.ActionType.ON_DEVICE} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.GREEN_BOX, dev) { Action = DrawInfo.ActionType.OTHER} }),
+                Mock.Of<IAction>(a => a.GetObjectToDrawOnEplanPage() == new List<DrawInfo>() { new DrawInfo(DrawInfo.Style.NO_DRAW, dev) { Action = DrawInfo.ActionType.OTHER} }),
+            };
+
+            var step = new Step("", getN => 1, null);
+            typeof(Step)
+                .GetField("actions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(step, actions);
+
+            var draw = step.GetObjectToDrawOnEplanPage();
+
+            Assert.AreEqual(1, draw.Count);
+            Assert.AreEqual(DrawInfo.Style.GREEN_BOX, draw[0].DrawingStyle);
+        }
+
+        [Test]
+        public void CheckInOutGroupActions()
+        {
+            var dev = Mock.Of<IDevice>(d => d.Name == "DEV1");
+
+            var actions = new List<IAction>()
+            {
+                Mock.Of<IAction>(a =>
+                    a.Name == "Группы AI -> AO AO ..." &&
+                    a.SubActions == new List<IAction>()
+                    {
+                        Mock.Of<IAction>(sa => sa.Empty == true),
+
+                        Mock.Of<IAction>(sa =>
+                            sa.GetDeviceProcessingStrategy() == Mock.Of<IDeviceProcessingStrategy>(ps =>
+                                ps.Check(It.IsAny<IDeviceManager>()) == "error 1\n")),
+
+                        Mock.Of<IAction>(sa =>
+                            sa.GetDeviceProcessingStrategy() == Mock.Of<IDeviceProcessingStrategy>(ps =>
+                                ps.Check(It.IsAny<IDeviceManager>()) == "error 2\n"))
+                    }
+                ),
+            };
+
+            var step = new Step("", getN => 1, null);
+            
+            typeof(Step)
+                .GetField("actions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(step, actions);
+
+            var error = typeof(Step)
+                .GetMethod("CheckInOutGroupActions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(step, null);
+
+            Assert.AreEqual("error 1\nerror 2\n", error);
         }
     }
 }

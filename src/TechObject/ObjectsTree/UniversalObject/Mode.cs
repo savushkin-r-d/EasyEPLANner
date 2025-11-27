@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +28,7 @@ namespace TechObject
         /// Базовая операция
         /// </summary>
         BaseOperation BaseOperation { get; }
-
+        
         /// <summary>
         /// Название операции
         /// </summary>
@@ -621,40 +621,7 @@ namespace TechObject
         }
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            var devToDraw = new List<DrawInfo>();
-            foreach (State stpMngr in stepsMngr)
-            {
-                List<DrawInfo> devToDrawTmp = stpMngr
-                    .GetObjectToDrawOnEplanPage();
-                foreach (DrawInfo dinfo in devToDrawTmp)
-                {
-                    bool isSetFlag = false;
-                    for (int i = 0; i < devToDraw.Count; i++)
-                    {
-                        if (devToDraw[i].DrawingDevice.Name == 
-                            dinfo.DrawingDevice.Name)
-                        {
-                            isSetFlag = true;
-                            if (devToDraw[i].DrawingStyle != dinfo.DrawingStyle)
-                            {
-                                devToDraw.Add(new DrawInfo(
-                                    DrawInfo.Style.GREEN_RED_BOX,
-                                    devToDraw[i].DrawingDevice));
-                                devToDraw.RemoveAt(i);
-                            }
-                        }
-                    }
-
-                    if (isSetFlag == false)
-                    {
-                        devToDraw.Add(dinfo);
-                    }
-                }
-            }
-
-            return devToDraw;
-        }
+        => DrawInfo.Filter([.. States.SelectMany(a => a.GetObjectToDrawOnEplanPage())]);
 
         public override IEnumerable<string> BaseObjectsList
         {

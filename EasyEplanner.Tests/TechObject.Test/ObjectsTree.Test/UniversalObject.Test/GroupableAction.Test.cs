@@ -101,7 +101,7 @@ namespace Tests.TechObject
             DrawInfo.Style defaultSubActionDrawStyle = subAction.DrawStyle;
             DrawInfo.Style defaultActionDrawStyle = action.DrawStyle;
 
-            DrawInfo.Style expectedDrawStyle = DrawInfo.Style.RED_BOX;
+            DrawInfo.Style expectedDrawStyle = DrawInfo.Style.GRAY_BOX;
             action.DrawStyle = expectedDrawStyle;
 
             Assert.Multiple(() =>

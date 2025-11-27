@@ -71,7 +71,7 @@ jobs:
       shell: powershell
       run: Set-Timezone -Id 'Belarus Standard Time'
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         submodules: 'recursive'
         ref: ${{ github.event.pull_request.head.sha }}
@@ -175,7 +175,7 @@ jobs:
         del Microsoft.mshtml.dll
 
     - name: Upload artifact    
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: EasyEPLANner
         path: src/bin/${{env.BUILD_CONFIGURATION}}
@@ -195,7 +195,7 @@ jobs:
       run: echo "date=$(date +'%d.%m.%Y')" >> $env:GITHUB_OUTPUT
 
     - name: Download artifact
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: EasyEPLANner
         path: ./bin
@@ -208,7 +208,7 @@ jobs:
         $version=[System.Reflection.Assembly]::LoadFrom("./EPLAN.EplAddin.EasyEPlanner.dll").GetName().Version.ToString()
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         path: ./EasyEPLANner
         submodules: 'recursive'
@@ -235,7 +235,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@62c96d0c4e8a889135c1f3a25910db8dbe0e85f7
+      uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
