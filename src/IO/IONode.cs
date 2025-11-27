@@ -97,7 +97,8 @@ namespace IO
                     $"выходит за диапазон адресного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
             }
 
-            for (int i = iOModules.Count; i < position; i++)
+            var initialCountModules = iOModules.Count;
+            for (int i = initialCountModules; i < position; i++)
             {
                 iOModules.Add(StubIOModule);
             }
@@ -106,7 +107,7 @@ namespace IO
 
             iOModules[position - 1] = iOModule;
 
-            if (iOModules.Count - position is { } indefiniteCount and > 0)
+            if (position - initialCountModules is { } indefiniteCount and > 1)
             {
                 throw new AddressAreaOutOfRangeException(
                     $"До модуля \"{iOModule.Name}\" {iOModule.ArticleName} не определено {indefiniteCount} модулей;\n");
