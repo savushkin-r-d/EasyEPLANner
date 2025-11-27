@@ -201,6 +201,11 @@ namespace EplanDevice
                 new(nameof(P_T_ERR), "Интервал ожидания изменения входа",
                     UnitFormat.Milliseconds);
 
+            /// <summary> Коэффициент пропорциональности </summary>
+            public static readonly Parameter P_K =
+                new(nameof(P_K), "Коэффициент пропорциональности",
+                    UnitFormat.Milliseconds);
+
             protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters = InitParameters();
 
             private static Lazy<Dictionary<string, Parameter>> InitParameters()
