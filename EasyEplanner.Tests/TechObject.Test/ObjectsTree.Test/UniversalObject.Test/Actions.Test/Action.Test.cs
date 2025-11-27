@@ -890,14 +890,14 @@ namespace TechObjectTests
         }
     }
 
-    class OneInManyOutActionProcessingStrategyTest
+    class ManyInManyOutActionProcessingStrategyTest
     {
         [TestCaseSource(nameof(ProcessDevicesTestCaseSource))]
         public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList(
             string devicesStr, EplanDevice.DeviceType[] allowedDevTypes,
             EplanDevice.DeviceSubType[] allowedDevSubTypes,
             List<int> actionDevsDefaultIds, IList<int> expectedDevsIds,
-            EplanDevice.DeviceType[] allowedInputTypes)
+            EplanDevice.DeviceType[] allowedInputTypes, string expectedError)
         {
             IAction action = ActionMock.GetAction(allowedDevTypes, allowedDevSubTypes, actionDevsDefaultIds);
             var strategy = new ManyInManyOutActionProcessingStrategy(allowedInputTypes)
@@ -907,8 +907,14 @@ namespace TechObjectTests
             var deviceManager = DeviceManagerMock.DeviceManager;
 
             IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr, deviceManager);
+            var error = strategy.Check(deviceManager);
 
-            CollectionAssert.AreEqual(expectedDevsIds, actualDevsIds);
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(expectedDevsIds, actualDevsIds);
+                Assert.AreEqual(expectedError, error);
+            });
+            
         }
 
         private static object[] ProcessDevicesTestCaseSource()
@@ -938,7 +944,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.DI
-                }
+                },
+                "->->->->: Неверно заполнены сигналы\n",
             };
 
             var correctSequenceAIAO = new object[]
@@ -966,7 +973,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.AI
-                }
+                },
+                "",
             };
 
             var replacingAIAOCase = new object[]
@@ -999,7 +1007,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.AI
-                }
+                },
+                "",
             };
 
             var replacingDIDOCase = new object[]
@@ -1031,7 +1040,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.DI
-                }
+                },
+                "",
             };
 
 
@@ -1066,7 +1076,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.DI
-                }
+                },
+                "",
             };
 
             var useHLAndReplaceDIwithGS = new object[]
@@ -1103,7 +1114,8 @@ namespace TechObjectTests
                 {
                     EplanDevice.DeviceType.DI,
                     EplanDevice.DeviceType.GS
-                }
+                },
+                "",
             };
 
             var removeAllInputDevsIfDoubleInputDevs = new object[]
@@ -1139,7 +1151,8 @@ namespace TechObjectTests
                 {
                     EplanDevice.DeviceType.DI,
                     EplanDevice.DeviceType.GS
-                }
+                },
+                "->->->->: Неверно заполнены сигналы\n",
             };
 
             return new object[]
