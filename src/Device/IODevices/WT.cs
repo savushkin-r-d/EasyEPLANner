@@ -59,6 +59,8 @@ namespace EplanDevice
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
 
                     parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_K, null);
                     break;
 
 
@@ -163,6 +165,8 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Parameter.P_DT, 1},
+                                {Tag.P_CZ, 1},
+                                {Parameter.P_K, 1},
                             };
                     }
                     break;
