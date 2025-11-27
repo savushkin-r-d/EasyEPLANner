@@ -877,7 +877,7 @@ namespace TechObject
             string modeName = mode.Name;
 
             errors += CheckOpenAndCloseActions(techObjName, modeName);
-            errors += CheckInOutGroupActions(techObjName, modeName);
+            errors += CheckInOutGroupActions();
             return errors;
         }
 
@@ -915,48 +915,27 @@ namespace TechObject
             return errors;
         }
 
-        private string CheckInOutGroupActions(string techObjName,
-            string modeName)
+        private string CheckInOutGroupActions()
         {
-            var errors = string.Empty;
+            var errors = new List<string>();
 
             var checkingActionsGroups = actions
                 .Where(x => x.Name == groupAIAOActionName ||
                 x.Name == groupDIDOActionName ||
                 x.Name == groupDIDOActionNameInverted);
 
-            foreach(var group in checkingActionsGroups)
+            foreach (var action in checkingActionsGroups.SelectMany(g => g.SubActions).OfType<IAction>())
             {
-                bool hasError = false;
-                var groupActions = group.SubActions;
-                foreach(IAction groupAction in groupActions)
+                if (action.Empty)
                 {
-                    if(groupAction.Empty)
-                    {
-                        continue;
-                    }
-
-                    int devsCount = groupAction.DevicesIndex.Count;
-                    if (devsCount == 1)
-                    {
-                        hasError = true;
-                    }
+                    continue;
                 }
 
-                if (hasError)
-                {
-                    errors += $"Неправильно заполнены сигналы в " +
-                        $"действии \"{group.Name}\", " +
-                        $"шаге \"{GetStepName()}\", " +
-                        $"операции \"{modeName}\", " +
-                        $"технологического объекта " +
-                        $"\"{techObjName}\"\n";
-
-                    hasError = false;
-                }
+                errors.Add(action.GetDeviceProcessingStrategy()
+                    .Check(deviceManager));
             }
 
-            return errors;
+            return string.Join("", errors.Distinct());
         }
         #endregion
 
