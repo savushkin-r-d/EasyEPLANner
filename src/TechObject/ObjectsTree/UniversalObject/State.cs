@@ -157,7 +157,7 @@ namespace TechObject
 
             string res = string.Empty;
 
-            res += IsRunPoint ? "runPoint = true," : "";
+            res += IsRunPoint ? prefix + "runPoint = true,\n" : "";
             res += modeStep.SaveAsLuaTable(prefix, true);
 
             if (steps.Count > 1)

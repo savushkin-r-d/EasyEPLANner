@@ -614,7 +614,7 @@ ProjectTestEnabled=True
 
 <p align="center"><img src="images/AutorunState.png"></p>
 
-<p align="center"><b>Рисунок</b> - <i>Выбор состояния операции для запуск</i></p>
+<p align="center"><b>Рисунок</b> - <i>Выбор состояния операции для запуска</i></p>
 
 ### 5.2 Схемы ###
 <p align="center"><img src="images/operations_descr_in_eplan.png"></p>
