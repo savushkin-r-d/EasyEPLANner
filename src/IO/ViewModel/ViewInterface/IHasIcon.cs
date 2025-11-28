@@ -47,6 +47,9 @@ namespace IO.ViewModel
         /// <summary> Модуль (желтый). </summary>
         YellowModule,
 
+        /// <summary> Пустой модуль. </summary>
+        EmptyModule,
+
         /// <summary> Клемма. </summary>
         Clamp,
 
