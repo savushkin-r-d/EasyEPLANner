@@ -24,12 +24,12 @@ namespace EasyEPlanner
         const string prefixSubtypes = "subtypes";
         const string prefixChannels = "channels";
 
-        const string bmk = "http://brestmilk.by/";
-        readonly string nsDriver = Path.Combine(bmk, "driver/");
-        readonly string nsSubtypes = Path.Combine(bmk, "subtypes/");
-        readonly string nsParameters = Path.Combine(bmk, "parameters/");
-        readonly string nsChannels = Path.Combine(bmk, "channels/");
-        readonly string nsCommunication = Path.Combine(bmk, "communication/");
+        const string rootNS = "https://www.savushkin.com/";
+        readonly string nsDriver = Path.Combine(rootNS, "driver/");
+        readonly string nsSubtypes = Path.Combine(rootNS, "subtypes/");
+        readonly string nsParameters = Path.Combine(rootNS, "parameters/");
+        readonly string nsChannels = Path.Combine(rootNS, "channels/");
+        readonly string nsCommunication = Path.Combine(rootNS, "communication/");
 
 
         /// <summary>
