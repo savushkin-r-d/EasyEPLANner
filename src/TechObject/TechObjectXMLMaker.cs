@@ -1,4 +1,4 @@
-﻿using EasyEPlanner;
+using EasyEPlanner;
 using EasyEPlanner.FileSavers.XML;
 using Eplan.EplApi.Base;
 using IO.ViewModel;
@@ -142,6 +142,8 @@ namespace TechObject
                 {
                     root.AddChannel(
                         SubtypeName(subtype, "Параметры"),
+                        cdbxNewNames ?
+                        $"{objName}.{paramsGroup.NameForChannelBase}_{param.GetNameLua()}[ {param.GetParameterNumber} ]" :
                         $"{objName}.{paramsGroup.NameForChannelBase}[ {param.GetParameterNumber} ]");
                 }
             }
@@ -191,7 +193,7 @@ namespace TechObject
         /// <returns></returns>
         private string GenerateObjectName(TechObject item, int itemNumber)
         {
-            if (cdbxNewNames == true)
+            if (cdbxNewNames)
             {
                 return item.NameBC.ToUpper() + item.TechNumber.ToString();
             }
