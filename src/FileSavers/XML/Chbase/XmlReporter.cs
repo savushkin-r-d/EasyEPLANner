@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.FileSavers.XML;
+using EasyEPlanner.FileSavers.XML;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
 using EplanDevice;
 using System;

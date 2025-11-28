@@ -708,7 +708,7 @@ namespace EasyEPlanner
                 const int MinimalASNumber = 1;
                 const int MaximalASNumber = 62;
                 const int NormalDifference = 1; // Нормальные условия
-                if (number < MinimalASNumber && number > MaximalASNumber)
+                if (number is < MinimalASNumber or > MaximalASNumber)
                 {
                     devicesWithoutASNumber += device.EplanName
                         + WhiteSpace;

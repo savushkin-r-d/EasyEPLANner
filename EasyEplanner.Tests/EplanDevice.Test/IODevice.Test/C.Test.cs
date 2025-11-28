@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.FileSavers.XML;
+using EasyEPlanner.FileSavers.XML;
 using EplanDevice;
 using Moq;
 using NUnit.Framework;
@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using NUnit.Framework;
+using EplanDevice;
+using EasyEPlanner.FileSavers.XML;
 
 namespace Tests.EplanDevices
 {

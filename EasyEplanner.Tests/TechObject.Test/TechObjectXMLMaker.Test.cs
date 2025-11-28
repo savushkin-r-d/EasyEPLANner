@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.FileSavers.XML;
+using EasyEPlanner.FileSavers.XML;
 using EplanDevice;
 using Moq;
 using NUnit.Framework;
