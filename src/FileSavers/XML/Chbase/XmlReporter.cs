@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.FileSavers.XML;
+using EasyEPlanner.FileSavers.XML;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
 using EplanDevice;
 using System;
@@ -122,7 +122,7 @@ namespace EasyEPlanner
         {
             projectConfig.SynchronizeDevices();
 
-            var root = new Driver();
+            var root = new Driver(deviceManager);
             techObjectManager.GetObjectForXML(root, cdbxTagView, cdbxNewNames);
             deviceManager.GetObjectForXML(root);
 
@@ -618,7 +618,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         public static int GetTagsCount()
         {
-            var root = new Driver();
+            var root = new Driver(deviceManager);
             bool useNewNames = false;
             bool combineTags = false;
             techObjectManager.GetObjectForXML(root, combineTags, useNewNames);
