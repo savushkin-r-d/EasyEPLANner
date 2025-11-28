@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -49,13 +49,14 @@ namespace IO.ViewModel
             nameof(Color.Red) => Icon.RedModule,
             nameof(Color.Violet) => Icon.VioletModule,
             nameof(Color.Yellow) => Icon.YellowModule,
+            "0" => Icon.EmptyModule,
             _ => Icon.None
         };
 
         public bool Expanded 
         { 
-            get => IOModule.Function.Expanded;
-            set => IOModule.Function.Expanded = value;
+            get => IOModule.Function?.Expanded ?? false;
+            set => IOModule.Function?.Expanded = value;
         }
     }
 }

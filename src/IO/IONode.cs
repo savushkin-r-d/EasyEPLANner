@@ -69,6 +69,14 @@ namespace IO
             public AddressAreaOutOfRangeException(string message) : base(message) { }
         }
 
+        /// <summary>
+        /// Исключение переполнения адресного пространства в узле
+        /// </summary>
+        public class IndefiniteModulesException : Exception
+        {
+            public IndefiniteModulesException(string message) : base(message) { }
+        }
+
         public void SetModule(IIOModule iOModule, int position)
         {
             if (AddressArea is null)
@@ -89,21 +97,25 @@ namespace IO
                     $"выходит за диапазон адресного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
             }
 
-            if (iOModules.Count < position)
+            var initialCountModules = iOModules.Count;
+            for (int i = initialCountModules; i < position; i++)
             {
-                for (int i = iOModules.Count; i < position; i++)
-                {
-                    iOModules.Add(StubIOModule);
-                }
+                iOModules.Add(StubIOModule);
             }
 
             currentAddressArea += iOModule.AddressArea;
 
             iOModules[position - 1] = iOModule;
+
+            if (position - initialCountModules is { } indefiniteCount and > 1)
+            {
+                throw new AddressAreaOutOfRangeException(
+                    $"До модуля \"{iOModule.Name}\" {iOModule.ArticleName} не определено {indefiniteCount} модулей;\n");
+            }
         }
 
         [ExcludeFromCodeCoverage]
-        public virtual IIOModule StubIOModule => new IOModule(0, 0, null);
+        public virtual IIOModule StubIOModule => new IOModule(0, 0, IOModuleInfo.Stub);
 
         public IIOModule this[int idx]
         {

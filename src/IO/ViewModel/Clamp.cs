@@ -1,4 +1,4 @@
-﻿using EasyEPlanner;
+using EasyEPlanner;
 using EplanDevice;
 using StaticHelper;
 using System;
@@ -48,7 +48,8 @@ namespace IO.ViewModel
             return $"{device.Name}{type}{ioLinkSize}{comment}"; 
         }
 
-        public IEplanFunction ClampFunction => Module.ClampFunctions[clamp];
+        public IEplanFunction ClampFunction 
+            => Module.ClampFunctions.TryGetValue(clamp, out var function)? function : null;
 
         public IIOModule Module => owner.IOModule;
 
@@ -58,7 +59,7 @@ namespace IO.ViewModel
 
         Icon IHasDescriptionIcon.Icon => Bound? Icon.Cable : Icon.None;
 
-        public string Value => ClampFunction.FunctionalText;
+        public string Value => ClampFunction?.FunctionalText;
 
         public bool Bound => Module.Devices[clamp]?.Any() ?? false;
 
@@ -73,13 +74,13 @@ namespace IO.ViewModel
             {
                 dev.ClearChannel(Module.Info.AddressSpaceType, channel.Comment, channel.Name);
             }
-            ClampFunction.FunctionalText = "Резерв";
+            ClampFunction?.FunctionalText = "Резерв";
             Reset();
         }
 
         public bool SetValue(string value)
         {
-            if (ClampFunction.FunctionalText == value)
+            if (ClampFunction is null || ClampFunction.FunctionalText == value)
                 return false;
 
             ClampFunction.FunctionalText = value;

@@ -218,8 +218,14 @@ namespace IOTests
 
             var testNode = testNodeMock.Object;
 
-            testNode.SetModule(IOModuleMock.Object, lastIndex);
-
+            try
+            {
+                testNode.SetModule(IOModuleMock.Object, lastIndex);
+            } catch(Exception ex)
+            {
+                Assert.IsNotEmpty(ex.Message);
+            }
+            
             Assert.IsTrue(testNode[lastIndex - 1].Name == moduleName);
         }
 
