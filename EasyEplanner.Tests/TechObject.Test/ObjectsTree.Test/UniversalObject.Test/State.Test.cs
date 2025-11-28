@@ -208,5 +208,52 @@ namespace EasyEplanner.Tests
         {
             CollectionAssert.AreEqual(expectedMap, state.StateTransition());
         }
+
+        [Test]
+        public void SetNewValue()
+        {
+            var modesManager = new ModesManager(null);
+            var mode = Mock.Of<IMode>(m => m.Owner == modesManager);
+            var RUN = new State(State.StateType.RUN, mode, true);
+            var IDLE = new State(State.StateType.IDLE, mode, true);
+
+            Assert.Multiple(() =>
+            {
+                RUN.SetNewValue(State.RUNPOINT, true);
+                Assert.AreSame(RUN, modesManager.RunPointState);
+
+                IDLE.SetNewValue(State.RUNPOINT, true);
+                Assert.AreSame(IDLE, modesManager.RunPointState);
+                Assert.IsFalse(RUN.IsRunPoint);
+
+                IDLE.SetNewValue("", true);
+                Assert.IsNull(modesManager.RunPointState);
+                Assert.IsFalse(IDLE.IsRunPoint);
+            });
+        }
+
+        [Test]
+        public void TestProperties()
+        {
+            var modesManager = new ModesManager(null);
+            var mode = Mock.Of<IMode>(m => m.Owner == modesManager);
+            var RUN = new State(State.StateType.RUN, mode, true);
+
+            RUN.SetNewValue(State.RUNPOINT, true);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(RUN.IsEditable);
+                Assert.IsTrue(RUN.IsBoolParameter);
+
+                CollectionAssert.AreEqual(new string[] { State.RUNPOINT, "" }, RUN.BaseObjectsList);
+                CollectionAssert.AreEqual(new int[] { -1, 1 }, RUN.EditablePart);
+                CollectionAssert.AreEqual(new string[] { $"{RUN.Name}", State.RUNPOINT}, RUN.DisplayText);
+
+                Assert.AreEqual(ImageIndexEnum.Run, RUN.DescriptionImageIndex);
+                Assert.AreEqual(ImageIndexEnum.ModesManager, modesManager.ImageIndex);
+                Assert.AreEqual(ImageIndexEnum.Run, modesManager.DescriptionImageIndex);
+            });
+        }
     }
 }
