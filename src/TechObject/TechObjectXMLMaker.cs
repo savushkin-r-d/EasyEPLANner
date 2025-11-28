@@ -1,4 +1,4 @@
-﻿using EasyEPlanner;
+using EasyEPlanner;
 using EasyEPlanner.FileSavers.XML;
 using Eplan.EplApi.Base;
 using IO.ViewModel;
