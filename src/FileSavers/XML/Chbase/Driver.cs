@@ -12,12 +12,18 @@ namespace EasyEPlanner.FileSavers.XML
         public Driver(IDeviceManager deviceManager)
         {
             this.deviceManager = deviceManager;
-            PrepareChannelsLogg();
+            PrepareChannelsLogging();
         }
 
-        private IDeviceManager deviceManager;
+        private readonly IDeviceManager deviceManager;
 
-        private void PrepareChannelsLogg()
+        /// <summary>
+        /// Подготовка логирования сигналов для записи
+        /// </summary>
+        /// <remarks>
+        /// - Проверка привязанных сигналов к WATCHDOG
+        /// </remarks>
+        private void PrepareChannelsLogging()
         {
             var tags = deviceManager.Devices?
                 .Where(d => d.DeviceType is DeviceType.WATCHDOG)
