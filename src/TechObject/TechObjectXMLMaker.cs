@@ -1,4 +1,4 @@
-﻿using EasyEPlanner;
+using EasyEPlanner;
 using EasyEPlanner.FileSavers.XML;
 using Eplan.EplApi.Base;
 using IO.ViewModel;
@@ -140,9 +140,16 @@ namespace TechObject
             {
                 foreach (var param in paramsGroup.Parameters)
                 {
-                    root.AddChannel(
+                    var channel = root.AddChannel(
                         SubtypeName(subtype, "Параметры"),
+                        cdbxNewNames ?
+                        $"{objName}.{paramsGroup.NameForChannelBase}_{param.GetNameLua()}[ {param.GetParameterNumber} ]" :
                         $"{objName}.{paramsGroup.NameForChannelBase}[ {param.GetParameterNumber} ]");
+
+                    if (param.Operations is { } operations && operations != "-1")
+                    {
+                        channel.WithParameter("Operations", $"[ {string.Join(", ", operations.Split(' '))} ]");
+                    }
                 }
             }
         }
@@ -191,7 +198,7 @@ namespace TechObject
         /// <returns></returns>
         private string GenerateObjectName(TechObject item, int itemNumber)
         {
-            if (cdbxNewNames == true)
+            if (cdbxNewNames)
             {
                 return item.NameBC.ToUpper() + item.TechNumber.ToString();
             }
