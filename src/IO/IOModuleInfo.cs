@@ -311,9 +311,9 @@ namespace IO
         /// <summary>
         /// Заглушка, для возврата в случае поиска неописанных модулей. 
         /// </summary>
-        public static IOModuleInfo Stub = new IOModuleInfo(0,
-            "не определен", "", ADDRESS_SPACE_TYPE.NONE, "", "", new int[0],
-            new int[0], new int[0], 0, 0, 0, 0, 0, Color.LightGray);
+        public static IOModuleInfo Stub = new(
+            0, "не определен", "Модуль не определен", ADDRESS_SPACE_TYPE.NONE,
+            "", "", [], [], [], 0, 0, 0, 0, 0, Color.Empty);
 
         /// <summary>
         /// Изначальное адрессное пространство, занимаемое любым модулем AXL

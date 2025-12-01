@@ -170,7 +170,7 @@ namespace EasyEPlanner.ProjectImportICP
         /// </summary>
         private void ExportChbase(string path)
         {
-            var reporter = new XMLReporter();
+            var reporter = new XmlReporter();
             reporter.AwaitSaveAsCDBX(
                 path,
                 (bool)CombineTagCmbBx.SelectedValue,
