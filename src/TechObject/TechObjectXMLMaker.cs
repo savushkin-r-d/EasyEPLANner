@@ -140,11 +140,16 @@ namespace TechObject
             {
                 foreach (var param in paramsGroup.Parameters)
                 {
-                    root.AddChannel(
+                    var channel = root.AddChannel(
                         SubtypeName(subtype, "Параметры"),
                         cdbxNewNames ?
                         $"{objName}.{paramsGroup.NameForChannelBase}_{param.GetNameLua()}[ {param.GetParameterNumber} ]" :
                         $"{objName}.{paramsGroup.NameForChannelBase}[ {param.GetParameterNumber} ]");
+
+                    if (param.Operations is { } operations && operations != "-1")
+                    {
+                        channel.WithParameter("Operations", $"[ {string.Join(", ", operations.Split(' '))} ]");
+                    }
                 }
             }
         }
