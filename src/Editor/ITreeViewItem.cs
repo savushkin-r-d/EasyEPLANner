@@ -267,6 +267,11 @@ namespace Editor
         ImageIndexEnum ImageIndex { get; set; }
 
         /// <summary>
+        /// Индекс картинки из формы, для вставки в элемент (2я колонка).
+        /// </summary>
+        ImageIndexEnum DescriptionImageIndex { get; set; }
+
+        /// <summary>
         /// Содержит ли объект базовый объект/операцию/шаг
         /// </summary>
         bool ContainsBaseObject { get; }
