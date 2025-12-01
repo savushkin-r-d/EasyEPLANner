@@ -989,6 +989,35 @@ local io_modules =
             AI_count = 6,
             Color = 'Green'
             },
+
+    [ 51 ] = {
+            n = 1027904,
+            name = 'AXL F DO16/2 2H',
+            description = '16-channel Digital Output Module',
+            addressSpaceType = 1,
+            typeName = 'Цифровой выход',
+            groupName = 'AXL F',
+            channelClamps = {
+                00, 01, 02, 03, 20, 21, 22, 23,
+                40, 41, 42, 43, 60, 61, 62, 63
+            },
+            channelAddressesIn = { },
+            channelAddressesOut = {
+                0, 1, 2, 3, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                4, 5, 6, 7, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                8, 9, 10, 11, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                12, 13, 14, 15, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            },
+            DO_count = 16,
+            DI_count = 16,
+            AO_count = 1,
+            AI_count = 1,
+            Color = 'Red',
+            },
     }
 
 return io_modules
