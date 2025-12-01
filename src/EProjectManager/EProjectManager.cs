@@ -177,7 +177,7 @@ namespace EasyEPlanner
             string projectDirPath = currentProject.ProjectDirectoryPath;
             ExcelRepoter.AutomaticExportExcelForSCADA(projectDirPath,
                 projectName);
-            var xmlReporter = new XMLReporter();
+            var xmlReporter = new XmlReporter();
             xmlReporter.AutomaticExportNewChannelBaseCombineTags(
                 projectDirPath, projectName);
 

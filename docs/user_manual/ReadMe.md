@@ -553,6 +553,7 @@ ProjectTestEnabled=True
 | Phoenix Contact | AXL F IOL8 2H (1027843)          | AI/AO/DI/DO | IO-Link с привязкой DI/DO, 8 каналов           |
 | Phoenix Contact | AXL F DI16/4 2F (2688022)        | DI          | 16 каналов                                     |
 | Phoenix Contact | AXL F DO16/3 2F (2688048)        | DO          | 16 каналов                                     |
+| Phoenix Contact | AXL F DO16/2 2H (1027904)        | DO          | 16 каналов                                     |
 | Phoenix Contact | AXL F DI8/3 DO8/3 2H (2702071)   | DI/DO       | 8 каналов DI и 8 каналов DO                    |
 | Phoenix Contact | AXL F DI8/1 DO8/1 1H (2701916)   | DI/DO       | 8 каналов DI и 8 каналов DO                    |
 | Phoenix Contact | AXL F AI2 AO2 1H 0-10V (2702072) | AI/AO       | 2 канала AI и 2 канала DI                      |
@@ -606,6 +607,15 @@ ProjectTestEnabled=True
 <p align="center"><img src="images/transition_between_operations.svg"></p>
 
 <p align="center"><b>Рисунок</b> - <i>Переход между состояниями операций</i></p>
+
+Состояние операции может быть выбрано для запуска при старте программы.
+Для одного объекта возможен выбор для запуска только одной операции в некотором состоянии.
+Для этого нужно в состоянии выбрать опцию `Запускать при старте программы`.
+(Остальные состояния автоматически сбрасывают эту опцию).
+
+<p align="center"><img src="images/AutorunState.png"></p>
+
+<p align="center"><b>Рисунок</b> - <i>Выбор состояния операции для запуска</i></p>
 
 ### 5.2 Схемы ###
 <p align="center"><img src="images/operations_descr_in_eplan.png"></p>

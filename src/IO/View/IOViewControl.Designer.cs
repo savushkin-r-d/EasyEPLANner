@@ -126,8 +126,9 @@ namespace IO.View
             this.ViewItemImageList.Images.SetKeyName(8, "module_red.png");
             this.ViewItemImageList.Images.SetKeyName(9, "module_violet.png");
             this.ViewItemImageList.Images.SetKeyName(10, "module_yellow.png");
-            this.ViewItemImageList.Images.SetKeyName(11, "clamp.png");
-            this.ViewItemImageList.Images.SetKeyName(12, "cable.png");
+            this.ViewItemImageList.Images.SetKeyName(11, "module_empty.png");
+            this.ViewItemImageList.Images.SetKeyName(12, "clamp.png");
+            this.ViewItemImageList.Images.SetKeyName(13, "cable.png");
             // 
             // tableLayoutPanel2
             // 

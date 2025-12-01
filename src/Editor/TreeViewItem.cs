@@ -54,7 +54,7 @@ namespace Editor
             return false;
         }
 
-        virtual public bool SetNewValue(string newVal, bool isExtraValue)
+        virtual public bool SetNewValue(string newValue, bool isExtraValue)
         {
             return false;
         }
@@ -372,6 +372,9 @@ namespace Editor
 
 
         public virtual ImageIndexEnum ImageIndex { get; set; } =
+            ImageIndexEnum.NONE;
+
+        public virtual ImageIndexEnum DescriptionImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 
         public virtual bool ContainsBaseObject
