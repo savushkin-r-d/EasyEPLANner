@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EasyEPlanner.FileSavers.XML
 {
     /// <summary>
-    /// 
+    /// Драйвер - корневой узел базы каналов
     /// </summary>
     public interface IDriver
     {

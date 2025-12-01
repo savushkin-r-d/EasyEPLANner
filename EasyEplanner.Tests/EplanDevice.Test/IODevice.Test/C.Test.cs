@@ -1,4 +1,8 @@
-﻿using System;
+using EasyEPlanner.FileSavers.XML;
+using EplanDevice;
+using Moq;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -234,7 +238,7 @@ namespace Tests.EplanDevices
         {
             var dev = GetNewCDevice();
             
-            IDriver actualNode = new Driver();
+            IDriver actualNode = new Driver(Mock.Of<IDeviceManager>(dm => dm.Devices == new List<IODevice>()));
             dev.GenerateDeviceTags(actualNode);
             
             ISubtype expectedSubType = new Subtype(dev.Name);

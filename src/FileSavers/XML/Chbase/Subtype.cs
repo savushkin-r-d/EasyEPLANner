@@ -1,4 +1,5 @@
-﻿using LuaInterface;
+using EplanDevice;
+using LuaInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,15 @@ namespace EasyEPlanner.FileSavers.XML
             "HL_ST",
             "HA_ST",
             "AO_V",
-            "AI_V"
+            "AI_V",
+            $"{nameof(DeviceType.WATCHDOG)}_{IODevice.Tag.ST}",
         ];
+
+        /// <summary>
+        /// Список каналов с НЕ дефолтной протоколируемостью
+        /// </summary>
+        public static Dictionary<string, bool> ChannelsLogging { get; set; } 
+            = [];
 
         private static readonly List<string> defaultRequestedByTime =
         [
@@ -96,6 +104,11 @@ namespace EasyEPlanner.FileSavers.XML
         public IChannel AddChannel(IChannel channel, int count = 1)
         {
             channel.IsLogged = IsLogged;
+            if (ChannelsLogging.TryGetValue(channel.Name, out var logged))
+            {
+                channel.IsLogged = logged;
+            }
+
             channel.IsRequestByTime = IsRequestByTime;
             channel.RequestPeriod = RequestPeriod;
             channel.Delta = Delta;
