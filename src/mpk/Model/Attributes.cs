@@ -18,6 +18,6 @@ namespace EasyEPlanner.mpk.Model
 
         public string Comment { get; set; } = "";
 
-        public string CurrentDate => DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss");
+        public string CurrentDate => DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
     }
 }

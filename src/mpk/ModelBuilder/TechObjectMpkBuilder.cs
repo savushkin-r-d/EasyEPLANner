@@ -94,7 +94,7 @@ namespace EasyEPlanner.mpk.ModelBuilder
 
         public List<IProperty> GetParametersProperties(Params parameters, PropertyType type, string shortTag)
         {
-            return [.. parameters.Parameters.Select(p => new Property()
+            return [.. parameters?.Parameters?.Select(p => new Property()
             {
                 Name = $"{parameters.NameForChannelBase}{p.GetParameterNumber}",
                 Caption = $"{shortTag}{p.GetParameterNumber} {p.GetName()}, {p.GetMeter()}",

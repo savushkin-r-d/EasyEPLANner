@@ -3,7 +3,7 @@
 namespace EasyEPlanner.mpk.Model
 {
     /// <summary>
-    /// Компонет
+    /// Компонент
     /// </summary>
     public interface IComponent
     {

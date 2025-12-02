@@ -34,7 +34,7 @@ namespace EasyEPlanner.Main
                     return false;
                 }
 
-                var folderDialog = new FolderBrowserDialog();
+                using var folderDialog = new FolderBrowserDialog();
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
                     string selectedFolderPath = folderDialog.SelectedPath;

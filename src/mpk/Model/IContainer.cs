@@ -13,7 +13,7 @@ namespace EasyEPlanner.mpk.Model
         IAttributes Attributes { get; set; }
         
         /// <summary>
-        /// Версия сброрки
+        /// Версия сборки
         /// </summary>
         int Build { get; set; }
 

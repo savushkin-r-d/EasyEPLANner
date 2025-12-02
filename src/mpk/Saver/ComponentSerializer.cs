@@ -24,17 +24,17 @@ namespace EasyEPlanner.mpk.Saver
             return new XElement("component",
                 new XElement("imageslist",
                     new XElement("width", 0),
-                    new XElement("heigth", 0),
+                    new XElement("height", 0),
                     new XElement("startx", 0),
                     new XElement("starty", 0),
                     new XElement("wallpaper", false.ToString()),
                     new XElement("animation", false.ToString()),
                     new XElement("animationstart", 1),
-                    new XElement("animbationend", 1),
+                    new XElement("animationend", 1),
                     new XElement("animationspeed", 1)
                 ),
                 BuildPropertiesList(component.Properties),
-                BuildMassagesList(component.Messages)
+                BuildMessagesList(component.Messages)
             );
         }
 
@@ -66,19 +66,19 @@ namespace EasyEPlanner.mpk.Saver
             );
         }
 
-        private static XElement BuildMassagesList(List<IMessage> messages)
+        private static XElement BuildMessagesList(List<IMessage> messages)
         {
             if (messages?.Any() is null or false)
                 return null;
 
-            return new XElement("propertieslist",
+            return new XElement("messageslist",
                 messages.Select(BuildMessage)
             );
         }
 
         private static XElement BuildMessage(IMessage message)
         {
-            return new XElement("property",
+            return new XElement("message",
                 new XElement("name", message.Name),
                 new XElement("caption", message.Caption),
                 new XElement("visible", message.Visible.ToString()),

@@ -31,7 +31,7 @@
         PropertyModel PropModel { get; set; }
     
         /// <summary>
-        /// Тип значние свойства
+        /// Тип значения
         /// </summary>
         PropertyType PropType { get; set; }
         

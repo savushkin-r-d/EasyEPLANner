@@ -44,13 +44,13 @@ namespace EasyEplannerTests.mpkTest.SaverTest
             var expected = "<component>\r\n" +
                 "  <imageslist>\r\n" +
                 "    <width>0</width>\r\n" +
-                "    <heigth>0</heigth>\r\n" +
+                "    <height>0</height>\r\n" +
                 "    <startx>0</startx>\r\n" +
                 "    <starty>0</starty>\r\n" +
                 "    <wallpaper>False</wallpaper>\r\n" +
                 "    <animation>False</animation>\r\n" +
                 "    <animationstart>1</animationstart>\r\n" +
-                "    <animbationend>1</animbationend>\r\n" +
+                "    <animationend>1</animationend>\r\n" +
                 "    <animationspeed>1</animationspeed>\r\n" +
                 "  </imageslist>\r\n" +
                 "  <propertieslist>\r\n" +
