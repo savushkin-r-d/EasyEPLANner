@@ -897,7 +897,7 @@ namespace TechObject
                     $"{Action?.Owner?.Owner?.Owner?.DisplayText[0]}->" +
                     $"{Action?.Owner?.Owner?.Name}->" +
                     $"{Action?.Owner?.GetStepName()}->" +
-                    $"{(Action as ITreeViewItem)?.Parent.DisplayText[0]}: Неверно заполнены сигналы\n";
+                    $"{(Action as ITreeViewItem)?.Parent?.DisplayText[0]}: Неверно заполнены сигналы\n";
             }
         }
     }
