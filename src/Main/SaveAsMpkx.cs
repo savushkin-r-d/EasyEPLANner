@@ -1,6 +1,8 @@
 ﻿using EasyEPlanner.ModbusExchange.View;
 using EasyEPlanner.mpk.ModelBuilder;
 using EasyEPlanner.mpk.Saver;
+using EasyEPlanner.mpk.View;
+using EasyEPlanner.mpk.ViewModel;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using System;
@@ -34,14 +36,10 @@ namespace EasyEPlanner.Main
                     return false;
                 }
 
-                using var folderDialog = new FolderBrowserDialog();
-                if (folderDialog.ShowDialog() == DialogResult.OK)
+                var saverDialog = new MpkSaverForm(new MpkSaverContext(currentProject.ProjectName));
+                if (saverDialog.ShowDialog() != DialogResult.Cancel)
                 {
-                    string selectedFolderPath = folderDialog.SelectedPath;
-
-                    var container = new TechObjectMpkBuilder(TechObjectManager.GetInstance(), currentProject.ProjectName).Build();
-                    var exchange = new MpkxSaver(container);
-                    exchange.Save(selectedFolderPath);
+                    new MpkxSaver().Save(saverDialog.Context);
                 }
             }
             catch (Exception ex)

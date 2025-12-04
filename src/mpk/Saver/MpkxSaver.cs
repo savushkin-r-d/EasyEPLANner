@@ -1,4 +1,6 @@
 ﻿using EasyEPlanner.mpk.Model;
+using EasyEPlanner.mpk.ModelBuilder;
+using EasyEPlanner.mpk.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -12,38 +14,30 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using TechObject;
 
 namespace EasyEPlanner.mpk.Saver
 {
     [ExcludeFromCodeCoverage]
-    public class MpkxSaver(IContainer container)
+    public class MpkxSaver()
     {
-        public void Save(string folderPath)
+        public void Save(IMpkSaverContext context)
         {
-            var mpkxPath = Path.Combine(folderPath, $"{container.Name}.mpkx");
-            var componentsFolder = Path.Combine(folderPath, $"{container.Name}.files");
+            var container = new TechObjectMpkBuilder(TechObjectManager.GetInstance(), context.MainContainerName).Build();
+
+            var mpkxPath = Path.Combine(context.MpkDirectory, $"{container.Name}.mpkx");
+            var componentsFolder = Path.Combine(context.MpkDirectory, $"{container.Name}.files");
             var iconsFolder = Path.Combine(componentsFolder, "_Icons");
 
-            if (File.Exists(mpkxPath))
-            {
-                if (MessageBox.Show(
-                        "Контейнер с таким названием уже существует. Перезаписать существующий контейнер",
-                        "Сохранение контейнера",
-                        MessageBoxButtons.YesNo)
-                    == DialogResult.No)
-                {
-                    return;
-                }
-                
-                if (Directory.Exists(componentsFolder))
-                    Directory.Delete(componentsFolder, true);
-            }
+            if (Directory.Exists(componentsFolder))
+                Directory.Delete(componentsFolder, true);
+
+            Directory.CreateDirectory(componentsFolder);
+            Directory.CreateDirectory(iconsFolder);
 
             using var mpkx = new StreamWriter(mpkxPath, false);
             mpkx.Write(new ContainerSerializer(container).Serialize());
 
-            Directory.CreateDirectory(componentsFolder);
-            Directory.CreateDirectory(iconsFolder);
             foreach (var component in container.Components)
             {
                 var componentFolder = Path.Combine(componentsFolder, $"{component.Name}.cmp");
