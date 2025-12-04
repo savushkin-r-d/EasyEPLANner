@@ -59,7 +59,7 @@ namespace TechObject
             foreach (ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
-                if (property.LuaName == name)
+                if (property.LuaName.ToUpper() == name.ToUpper())
                 {
                     property.SetNewValue(value);
                 }
