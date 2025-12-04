@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ using TechObject;
 
 namespace EasyEPlanner.mpk.View
 {
+    [ExcludeFromCodeCoverage]
     public partial class MpkSaverForm : Form
     {
         public IMpkSaverContext Context { get; private set; }
@@ -24,11 +26,6 @@ namespace EasyEPlanner.mpk.View
             Context = context;
             InitializeComponent();
             InitModel();
-        }
-
-        private void MpkSaverForm_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void InitModel()
@@ -53,10 +50,11 @@ namespace EasyEPlanner.mpk.View
                 Context.MpkDirectory = folderDialog.SelectedPath;
                 MpkDirectoryTextBox.Text = folderDialog.SelectedPath;
 
-                if (folderDialog.SelectedPath != defaultDirectory.FullName &&
+                if (defaultDirectory is not null &&
+                    folderDialog.SelectedPath != defaultDirectory.FullName &&
                     !defaultDirectory.EnumerateFiles().Any())
                 {
-                    defaultDirectory?.Delete();
+                    defaultDirectory.Delete();
                 }
 
                 return;

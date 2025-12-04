@@ -186,7 +186,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Экспорт mpk";
-            this.Load += new System.EventHandler(this.MpkSaverForm_Load);
             this.MainTableLayoutPanel.ResumeLayout(false);
             this.MainTableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);

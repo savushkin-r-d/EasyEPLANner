@@ -39,7 +39,7 @@ namespace EasyEPlanner.Main
                 var saverDialog = new MpkSaverForm(new MpkSaverContext(currentProject.ProjectName));
                 if (saverDialog.ShowDialog() != DialogResult.Cancel)
                 {
-                    new MpkxSaver().Save(saverDialog.Context);
+                    MpkxSaver.Save(saverDialog.Context);
                 }
             }
             catch (Exception ex)

@@ -19,9 +19,9 @@ using TechObject;
 namespace EasyEPlanner.mpk.Saver
 {
     [ExcludeFromCodeCoverage]
-    public class MpkxSaver()
+    public static class MpkxSaver
     {
-        public void Save(IMpkSaverContext context)
+        public static void Save(IMpkSaverContext context)
         {
             var container = new TechObjectMpkBuilder(TechObjectManager.GetInstance(), context.MainContainerName).Build();
 
