@@ -1217,10 +1217,10 @@ ProjectTestEnabled=True
         <tr> <td rowspan = 1> <b> 
         WT_ETH
             <td> <b> PC_0 <td> Сдвиг нуля
-        <tr> <td rowspan = 1> <b> 
+        <tr> <td rowspan = 3> <b> 
         WT_PXC_AXL
-            <td> <b> P_DT <td> Время порогового фильтра
-            <td> <b> P_C0 <td> Сдвиг нуля
+            <td> <b> P_DT <td> Время порогового фильтра <tr>
+            <td> <b> P_C0 <td> Сдвиг нуля <tr>
             <td> <b> P_K <td> Коэффициент пропорциональности
         <tr> <td rowspan = 3> <b> 
         PT
