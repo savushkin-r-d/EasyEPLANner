@@ -53,7 +53,7 @@ namespace EasyEPlanner.mpk.Model
 
         public PropertyType PropType { get; set; }
 
-        public object Value { get; set; } = 0;
+        public object Value { get; set; } = null;
 
         public int ChannelId { get; set; } = 0;
 

@@ -60,11 +60,22 @@ namespace EasyEPlanner.mpk.Saver
                 new XElement("tagname", property.TagName),
                 new XElement("propmodel", (int)property.PropModel),
                 new XElement("proptype", (int)property.PropType),
-                new XElement("value", property.Value),
+                new XElement("value", ValueToString(property.Value, property.PropType)),
                 new XElement("channelid", property.ChannelId),
                 new XElement("priority", property.Priority)
             );
         }
+
+        private static string ValueToString(object value, PropertyType type) => type switch
+        {
+            PropertyType.Integer => value?.ToString() ?? "0",
+            PropertyType.Float => value?.ToString() ?? "0",
+            PropertyType.String => value?.ToString() ?? "",
+            PropertyType.Boolean => value?.ToString() ?? "False",
+            PropertyType.Date => (value as DateTime?)?.ToString("dd.MM.yyyy") ?? DateTime.Now.ToString("dd.MM.yyyy"),
+            _ => "",
+        };
+
 
         private static XElement BuildMessagesList(List<IMessage> messages)
         {

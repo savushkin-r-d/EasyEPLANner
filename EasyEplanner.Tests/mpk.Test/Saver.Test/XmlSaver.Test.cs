@@ -63,6 +63,19 @@ namespace EasyEplannerTests.mpkTest.SaverTest
                 "      <tagname></tagname>\r\n" +
                 "      <propmodel>0</propmodel>\r\n" +
                 "      <proptype>0</proptype>\r\n" +
+                "      <value></value>\r\n" +
+                "      <channelid>0</channelid>\r\n" +
+                "      <priority>5</priority>\r\n" +
+                "    </property>\r\n" +
+                "    <property>\r\n" +
+                "      <name />\r\n" +
+                "      <caption />\r\n" +
+                "      <visible>True</visible>\r\n" +
+                "      <report>False</report>\r\n" +
+                "      <saved>False</saved>\r\n" +
+                "      <tagname></tagname>\r\n" +
+                "      <propmodel>0</propmodel>\r\n" +
+                "      <proptype>2</proptype>\r\n" +
                 "      <value>0</value>\r\n" +
                 "      <channelid>0</channelid>\r\n" +
                 "      <priority>5</priority>\r\n" +
@@ -72,7 +85,11 @@ namespace EasyEplannerTests.mpkTest.SaverTest
 
             var actual = new ComponentSerializer(new Component()
             {
-                Properties = new List<IProperty>() { new Property() }
+                Properties = new List<IProperty>() 
+                { 
+                    new Property() { PropType = PropertyType.String },
+                    new Property() { PropType = PropertyType.Float }
+                }
             }).Serialize();
 
             Assert.AreEqual(expected, actual);
