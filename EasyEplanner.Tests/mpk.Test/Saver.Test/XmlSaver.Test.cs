@@ -75,8 +75,47 @@ namespace EasyEplannerTests.mpkTest.SaverTest
                 "      <saved>False</saved>\r\n" +
                 "      <tagname></tagname>\r\n" +
                 "      <propmodel>0</propmodel>\r\n" +
+                "      <proptype>1</proptype>\r\n" +
+                "      <value>0</value>\r\n" +
+                "      <channelid>0</channelid>\r\n" +
+                "      <priority>5</priority>\r\n" +
+                "    </property>\r\n" +
+                "    <property>\r\n" +
+                "      <name />\r\n" +
+                "      <caption />\r\n" +
+                "      <visible>True</visible>\r\n" +
+                "      <report>False</report>\r\n" +
+                "      <saved>False</saved>\r\n" +
+                "      <tagname></tagname>\r\n" +
+                "      <propmodel>0</propmodel>\r\n" +
                 "      <proptype>2</proptype>\r\n" +
                 "      <value>0</value>\r\n" +
+                "      <channelid>0</channelid>\r\n" +
+                "      <priority>5</priority>\r\n" +
+                "    </property>\r\n" +
+                "    <property>\r\n" +
+                "      <name />\r\n" +
+                "      <caption />\r\n" +
+                "      <visible>True</visible>\r\n" +
+                "      <report>False</report>\r\n" +
+                "      <saved>False</saved>\r\n" +
+                "      <tagname></tagname>\r\n" +
+                "      <propmodel>0</propmodel>\r\n" +
+                "      <proptype>3</proptype>\r\n" +
+                "      <value>False</value>\r\n" +
+                "      <channelid>0</channelid>\r\n" +
+                "      <priority>5</priority>\r\n" +
+                "    </property>\r\n" +
+                "    <property>\r\n" +
+                "      <name />\r\n" +
+                "      <caption />\r\n" +
+                "      <visible>True</visible>\r\n" +
+                "      <report>False</report>\r\n" +
+                "      <saved>False</saved>\r\n" +
+                "      <tagname></tagname>\r\n" +
+                "      <propmodel>0</propmodel>\r\n" +
+                "      <proptype>4</proptype>\r\n" +
+                $"      <value>{DateTime.Now:dd.MM.yyyy}</value>\r\n" +
                 "      <channelid>0</channelid>\r\n" +
                 "      <priority>5</priority>\r\n" +
                 "    </property>\r\n" +
@@ -88,7 +127,10 @@ namespace EasyEplannerTests.mpkTest.SaverTest
                 Properties = new List<IProperty>() 
                 { 
                     new Property() { PropType = PropertyType.String },
-                    new Property() { PropType = PropertyType.Float }
+                    new Property() { PropType = PropertyType.Integer },
+                    new Property() { PropType = PropertyType.Float },
+                    new Property() { PropType = PropertyType.Boolean },
+                    new Property() { PropType = PropertyType.Date },
                 }
             }).Serialize();
 
