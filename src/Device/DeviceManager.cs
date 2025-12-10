@@ -9,7 +9,6 @@ using System.Text;
 using System.Security.Cryptography;
 using TechObject;
 using StaticHelper;
-using static System.Windows.Forms.Design.AxImporter;
 using EasyEPlanner.FileSavers.XML;
 
 /// <summary>
@@ -46,6 +45,11 @@ namespace EplanDevice
         /// Устройства проекта
         /// </summary>
         List<IODevice> Devices { get; }
+        
+        /// <summary>
+        /// Каналы устройств
+        /// </summary>
+        ChannelsCounter DeviceChannelsCounter { get; }
 
         /// <summary>
         /// Генерация тегов устройств для экспорта в базу каналов.
@@ -893,7 +897,9 @@ namespace EplanDevice
         private DeviceManager()
         {
             devices = new List<IODevice>();
+            DeviceChannelsCounter = new(this);
             InitIOLinkSizesForDevices();
+            InitDeviceChannelsCount();
         }
 
         /// <summary>
@@ -949,6 +955,16 @@ namespace EplanDevice
                     .ResourceManager.GetString("IOLinkDevicesFilePattern");
                 File.WriteAllText(fullPath, template);
             }
+        }
+
+        private void InitDeviceChannelsCount()
+        {
+            var lua = new LuaInterface.Lua();
+            const string devicesFile = "sys_subtype_channels_count.lua";
+            var fullPath = Path.Combine(ProjectManager.GetInstance().SystemFilesPath, devicesFile);
+
+            lua.RegisterFunction("ADD_CHANNELS_COUNT", DeviceChannelsCounter, DeviceChannelsCounter.GetType().GetMethod(nameof(DeviceChannelsCounter.AddChannelsCount)));
+            lua.DoFile(fullPath);
         }
 
         /// <summary>
@@ -1192,6 +1208,8 @@ namespace EplanDevice
 
             return device;
         }
+
+        public ChannelsCounter DeviceChannelsCounter { get; private set; }
 
         /// <summary>
         /// Шаблон для получение ОУ устройства.

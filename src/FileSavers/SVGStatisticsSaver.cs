@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using TechObject;
 using System.Linq;
+using System;
 
 namespace EasyEPlanner
 {
@@ -27,6 +28,25 @@ namespace EasyEPlanner
             SaveIOLinkModulesPercentage(pathToFiles);
             SaveCouplersCount(pathToFiles);
             SaveIOModulesCount(pathToFiles);
+            SaveChannelsCount(pathToFiles);
+        }
+
+        private void SaveChannelsCount(string pathToFiles)
+        {
+            var (DI, DO, AI, AO) = deviceManager.DeviceChannelsCounter.CalculateUsedChannelsCount();
+            var sum = DI + DO + AI + AO;
+            
+            SaveCahnnelsCpount(pathToFiles, "DI", DI, sum); 
+            SaveCahnnelsCpount(pathToFiles, "DO", DO, sum); 
+            SaveCahnnelsCpount(pathToFiles, "AI", AI, sum); 
+            SaveCahnnelsCpount(pathToFiles, "AO", AO, sum);
+            SaveCahnnelsCpount(pathToFiles, "SUM", sum, sum);
+        }
+
+        private void SaveCahnnelsCpount(string pathToFiles, string channelsType, int count, int max)
+        {
+            string result = MakeStringForWriting(count, max, count.ToString());
+            WriteFile(result, Path.Combine(pathToFiles, $"channels_{channelsType}.svg"));
         }
 
         /// <summary>

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using EasyEPlanner.FileSavers.XML;
+using EplanDevice;
+using IO;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using TechObject;
-using EplanDevice;
-using IO;
-using System.Globalization;
-using System.Drawing;
 
 namespace EasyEPlanner
 {
@@ -467,49 +468,42 @@ namespace EasyEPlanner
             var devices = new Dictionary<string, int>();
             foreach (IODevice dev in deviceManager.Devices)
             {
-                
-                if (dev.DeviceType == DeviceType.V ||
-                    dev.DeviceType == DeviceType.M ||
-                    dev.DeviceType == DeviceType.LS)
+                string deviceSubType = dev.GetDeviceSubTypeStr(dev.DeviceType, dev.DeviceSubType);
+                if (devices.ContainsKey(deviceSubType) == false)
                 {
-                    string deviceSubType = dev.GetDeviceSubTypeStr(
-                        dev.DeviceType, dev.DeviceSubType);
-                    if (devices.ContainsKey(deviceSubType) == false)
-                    {
-                        devices.Add(deviceSubType, 1);
-                    }
-                    else
-                    {
-                        devices[deviceSubType]++;
-                    }
+                    devices.Add(deviceSubType, 1);
                 }
                 else
                 {
-                    string deviceType = dev.DeviceType.ToString();
-                    if (devices.ContainsKey(dev.DeviceType.ToString()) == false)
-                    {
-                        devices.Add(deviceType, 1);
-                    }
-                    else
-                    {
-                        devices[deviceType]++;
-                    }
+                    devices[deviceSubType]++;
                 }
             }
 
             // Сводная таблица
             int idx = 0;
-            foreach(var devType in devices)
+            foreach (var devType in devices)
             {
-                res[idx, 0] = devType.Key;
-                res[idx, 1] = devType.Value;
+
+                res[idx, 1] = devType.Key;
+                res[idx, 2] = devType.Value;
                 idx++;
             }
-            res[idx, 0] = "Всего";
-            res[idx, 1] = deviceManager.Devices.Count;
+            res[idx, 1] = "Всего";
+            res[idx, 2] = $"=СУММ(B2:B{idx})";
 
             return res;
         }
+
+        public static Dictionary<string, Dictionary<string, int>> GetTypesCount()
+        {
+            return deviceManager.DeviceChannelsCounter.GetTypesCount();
+        }
+        
+        public static int[] GetChannelsCount(string subtype)
+        {
+            return deviceManager.DeviceChannelsCounter.GetChannelsCount(subtype);
+        }
+        
 
         /// <summary>
         /// Сохранение подключение устройств к устройствам ввода-вывода.
