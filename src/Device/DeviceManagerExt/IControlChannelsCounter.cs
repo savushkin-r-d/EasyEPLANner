@@ -2,12 +2,12 @@
 
 namespace EplanDevice
 {
-    public interface IChannelsCounter
+    public interface IControlChannelsCounter
     {
         /// <summary>
         /// Список каналов подтипов
         /// </summary>
-        List<SubtypeChannels> SubtypeChannels { get; set; }
+        List<SubtypeControlChannels> SubtypeChannels { get; set; }
 
         /// <summary>
         /// Добавить описание каналов подтипа
@@ -35,11 +35,6 @@ namespace EplanDevice
         /// Получить описание каналов подтипа
         /// </summary>
         /// <param name="dstStr"></param>
-        SubtypeChannels GetSubtypeChannels(string dstStr);
-
-        /// <summary>
-        /// Получить количество использованных подтипов в проекте
-        /// </summary>
-        Dictionary<string, Dictionary<string, int>> GetTypesCount();
+        SubtypeControlChannels GetSubtypeControlChannels(string dstStr);
     }
 }

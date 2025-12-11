@@ -117,8 +117,12 @@
     <Compile Include="ColumnNodes.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
-    <Compile Include="Device\ChannelsCounter.cs" />
-    <Compile Include="Device\IChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\ControlChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\IControlChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\ISubtypeControlChannels.cs" />
+    <Compile Include="Device\DeviceManagerExt\ISummaryDevices.cs" />
+    <Compile Include="Device\DeviceManagerExt\SubtypeControlChannels.cs" />
+    <Compile Include="Device\DeviceManagerExt\SummaryDevices.cs" />
     <Compile Include="Device\IODevices\EY.cs" />
     <Compile Include="Device\IODevices\WATCHDOG.cs" />
     <Compile Include="Device\ISetupTerminal.cs" />

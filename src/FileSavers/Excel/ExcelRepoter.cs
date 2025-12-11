@@ -4,6 +4,7 @@ using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -464,6 +465,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private static void CreateTotalDevicePage(ref Workbook workBook)
         {
             string sheetName = "Сводная таблица устройств";
@@ -473,7 +475,7 @@ namespace EasyEPlanner
                 1, 1, false);
             workSheet.FreezePanes(2, 1);
             workSheet.Range[1, 1, 1, 8].Style.Font.IsBold = true;
-
+            workSheet.Range[1, 1, 1, 8].Style.HorizontalAlignment = HorizontalAlignType.Center;
 
             var devices = ExcelDataCollector.GetTypesCount();
             var rowIndex = 2;
@@ -507,14 +509,14 @@ namespace EasyEPlanner
             
             workSheet[rowIndex, 2].Formula = $"=COUNTA(B2:B{rowIndex - 1})";
             workSheet[rowIndex, 3].Formula = $"=SUM(C2:C{rowIndex - 1})";
-            workSheet[rowIndex, 3].Formula = $"=SUM(C2:C{rowIndex - 1})";
-            workSheet[rowIndex, 4].Formula = $"=SUMPRODUCT(C2:C{rowIndex - 1},D2:D{rowIndex - 1})";
-            workSheet[rowIndex, 5].Formula = $"=SUMPRODUCT(C2:C{rowIndex - 1},E2:E{rowIndex - 1})";
-            workSheet[rowIndex, 6].Formula = $"=SUMPRODUCT(C2:C{rowIndex - 1},F2:F{rowIndex - 1})";
-            workSheet[rowIndex, 7].Formula = $"=SUMPRODUCT(C2:C{rowIndex - 1},G2:G{rowIndex - 1})";
+            for (int colIdx = 4, letterOffset = 0 ; colIdx <= 7; ++colIdx, ++letterOffset)
+            {
+                var letterIndex = (char)('D' + letterOffset);
+                workSheet[rowIndex, colIdx].Formula = $"=SUMPRODUCT(C2:C{rowIndex - 1},{letterIndex}2:{letterIndex}{rowIndex - 1})";
+            }
             workSheet[rowIndex, 8].Formula = $"=SUM(H2:H{rowIndex - 1})";;
 
-            workSheet[rowIndex, 1, rowIndex, 8].Style.Borders[BordersLineType.EdgeTop].LineStyle = LineStyleType.Thick;
+            workSheet[rowIndex, 1, rowIndex, 8].Style.Borders[BordersLineType.EdgeTop].LineStyle = LineStyleType.Thin;
 
             workBook.CalculateAllValue();
 

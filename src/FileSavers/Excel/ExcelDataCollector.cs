@@ -456,53 +456,11 @@ namespace EasyEPlanner
             return res;
         }
 
-        /// <summary>
-        /// Сохранение сводной информации об устройствах в виде таблицы.
-        /// </summary>
-        public static object[,] SaveDevicesSummaryAsArray()
-        {
-            const int MAX_ROW = 200;
-            const int MAX_COL = 20;
-            var res = new object[MAX_ROW, MAX_COL];
-
-            var devices = new Dictionary<string, int>();
-            foreach (IODevice dev in deviceManager.Devices)
-            {
-                string deviceSubType = dev.GetDeviceSubTypeStr(dev.DeviceType, dev.DeviceSubType);
-                if (devices.ContainsKey(deviceSubType) == false)
-                {
-                    devices.Add(deviceSubType, 1);
-                }
-                else
-                {
-                    devices[deviceSubType]++;
-                }
-            }
-
-            // Сводная таблица
-            int idx = 0;
-            foreach (var devType in devices)
-            {
-
-                res[idx, 1] = devType.Key;
-                res[idx, 2] = devType.Value;
-                idx++;
-            }
-            res[idx, 1] = "Всего";
-            res[idx, 2] = $"=СУММ(B2:B{idx})";
-
-            return res;
-        }
-
         public static Dictionary<string, Dictionary<string, int>> GetTypesCount()
-        {
-            return deviceManager.DeviceChannelsCounter.GetTypesCount();
-        }
+            => deviceManager.Summary.NumberUsedTypes();
         
         public static int[] GetChannelsCount(string subtype)
-        {
-            return deviceManager.DeviceChannelsCounter.GetChannelsCount(subtype);
-        }
+            => deviceManager.ConterChannelsCounter.GetChannelsCount(subtype);
         
 
         /// <summary>

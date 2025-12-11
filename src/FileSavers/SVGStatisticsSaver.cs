@@ -33,7 +33,7 @@ namespace EasyEPlanner
 
         private void SaveChannelsCount(string pathToFiles)
         {
-            var (DI, DO, AI, AO) = deviceManager.DeviceChannelsCounter.CalculateUsedChannelsCount();
+            var (DI, DO, AI, AO) = deviceManager.ConterChannelsCounter.CalculateUsedChannelsCount();
             var sum = DI + DO + AI + AO;
             
             SaveCahnnelsCpount(pathToFiles, "DI", DI, sum); 

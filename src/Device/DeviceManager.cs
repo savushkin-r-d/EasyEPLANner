@@ -49,7 +49,12 @@ namespace EplanDevice
         /// <summary>
         /// Каналы устройств
         /// </summary>
-        ChannelsCounter DeviceChannelsCounter { get; }
+        ControlChannelsCounter ConterChannelsCounter { get; }
+        
+        /// <summary>
+        /// Сводка и статистика по устройствам
+        /// </summary>
+        SummaryDevices Summary { get; }
 
         /// <summary>
         /// Генерация тегов устройств для экспорта в базу каналов.
@@ -897,7 +902,8 @@ namespace EplanDevice
         private DeviceManager()
         {
             devices = new List<IODevice>();
-            DeviceChannelsCounter = new(this);
+            Summary = new SummaryDevices(this);
+            ConterChannelsCounter = new(Summary);
             InitIOLinkSizesForDevices();
             InitDeviceChannelsCount();
         }
@@ -963,7 +969,7 @@ namespace EplanDevice
             const string devicesFile = "sys_subtype_channels_count.lua";
             var fullPath = Path.Combine(ProjectManager.GetInstance().SystemFilesPath, devicesFile);
 
-            lua.RegisterFunction("ADD_CHANNELS_COUNT", DeviceChannelsCounter, DeviceChannelsCounter.GetType().GetMethod(nameof(DeviceChannelsCounter.AddChannelsCount)));
+            lua.RegisterFunction("ADD_CHANNELS_COUNT", ConterChannelsCounter, ConterChannelsCounter.GetType().GetMethod(nameof(ConterChannelsCounter.AddChannelsCount)));
             lua.DoFile(fullPath);
         }
 
@@ -1209,7 +1215,10 @@ namespace EplanDevice
             return device;
         }
 
-        public ChannelsCounter DeviceChannelsCounter { get; private set; }
+
+        public SummaryDevices Summary { get; private set; }
+
+        public ControlChannelsCounter ConterChannelsCounter { get; private set; }
 
         /// <summary>
         /// Шаблон для получение ОУ устройства.
