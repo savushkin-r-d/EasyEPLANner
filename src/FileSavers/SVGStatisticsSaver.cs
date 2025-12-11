@@ -2,6 +2,7 @@
 using TechObject;
 using System.Linq;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -31,6 +32,7 @@ namespace EasyEPlanner
             SaveChannelsCount(pathToFiles);
         }
 
+        [ExcludeFromCodeCoverage]
         private void SaveChannelsCount(string pathToFiles)
         {
             var (DI, DO, AI, AO) = deviceManager.ConterChannelsCounter.CalculateUsedChannelsCount();
@@ -43,6 +45,7 @@ namespace EasyEPlanner
             SaveCahnnelsCpount(pathToFiles, "SUM", sum, sum);
         }
 
+        [ExcludeFromCodeCoverage]
         private void SaveCahnnelsCpount(string pathToFiles, string channelsType, int count, int max)
         {
             string result = MakeStringForWriting(count, max, count.ToString());
