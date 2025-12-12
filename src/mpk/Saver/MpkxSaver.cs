@@ -44,7 +44,7 @@ namespace EasyEPlanner.mpk.Saver
                 Directory.CreateDirectory(componentFolder);
 
                 using var icon = new FileStream(Path.Combine(iconsFolder, $"{component.Name}.bmp"), FileMode.Create, FileAccess.Write);
-                _ = new StreamWriter(Path.Combine(componentFolder, "component.script"), false);
+                using var script = new StreamWriter(Path.Combine(componentFolder, "component.script"), false);
                 using var cmp = new StreamWriter(Path.Combine(componentFolder, "component.xml"), false);
 
                 Properties.Resources.mpkDefaultIcon.Save(icon, System.Drawing.Imaging.ImageFormat.Bmp);
