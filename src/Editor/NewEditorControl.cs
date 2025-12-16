@@ -2093,6 +2093,8 @@ namespace Editor
                 textBox_search.ForeColor = Color.Black;
                 textBox_search.Text = string.Empty;
             }
+
+            IsCellEditing = true;
         }
 
         private void textBox_search_Leave(object sender, EventArgs e)
@@ -2110,6 +2112,8 @@ namespace Editor
                 searchBoxTLP.Visible = false;
                 searchTSButton.Visible = true;
             }
+
+            IsCellEditing = false;
         }
 
         /// <summary>
