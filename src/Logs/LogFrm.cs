@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -74,6 +75,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Окно для вывода сообщений о ходе обработки.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class LogFrm : Form, ILog
     {
         void ThreadProc(object vindowWrapper)
@@ -220,7 +222,7 @@ namespace EasyEPlanner
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            synchronizationContext.Post(new System.Threading.SendOrPostCallback(
+            synchronizationContext.Post(new SendOrPostCallback(
                 delegate (object state)
                 {
                     var saveFileDialog = new SaveFileDialog()
@@ -233,10 +235,7 @@ namespace EasyEPlanner
 
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        string name = saveFileDialog.FileName;
-
                         using var streamWriter = new StreamWriter(saveFileDialog.FileName);
-
                         streamWriter.Write(richTextBox.Text);
                     }
                 }
