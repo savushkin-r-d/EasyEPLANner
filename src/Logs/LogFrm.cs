@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
@@ -37,12 +39,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Сделать доступным кнопку ОК.
         /// </summary>
-        void EnableOkButton();
+        void EnableButtons();
 
         /// <summary>
         /// Сделать не доступным кнопку ОК.
         /// </summary>
-        void DisableOkButton();
+        void DisableButtons();
 
         /// <summary>
         /// Добавить сообщение.
@@ -176,22 +178,24 @@ namespace EasyEPlanner
             ), null);
         }
 
-        public void DisableOkButton()
+        public void DisableButtons()
         {
             synchronizationContext.Send(new System.Threading.SendOrPostCallback(
                 delegate (object state)
                 {
-                    okButton.Enabled = false;
+                    OkButton.Enabled = false;
+                    ExportButton.Enabled = false;
                 }
             ), null);
         }
 
-        public void EnableOkButton()
+        public void EnableButtons()
         {
             synchronizationContext.Send(new System.Threading.SendOrPostCallback(
                 delegate (object state)
                 {
-                    okButton.Enabled = true;
+                    OkButton.Enabled = true;
+                    ExportButton.Enabled = true;
                 }
             ), null);
         }
@@ -207,11 +211,39 @@ namespace EasyEPlanner
 
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void OkButton_Click(object sender, EventArgs e)
         {
             richTextBox.Text = "";
             this.Close();
             isExist = false;
         }
+
+        private void ExportButton_Click(object sender, EventArgs e)
+        {
+            synchronizationContext.Post(new System.Threading.SendOrPostCallback(
+                delegate (object state)
+                {
+                    var saveFileDialog = new SaveFileDialog()
+                    {
+                        Filter = "Text files (*.txt)|*.txt",
+                        RestoreDirectory = true,
+                        Title = "Выгрузить лог",
+                    };
+
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string name = saveFileDialog.FileName;
+
+                        using var streamWriter = new StreamWriter(saveFileDialog.FileName);
+
+                        streamWriter.Write(richTextBox.Text);
+                    }
+                }
+            ), null);
+
+            
+        }
     }
 }
+ 
