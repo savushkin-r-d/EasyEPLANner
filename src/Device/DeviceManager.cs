@@ -9,7 +9,6 @@ using System.Text;
 using System.Security.Cryptography;
 using TechObject;
 using StaticHelper;
-using static System.Windows.Forms.Design.AxImporter;
 using EasyEPlanner.FileSavers.XML;
 
 /// <summary>
@@ -46,6 +45,16 @@ namespace EplanDevice
         /// Устройства проекта
         /// </summary>
         List<IODevice> Devices { get; }
+        
+        /// <summary>
+        /// Каналы устройств
+        /// </summary>
+        ControlChannelsCounter ConterChannelsCounter { get; }
+        
+        /// <summary>
+        /// Сводка и статистика по устройствам
+        /// </summary>
+        SummaryDevices Summary { get; }
 
         /// <summary>
         /// Генерация тегов устройств для экспорта в базу каналов.
@@ -893,7 +902,10 @@ namespace EplanDevice
         private DeviceManager()
         {
             devices = new List<IODevice>();
+            Summary = new SummaryDevices(this);
+            ConterChannelsCounter = new(Summary);
             InitIOLinkSizesForDevices();
+            InitDeviceChannelsCount();
         }
 
         /// <summary>
@@ -949,6 +961,16 @@ namespace EplanDevice
                     .ResourceManager.GetString("IOLinkDevicesFilePattern");
                 File.WriteAllText(fullPath, template);
             }
+        }
+
+        private void InitDeviceChannelsCount()
+        {
+            var lua = new LuaInterface.Lua();
+            const string devicesFile = "sys_subtype_channels_count.lua";
+            var fullPath = Path.Combine(ProjectManager.GetInstance().SystemFilesPath, devicesFile);
+
+            lua.RegisterFunction("ADD_CHANNELS_COUNT", ConterChannelsCounter, ConterChannelsCounter.GetType().GetMethod(nameof(ConterChannelsCounter.AddChannelsCount)));
+            lua.DoFile(fullPath);
         }
 
         /// <summary>
@@ -1192,6 +1214,11 @@ namespace EplanDevice
 
             return device;
         }
+
+
+        public SummaryDevices Summary { get; private set; }
+
+        public ControlChannelsCounter ConterChannelsCounter { get; private set; }
 
         /// <summary>
         /// Шаблон для получение ОУ устройства.
