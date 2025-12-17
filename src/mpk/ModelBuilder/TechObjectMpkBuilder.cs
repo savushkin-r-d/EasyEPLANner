@@ -42,6 +42,12 @@ namespace EasyEPlanner.mpk.ModelBuilder
 
             foreach (var comp in objects)
             {
+                if (comp.Value is null)
+                {
+                    Logs.AddMessage($"Не удалось определить технологический объект по ключу '{comp.Key}'\n");
+                    continue;
+                }
+
                 container.Components.Add(new Component
                 {
                     Name = comp.Key,

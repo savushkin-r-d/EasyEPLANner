@@ -21,7 +21,37 @@ namespace EasyEPlanner.mpk.Saver
     [ExcludeFromCodeCoverage]
     public static class MpkxSaver
     {
-        public static void Save(IMpkSaverContext context)
+        public static void Invoke(IMpkSaverContext context)
+        {
+            Logs.Show();
+
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
+
+
+            try
+            {
+                Logs.SetProgress(1);
+                Save(context);
+                Logs.AddMessage("Done.");
+            }
+
+            catch (System.Exception ex)
+            {
+                Logs.AddMessage("Exception - " + ex);
+            }
+            finally
+            {
+                if (Logs.IsNull() == false)
+                {
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
+                }
+            }
+        }
+
+        private static void Save(IMpkSaverContext context)
         {
             var container = new TechObjectMpkBuilder(TechObjectManager.GetInstance(), context.MainContainerName).Build();
 
