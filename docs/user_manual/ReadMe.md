@@ -1352,7 +1352,7 @@ ProjectTestEnabled=True
 | V            | GEA.TA15L8IAJ                                          | 4             | 1              |
 | FQT          | SMR12GGXFRKG/US-100                                    | 8             | 0              |
 | FQT          | IFM.SM6100                                             | 8             | 0              |
-| FQT          | IFM.SM4000                                             | 12            | 0              |
+| FQT          | IFM.SM4000                                             | 8             | 0              |
 | QT           | IFM.LDL100                                             | 12            | 0              |
 | QT           | IFM.LDL200                                             | 12            | 0              |
 | PT           | IFM.PI2715                                             | 2             | 0              |

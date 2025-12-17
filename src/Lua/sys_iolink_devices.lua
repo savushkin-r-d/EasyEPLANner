@@ -17,7 +17,7 @@ local iolink_devices =
     -- FQT
     { articleName = "SMR12GGXFRKG/US-100", sizeIn = 4, sizeOut = 0 },
     { articleName = "IFM.SM6100", sizeIn = 4, sizeOut = 0 },
-    { articleName = "IFM.SM4000", sizeIn = 6, sizeOut = 0 },
+    { articleName = "IFM.SM4000", sizeIn = 4, sizeOut = 0 },
     -- QT
     { articleName = "IFM.LDL100", sizeIn = 6, sizeOut = 0 },
     { articleName = "IFM.LDL200", sizeIn = 6, sizeOut = 0 },
