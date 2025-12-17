@@ -57,6 +57,19 @@
             return errStr;
         }
 
+        public override string GetDeviceSubTypeStr(DeviceType dt, DeviceSubType dst) => dt switch
+        {
+            DeviceType.Y => dst switch
+            {
+                DeviceSubType.Y => nameof(DeviceSubType.Y),
+                DeviceSubType.DEV_VTUG_8 => nameof(DeviceSubType.DEV_VTUG_8),
+                DeviceSubType.DEV_VTUG_16 => nameof(DeviceSubType.DEV_VTUG_16),
+                DeviceSubType.DEV_VTUG_24 => nameof(DeviceSubType.DEV_VTUG_24),
+                _ => ""
+            },
+            _ => ""
+        };
+
         public override string Check()
         {
             string res = base.Check();

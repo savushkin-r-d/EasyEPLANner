@@ -188,6 +188,11 @@ namespace TechObject
             {
                 root.AddChannel(SYSTEM, $"{SYSTEM}.NODEENABLED[ {nodeNumber + 1} ]");
             }
+
+            foreach (var nodeNumber in Enumerable.Range(1, nodes.Count - 1))
+            {
+                root.AddChannel(SYSTEM, $"{SYSTEM}.NODEST[ {nodeNumber + 1} ]");
+            }
         }
 
         /// <summary>

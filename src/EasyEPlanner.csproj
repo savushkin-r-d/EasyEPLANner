@@ -117,6 +117,12 @@
     <Compile Include="ColumnNodes.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
+    <Compile Include="Device\DeviceManagerExt\ControlChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\IControlChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\ISubtypeControlChannels.cs" />
+    <Compile Include="Device\DeviceManagerExt\ISummaryDevices.cs" />
+    <Compile Include="Device\DeviceManagerExt\SubtypeControlChannels.cs" />
+    <Compile Include="Device\DeviceManagerExt\SummaryDevices.cs" />
     <Compile Include="Device\IODevices\EY.cs" />
     <Compile Include="Device\IODevices\WATCHDOG.cs" />
     <Compile Include="Device\ISetupTerminal.cs" />
@@ -160,6 +166,9 @@
     <Compile Include="IO\View\IOViewControl.Designer.cs">
       <DependentUpon>IOViewControl.cs</DependentUpon>
     </Compile>
+    <None Include="Lua\sys_subtype_channels_count.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\sys_modbus_exchange.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
