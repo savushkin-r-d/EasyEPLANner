@@ -65,7 +65,7 @@ namespace EasyEPlanner
             CreateInformDevicePage(ref workBook);
             Logs.SetProgress(20);
 
-            CreateTotalDevicePage(ref workBook);
+            CreateTotalDevicePage(prjName, ref workBook);
             Logs.SetProgress(35);
 
             CreateDeviceConnectionPage(ref workBook);
@@ -466,19 +466,29 @@ namespace EasyEPlanner
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
         [ExcludeFromCodeCoverage]
-        private static void CreateTotalDevicePage(ref Workbook workBook)
+        private static void CreateTotalDevicePage(string projectName, ref Workbook workBook)
         {
             string sheetName = "Сводная таблица устройств";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+
+            var rowIndex = 1;
+            workSheet[rowIndex, 1].Value = projectName;
+            var prjNameRange = workSheet.Range[rowIndex, 1, rowIndex, 8];
+            prjNameRange.Merge();
+            prjNameRange.Style.HorizontalAlignment = HorizontalAlignType.Center;
+            prjNameRange.Style.Font.IsBold = true;
+
+            ++rowIndex;
+            workSheet.Range[rowIndex, 1, rowIndex, 8].Style.Font.IsBold = true;
             workSheet.InsertArray(
                 ["Тип", "Подтип", "Количество", "DI", "DO", "AI", "AO", "Всего каналов"],
-                1, 1, false);
-            workSheet.FreezePanes(2, 1);
-            workSheet.Range[1, 1, 1, 8].Style.Font.IsBold = true;
-            workSheet.Range[1, 1, 1, 8].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                rowIndex, 1, false);
+            workSheet.FreezePanes(rowIndex, 1);
+            workSheet.Range[rowIndex, 1, rowIndex, 8].Style.Font.IsBold = true;
+            workSheet.Range[rowIndex, 1, rowIndex, 8].Style.HorizontalAlignment = HorizontalAlignType.Center;
 
+            ++rowIndex;
             var devices = ExcelDataCollector.GetTypesCount();
-            var rowIndex = 2;
             foreach (var typeIdx in Enumerable.Range(0, devices.Count))
             {
                 var type = devices.ElementAt(typeIdx).Key;
