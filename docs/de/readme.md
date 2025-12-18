@@ -1,5 +1,19 @@
 # EasyEPLANner - Open Source
 
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=bugs)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=coverage)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
+
+>[!TIP]
+>Беларускі варыянт знаходзіцца [тут](../by/readme.md) \
+>Русский вариант находится [здесь](../ru/readme.md). \
+>English version is [here](../../ReadMe.md)
+
+
 ### Repository
 Dieses Repository ist ein Open-Source Projekt - EasyEPLANner.
 Wir arbeiten am Projekt und lösen verschiedene mit der Entwicklung des Projekts verbundene Aufgaben.

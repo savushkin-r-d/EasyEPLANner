@@ -9,7 +9,10 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=savushkin-r-d_EasyEPLANner&metric=coverage)](https://sonarcloud.io/summary/new_code?id=savushkin-r-d_EasyEPLANner)
 
-**Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).**
+>[!TIP]
+>Беларускі варыянт знаходзіцца [тут](docs/by/readme.md) \
+>Русский вариант находится [здесь](docs/ru/readme.md). \
+>Deutsche Readme ist [hier](docs/de/readme.md).
 
 ### Repository
 
