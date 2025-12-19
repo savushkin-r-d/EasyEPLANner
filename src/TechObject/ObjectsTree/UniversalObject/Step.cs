@@ -228,7 +228,7 @@ namespace TechObject
             {
                 var enableStepBySignalAction = new ActionCustom("Группа", this, "");
                 enableStepBySignalAction.CreateAction(
-                    new Action("Сигналы", this, "", pairsDiDoAllowedInputTypes,
+                    new Action("Сигналы", this, "", pairsDiDoAllowedDevTypes,
                     null, new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes)));
                 enableStepBySignalAction.CreateParameter(
                     new ComboBoxParameter("logic_type", "Логика", new Dictionary<string, string>() {
