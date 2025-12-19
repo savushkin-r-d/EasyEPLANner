@@ -25,7 +25,7 @@ namespace EasyEPlanner.mpk.ModelBuilder
         {
             var objects = techObjectManager.TechObjects
                 .Select(to => to.NameBC)
-                .Select(bcn => Regex.Replace(bcn, @"\d+", "", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
+                .Select(bcn => Regex.Replace(bcn, @"\d+$", "", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                 .Distinct()
                 .Where(bcn => bcn != "")
                 .ToDictionary(bcn => bcn, bcn => techObjectManager.TechObjects.Find(to => to.NameBC.Contains(bcn)));
