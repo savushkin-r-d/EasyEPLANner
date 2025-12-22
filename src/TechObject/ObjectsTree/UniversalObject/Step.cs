@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -54,7 +55,7 @@ namespace TechObject
             var checkedDevices = new Action("Проверяемые устройства",
                 this, "checked_devices", null, null);
             actions.Add(checkedDevices);
-            
+
             var openDevices = new Action(openDevicesActionName, this,
                 "opened_devices",
                 new EplanDevice.DeviceType[]
@@ -70,12 +71,12 @@ namespace TechObject
 
             var openDevicesActionGroup = new ActionGroupCustom(
                 "Включать с задержкой", this, "delay_opened_devices",
-                () => 
+                () =>
                 {
                     var openedDeviceAction = new ActionCustom("Группа",
                         this, "");
                     var opened = openedDeviceAction.CreateAction(new Action("Включать",
-                        this,"",
+                        this, "",
                         [
                             DeviceType.V,
                             DeviceType.DO,
@@ -221,22 +222,34 @@ namespace TechObject
                 EplanDevice.DeviceType.FS
             };
 
+
+            // Поля для действий Группа дискретных сигналов
+            ActionCustom subgroupDIDO()
+            {
+                var enableStepBySignalAction = new ActionCustom("Группа", this, "");
+                enableStepBySignalAction.CreateAction(
+                    new Action("Сигналы", this, "", pairsDiDoAllowedDevTypes,
+                    null, new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes)));
+                enableStepBySignalAction.CreateParameter(
+                    new ComboBoxParameter("logic_type", "Логика", new Dictionary<string, string>() {
+                        { "ИЛИ", "0" },
+                        { "И", "1" }
+                    }, "0"));
+                return enableStepBySignalAction;
+            }
+
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входных дискретных сигналов.
-            var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                "DI_DO", pairsDiDoAllowedDevTypes, null,
-                new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+            var groupDIDO = new ActionGroupCustom(groupDIDOActionName, this, "DI_DO", subgroupDIDO);
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
-
             // Специальное действие - выдача дискретных сигналов 
             // при пропадании входных дискретных сигналов.
-            var groupInvertedDiDo = new ActionGroup(groupDIDOActionNameInverted,
-                this, "inverted_DI_DO", pairsDiDoAllowedDevTypes, null, 
-                new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
-            groupInvertedDiDo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
-            actions.Add(groupInvertedDiDo);
+            var groupInvertedDIDO = new ActionGroupCustom(groupDIDOActionNameInverted, this, "inverted_DI_DO", subgroupDIDO);
+            groupInvertedDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
+            actions.Add(groupInvertedDIDO);
+
 
             var pairsAiAoAllowedInputTypes = new EplanDevice.DeviceType[]
             {

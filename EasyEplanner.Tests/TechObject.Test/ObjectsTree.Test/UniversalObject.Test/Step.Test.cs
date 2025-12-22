@@ -672,8 +672,8 @@ namespace EasyEplanner.Tests
             Type openedLowerSeats = actionGroup;
             Type requiredFB = action;
             Type devices = actionGroupWash;
-            Type pairsDIDO = actionGroup;
-            Type pairsInvertedDIDO = actionGroup;
+            Type pairsDIDO = actionGroupCustom;
+            Type pairsInvertedDIDO = actionGroupCustom;
             Type pairsAIAO = actionGroup;
             Type enableStepBySignal = actionGroupCustom;
 
