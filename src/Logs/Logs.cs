@@ -56,7 +56,7 @@
         /// </summary>
         public static void DisableButtons()
         {
-            log.DisableOkButton();
+            log.DisableButtons();
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
         /// </summary>
         public static void EnableButtons()
         {
-            log.EnableOkButton();
+            log.EnableButtons();
         }
 
         /// <summary>
