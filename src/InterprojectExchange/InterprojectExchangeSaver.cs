@@ -97,7 +97,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Update or Add info about EasyEplanner version to shared.lua file 
         /// </summary>
-        /// <param name="model">Project model</param>
+        /// <param name="model">Project MpkSaverContext</param>
         private void AddOrUpdateEplannerVersionInfo(IProjectModel model)
         {
             var fileAsList = model.SharedFileAsStringList;

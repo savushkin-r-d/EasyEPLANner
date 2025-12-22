@@ -177,6 +177,7 @@
     <Compile Include="Main\ImportIcpWagoProject.cs" />
     <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
+    <Compile Include="Main\SaveAsMpkx.cs" />
     <Compile Include="Main\ShowPlcAction.cs" />
     <Compile Include="ModbusExchange\CsvImporter.cs" />
     <Compile Include="ModbusExchange\ModbusExchangeLoader.cs" />
@@ -204,6 +205,29 @@
     </Compile>
     <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mpk\ModelBuilder\TechObjectMpkBuilder.cs" />
+    <Compile Include="mpk\Model\Attributes.cs" />
+    <Compile Include="mpk\Model\Component.cs" />
+    <Compile Include="mpk\Model\Container.cs" />
+    <Compile Include="mpk\Model\IAttributes.cs" />
+    <Compile Include="mpk\Model\IComponent.cs" />
+    <Compile Include="mpk\Model\IContainer.cs" />
+    <Compile Include="mpk\Model\IMessage.cs" />
+    <Compile Include="mpk\Model\IProperty.cs" />
+    <Compile Include="mpk\Model\Message.cs" />
+    <Compile Include="mpk\Model\Property.cs" />
+    <Compile Include="mpk\Saver\ComponentSerializer.cs" />
+    <Compile Include="mpk\Saver\ContainerSerializer.cs" />
+    <Compile Include="mpk\Saver\IXmlSerializer.cs" />
+    <Compile Include="mpk\Saver\MpkxSaver.cs" />
+    <Compile Include="mpk\ViewModel\IMpkSaverContext.cs" />
+    <Compile Include="mpk\ViewModel\MpkSaverContext.cs" />
+    <Compile Include="mpk\View\MpkSaverForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mpk\View\MpkSaverForm.Designer.cs">
+      <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\EplanFunction.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
@@ -562,6 +586,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ModbusExchange\View\ModbusExchangeView.resx">
       <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mpk\View\MpkSaverForm.resx">
+      <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StaticHelper\SaveAndCloseDialog.resx">
       <DependentUpon>SaveAndCloseDialog.cs</DependentUpon>

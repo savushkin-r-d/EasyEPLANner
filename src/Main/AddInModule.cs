@@ -35,6 +35,12 @@ namespace EasyEPlanner
                 "Экспорт XML для EasyServer", 0);
 
             menuID = oMenu.AddMenuItem(
+                 "Экспорт компонентов *.mpkx",
+                 nameof(SaveAsMpkx),
+                 "Экспорт компонентов *.mpkx", menuID, 1,
+                 false, false);
+
+            menuID = oMenu.AddMenuItem(
                 "Экспорт технологических устройств в Excel",
                 "ExportTechDevsToExcel",
                 "Экспорт технологических устройств в Excel", menuID, 1, 
