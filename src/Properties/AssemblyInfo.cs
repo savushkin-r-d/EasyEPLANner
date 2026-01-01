@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "OJSC Savushkin product" )]
 [assembly: AssemblyProduct( "EPLAN project designer" )]
-[assembly: AssemblyCopyright( "Copyright ©  2012 - 2025" )]
+[assembly: AssemblyCopyright( "Copyright ©  2012 - 2026" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the GetTextToSave and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2025.12.*")]
-[assembly: AssemblyFileVersion("2025.12.0.0")]
+[assembly: AssemblyVersion("2026.01.*")]
+[assembly: AssemblyFileVersion("2026.01.0.0")]
