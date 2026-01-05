@@ -107,5 +107,36 @@ namespace TechObjectTests
                 new List<string>() { "", "LS1", "OBJ1LS1", "LS2", "OBJ1LS1" },
                 equipment.Items.OfType<BaseParameter>().Select(p => p.Value));
         }
+
+
+        [Test]
+        public void Check()
+        {
+            var techObject = new TechObject.TechObject(string.Empty, GetN => 1, 1, 2,
+                "OBJ", -1, string.Empty, string.Empty, new BaseTechObject());
+            techObject.GetParamsManager().AddFloatParam("", 0, "", "PARAMETER_1");
+            techObject.GetParamsManager().AddFloatParam("", 0, "", "PARAMETER_2");
+
+            var equipment = new Equipment(techObject);
+
+            var par = new EquipmentParameter("P_SET_VALUE", "")
+            {
+                Owner = equipment
+            };
+            par.SetNewValue("PARAMETER_1");
+
+            equipment.AddItems(new List<BaseParameter>()
+            {
+                par
+            });
+
+            var res = equipment.Check();
+
+            par.SetNewValue("PARAMETER_2 PARAMETER_2");
+
+            res += equipment.Check();
+
+            Assert.AreEqual("", res);
+        }
     }
 }
