@@ -250,8 +250,8 @@ namespace TechObject
                 errors = $"Проверьте оборудование: " +
                     $"\"{equipment.Name}\" в объекте " +
                     $"\"{techObjectName}\". " +
-                    $"Некорректные занчения: " +
-                    $"{string.Join(",", unknownValues)}.\n";
+                    $"Некорректные значения: " +
+                    $"{string.Join(", ", unknownValues)}.\n";
             }
 
             return errors;

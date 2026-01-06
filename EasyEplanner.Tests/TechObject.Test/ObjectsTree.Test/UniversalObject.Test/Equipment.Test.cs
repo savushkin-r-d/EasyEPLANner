@@ -132,11 +132,19 @@ namespace TechObjectTests
 
             var res = equipment.Check();
 
-            par.SetNewValue("PARAMETER_2 PARAMETER_2");
-
+            par.SetNewValue("PARAMETER_1 PARAMETER_2");
             res += equipment.Check();
 
-            Assert.AreEqual("", res);
+            par.SetValue("UNKNOWN");
+            res += equipment.Check();
+
+            par.SetValue("UNKNOWN1 UNKNOWN2");
+            res += equipment.Check();
+
+            Assert.AreEqual(
+                "Проверьте оборудование: \"\" в объекте \"1.  №1 (#0)\". Некорректное значение: UNKNOWN.\n" +
+                "Проверьте оборудование: \"\" в объекте \"1.  №1 (#0)\". Некорректные значения: UNKNOWN1, UNKNOWN2.\n",
+                res);
         }
     }
 }
