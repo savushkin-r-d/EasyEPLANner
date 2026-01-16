@@ -133,17 +133,7 @@ namespace TechObject
         /// <summary>
         /// Объект-владелец параметра.
         /// </summary>
-        public virtual object Owner
-        {
-            get
-            {
-                return owner;
-            }
-            set
-            {
-                owner = value;
-            }
-        }
+        public virtual object Owner { get; set; }
 
         /// <summary>
         /// Базовая операция - владелец параметра
@@ -622,7 +612,6 @@ namespace TechObject
 
         protected static readonly IDeviceManager deviceManager = DeviceManager.GetInstance();
 
-        private object owner;
         private List<DisplayObject> displayObjectsFlags;
         private ValueType currentValueType;
         protected List<int> devicesIndexes;
