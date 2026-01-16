@@ -28,6 +28,29 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Перегрузка для установки объекта владельца дочерним параметрам
+        /// </summary>
+        public override object Owner 
+        { 
+            get => base.Owner; 
+            set 
+            {
+                base.Owner = value;
+                Parameters.ForEach(p => p.Owner = value);
+            }
+        }
+
+        public override BaseOperation BaseOperation 
+        { 
+            get => base.BaseOperation;
+            set
+            {
+                base.BaseOperation = value;
+                Parameters.ForEach(p => p.BaseOperation = value);
+            }
+        }
+
+        /// <summary>
         /// Проверка параметра
         /// </summary>
         public override void Check()

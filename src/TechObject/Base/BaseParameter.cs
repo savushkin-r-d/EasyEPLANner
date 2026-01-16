@@ -133,7 +133,7 @@ namespace TechObject
         /// <summary>
         /// Объект-владелец параметра.
         /// </summary>
-        public object Owner
+        public virtual object Owner
         {
             get
             {
@@ -148,7 +148,7 @@ namespace TechObject
         /// <summary>
         /// Базовая операция - владелец параметра
         /// </summary>
-        public BaseOperation BaseOperation { get; set; }
+        public virtual BaseOperation BaseOperation { get; set; }
 
         #region синхронизация устройств
         public virtual void Synch(int[] array)

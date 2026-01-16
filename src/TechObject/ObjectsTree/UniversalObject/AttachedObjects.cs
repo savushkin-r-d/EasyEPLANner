@@ -358,28 +358,23 @@ namespace TechObject
         }
 
         public List<string> GetAttachedObjectsName()
+            => [.. GetTechObjects().Select(obj => obj.NameEplanForFile.ToLower() + obj.TechNumber)];
+
+        public List<TechObject> GetTechObjects()
         {
-            var objectNames = new List<string>();
             if (Value == string.Empty)
-            {
-                return objectNames;
-            }
+                return [];
 
-            string[] nums = Value.Split(' ');
-            foreach (var num in nums)
-            {
-                bool converted = int.TryParse(num, out int objNum);
-                if(converted)
-                {
-                    var obj = TechObjectManager.GetInstance()
-                        .GetTObject(objNum);
-                    string objName = obj.NameEplanForFile.ToLower() + 
-                        obj.TechNumber;
-                    objectNames.Add(objName);
-                }
-            }
+            return [.. Value.Split(' ')
+                .Where(n => int.TryParse(n, out _))
+                .Select(int.Parse)
+                .Select(techObjectManager.GetTObject)];
+        }
 
-            return objectNames;
+        public BaseTechObject GetBaseTechObjectByLuaName(string Luaname)
+        {
+            return GetTechObjects().Select(to => to.BaseTechObject)
+                .FirstOrDefault(bto => bto.EplanName == Luaname);
         }
 
         /// <summary>

@@ -603,13 +603,16 @@ namespace TechObject
                 newProperty.BaseOperation = this;
                 if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
                 {
-                    newProperty.Owner = obj.Clone(newOwner.Owner.Owner.Owner);
+                    newProperty.Owner = newOwner.Owner.Owner.Owner
+                        .AttachedObjects.GetBaseTechObjectByLuaName(obj.EplanName);
                 }
                 else
                 {
                     newProperty.Owner = newOwner;
                 }
-                properties.Add(newProperty);
+                
+                if (newProperty.Owner is not null)
+                    properties.Add(newProperty);
             }
 
             return properties;
