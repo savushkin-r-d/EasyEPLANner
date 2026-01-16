@@ -603,7 +603,10 @@ namespace TechObject
                 newProperty.BaseOperation = this;
                 if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
                 {
-                    newProperty.Owner = newOwner.Owner.Owner.Owner
+                    // Если параметр пренадлежит привязанному агрегату,
+                    // то заменяем объекта-владелец на новый базовый объект
+                    // привязанного агрегата (Необходимо в случае копирования операции в другой объект)
+                    newProperty.Owner = newOwner.Owner.TechObject
                         .AttachedObjects.GetBaseTechObjectByLuaName(obj.EplanName);
                 }
                 else

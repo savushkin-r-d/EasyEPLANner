@@ -357,9 +357,18 @@ namespace TechObject
             return string.Join(", ", objectNames);
         }
 
+        /// <summary>
+        /// Получить список названий привязанных объектов
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetAttachedObjectsName()
             => [.. GetTechObjects().Select(obj => obj.NameEplanForFile.ToLower() + obj.TechNumber)];
 
+
+        /// <summary>
+        /// Получить список привязанных объектов
+        /// </summary>
+        /// <returns></returns>
         public List<TechObject> GetTechObjects()
         {
             if (Value == string.Empty)
@@ -371,6 +380,11 @@ namespace TechObject
                 .Select(techObjectManager.GetTObject)];
         }
 
+        /// <summary>
+        /// Получить базовый тех. объект привязанного объекта по его названию
+        /// </summary>
+        /// <param name="Luaname">Lua-название базового объекта</param>
+        /// <returns></returns>
         public BaseTechObject GetBaseTechObjectByLuaName(string Luaname)
         {
             return GetTechObjects().Select(to => to.BaseTechObject)

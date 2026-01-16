@@ -40,6 +40,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Перегрузка для установки базовой операции дочерним параметрам
+        /// </summary>
         public override BaseOperation BaseOperation 
         { 
             get => base.BaseOperation;
