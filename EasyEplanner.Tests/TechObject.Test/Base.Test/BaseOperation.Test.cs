@@ -567,6 +567,18 @@ namespace EasyEplanner.Tests
         [Test]
         public void Clone_StateUnderTestSource_ReturnsCopy()
         {
+            var bto = new BaseTechObject();
+            var tomanager = Mock.Of<ITechObjectManager>(tom => 
+                tom.GetTObject(1) == new TechObject.TechObject("", getN => 1, 1, 2, "", 1, "", "", bto));
+
+            var techObject = new TechObject.TechObject("", getN => 1, 1, 2, "", 1, "", "", new BaseTechObject());
+            
+            techObject.AttachedObjects.SetValue("1");
+
+            typeof(AttachedObjects).GetField("techObjectManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, tomanager);
+
             string name = "Операция 1";
             string luaName = "LuaName 1";
             int defaultPosition = 1;
@@ -615,7 +627,7 @@ namespace EasyEplanner.Tests
                 };
             operation.AddProperties(objParams, baseTechObj);
 
-            var mode = new Mode("", getN => 1, new ModesManager(null));
+            var mode = new Mode("", getN => 1, new ModesManager(techObject));
 
             BaseOperation cloned = operation.Clone(mode);
 
