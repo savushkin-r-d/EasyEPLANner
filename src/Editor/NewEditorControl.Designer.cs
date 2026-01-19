@@ -99,11 +99,11 @@ namespace Editor
             this.searchBoxTLP = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textBox_search = new System.Windows.Forms.TextBox();
-            this.searchIterator = new EditorControls.SearchIterator();
             this.searchButtonToolStrip = new System.Windows.Forms.ToolStrip();
             this.searchTSButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.searchIterator = new EditorControls.SearchIterator();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -144,7 +144,7 @@ namespace Editor
             this.reorderObjectsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(555, 29);
+            this.toolStrip.Size = new System.Drawing.Size(586, 29);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -262,7 +262,7 @@ namespace Editor
             this.refresh_toolStripButton.Name = "refresh_toolStripButton";
             this.refresh_toolStripButton.Size = new System.Drawing.Size(24, 26);
             this.refresh_toolStripButton.Text = "Синхронизация и сохранение";
-            this.refresh_toolStripButton.ToolTipText = "Синхронизация и сохранение (F6)";
+            this.refresh_toolStripButton.ToolTipText = "Синхронизация и сохранение (F5)";
             this.refresh_toolStripButton.Click += new System.EventHandler(this.refresh_toolStripButton_Click);
             // 
             // toolStripSeparator2
@@ -912,7 +912,7 @@ namespace Editor
             this.searchBoxTLP.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.searchBoxTLP.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchBoxTLP.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.searchBoxTLP.Location = new System.Drawing.Point(557, 2);
+            this.searchBoxTLP.Location = new System.Drawing.Point(588, 2);
             this.searchBoxTLP.Margin = new System.Windows.Forms.Padding(2);
             this.searchBoxTLP.Name = "searchBoxTLP";
             this.searchBoxTLP.RowCount = 1;
@@ -959,18 +959,6 @@ namespace Editor
             this.textBox_search.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox_Commands_KeyUp);
             this.textBox_search.LostFocus += new System.EventHandler(this.textBox_search_Leave);
             // 
-            // searchIterator
-            // 
-            this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.searchIterator.Index = 0;
-            this.searchIterator.Location = new System.Drawing.Point(131, 2);
-            this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
-            this.searchIterator.Maximum = 0;
-            this.searchIterator.Name = "searchIterator";
-            this.searchIterator.Size = new System.Drawing.Size(84, 22);
-            this.searchIterator.TabIndex = 7;
-            // 
             // searchButtonToolStrip
             // 
             this.searchButtonToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -979,9 +967,9 @@ namespace Editor
             this.searchTSButton,
             this.toolStripSeparator7});
             this.searchButtonToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.searchButtonToolStrip.Location = new System.Drawing.Point(775, 0);
+            this.searchButtonToolStrip.Location = new System.Drawing.Point(806, 0);
             this.searchButtonToolStrip.Name = "searchButtonToolStrip";
-            this.searchButtonToolStrip.Size = new System.Drawing.Size(63, 29);
+            this.searchButtonToolStrip.Size = new System.Drawing.Size(32, 29);
             this.searchButtonToolStrip.TabIndex = 5;
             this.searchButtonToolStrip.Text = "toolStrip1";
             // 
@@ -1015,6 +1003,18 @@ namespace Editor
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainTableLayoutPanel.Size = new System.Drawing.Size(867, 500);
             this.mainTableLayoutPanel.TabIndex = 6;
+            // 
+            // searchIterator
+            // 
+            this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.searchIterator.Index = 0;
+            this.searchIterator.Location = new System.Drawing.Point(131, 2);
+            this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
+            this.searchIterator.Maximum = 0;
+            this.searchIterator.Name = "searchIterator";
+            this.searchIterator.Size = new System.Drawing.Size(84, 22);
+            this.searchIterator.TabIndex = 7;
             // 
             // NewEditorControl
             // 

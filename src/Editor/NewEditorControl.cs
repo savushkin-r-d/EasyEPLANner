@@ -391,7 +391,7 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_LEFT:    // Left
                     case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
                     case PI.VIRTUAL_KEY.VK_F1:      // F1
-                    case PI.VIRTUAL_KEY.VK_F6:      // F6
+                    case PI.VIRTUAL_KEY.VK_F5:      // F5
                         PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
                         return (IntPtr)1;
                 }
@@ -790,7 +790,7 @@ namespace Editor
                     }
                     break;
 
-                case Keys.F6:
+                case Keys.F5:
                     refresh_toolStripButton.PerformClick();
                     break;
 
