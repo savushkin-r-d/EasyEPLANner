@@ -54,6 +54,10 @@ namespace TechObject
             var displayedValue = parameterValues
                 .FirstOrDefault(item => item.Value == newValue)
                 .Key;
+
+            if (displayedValue is null && newValue != DefaultValue)
+                return SetNewValue(DefaultValue);
+
             DisplayedValue = displayedValue;
 
             if (newValue == null)
