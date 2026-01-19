@@ -27,12 +27,12 @@ namespace TechObject
         {
             this.parameterValues = parameterValues;
 
-            if (defaultValue == null)
+            if (!parameterValues.ContainsValue(DefaultValue))
             {
-                defaultValue = parameterValues.First().Value;
+                this.defaultValue = parameterValues.First().Value;
             }
 
-            SetNewValue(defaultValue);
+            SetNewValue(DefaultValue);
         }
 
         public override BaseParameter Clone()
@@ -52,18 +52,14 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             var displayedValue = parameterValues
-                .FirstOrDefault(item => item.Value == newValue)
-                .Key;
+                .FirstOrDefault(item => item.Value == newValue).Key;
+
+            DisplayedValue = displayedValue;
 
             if (displayedValue is null && newValue != DefaultValue)
                 return SetNewValue(DefaultValue);
 
-            DisplayedValue = displayedValue;
-
-            if (newValue == null)
-                return base.SetNewValue(DefaultValue);
-            else
-                return base.SetNewValue(newValue);
+            return base.SetNewValue(newValue);
         }
 
         /// <summary>
