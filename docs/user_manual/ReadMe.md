@@ -1441,11 +1441,11 @@ ProjectTestEnabled=True
 <p align="center"><b>Рисунок</b> - <i>Окно редактора</i></p>
 
 Описание панели инструментов редактора (подписаны числами черного цвета под кнопками):  
-1. <img src=images/ToolBar/expand.png width = 20 height = 20> - Развернуть/свернуть дерево объектов до определенного уровня. 
-2. <img src=images/ToolBar/highlight.png width = 20 height = 20> - Включить подсветку устройств на схеме автоматизации.
-3. <img src=images/ToolBar/edit.png width = 20 height = 20> - Включить режим редактирования.
-4. <img src=images/ToolBar/refresh.png width = 20 height = 20> - Сохранение и синхронизация объектов.
-5. <img src=images/ToolBar/create.png width = 20 height = 20> - Создать новый объект в выделенной точке (вставка нового объекта) (**Ins**).
+1. <img src=images/ToolBar/expand.png width = 20 height = 20> - Развернуть/свернуть дерево объектов до определенного уровня <kbd>Ctrl</kbd>+<kbd>1-5</kbd>. 
+2. <img src=images/ToolBar/highlight.png width = 20 height = 20> - Включить подсветку устройств на схеме автоматизации <kbd>Ctrl</kbd>+<kbd>H</kbd>.
+3. <img src=images/ToolBar/edit.png width = 20 height = 20> - Включить режим редактирования <kbd>Ctrl</kbd>+<kbd>E</kbd>.
+4. <img src=images/ToolBar/refresh.png width = 20 height = 20> - Сохранение и синхронизация объектов <kbd>F5</kbd>.
+5. <img src=images/ToolBar/create.png width = 20 height = 20> - Создать новый объект в выделенной точке (вставка нового объекта) <kbd>Ins</kbd>.
 6. <img src=images/ToolBar/delete.png width = 20 height = 20> - Удалить выделенный объект <kbd>Delete</kbd>.
 7. <img src=images/ToolBar/cut.png width = 20 height = 20> - Вырезать выделенный объект <kbd>Ctrl</kbd>+<kbd>X</kbd>.
 8. <img src=images/ToolBar/copy.png width = 20 height = 20> - Копировать выделенный объект <kbd>Ctrl</kbd>+<kbd>C</kbd>.  
@@ -1457,7 +1457,7 @@ ProjectTestEnabled=True
 14. <img src=images/ToolBar/export.png width = 20 height = 20> - Экспорт объектов из проекта. 
 15. <img src=images/ToolBar/changeObj.png width = 20 height = 20> - Сброс базового объекта.
 16. <img src=images/ToolBar/hideEmptyItems.png width = 20 height = 20> - Скрыть пустые поля.  
-17. <img src=images/ToolBar/search.png width = 20 height = 20> - Поиск.
+17. <img src=images/ToolBar/search.png width = 20 height = 20> - Поиск <kbd>Ctrl</kbd>+<kbd>F</kbd>.
 18. <img src=images/ToolBar/toolSettings.png width = 20 height = 20> - Настройка панели инструментов.
 
 **Поиск**:
