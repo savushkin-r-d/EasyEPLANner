@@ -372,6 +372,8 @@ namespace Editor
                     case (int)Keys.B when Ctrl:     // Ctrl + B
                     case (int)Keys.A when Ctrl:     // Ctrl + A
                     case (int)Keys.F when Ctrl:     // Ctrl + F
+                    case (int)Keys.H when Ctrl:     // Ctrl + H
+                    case (int)Keys.E when Ctrl:     // Ctrl + E
 
                     case (int)Keys.D1 when Ctrl:     // Ctrl + 1
                     case (int)Keys.D2 when Ctrl:     // Ctrl + 2
@@ -389,6 +391,7 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_LEFT:    // Left
                     case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
                     case PI.VIRTUAL_KEY.VK_F1:      // F1
+                    case PI.VIRTUAL_KEY.VK_F6:      // F6
                         PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
                         return (IntPtr)1;
                 }
@@ -727,7 +730,17 @@ namespace Editor
 
                 // Поиск
                 case Keys.F when e.Control:
-                    SearchTSButton_Click(null, null);
+                    searchTSButton.PerformClick();
+                    break;
+
+                // Подсветка
+                case Keys.H when e.Control:
+                    drawDev_toolStripButton.PerformClick();
+                    break;
+
+                // Редактирование
+                case Keys.E when e.Control:
+                    edit_toolStripButton.PerformClick();
                     break;
 
                 case Keys.D1:
@@ -775,6 +788,10 @@ namespace Editor
                         }
                         Process.Start(link);
                     }
+                    break;
+
+                case Keys.F6:
+                    refresh_toolStripButton.PerformClick();
                     break;
 
                 default:
