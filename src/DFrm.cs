@@ -594,6 +594,13 @@ namespace EasyEPlanner
         {
             devicesTreeViewAdv.BeginUpdate();
 
+            var oldRoot = devicesTreeViewAdv.Root;
+            if (devicesTreeViewAdv.GetNodeAt(new Point(1,devicesTreeViewAdv.Height - 25)) is { } lastNodeVisible)
+            {
+                // Полчаем последний видимый элемент для последующего восстановления прокрутки окна
+                devicesTreeViewAdv.SelectedNode = lastNodeVisible;
+            }
+            
             devicesTreeViewAdv.Model = null;
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
@@ -619,12 +626,54 @@ namespace EasyEPlanner
             TreeNodeAdv treeNode = nodes[0];
             OnHideOperationTree.Execute(treeNode);
 
-            devicesTreeViewAdv.ExpandAll();
+            if (checkedObjects != string.Empty || !RestoreExpanding(devicesTreeViewAdv.Root, oldRoot))
+                devicesTreeViewAdv.ExpandAll();
+
             devicesTreeViewAdv.Refresh();
+            if (devicesTreeViewAdv.SelectedNode is { } selectedNode)
+            {
+                devicesTreeViewAdv.ScrollTo(selectedNode);
+                selectedNode.IsSelected = false;
+            }
             devicesTreeViewAdv.EndUpdate();
 
             SelectDisplayObjects(checkedObjects, functionAfterCheck);
         }
+
+        /// <summary>
+        /// Востановление развертки узлов устройств после обновления
+        /// </summary>
+        /// <param name="node">Новый узел</param>
+        /// <param name="referenceNode">Референсный узел</param>
+        private bool RestoreExpanding(TreeNodeAdv node, TreeNodeAdv referenceNode)
+        {
+            if (node is null || referenceNode is null)
+                return false;
+
+            if(referenceNode.IsExpanded)
+                node.Expand();
+            node.IsSelected = referenceNode.IsSelected;
+            
+            var referenceChildNodes = referenceNode.Children
+                .ToDictionary(rcn => GetTextWithoutCount(rcn), rcn => rcn);
+
+            foreach (var childNode in node.Children)
+            {
+                if (referenceChildNodes.TryGetValue(GetTextWithoutCount(childNode), out var referenceChildNode))
+                {
+                    RestoreExpanding(childNode, referenceChildNode);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Получить текст узла без обозначения количества дочерних элементов в скобках
+        /// </summary>
+        private string GetTextWithoutCount(TreeNodeAdv node)
+            => Regex.Replace((node.Tag as Node)?.Text, @"\(\d\)$", "", 
+                RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
         /// <summary>
         /// Заполнить дерево устройствами/сигналами проекта
