@@ -6,6 +6,7 @@ using PInvoke;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
@@ -16,6 +17,7 @@ using TechObject;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -671,7 +673,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Получить текст узла без обозначения количества дочерних элементов в скобках
         /// </summary>
-        private string GetTextWithoutCount(TreeNodeAdv node)
+        private static string GetTextWithoutCount(TreeNodeAdv node)
             => Regex.Replace((node.Tag as Node)?.Text, @"\(\d\)$", "", 
                 RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
