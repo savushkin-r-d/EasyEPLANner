@@ -16,8 +16,7 @@ using System.Windows.Forms;
 using TechObject;
 
 namespace EasyEPlanner
-{
-    [ExcludeFromCodeCoverage]
+{ 
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -592,6 +591,7 @@ namespace EasyEPlanner
         /// <param name="checkedObjects">Выбранные объекты.</param>
         /// <param name="techObjectIndex">Индекс технологического объекта
         /// </param>
+        [ExcludeFromCodeCoverage]
         private void Refresh(string checkedObjects, int techObjectIndex)
         {
             devicesTreeViewAdv.BeginUpdate();
@@ -647,6 +647,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="node">Новый узел</param>
         /// <param name="referenceNode">Референсный узел</param>
+        [ExcludeFromCodeCoverage]
         private bool RestoreExpanding(TreeNodeAdv node, TreeNodeAdv referenceNode)
         {
             if (node is null || referenceNode is null)
@@ -674,8 +675,8 @@ namespace EasyEPlanner
         /// Получить текст узла без обозначения количества дочерних элементов в скобках
         /// </summary>
         private static string GetTextWithoutCount(TreeNodeAdv node)
-            => Regex.Replace((node.Tag as Node)?.Text, @"\(\d\)$", "", 
-                RegexOptions.None, TimeSpan.FromMilliseconds(100));
+            => Regex.Replace((node.Tag as Node)?.Text, @"\(\s*\d*\s*\)$", "", 
+                RegexOptions.None, TimeSpan.FromMilliseconds(100)).Trim();
 
         /// <summary>
         /// Заполнить дерево устройствами/сигналами проекта
