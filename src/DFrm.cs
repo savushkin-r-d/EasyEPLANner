@@ -6,6 +6,7 @@ using PInvoke;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
@@ -15,7 +16,7 @@ using System.Windows.Forms;
 using TechObject;
 
 namespace EasyEPlanner
-{
+{ 
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -590,10 +591,18 @@ namespace EasyEPlanner
         /// <param name="checkedObjects">Выбранные объекты.</param>
         /// <param name="techObjectIndex">Индекс технологического объекта
         /// </param>
+        [ExcludeFromCodeCoverage]
         private void Refresh(string checkedObjects, int techObjectIndex)
         {
             devicesTreeViewAdv.BeginUpdate();
 
+            var oldRoot = devicesTreeViewAdv.Root;
+            if (devicesTreeViewAdv.GetNodeAt(new Point(1,devicesTreeViewAdv.Height - 25)) is { } lastNodeVisible)
+            {
+                // Полчаем последний видимый элемент для последующего восстановления прокрутки окна
+                devicesTreeViewAdv.SelectedNode = lastNodeVisible;
+            }
+            
             devicesTreeViewAdv.Model = null;
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
@@ -619,12 +628,55 @@ namespace EasyEPlanner
             TreeNodeAdv treeNode = nodes[0];
             OnHideOperationTree.Execute(treeNode);
 
-            devicesTreeViewAdv.ExpandAll();
+            if (checkedObjects != string.Empty || !RestoreExpanding(devicesTreeViewAdv.Root, oldRoot))
+                devicesTreeViewAdv.ExpandAll();
+
             devicesTreeViewAdv.Refresh();
+            if (devicesTreeViewAdv.SelectedNode is { } selectedNode)
+            {
+                devicesTreeViewAdv.ScrollTo(selectedNode);
+                selectedNode.IsSelected = false;
+            }
             devicesTreeViewAdv.EndUpdate();
 
             SelectDisplayObjects(checkedObjects, functionAfterCheck);
         }
+
+        /// <summary>
+        /// Востановление развертки узлов устройств после обновления
+        /// </summary>
+        /// <param name="node">Новый узел</param>
+        /// <param name="referenceNode">Референсный узел</param>
+        [ExcludeFromCodeCoverage]
+        private bool RestoreExpanding(TreeNodeAdv node, TreeNodeAdv referenceNode)
+        {
+            if (node is null || referenceNode is null)
+                return false;
+
+            if(referenceNode.IsExpanded)
+                node.Expand();
+            node.IsSelected = referenceNode.IsSelected;
+            
+            var referenceChildNodes = referenceNode.Children
+                .ToDictionary(rcn => GetTextWithoutCount(rcn), rcn => rcn);
+
+            foreach (var childNode in node.Children)
+            {
+                if (referenceChildNodes.TryGetValue(GetTextWithoutCount(childNode), out var referenceChildNode))
+                {
+                    RestoreExpanding(childNode, referenceChildNode);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Получить текст узла без обозначения количества дочерних элементов в скобках
+        /// </summary>
+        private static string GetTextWithoutCount(TreeNodeAdv node)
+            => Regex.Replace((node.Tag as Node)?.Text, @"\(\s*\d*\s*\)$", "", 
+                RegexOptions.None, TimeSpan.FromMilliseconds(100)).Trim();
 
         /// <summary>
         /// Заполнить дерево устройствами/сигналами проекта
