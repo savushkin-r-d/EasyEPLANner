@@ -197,8 +197,8 @@ namespace EasyEplanner.Tests
 
 
         [TestCase(State.StateType.IDLE, State.StateType.RUN)]
-        [TestCase(State.StateType.RUN, State.StateType.IDLE, State.StateType.PAUSE, State.StateType.STOP)]
-        [TestCase(State.StateType.PAUSE, State.StateType.RUN, State.StateType.IDLE, State.StateType.STOP)]
+        [TestCase(State.StateType.RUN, State.StateType.PAUSE, State.StateType.STOP)]
+        [TestCase(State.StateType.PAUSE, State.StateType.RUN, State.StateType.STOP)]
         [TestCase(State.StateType.STOP, State.StateType.IDLE)]
         [TestCase(State.StateType.STARTING, State.StateType.RUN)]
         [TestCase(State.StateType.PAUSING, State.StateType.PAUSE)]
