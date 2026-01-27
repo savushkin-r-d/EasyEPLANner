@@ -150,5 +150,16 @@ namespace EasyEplannerTests
 
 
         }
+
+        [Test]
+        public void GetTextWithoutCountText()
+        {
+            var method = typeof(DFrm).GetMethod("GetTextWithoutCount",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+
+            var node = new TreeNodeAdv(new Node("Устройства (60)"));
+
+            Assert.AreEqual("Устройства", method.Invoke(null, new object[] { node }));
+        }
     }
 }

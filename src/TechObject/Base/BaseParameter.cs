@@ -133,22 +133,12 @@ namespace TechObject
         /// <summary>
         /// Объект-владелец параметра.
         /// </summary>
-        public object Owner
-        {
-            get
-            {
-                return owner;
-            }
-            set
-            {
-                owner = value;
-            }
-        }
+        public virtual object Owner { get; set; }
 
         /// <summary>
         /// Базовая операция - владелец параметра
         /// </summary>
-        public BaseOperation BaseOperation { get; set; }
+        public virtual BaseOperation BaseOperation { get; set; }
 
         #region синхронизация устройств
         public virtual void Synch(int[] array)
@@ -622,7 +612,6 @@ namespace TechObject
 
         protected static readonly IDeviceManager deviceManager = DeviceManager.GetInstance();
 
-        private object owner;
         private List<DisplayObject> displayObjectsFlags;
         private ValueType currentValueType;
         protected List<int> devicesIndexes;

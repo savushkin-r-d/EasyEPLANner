@@ -722,8 +722,8 @@ namespace TechObject
         public static List<State.StateType> StateTransition(this State.StateType type) => type switch
         {
             State.StateType.IDLE => [State.StateType.RUN],
-            State.StateType.RUN => [State.StateType.IDLE, State.StateType.PAUSE, State.StateType.STOP],
-            State.StateType.PAUSE => [State.StateType.RUN, State.StateType.IDLE, State.StateType.STOP],
+            State.StateType.RUN => [State.StateType.PAUSE, State.StateType.STOP],
+            State.StateType.PAUSE => [State.StateType.RUN, State.StateType.STOP],
             State.StateType.STOP => [State.StateType.IDLE],
             State.StateType.STARTING => [State.StateType.RUN],
             State.StateType.PAUSING => [State.StateType.PAUSE],
