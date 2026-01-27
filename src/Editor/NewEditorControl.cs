@@ -371,6 +371,15 @@ namespace Editor
                     case (int)Keys.V when Ctrl:     // Ctrl + V
                     case (int)Keys.B when Ctrl:     // Ctrl + B
                     case (int)Keys.A when Ctrl:     // Ctrl + A
+                    case (int)Keys.F when Ctrl:     // Ctrl + F
+                    case (int)Keys.H when Ctrl:     // Ctrl + H
+                    case (int)Keys.E when Ctrl:     // Ctrl + E
+
+                    case (int)Keys.D1 when Ctrl:     // Ctrl + 1
+                    case (int)Keys.D2 when Ctrl:     // Ctrl + 2
+                    case (int)Keys.D3 when Ctrl:     // Ctrl + 3
+                    case (int)Keys.D4 when Ctrl:     // Ctrl + 4
+                    case (int)Keys.D5 when Ctrl:     // Ctrl + 5
 
                     case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
                     case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
@@ -382,6 +391,7 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_LEFT:    // Left
                     case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
                     case PI.VIRTUAL_KEY.VK_F1:      // F1
+                    case PI.VIRTUAL_KEY.VK_F5:      // F5
                         PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
                         return (IntPtr)1;
                 }
@@ -607,6 +617,10 @@ namespace Editor
                 case Keys.X | Keys.Control:
                     (sender as TextBox).Cut();
                     break;
+
+                case Keys.Escape:
+                    editorTView.Focus();
+                    break;
             }
         }
 
@@ -714,6 +728,30 @@ namespace Editor
                     autocompleteToolStripMenuItem_Click(null, null);
                     break;
 
+                // Поиск
+                case Keys.F when e.Control:
+                    searchTSButton.PerformClick();
+                    break;
+
+                // Подсветка
+                case Keys.H when e.Control:
+                    drawDev_toolStripButton.PerformClick();
+                    break;
+
+                // Редактирование
+                case Keys.E when e.Control:
+                    edit_toolStripButton.PerformClick();
+                    break;
+
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                    if (e.Control)
+                        ExpandToLevel(e.KeyCode - Keys.D0);
+                    break;
+
                 // Создание новой группы с типовым объектом
                 case Keys.Insert when e.Control && Editable && singleSelection:
                     createGenericToolStripMenuItem_Click(null, null);
@@ -750,6 +788,10 @@ namespace Editor
                         }
                         Process.Start(link);
                     }
+                    break;
+
+                case Keys.F5:
+                    refresh_toolStripButton.PerformClick();
                     break;
 
                 default:
@@ -1041,8 +1083,12 @@ namespace Editor
         /// </summary>
         private void toolStripButton_Click(object sender, EventArgs e)
         {
+            ExpandToLevel(Convert.ToInt32((sender as ToolStripMenuItem).Tag));   
+        }
+
+        public void ExpandToLevel(int level)
+        {
             editorTView.BeginUpdate();
-            int level = Convert.ToInt32((sender as ToolStripMenuItem).Tag);
             editorTView.SelectedIndex = 0;
             editorTView.CollapseAll();
             ExpandToLevel(level, editorTView.Objects);

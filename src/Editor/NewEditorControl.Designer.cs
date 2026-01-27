@@ -99,11 +99,11 @@ namespace Editor
             this.searchBoxTLP = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textBox_search = new System.Windows.Forms.TextBox();
-            this.searchIterator = new EditorControls.SearchIterator();
             this.searchButtonToolStrip = new System.Windows.Forms.ToolStrip();
             this.searchTSButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.searchIterator = new EditorControls.SearchIterator();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -163,7 +163,7 @@ namespace Editor
             this.expandDropDownList.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.expandDropDownList.Size = new System.Drawing.Size(33, 26);
             this.expandDropDownList.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.expandDropDownList.ToolTipText = "Выбрать уровень развертки";
+            this.expandDropDownList.ToolTipText = "Выбрать уровень развертки (Ctrl + 1-5)";
             // 
             // expandButton1
             // 
@@ -174,7 +174,7 @@ namespace Editor
             this.expandButton1.Size = new System.Drawing.Size(125, 22);
             this.expandButton1.Tag = "1";
             this.expandButton1.Text = " Уровень 1";
-            this.expandButton1.ToolTipText = "Уровень 1";
+            this.expandButton1.ToolTipText = "Уровень 1 (Ctrl + 1)";
             this.expandButton1.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // expandButton2
@@ -185,7 +185,7 @@ namespace Editor
             this.expandButton2.Size = new System.Drawing.Size(125, 22);
             this.expandButton2.Tag = "2";
             this.expandButton2.Text = "Уровень 2";
-            this.expandButton2.ToolTipText = "Уровень 2";
+            this.expandButton2.ToolTipText = "Уровень 2 (Ctrl + 2)";
             this.expandButton2.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // expandButton3
@@ -196,7 +196,7 @@ namespace Editor
             this.expandButton3.Size = new System.Drawing.Size(125, 22);
             this.expandButton3.Tag = "3";
             this.expandButton3.Text = "Уровень 3";
-            this.expandButton3.ToolTipText = "Уровень 3";
+            this.expandButton3.ToolTipText = "Уровень 3 (Ctrl + 3)";
             this.expandButton3.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // expandButton4
@@ -208,7 +208,7 @@ namespace Editor
             this.expandButton4.Tag = "4";
             this.expandButton4.Text = "Уровень 4";
             this.expandButton4.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
-            this.expandButton4.ToolTipText = "Уровень 4";
+            this.expandButton4.ToolTipText = "Уровень 4 (Ctrl + 4)";
             this.expandButton4.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // expandButton5
@@ -220,7 +220,7 @@ namespace Editor
             this.expandButton5.Tag = "5";
             this.expandButton5.Text = "Уровень 5";
             this.expandButton5.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
-            this.expandButton5.ToolTipText = "Уровень 5";
+            this.expandButton5.ToolTipText = "Уровень 5 (Ctrl + 5)";
             this.expandButton5.Click += new System.EventHandler(this.toolStripButton_Click);
             // 
             // toolStripSeparator_1
@@ -235,7 +235,7 @@ namespace Editor
             this.drawDev_toolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.drawDev_toolStripButton.Name = "drawDev_toolStripButton";
             this.drawDev_toolStripButton.Size = new System.Drawing.Size(24, 26);
-            this.drawDev_toolStripButton.ToolTipText = "Подсветка устройств";
+            this.drawDev_toolStripButton.ToolTipText = "Подсветка устройств (Ctrl + H)";
             this.drawDev_toolStripButton.Click += new System.EventHandler(this.DrawDev_toolStripButton_Click);
             // 
             // edit_toolStripButton
@@ -246,7 +246,7 @@ namespace Editor
             this.edit_toolStripButton.Name = "edit_toolStripButton";
             this.edit_toolStripButton.Size = new System.Drawing.Size(24, 26);
             this.edit_toolStripButton.Text = "Редактирование устройств";
-            this.edit_toolStripButton.ToolTipText = "Редактирование";
+            this.edit_toolStripButton.ToolTipText = "Редактирование (Ctrl + E)";
             this.edit_toolStripButton.Click += new System.EventHandler(this.edit_toolStripButton_Click);
             // 
             // toolStripSeparator1
@@ -262,6 +262,7 @@ namespace Editor
             this.refresh_toolStripButton.Name = "refresh_toolStripButton";
             this.refresh_toolStripButton.Size = new System.Drawing.Size(24, 26);
             this.refresh_toolStripButton.Text = "Синхронизация и сохранение";
+            this.refresh_toolStripButton.ToolTipText = "Синхронизация и сохранение (F5)";
             this.refresh_toolStripButton.Click += new System.EventHandler(this.refresh_toolStripButton_Click);
             // 
             // toolStripSeparator2
@@ -958,18 +959,6 @@ namespace Editor
             this.textBox_search.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox_Commands_KeyUp);
             this.textBox_search.LostFocus += new System.EventHandler(this.textBox_search_Leave);
             // 
-            // searchIterator
-            // 
-            this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.searchIterator.Index = 0;
-            this.searchIterator.Location = new System.Drawing.Point(131, 2);
-            this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
-            this.searchIterator.Maximum = 0;
-            this.searchIterator.Name = "searchIterator";
-            this.searchIterator.Size = new System.Drawing.Size(84, 22);
-            this.searchIterator.TabIndex = 7;
-            // 
             // searchButtonToolStrip
             // 
             this.searchButtonToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -992,7 +981,7 @@ namespace Editor
             this.searchTSButton.Name = "searchTSButton";
             this.searchTSButton.Size = new System.Drawing.Size(23, 26);
             this.searchTSButton.Text = "toolStripButton1";
-            this.searchTSButton.ToolTipText = "Поиск";
+            this.searchTSButton.ToolTipText = "Поиск (Ctrl + F)";
             this.searchTSButton.Click += new System.EventHandler(this.SearchTSButton_Click);
             // 
             // toolStripSeparator7
@@ -1014,6 +1003,18 @@ namespace Editor
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainTableLayoutPanel.Size = new System.Drawing.Size(867, 500);
             this.mainTableLayoutPanel.TabIndex = 6;
+            // 
+            // searchIterator
+            // 
+            this.searchIterator.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.searchIterator.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.searchIterator.Index = 0;
+            this.searchIterator.Location = new System.Drawing.Point(131, 2);
+            this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
+            this.searchIterator.Maximum = 0;
+            this.searchIterator.Name = "searchIterator";
+            this.searchIterator.Size = new System.Drawing.Size(84, 22);
+            this.searchIterator.TabIndex = 7;
             // 
             // NewEditorControl
             // 
