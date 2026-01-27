@@ -771,11 +771,11 @@ namespace PInvoke
             /// </summary>
             DEADCHAR = 0x0103,
             /// <summary>
-            /// The WM_SYSKEYDOWN message is posted to the window with the keyboard focus when the user presses the F10 key (which activates the menu bar) or holds down the ALT key and then presses another key. It also occurs when no window currently has the keyboard focus; in this case, the WM_SYSKEYDOWN message is sent to the active window. The window that receives the message can distinguish between these two contexts by checking the context code in the lParam parameter.
+            /// The WM_SYSKEYDOWN message is posted to the window with the keyboard focus when the user presses the F10 key (which activates the menu bar) or holds down the ALT key and then presses another key. It also occurs when no window currently has the keyboard focus; in this case, the WM_SYSKEYDOWN message is sent to the active window. The window that receives the message can distinguish between these two contexts by checking the MpkSaverContext code in the lParam parameter.
             /// </summary>
             SYSKEYDOWN = 0x0104,
             /// <summary>
-            /// The WM_SYSKEYUP message is posted to the window with the keyboard focus when the user releases a key that was pressed while the ALT key was held down. It also occurs when no window currently has the keyboard focus; in this case, the WM_SYSKEYUP message is sent to the active window. The window that receives the message can distinguish between these two contexts by checking the context code in the lParam parameter.
+            /// The WM_SYSKEYUP message is posted to the window with the keyboard focus when the user releases a key that was pressed while the ALT key was held down. It also occurs when no window currently has the keyboard focus; in this case, the WM_SYSKEYUP message is sent to the active window. The window that receives the message can distinguish between these two contexts by checking the MpkSaverContext code in the lParam parameter.
             /// </summary>
             SYSKEYUP = 0x0105,
             /// <summary>
@@ -885,15 +885,15 @@ namespace PInvoke
             /// </summary>
             QUERYUISTATE = 0x0129,
             /// <summary>
-            /// The WM_CTLCOLORMSGBOX message is sent to the owner window of a message box before Windows draws the message box. By responding to this message, the owner window can set the text and background colors of the message box by using the given display device context handle.
+            /// The WM_CTLCOLORMSGBOX message is sent to the owner window of a message box before Windows draws the message box. By responding to this message, the owner window can set the text and background colors of the message box by using the given display device MpkSaverContext handle.
             /// </summary>
             CTLCOLORMSGBOX = 0x0132,
             /// <summary>
-            /// An edit control that is not read-only or disabled sends the WM_CTLCOLOREDIT message to its parent window when the control is about to be drawn. By responding to this message, the parent window can use the specified device context handle to set the text and background colors of the edit control.
+            /// An edit control that is not read-only or disabled sends the WM_CTLCOLOREDIT message to its parent window when the control is about to be drawn. By responding to this message, the parent window can use the specified device MpkSaverContext handle to set the text and background colors of the edit control.
             /// </summary>
             CTLCOLOREDIT = 0x0133,
             /// <summary>
-            /// Sent to the parent window of a list box before the system draws the list box. By responding to this message, the parent window can set the text and background colors of the list box by using the specified display device context handle.
+            /// Sent to the parent window of a list box before the system draws the list box. By responding to this message, the parent window can set the text and background colors of the list box by using the specified display device MpkSaverContext handle.
             /// </summary>
             CTLCOLORLISTBOX = 0x0134,
             /// <summary>
@@ -901,15 +901,15 @@ namespace PInvoke
             /// </summary>
             CTLCOLORBTN = 0x0135,
             /// <summary>
-            /// The WM_CTLCOLORDLG message is sent to a dialog box before the system draws the dialog box. By responding to this message, the dialog box can set its text and background colors using the specified display device context handle.
+            /// The WM_CTLCOLORDLG message is sent to a dialog box before the system draws the dialog box. By responding to this message, the dialog box can set its text and background colors using the specified display device MpkSaverContext handle.
             /// </summary>
             CTLCOLORDLG = 0x0136,
             /// <summary>
-            /// The WM_CTLCOLORSCROLLBAR message is sent to the parent window of a scroll bar control when the control is about to be drawn. By responding to this message, the parent window can use the display context handle to set the background color of the scroll bar control.
+            /// The WM_CTLCOLORSCROLLBAR message is sent to the parent window of a scroll bar control when the control is about to be drawn. By responding to this message, the parent window can use the display MpkSaverContext handle to set the background color of the scroll bar control.
             /// </summary>
             CTLCOLORSCROLLBAR = 0x0137,
             /// <summary>
-            /// A static control, or an edit control that is read-only or disabled, sends the WM_CTLCOLORSTATIC message to its parent window when the control is about to be drawn. By responding to this message, the parent window can use the specified device context handle to set the text and background colors of the static control.
+            /// A static control, or an edit control that is read-only or disabled, sends the WM_CTLCOLORSTATIC message to its parent window when the control is about to be drawn. By responding to this message, the parent window can use the specified device MpkSaverContext handle to set the text and background colors of the static control.
             /// </summary>
             CTLCOLORSTATIC = 0x0138,
             /// <summary>
@@ -1213,11 +1213,11 @@ namespace PInvoke
             /// </summary>
             HOTKEY = 0x0312,
             /// <summary>
-            /// The WM_PRINT message is sent to a window to request that it draw itself in the specified device context, most commonly in a printer device context.
+            /// The WM_PRINT message is sent to a window to request that it draw itself in the specified device MpkSaverContext, most commonly in a printer device MpkSaverContext.
             /// </summary>
             PRINT = 0x0317,
             /// <summary>
-            /// The WM_PRINTCLIENT message is sent to a window to request that it draw its client area in the specified device context, most commonly in a printer device context.
+            /// The WM_PRINTCLIENT message is sent to a window to request that it draw its client area in the specified device MpkSaverContext, most commonly in a printer device MpkSaverContext.
             /// </summary>
             PRINTCLIENT = 0x0318,
             /// <summary>

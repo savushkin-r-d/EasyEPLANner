@@ -603,13 +603,19 @@ namespace TechObject
                 newProperty.BaseOperation = this;
                 if (oldProperty.Owner is BaseTechObject obj && obj.IsAttachable)
                 {
-                    newProperty.Owner = obj.Clone(newOwner.Owner.Owner.Owner);
+                    // Если параметр пренадлежит привязанному агрегату,
+                    // то заменяем объекта-владелец на новый базовый объект
+                    // привязанного агрегата (Необходимо в случае копирования операции в другой объект)
+                    newProperty.Owner = newOwner.Owner.TechObject
+                        .AttachedObjects.GetBaseTechObjectByLuaName(obj.EplanName);
                 }
                 else
                 {
                     newProperty.Owner = newOwner;
                 }
-                properties.Add(newProperty);
+                
+                if (newProperty.Owner is not null)
+                    properties.Add(newProperty);
             }
 
             return properties;
