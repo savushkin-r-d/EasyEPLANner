@@ -377,7 +377,7 @@ namespace TechObjectTests
             var baseTechObject = BaseTechObjectManager.GetInstance().AddBaseObject("BaseTechObjectName", "BaseTechObjectName", 2,
                 "basicName", "bindingName", false, "luaModuleName", "monitorName", false, true);
 
-            var equipParameter = new EquipmentParameter("equip", "оборудование", "LS1");
+            var equipParameter = new EquipmentParameter("equip_D", "оборудование", "LS1");
 
             baseTechObject.Equipment.Add(equipParameter);
 
@@ -407,8 +407,8 @@ namespace TechObjectTests
             techObject2.GetParamsManager().AddFloatParam("параметр 3", 1, "g", "par_3");
 
             // Оборудование тех. объектов
-            techObject1.Equipment.SetEquipmentValue("equip", "TANK1V1");
-            techObject2.Equipment.SetEquipmentValue("equip", "TANK2V1");
+            techObject1.Equipment.SetEquipmentValue("equip_d", "TANK1V1");
+            techObject2.Equipment.SetEquipmentValue("equip_D", "TANK2V1");
 
             // Операции
             var expT1Mode =  techObject1.ModesManager.AddMode("Операция 1", "");
