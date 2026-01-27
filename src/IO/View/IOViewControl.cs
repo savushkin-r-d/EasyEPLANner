@@ -36,11 +36,11 @@ namespace IO.View
         /// </summary>
         public static void Start()
         {
-            Instance ??= new IOViewControl(new IOViewModel(IOManager.GetInstance()));
-            Instance.ShowDlg();
+            DataContext ??= new IOViewModel(IOManager.GetInstance());
+            Instance ??= new IOViewControl(DataContext);
 
-            DataContext = new IOViewModel(IOManager.GetInstance());
             Instance.InitDataStructPLC();
+            Instance.ShowDlg();
         }
 
         public void Clear()
@@ -91,7 +91,6 @@ namespace IO.View
         private void InitDataStructPLC()
         {
             StructPLC.BeginUpdate();
-            StructPLC.Freeze();
 
             StructPLC.Roots = DataContext.Roots;
 
@@ -99,13 +98,16 @@ namespace IO.View
             StructPLC.Columns[1].Width = 200;
 
             StructPLC.Expand(DataContext.Root);
+
+            /// Востановление развертки дерева
             RestoreExpanded(DataContext.Roots);
 
             StructPLC.SelectedIndex = 0;
             StructPLC.SelectedItem.EnsureVisible();
 
-            StructPLC.Unfreeze();
             StructPLC.EndUpdate();
+
+            AutoResizeColumns(StructPLC);
         }
 
         private void RestoreExpanded(IEnumerable items)
@@ -132,16 +134,16 @@ namespace IO.View
             StructPLC.Collapsed -= ItemCollapsed;
 
             StructPLC.SelectedIndex = 0;
-            StructPLC.CollapseAll();
 
             ExpandToLevel(level, StructPLC.Objects);
-            AutoResizeColumns(StructPLC);
 
             StructPLC.Expanded += ItemExpanded;
             StructPLC.Collapsed += ItemCollapsed;
             
             StructPLC.EnsureModelVisible(StructPLC.SelectedObject);
             StructPLC.EndUpdate();
+
+            AutoResizeColumns(StructPLC);
         }
 
         private void ExpandToLevel(int level, IEnumerable items)
@@ -151,10 +153,13 @@ namespace IO.View
                 if (level > 0 && !StructPLC.IsExpanded(item))
                 {
                     StructPLC.Expand(item);
+                    item?.Expanded = true;
                 }
-                else if (level == 0 && StructPLC.IsExpanded(item))
+                
+                if (level == 0 && StructPLC.IsExpanded(item))
                 {
                     StructPLC.Collapse(item);
+                    item?.Expanded = false;
                 }
 
                 if (item is not null)

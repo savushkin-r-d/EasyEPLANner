@@ -51,7 +51,7 @@ namespace IO.ViewModel
         public bool Expanded 
         {
             get => IONode.Function?.Expanded ?? false;
-            set => IONode.Function.Expanded = value;
+            set => IONode.Function?.Expanded = value;
         }
 
         Icon IHasIcon.Icon => Icon.Node;

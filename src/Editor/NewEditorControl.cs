@@ -1083,7 +1083,7 @@ namespace Editor
         /// </summary>
         private void toolStripButton_Click(object sender, EventArgs e)
         {
-            ExpandToLevel(Convert.ToInt32((sender as ToolStripMenuItem).Tag));   
+            ExpandToLevel(Convert.ToInt32((sender as ToolStripMenuItem).Tag));
         }
 
         public void ExpandToLevel(int level)
@@ -1094,6 +1094,8 @@ namespace Editor
             ExpandToLevel(level, editorTView.Objects);
             editorTView.EnsureModelVisible(editorTView.SelectedObject);
             editorTView.EndUpdate();
+
+            AutoResizeColumns(editorTView);
         }
 
         /// <summary>
@@ -1332,25 +1334,19 @@ namespace Editor
         {
             foreach (ITreeViewItem item in items)
             {
-                if (item.Items != null)
+                if (item.Items is not null)
                 {
-                    int lev = level;
-                    ExpandToLevel(--lev, item.Items);
+                    ExpandToLevel(level - 1, item.Items);
                 }
 
-                if (level > 0)
+                if (level > 0 && !editorTView.IsExpanded(item))
                 {
-                    if (editorTView.IsExpanded(item) == false)
-                    {
-                        editorTView.Expand(item);
-                    }
+                    editorTView.Expand(item);
                 }
-                else
+
+                if (level == 0 && editorTView.IsExpanded(item))
                 {
-                    if (editorTView.IsExpanded(item) == true)
-                    {
-                        editorTView.Collapse(item);
-                    }
+                    editorTView.Collapse(item);
                 }
             }
         }
@@ -1771,15 +1767,21 @@ namespace Editor
         private void editorTView_Expanded(object sender,
             TreeBranchExpandedEventArgs e)
         {
-            editorTView.Columns[0].AutoResize(
-                ColumnHeaderAutoResizeStyle.ColumnContent);
+            AutoResizeColumns(sender as TreeListView);
         }
 
         private void editorTView_Collapsed(object sender,
             TreeBranchCollapsedEventArgs e)
         {
-            editorTView.Columns[0].AutoResize(
-                ColumnHeaderAutoResizeStyle.ColumnContent);
+            AutoResizeColumns(sender as TreeListView);
+        }
+
+        private static void AutoResizeColumns(TreeListView treeListView)
+        {
+            if (treeListView is null)
+                return;
+
+            treeListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void hideEmptyItemsBtn_CheckStateChanged(object sender,
