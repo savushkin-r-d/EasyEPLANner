@@ -1335,6 +1335,7 @@ namespace Editor
         private void editorTView_FormatRow(object sender, FormatRowEventArgs e)
         {
             FormatCopiedItems(e);
+            FormatFoundItems(e);
         }
 
         /// <summary>
@@ -1404,6 +1405,20 @@ namespace Editor
             {
                 e.Item.BackColor = Color.LightPink;
                 e.Item.SelectedForeColor = Color.DeepPink;
+            }
+        }
+
+        /// <summary>
+        /// Форматирование скопированного элемента
+        /// </summary>
+        /// <param name="e"></param>
+        private void FormatFoundItems(FormatRowEventArgs e)
+        {
+            var item = e.Model as ITreeViewItem;
+            if (textBox_search.Text != "" &&  item.Contains(textBox_search.Text))
+            {
+                e.Item.BackColor = Color.LightSkyBlue;
+                e.Item.SelectedForeColor = Color.Blue;
             }
         }
 
@@ -2141,12 +2156,25 @@ namespace Editor
             FoundTreeViewItemsList.Clear();
             treeViewItemsList.ForEach(item => item.ResetFilter());
 
+            TextMatchFilter highlightingFilter = null;
+
             if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
             {
                 editorTView.UseFiltering = true;
                 searchIterator.Maximum = FoundTreeViewItemsList.Count;
+
+                highlightingFilter = TextMatchFilter.Contains(editorTView, searchText);
             }
 
+            editorTView.DefaultRenderer = (highlightingFilter == null) ? 
+                null : new HighlightTextRenderer(highlightingFilter)
+                {
+                    FillBrush = new SolidBrush(Color.LightGreen),
+                    FramePen = new Pen(Color.DarkGreen),
+                };
+            editorTView.TreeColumnRenderer.Filter = highlightingFilter;
+            editorTView.TreeColumnRenderer.FillBrush = new SolidBrush(Color.LightGreen);
+            editorTView.TreeColumnRenderer.FramePen = new Pen(Color.DarkGreen);
 
             if (searchBoxWasFocused)
                 textBox_search.Focus();
