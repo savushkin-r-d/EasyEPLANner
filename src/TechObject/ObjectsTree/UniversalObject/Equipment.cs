@@ -227,33 +227,31 @@ namespace TechObject
         /// <summary>
         /// Проверка множественных значений в оборудовании
         /// </summary>
-        /// <param name="devices">Устройства</param>
+        /// <param name="values">Устройства</param>
         /// <param name="equipment">Оборудование</param>
         /// <param name="techObjectName">Имя объекта</param>
         /// <returns></returns>
-        private string CheckMultiValue(string[] devices,
+        private string CheckMultiValue(string[] values,
             BaseParameter equipment, string techObjectName)
         {
             string errors = "";
-            var unknownDevices = new List<string>();
+            var unknownValues = new List<string>();
 
-            foreach (var deviceStr in devices)
+            foreach (var value in values)
             {
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDeviceByEplanName(deviceStr);
-                if (device.Description == StaticHelper.CommonConst.Cap)
+                if (!CheckValue(value, equipment))
                 {
-                    unknownDevices.Add(deviceStr);
+                    unknownValues.Add(value);
                 }
             }
 
-            if (unknownDevices.Count > 0)
+            if (unknownValues.Count > 0)
             {
                 errors = $"Проверьте оборудование: " +
                     $"\"{equipment.Name}\" в объекте " +
                     $"\"{techObjectName}\". " +
-                    $"Некорректные устройства: " +
-                    $"{string.Join(",", unknownDevices)}.\n";
+                    $"Некорректные значения: " +
+                    $"{string.Join(", ", unknownValues)}.\n";
             }
 
             return errors;
@@ -262,46 +260,38 @@ namespace TechObject
         /// <summary>
         /// Проверка одиночных значений в оборудовании
         /// </summary>
-        /// <param name="currentValue">Текущее значение</param>
+        /// <param name="value">Текущее значение</param>
         /// <param name="equipment">Оборудование</param>
         /// <param name="techObjectName">Имя объекта</param>
         /// <returns></returns>
-        private string CheckSingleValue(string currentValue,
+        private string CheckSingleValue(string value,
             BaseParameter equipment, string techObjectName)
         {
-            string errors = "";
-
-            var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDeviceByEplanName(currentValue);
-            if (equipment.LuaName == "SET_VALUE")
+            if (!CheckValue(value, equipment))
             {
-                bool isValid =
-                    (device.Description != StaticHelper.CommonConst.Cap ||
-                    owner.GetParamsManager().Float
-                    .GetParam(currentValue) != null);
-                if (!isValid)
-                {
-                    errors += $"Отсутствует задание для ПИД регулятора" +
-                        $" \"{owner.DisplayText[0]}\".\n";
-                }
-            }
-            else
-            {
-                bool isValid =
-                    device.Description != StaticHelper.CommonConst.Cap ||
-                    currentValue == "" ||
-                    currentValue == equipment.DefaultValue;
-                if (!isValid)
-                {
-                    errors += $"Проверьте оборудование: " +
-                        $"\"{equipment.Name}\" в объекте " +
-                        $"\"{techObjectName}\". " +
-                        $"Некорректное устройство: {currentValue}.\n";
-                }
+                return $"Проверьте оборудование: " +
+                    $"\"{equipment.Name}\" в объекте " +
+                    $"\"{techObjectName}\". " +
+                    $"Некорректное значение: {value}.\n";
             }
 
-            return errors;
+            return "";
         }
+
+        private bool CheckValue(string value, BaseParameter equipment)
+        {
+            var device = DeviceManager.GetInstance().GetDeviceByEplanName(value);
+            if (equipment.LuaName.EndsWith("SET_VALUE"))
+            {
+               return (device.Description != CommonConst.Cap ||
+                    owner.GetParamsManager().Float.GetParam(value) != null);
+            }
+
+            return device.Description != StaticHelper.CommonConst.Cap ||
+                value == "" ||
+                value == equipment.DefaultValue;
+        }
+
         #endregion
 
         #region Реализация ITreeViewItem
@@ -409,7 +399,7 @@ namespace TechObject
         public TechObject Owner
         {
             get
-            {
+            { 
                 return owner;
             }
         }
