@@ -513,7 +513,7 @@ namespace TechObject
                 return;
             }
 
-            var operation = baseOperation?.Owner;
+            var operation = baseOperation.Owner;
             var techObject = operation?.Owner?.Owner;
 
             switch (CurrentValueType)
