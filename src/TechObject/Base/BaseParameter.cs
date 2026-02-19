@@ -50,27 +50,16 @@ namespace TechObject
         /// </summary>
         private void SetUpDisplayObjects()
         {
-            deviceTypes = null;
-            displayParameters = false;
-            foreach (var displayObject in DisplayObjects)
+            displayParameters = DisplayObjects.Contains(DisplayObject.Parameters);
+            deviceTypes = [.. DisplayObjects.SelectMany(displayObject => displayObject switch
             {
-                switch (displayObject)
-                {
-                    case DisplayObject.Parameters:
-                        displayParameters = true;
-                        break;
-
-                    case DisplayObject.Signals:
-                        deviceTypes =
-                        [
-                            DeviceType.AI,
-                            DeviceType.AO,
-                            DeviceType.DI,
-                            DeviceType.DO
-                        ];
-                        break;
-                }
-            }
+                DisplayObject.Signals => [DeviceType.AI, DeviceType.AO, DeviceType.DI, DeviceType.DO],
+                DisplayObject.AI => [DeviceType.AI],
+                DisplayObject.AO => [DeviceType.AO],
+                DisplayObject.DI => [DeviceType.DI],
+                DisplayObject.DO => [DeviceType.DO],
+                _ => new DeviceType[] { }
+            }).Distinct()];
         }
 
         /// <summary>
@@ -381,44 +370,15 @@ namespace TechObject
                     obj.TechNumber.ToString();
             }
 
-            switch (CurrentValueType)
+            return CurrentValueType switch
             {
-                case ValueType.Boolean:
-                    return $"{prefix}{LuaName} = {Value}";
-
-                case ValueType.Other:
-                    if (Owner is BaseOperation baseOperation)
-                    {
-                        // Сброс поля параметра в доп. свойствах операции,
-                        // если указан несуществующий параметр.
-                        var operation = baseOperation.Owner;
-                        var techObject = operation.Owner.Owner;
-                        SetNewValue(string.Empty);
-                        Logs.AddMessage($"{techObject.DisplayText[0]}: {operation.DisplayText[0]}:" +
-                            $" в доп.свойствах сброшен неверно указанный параметр \"{Name}\"");
-                        return SaveToPrgLua(prefix);
-                    }
-                    return $"{prefix}{LuaName} = {Value}";
-
-                case ValueType.Device:
-                    return $"{prefix}{LuaName}" +
-                        $" = prg.control_modules.{Value}";
-
-                case ValueType.Number:
-                    return GetNumberParameterStringForSave(prefix);
-
-                case ValueType.Parameter:
-                    return $"{prefix}{LuaName} = " +
-                        $"{objName}.PAR_FLOAT.{Value}";
-
-                case ValueType.ManyDevices:
-                    string paramCode = SaveMoreThanOneDevice(LuaName, Value);
-                    return $"{prefix}{paramCode}";
-
-                case ValueType.None:
-                default:
-                    return string.Empty;
-            }
+                ValueType.Boolean or ValueType.Other => $"{prefix}{LuaName} = {Value}",
+                ValueType.Device => $"{prefix}{LuaName} = prg.control_modules.{Value}",
+                ValueType.ManyDevices => $"{prefix}{SaveMoreThanOneDevice(LuaName, Value)}",
+                ValueType.Number => GetNumberParameterStringForSave(prefix),
+                ValueType.Parameter => $"{prefix}{LuaName} = {objName}.PAR_FLOAT.{Value}",
+                _ => string.Empty
+            };
         }
 
         /// <summary>
@@ -541,9 +501,38 @@ namespace TechObject
 
         public virtual void Check()
         {
-            if (!IsEmpty && !Disabled)
+            if (IsEmpty || Disabled)
             {
-                SetParameterValueType(Value);
+                return;
+            }
+
+            SetParameterValueType(Value);
+
+            if (Owner is not BaseOperation baseOperation)
+            {
+                return;
+            }
+
+            var operation = baseOperation.Owner;
+            var techObject = operation.Owner.Owner;
+
+            switch (CurrentValueType)
+            {
+                case ValueType.Other:
+                    // Сброс поля параметра в доп. свойствах операции,
+                    // если указан несуществующий параметр.
+                    SetNewValue(string.Empty);
+                    Logs.AddMessage($"{techObject.DisplayText[0]}: {operation.DisplayText[0]}: доп. свойство \"{Name}\" имеет неопределенное значение: {Value};\n");
+                    break;
+
+                case ValueType.Device:
+                case ValueType.ManyDevices:
+                    if (Value.Split(' ').Select(deviceManager.GetDevice).Any(d => !deviceTypes.Contains(d.DeviceType)))
+                    {
+                        var types = string.Join(", ", [.. deviceTypes.Select(d => d.ToString())]);
+                        Logs.AddMessage($"{techObject.DisplayText[0]}: {operation.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
+                    }
+                    break;
             }
         }
 
@@ -593,6 +582,10 @@ namespace TechObject
             None = 1,
             Signals,
             Parameters,
+            AI,
+            AO,
+            DI,
+            DO,
         }
 
         /// <summary>

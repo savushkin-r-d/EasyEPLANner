@@ -241,14 +241,14 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Parameters
                     },
-                    null,
+                    new DeviceType[] { },
                     null,
                     true,
                 },
                 new object[]
                 {
                     null,
-                    null,
+                    new DeviceType[] { },
                     null,
                     false,
                 },
@@ -420,7 +420,7 @@ namespace EasyEplanner.Tests
 
         [TestCase("parameter1", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter1")]
         [TestCase("parameter2", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter2")]
-        [TestCase("other", "", "")]
+        [TestCase("other", "", "LuaName = other")]
         public void SaveToPrgLua_CheckBaseOperationOwner(string value, string prefix,
             string expected)
         {
