@@ -489,7 +489,7 @@ namespace TechObject
             }
             else if (Owner is BaseOperation operation)
             {
-                return operation.Owner.Owner.Owner;
+                return operation.Owner?.Owner?.Owner;
             }
             else if (Owner is Equipment equipment)
             {
@@ -513,8 +513,8 @@ namespace TechObject
                 return;
             }
 
-            var operation = baseOperation.Owner;
-            var techObject = operation.Owner.Owner;
+            var operation = baseOperation?.Owner;
+            var techObject = operation?.Owner?.Owner;
 
             switch (CurrentValueType)
             {
@@ -522,7 +522,7 @@ namespace TechObject
                     // Сброс поля параметра в доп. свойствах операции,
                     // если указан несуществующий параметр.
                     SetNewValue(string.Empty);
-                    Logs.AddMessage($"{techObject.DisplayText[0]}: {operation.DisplayText[0]}: доп. свойство \"{Name}\" имеет неопределенное значение: {Value};\n");
+                    Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" имеет неопределенное значение: {Value};\n");
                     break;
 
                 case ValueType.Device:
@@ -530,7 +530,7 @@ namespace TechObject
                     if (Value.Split(' ').Select(deviceManager.GetDevice).Any(d => !deviceTypes.Contains(d.DeviceType)))
                     {
                         var types = string.Join(", ", [.. deviceTypes.Select(d => d.ToString())]);
-                        Logs.AddMessage($"{techObject.DisplayText[0]}: {operation.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
+                        Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
                     }
                     break;
             }

@@ -5,6 +5,7 @@ using Moq;
 using System.Reflection;
 using EplanDevice;
 using System;
+using NUnit.Framework.Constraints;
 
 namespace EasyEplanner.Tests
 {
@@ -55,6 +56,10 @@ namespace EasyEplanner.Tests
             {
                 BaseParameter.DisplayObject.Signals,
                 BaseParameter.DisplayObject.Parameters,
+                BaseParameter.DisplayObject.AI,
+                BaseParameter.DisplayObject.AO,
+                BaseParameter.DisplayObject.DI,
+                BaseParameter.DisplayObject.DO,
             };
 
             var newObj = new BaseParameterImplementation(stub, stub, stub,
@@ -545,6 +550,26 @@ namespace EasyEplanner.Tests
 
             return deviceManagerMock;
         }
+
+        [Test]
+        public void Check()
+        {
+            var baseOperation = new BaseOperation("", "", new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+
+            var baseParamter = new ActiveParameter("bp", "");
+
+            baseParamter.Check();
+
+            baseParamter.SetNewValue("qwe");
+            baseParamter.Check();
+
+            baseParamter.Owner = baseOperation;
+            baseParamter.Check();
+
+            Assert.AreEqual("", baseParamter.Value);
+        }
+
+
 
         string stub = string.Empty;
     }
