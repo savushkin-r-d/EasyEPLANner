@@ -20,7 +20,9 @@ namespace IO.ViewModel
 
             IOModule = module;
 
-            binds.AddRange(module.Info.ChannelClamps.Select(c => new Clamp(this, c)));
+            binds.AddRange(module.Info.ChannelClamps
+                .OrderBy(c => c)
+                .Select(c => new Clamp(this, c)));
         }
 
         public IEnumerable<IViewItem> Items => binds;

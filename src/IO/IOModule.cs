@@ -110,7 +110,7 @@ namespace IO
 
             if (Info.ChannelClamps.GetLength(0) != 0)
             {
-                foreach(int clamp in Info.ChannelClamps)
+                foreach(int clamp in Info.ChannelClamps.OrderBy(x => x))
                 {
                     bool isIOLinkDevice = false;
                     res[idx, 0] = p;
@@ -240,7 +240,7 @@ namespace IO
                 {
                     object[,] asConnection = new object[Info.ChannelClamps.GetLength(0) * 128, 2];
                     int devIdx = 0;
-                    foreach (int clamp in Info.ChannelClamps)
+                    foreach (int clamp in Info.ChannelClamps.OrderBy(x => x))
                     {
                         if (devices[clamp] != null && devices[clamp].Count > 1)
                         {
