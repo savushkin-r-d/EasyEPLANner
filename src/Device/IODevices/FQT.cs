@@ -70,19 +70,8 @@ namespace EplanDevice
 
         public override List<string> MultipleProperties => [Property.MT];
         
-
-        public override string GetRange()
-        {
-            string range = string.Empty;
-            if (parameters.ContainsKey(Parameter.P_MIN_F) &&
-                parameters.ContainsKey(Parameter.P_MAX_F))
-            {
-                range = "_" + parameters[Parameter.P_MIN_F].ToString() + 
-                    ".." + parameters[Parameter.P_MAX_F].ToString();
-            }
-
-            return range;
-        }
+        public override string GetRange() 
+            => GetRange(Parameter.P_MIN_F, Parameter.P_MAX_F);
 
         public override string Check()
         {

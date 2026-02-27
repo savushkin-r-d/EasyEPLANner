@@ -52,6 +52,20 @@ namespace EplanDevice
             return null;
         }
 
+        public virtual string GetRange(Parameter p_min, Parameter p_max)
+        {
+            if (parameters.TryGetValue(p_min, out var min_value) &&
+                parameters.TryGetValue(p_max, out var max_value) &&
+                min_value is not null &&
+                max_value is not null)
+            {
+                return $"_{min_value}..{max_value}";
+
+            }
+
+            return string.Empty;
+        }
+
         /// <summary>
         /// Генерация тэгов устройства.
         /// </summary>
