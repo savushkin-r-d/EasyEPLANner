@@ -57,17 +57,7 @@ namespace EplanDevice
         }
 
         public override string GetRange()
-        {
-            string range = string.Empty;
-            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
-                parameters.ContainsKey(Parameter.P_MAX_V))
-            {
-                range = "_" + parameters[Parameter.P_MIN_V].ToString() +
-                    ".." + parameters[Parameter.P_MAX_V].ToString();
-            }
-
-            return range;
-        }
+            => GetRange(Parameter.P_MIN_V, Parameter.P_MAX_V);
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
             DeviceSubType dst)

@@ -96,6 +96,13 @@ namespace EplanDevice
         void UpdateRuntimeParameters();
 
         /// <summary>
+        /// Получение диапазона настройки
+        /// </summary>
+        /// <param name="p_min">Параметр минимального значения</param>
+        /// <param name="p_max">Параметр максимального значения</param>
+        string GetRange(IODevice.Parameter p_min, IODevice.Parameter p_max);
+
+        /// <summary>
         /// Список свойств устройства,
         /// для которых можно установить несколько значений
         /// </summary>
