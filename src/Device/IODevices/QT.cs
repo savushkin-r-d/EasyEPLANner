@@ -70,18 +70,8 @@ namespace EplanDevice
             return errStr;
         }
 
-        public override string GetRange()
-        {
-            string range = string.Empty;
-            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
-                parameters.ContainsKey(Parameter.P_MAX_V))
-            {
-                range = "_" + parameters[Parameter.P_MIN_V].ToString() + 
-                    ".." + parameters[Parameter.P_MAX_V].ToString();
-            }
-
-            return range;
-        }
+        public override string GetRange() 
+            => GetRange(Parameter.P_MIN_V, Parameter.P_MAX_V);
 
         /// <summary>
         /// Проверка устройства на корректную инициализацию.
