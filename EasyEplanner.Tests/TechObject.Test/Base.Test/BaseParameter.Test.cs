@@ -214,12 +214,12 @@ namespace EasyEplanner.Tests
                         BaseParameter.DisplayObject.Signals,
                         BaseParameter.DisplayObject.Parameters
                     },
-                    new EplanDevice.DeviceType[]
+                    new DeviceType[]
                     {
-                        EplanDevice.DeviceType.AI,
-                        EplanDevice.DeviceType.AO,
-                        EplanDevice.DeviceType.DI,
-                        EplanDevice.DeviceType.DO
+                        DeviceType.AI,
+                        DeviceType.AO,
+                        DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
+                        DeviceType.DO, DeviceType.HL,
                     },
                     null,
                     true,
@@ -230,12 +230,25 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Signals,
                     },
-                    new EplanDevice.DeviceType[]
+                    new DeviceType[]
                     {
-                        EplanDevice.DeviceType.AI,
-                        EplanDevice.DeviceType.AO,
-                        EplanDevice.DeviceType.DI,
-                        EplanDevice.DeviceType.DO
+                        DeviceType.AI,
+                        DeviceType.AO,
+                        DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
+                        DeviceType.DO, DeviceType.HL,
+                    },
+                    null,
+                    false,
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.DI,
+                    },
+                    new DeviceType[]
+                    {
+                        DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
                     },
                     null,
                     false,

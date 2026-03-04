@@ -53,11 +53,17 @@ namespace TechObject
             displayParameters = DisplayObjects.Contains(DisplayObject.Parameters);
             deviceTypes = [.. DisplayObjects.SelectMany(displayObject => displayObject switch
             {
-                DisplayObject.Signals => [DeviceType.AI, DeviceType.AO, DeviceType.DI, DeviceType.DO],
+                DisplayObject.Signals => // Отображаются в окне устройств только эти типы, но привязать можно любые
+                [
+                    DeviceType.AI,
+                    DeviceType.AO,
+                    DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
+                    DeviceType.DO, DeviceType.HL, 
+                ],
                 DisplayObject.AI => [DeviceType.AI],
                 DisplayObject.AO => [DeviceType.AO],
-                DisplayObject.DI => [DeviceType.DI],
-                DisplayObject.DO => [DeviceType.DO],
+                DisplayObject.DI => [DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS],
+                DisplayObject.DO => [DeviceType.DO, DeviceType.HL],
                 _ => new DeviceType[] { }
             }).Distinct()];
         }
@@ -527,7 +533,9 @@ namespace TechObject
 
                 case ValueType.Device:
                 case ValueType.ManyDevices:
-                    if (Value.Split(' ').Select(deviceManager.GetDevice).Any(d => !deviceTypes.Contains(d.DeviceType)))
+                    if (!DisplayObjects.Contains(DisplayObject.Signals) &&
+                        Value.Split(' ').Select(deviceManager.GetDevice)
+                            .Any(d => !deviceTypes.Contains(d.DeviceType)))
                     {
                         var types = string.Join(", ", [.. deviceTypes.Select(d => d.ToString())]);
                         Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
