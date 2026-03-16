@@ -631,6 +631,17 @@ namespace EasyEPlanner
                         AddLowerBoxHighlighting(Color.GRAY, objectFunction, points);
                         break;
                 }
+
+                switch (drawObj.Action)
+                {
+                    case DrawInfo.ActionType.DELAYED_ON_DEVICE:
+                        AddPolygonForeground(Color.GRAY, objectFunction, points);
+                        break;
+
+                    case DrawInfo.ActionType.DELAYED_OFF_DEVICE:
+                        AddPolygonForeground(Color.GREEN, objectFunction, points);
+                        break;
+                }
             }
         }
 
@@ -680,6 +691,30 @@ namespace EasyEPlanner
                 .ToStringIdentifier());
             highlightedObjects.Add(rc);
         }
+
+        /// <summary>
+        /// Добавить треугольник по диагонали для отображения переходных переключений (переключение с задержкой)
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        private void AddPolygonForeground(Color colour,
+            Eplan.EplApi.DataModel.Function objectFunction,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            var trngl = new Eplan.EplApi.DataModel.Graphics.PolyLine();
+            trngl.Create(objectFunction.Page);
+            trngl.DrawingOrder = 1;
+            var p = new Eplan.EplApi.Base.PointD(points[0].X, points[1].Y);
+            trngl.SetPointAt(0, ref points[0]);
+            trngl.SetPointAt(1, ref points[1]);
+            trngl.SetPointAt(2, ref p);
+            trngl.SetPointAt(3, ref points[0]);
+
+            trngl.Pen = new Eplan.EplApi.DataModel.Graphics.Pen((short)colour, -16002, -16002, -16002, 0);
+            trngl.FillPattern = Eplan.EplApi.DataModel.Graphics.GraphicalPlacement.FillPatternType.Solid;
+
+            highlightedObjects.Add(trngl);
+        }
+
         #endregion
 
         #region OSTIS
