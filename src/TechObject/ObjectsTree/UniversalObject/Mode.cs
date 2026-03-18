@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -73,7 +74,7 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            foreach (State.StateType state in (State.StateType[])Enum.GetValues(typeof(State.StateType)))
+            foreach (State.StateType state in State.GetOrderedStates())
             {
                 switch (state)
                 {
@@ -115,7 +116,7 @@ namespace TechObject
                 baseOperation.Properties.Count > 0;
 
             var itemsList = new List<ITreeViewItem>();
-            itemsList.AddRange(stepsMngr);
+            itemsList.AddRange(stepsMngr.Where(s => !s.Empty));
             itemsList.Add(operPar);
             itemsList.Add(restrictionMngr);
 
@@ -452,13 +453,18 @@ namespace TechObject
             }
         }
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items;
-            }
-        }
+        override public ITreeViewItem[] Items =>
+        [
+            ..stepsMngr.Where(s => !s.Empty),
+            operPar,
+            restrictionMngr,
+            .. (List<ITreeViewItem>)(NeedBaseOperation ? [baseOperation as BaseOperation] : [])
+        ];
+
+        private bool NeedBaseOperation =>
+            baseOperation.Name != string.Empty &&
+            baseOperation.LuaName != string.Empty &&
+            baseOperation.Properties.Count > 0; 
 
         override public bool SetNewValue(string newName)
         {
@@ -751,6 +757,23 @@ namespace TechObject
 
             paramsManager.Float.FillWithStubs();
         }
+
+        public override bool IsInsertable => true;
+
+        public override ITreeViewItem Insert(IDialogFactory dialogService)
+        {
+            var dialog = dialogService.GetInsertDialog<State.StateType, Mode, Mode>();
+
+            if (dialog.ShowDialog(this) is DialogResult.OK)
+            {
+                return CreateStateStep(dialog.Result);
+            }
+
+            return null;
+        }
+
+        public ITreeViewItem CreateStateStep(State.StateType state)
+            => this[(int)state].Insert();
 
         public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance();
 

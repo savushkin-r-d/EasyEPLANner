@@ -827,24 +827,20 @@ namespace Editor
         [ExcludeFromCodeCoverage]
         private void CreateItem(ITreeViewItem item)
         {
+            if (item.IsInsertable != true)
+                return;
+
+            ITreeViewItem newItem = item.Insert(InsertDialogFactory);
+
+            if (newItem is null) 
+                return;
+
             if (item is TechObject.TechObject)
                 editorTView.Collapse(item);
 
-            if (item.IsInsertable == true)
-            {
-                ITreeViewItem newItem = item.Insert();
-                if (newItem != null)
-                {
-                    editorTView.RefreshObjects(item.Items);
-                    editorTView.RefreshObject(item);
-                    if (item.NeedRebuildParent && item.Parent != null)
-                    {
-                        editorTView.RefreshObject(item.Parent);
-                    }
+            editorTView.RefreshObjects(treeViewItemsList);
 
-                    HighlightItems();
-                }
-            }
+            HighlightItems();
         }
 
         /// <summary>
@@ -2282,6 +2278,8 @@ namespace Editor
 
             editorTView.EndUpdate();
         }
+
+        readonly IDialogFactory InsertDialogFactory = new InsertDialogFactory();
 
         public bool wasInit { get; set; }
         private bool IsCellEditing;

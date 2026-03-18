@@ -311,6 +311,8 @@ namespace Editor
             return null;
         }
 
+        public ITreeViewItem Insert(IDialogFactory dialogService) => null;
+
         public virtual bool IsUseDevList
         {
             get
