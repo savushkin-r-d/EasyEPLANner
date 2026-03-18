@@ -129,11 +129,11 @@
     <Compile Include="Device\ITag.cs" />
     <Compile Include="Editor\Dialogs\IInsertDialog.cs" />
     <Compile Include="Editor\Dialogs\IDialogFactory.cs" />
-    <Compile Include="Editor\Dialogs\StatesCreator.cs">
+    <Compile Include="Editor\Dialogs\StatesCreatorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Editor\Dialogs\StatesCreator.Designer.cs">
-      <DependentUpon>StatesCreator.cs</DependentUpon>
+    <Compile Include="Editor\Dialogs\StatesCreatorDialog.Designer.cs">
+      <DependentUpon>StatesCreatorDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="FileSavers\XML\Chbase\Channel.cs" />
@@ -554,8 +554,8 @@
     <EmbeddedResource Include="Editor\Controls\SearchIterator.resx">
       <DependentUpon>SearchIterator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\Dialogs\StatesCreator.resx">
-      <DependentUpon>StatesCreator.cs</DependentUpon>
+    <EmbeddedResource Include="Editor\Dialogs\StatesCreatorDialog.resx">
+      <DependentUpon>StatesCreatorDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\ImportExport\TechObjectsExportForm.resx">
       <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
