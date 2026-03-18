@@ -27,6 +27,8 @@ namespace Editor
             InitObjectListView();
             SetUpToolsHideFromConfig();
 
+            DialogFactory = new DialogFactory(this);
+
             dialogCallbackDelegate = new PI.HookProc(DlgWndHookCallbackFunction);
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
@@ -830,7 +832,7 @@ namespace Editor
             if (item.IsInsertable != true)
                 return;
 
-            ITreeViewItem newItem = item.Insert(InsertDialogFactory);
+            ITreeViewItem newItem = item.Insert(DialogFactory);
 
             if (newItem is null) 
                 return;
@@ -2279,7 +2281,7 @@ namespace Editor
             editorTView.EndUpdate();
         }
 
-        readonly IDialogFactory InsertDialogFactory = new InsertDialogFactory();
+        readonly IDialogFactory DialogFactory;
 
         public bool wasInit { get; set; }
         private bool IsCellEditing;

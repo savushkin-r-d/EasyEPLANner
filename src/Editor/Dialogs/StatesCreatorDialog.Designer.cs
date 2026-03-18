@@ -112,15 +112,16 @@
             this.CancelBttn.UseVisualStyleBackColor = true;
             this.CancelBttn.Click += new System.EventHandler(this.CancelBttn_Click);
             // 
-            // StatesCreator
+            // StatesCreatorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(264, 281);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MinimumSize = new System.Drawing.Size(280, 320);
-            this.Name = "StatesCreator";
+            this.Name = "StatesCreatorDialog";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Менеджер состояний";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);

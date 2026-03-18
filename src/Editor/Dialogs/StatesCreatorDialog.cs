@@ -18,10 +18,14 @@ namespace Editor
     [ExcludeFromCodeCoverage]
     public partial class StatesCreatorDialog : Form, IInsertDialog<State.StateType, Mode>
     {
-        public StatesCreatorDialog()
+        public StatesCreatorDialog(Control parent)
         {
             InitializeComponent();
+
+            ParentFrom = parent;
         }
+
+        public Control ParentFrom { get; private set; }
 
         public State.StateType Result { get; private set; }
 
@@ -36,7 +40,7 @@ namespace Editor
                 .ToArray();
             StatesListView.Items.AddRange(list);
 
-            return ShowDialog();
+            return ShowDialog(ParentFrom);
         }
 
         private void StatesListView_MouseDoubleClick(object sender, MouseEventArgs e)

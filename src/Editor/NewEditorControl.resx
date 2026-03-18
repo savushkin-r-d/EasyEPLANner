@@ -140,7 +140,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAW
-        lQAAAk1TRnQBSQFMAgEBGwEAAcgBFAHIARQBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+        lQAAAk1TRnQBSQFMAgEBGwEAAdABFAHQARQBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
         AwABcAMAAQEBAAEgBgABcC0AAf8DAAH/AwAB/wMAAf8zAAH/AwAB/wMAAf8DAAH/MwAB/wMAAf8DAAH/
         AwAB/2sAAf8DAAH/AcwB/wHMAf8BzAH/AcwB/wHMAf8BzAH/AcwB/wHMAf8DAAH/AwAB/yMAAf8DAAH/
         A9YB/wPWAf8D1gH/A9YB/wMAAf8DAAH/IwAB/wMAAf8DqAH/A6gB/wOoAf8DqAH/AwAB/wMAAf9fAAH/
@@ -781,12 +781,6 @@
   </data>
   <metadata name="contextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>408, 50</value>
-  </metadata>
-  <metadata name="toolSettingsStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>267, 50</value>
-  </metadata>
-  <metadata name="searchButtonToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>556, 50</value>
   </metadata>
   <metadata name="toolSettingsStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>267, 50</value>

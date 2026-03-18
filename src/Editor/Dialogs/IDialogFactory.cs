@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using TechObject;
 
 namespace Editor
@@ -15,11 +16,11 @@ namespace Editor
         IInsertDialog<TRslt, TArg> GetInsertDialog<TRslt, TBase, TArg>();
     }
 
-    public class InsertDialogFactory : IDialogFactory
+    public class DialogFactory(Control parent) : IDialogFactory
     {
         public IInsertDialog<TRslt, TArg> GetInsertDialog<TRslt, TBase, TArg>() => typeof(TBase) switch
         {
-            var T when T == typeof(Mode) => new StatesCreatorDialog() as IInsertDialog<TRslt, TArg>,
+            var T when T == typeof(Mode) => new StatesCreatorDialog(parent) as IInsertDialog<TRslt, TArg>,
             _ => null,
         };
     }
