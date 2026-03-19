@@ -122,7 +122,7 @@
             this.Name = "StatesCreatorDialog";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Менеджер состояний";
+            this.Text = "Добавить состояние операции";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
