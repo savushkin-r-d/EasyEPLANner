@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aga.Controls.Tree;
 using Editor;
@@ -678,6 +679,7 @@ namespace TechObject
 
         public StateType Type { get; private set; }
 
+        [ExcludeFromCodeCoverage]
         public override ImageIndexEnum ImageIndex => Type switch
         {
             StateType.IDLE => ImageIndexEnum.STATE_IDLE,

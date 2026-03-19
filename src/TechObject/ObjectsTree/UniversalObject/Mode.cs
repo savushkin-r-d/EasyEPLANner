@@ -57,6 +57,14 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получение состояния по типу
+        /// </summary>
+        /// <param name="stateType">Тип состояния</param>
+        /// <returns>Состояние заданного типа</returns>
+        public State this[State.StateType stateType] 
+            => stepsMngr.FirstOrDefault(state => state.Type == stateType);
+
+        /// <summary>
         /// Создание новой операции.
         /// </summary>
         /// <param name="name">Имя операции.</param>
@@ -101,31 +109,6 @@ namespace TechObject
 
             if (this.baseOperation is ITreeViewItem itviBaseOperation)
                 itviBaseOperation.ValueChanged += (sender) => OnValueChanged(sender);
-
-            SetItems();
-        }
-
-        /// <summary>
-        /// Добавление полей в массив для отображения на дереве.
-        /// </summary>
-        public void SetItems()
-        {
-            bool notEmptyBaseOperation = baseOperation.Name != string.Empty &&
-                baseOperation.LuaName != string.Empty;
-            bool baseOperationHasProperties =
-                baseOperation.Properties.Count > 0;
-
-            var itemsList = new List<ITreeViewItem>();
-            itemsList.AddRange(stepsMngr.Where(s => !s.Empty));
-            itemsList.Add(operPar);
-            itemsList.Add(restrictionMngr);
-
-            if (notEmptyBaseOperation && baseOperationHasProperties)
-            {
-                itemsList.Add(baseOperation as BaseOperation);
-            }
-
-            items = itemsList.ToArray();
         }
 
         public OperationParams GetOperationParams()
@@ -154,7 +137,6 @@ namespace TechObject
             clone.operPar = operPar.Clone(clone);
 
             clone.restrictionMngr = restrictionMngr.Clone();
-            clone.SetItems();
 
             clone.States.ForEach(state => state.ValueChanged += sender => clone.OnValueChanged(sender));
             clone.stepsMngr.ForEach(step => step.ValueChanged += sender => clone.OnValueChanged(sender));
@@ -504,7 +486,6 @@ namespace TechObject
 
             // Инициализация базовой операции по имени
             baseOperation.Init(newBaseOperationName, this);
-            SetItems();
 
             if (CloneExtraProperties != null)
                 baseOperation.SetExtraProperties(CloneExtraProperties);
@@ -577,7 +558,6 @@ namespace TechObject
                 int index = stepsMngr.IndexOf(selectedState);
                 stepsMngr.Remove(selectedState);
                 stepsMngr.Insert(index, newState);
-                SetItems();
 
                 newState.AddParent(this);
                 return newState;
@@ -773,7 +753,7 @@ namespace TechObject
         }
 
         public ITreeViewItem CreateStateStep(State.StateType state)
-            => this[(int)state].Insert();
+            => this[state].Insert();
 
         public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance();
 
@@ -782,7 +762,6 @@ namespace TechObject
         private string name;           /// Имя операции.
         private List<State> stepsMngr;/// Список шагов операции для состояний.
         private RestrictionManager restrictionMngr;
-        private ITreeViewItem[] items;
 
         private OperationParams operPar;
 

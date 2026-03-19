@@ -829,7 +829,7 @@ namespace Editor
         [ExcludeFromCodeCoverage]
         private void CreateItem(ITreeViewItem item)
         {
-            if (item.IsInsertable != true)
+            if (!item.IsInsertable)
                 return;
 
             ITreeViewItem newItem = item.Insert(DialogFactory);

@@ -32,17 +32,17 @@ namespace Editor
         public DialogResult ShowDialog(Mode mode)
         {
             var list = State.GetOrderedStates()
-                .Select(s => new ListViewItem(s.Name(), s.ToString()) 
+                .Select(state => new ListViewItem(state.Name(), state.ToString()) 
                 { 
-                    Tag = s,
-                    ForeColor = mode[(int)s].Empty ? Color.DarkGray : Color.Black
+                    Tag = state,
+                    ForeColor = mode[state].Empty ? Color.DarkGray : Color.Black
                 })
                 .ToArray();
             StatesListView.Items.AddRange(list);
 
             return ShowDialog(ParentFrom);
         }
-
+         
         private void StatesListView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             SetResult();

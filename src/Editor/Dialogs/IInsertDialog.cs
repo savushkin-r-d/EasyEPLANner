@@ -7,7 +7,7 @@ namespace Editor
     /// </summary>
     /// <typeparam name="TRslt">Результат</typeparam>
     /// <typeparam name="TArg">Аргумент передоваемый в диалог</typeparam>
-    public interface IInsertDialog<TRslt, TArg>
+    public interface IInsertDialog<out TRslt, in TArg>
     {
         /// <summary>
         /// Отобразить диалог

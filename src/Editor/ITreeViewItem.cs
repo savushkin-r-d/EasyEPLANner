@@ -157,7 +157,7 @@ namespace Editor
         /// <returns>
         /// Добавленный элемент. Может быть null, тогда ничего не вставляется.
         /// </returns>
-        ITreeViewItem Insert(IDialogFactory dialogSerive);
+        ITreeViewItem Insert(IDialogFactory dialogService);
 
         /// <summary>    
         /// Признак возможности добавления устройств через список устройств.

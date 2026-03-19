@@ -319,5 +319,23 @@ namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjectTest
                 Assert.AreEqual(DrawInfo.Style.GREEN_GRAY_BOX, draw[4].DrawingStyle);
             });
         }
+
+        [Test]
+        public void Insert_Test()
+        {
+            var mode = new Mode("mode 1", getN => 1, null);
+
+            var dialogFactory = Mock.Of<IDialogFactory>(df =>
+                df.GetInsertDialog<State.StateType, Mode, Mode>() == Mock.Of<IInsertDialog<State.StateType, Mode>>(d =>
+                    d.ShowDialog(It.IsAny<Mode>()) == DialogResult.OK &&
+                    d.Result == State.StateType.STARTING));
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(mode[State.StateType.STARTING].Empty);
+                mode.Insert(dialogFactory);
+                Assert.IsFalse(mode[State.StateType.STARTING].Empty);
+            });   
+        }
     }
 }
