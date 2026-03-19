@@ -8,20 +8,15 @@ namespace Editor
     public interface IDialogFactory
     {
         /// <summary>
-        /// Получить диалог создания элемента для отоброжения
+        /// Получитть диалог создания шага состояния
         /// </summary>
-        /// <typeparam name="TRslt">Результат диалого</typeparam>
-        /// <typeparam name="TBase">Базовый тип для получения диалога</typeparam>
-        /// <typeparam name="TArg">Тип аргумента передаваемый в диалог</typeparam>
-        IInsertDialog<TRslt, TArg> GetInsertDialog<TRslt, TBase, TArg>();
+        /// <returns></returns>
+        IInsertDialog<State.StateType, Mode> GetStatesCreatorDialog();
     }
 
-    public class DialogFactory(Control parent) : IDialogFactory
+    public class DialogFactory(Control parent = null) : IDialogFactory
     {
-        public IInsertDialog<TRslt, TArg> GetInsertDialog<TRslt, TBase, TArg>() => typeof(TBase) switch
-        {
-            var T when T == typeof(Mode) => new StatesCreatorDialog(parent) as IInsertDialog<TRslt, TArg>,
-            _ => null,
-        };
+        public IInsertDialog<State.StateType, Mode> GetStatesCreatorDialog()
+            => new StatesCreatorDialog(parent);
     }
 }

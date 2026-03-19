@@ -35,7 +35,7 @@ namespace Editor
                 .Select(state => new ListViewItem(state.Name(), state.ToString()) 
                 { 
                     Tag = state,
-                    ForeColor = mode[state].Empty ? Color.DarkGray : Color.Black
+                    ForeColor = mode[(int)state].Empty ? Color.DarkGray : Color.Black
                 })
                 .ToArray();
             StatesListView.Items.AddRange(list);

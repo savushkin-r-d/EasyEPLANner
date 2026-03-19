@@ -57,14 +57,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получение состояния по типу
-        /// </summary>
-        /// <param name="stateType">Тип состояния</param>
-        /// <returns>Состояние заданного типа</returns>
-        public State this[State.StateType stateType] 
-            => stepsMngr.FirstOrDefault(state => state.Type == stateType);
-
-        /// <summary>
         /// Создание новой операции.
         /// </summary>
         /// <param name="name">Имя операции.</param>
@@ -740,9 +732,9 @@ namespace TechObject
 
         public override bool IsInsertable => true;
 
-        public override ITreeViewItem Insert(IDialogFactory dialogService)
+        public override ITreeViewItem Insert(IDialogFactory dialogFactory)
         {
-            var dialog = dialogService.GetInsertDialog<State.StateType, Mode, Mode>();
+            var dialog = dialogFactory.GetStatesCreatorDialog();
 
             if (dialog.ShowDialog(this) is DialogResult.OK)
             {
@@ -753,7 +745,7 @@ namespace TechObject
         }
 
         public ITreeViewItem CreateStateStep(State.StateType state)
-            => this[state].Insert();
+            => this[(int)state].Insert();
 
         public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance();
 
