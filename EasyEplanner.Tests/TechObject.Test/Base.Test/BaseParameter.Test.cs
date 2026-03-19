@@ -5,6 +5,7 @@ using Moq;
 using System.Reflection;
 using EplanDevice;
 using System;
+using NUnit.Framework.Constraints;
 
 namespace EasyEplanner.Tests
 {
@@ -55,6 +56,10 @@ namespace EasyEplanner.Tests
             {
                 BaseParameter.DisplayObject.Signals,
                 BaseParameter.DisplayObject.Parameters,
+                BaseParameter.DisplayObject.AI,
+                BaseParameter.DisplayObject.AO,
+                BaseParameter.DisplayObject.DI,
+                BaseParameter.DisplayObject.DO,
             };
 
             var newObj = new BaseParameterImplementation(stub, stub, stub,
@@ -209,12 +214,12 @@ namespace EasyEplanner.Tests
                         BaseParameter.DisplayObject.Signals,
                         BaseParameter.DisplayObject.Parameters
                     },
-                    new EplanDevice.DeviceType[]
+                    new DeviceType[]
                     {
-                        EplanDevice.DeviceType.AI,
-                        EplanDevice.DeviceType.AO,
-                        EplanDevice.DeviceType.DI,
-                        EplanDevice.DeviceType.DO
+                        DeviceType.AI,
+                        DeviceType.AO,
+                        DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
+                        DeviceType.DO, DeviceType.HL,
                     },
                     null,
                     true,
@@ -225,12 +230,25 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Signals,
                     },
-                    new EplanDevice.DeviceType[]
+                    new DeviceType[]
                     {
-                        EplanDevice.DeviceType.AI,
-                        EplanDevice.DeviceType.AO,
-                        EplanDevice.DeviceType.DI,
-                        EplanDevice.DeviceType.DO
+                        DeviceType.AI,
+                        DeviceType.AO,
+                        DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
+                        DeviceType.DO, DeviceType.HL,
+                    },
+                    null,
+                    false,
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.DI,
+                    },
+                    new DeviceType[]
+                    {
+                        DeviceType.DI, DeviceType.SB, DeviceType.LS, DeviceType.FS, DeviceType.GS, DeviceType.TS,
                     },
                     null,
                     false,
@@ -241,14 +259,14 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Parameters
                     },
-                    null,
+                    new DeviceType[] { },
                     null,
                     true,
                 },
                 new object[]
                 {
                     null,
-                    null,
+                    new DeviceType[] { },
                     null,
                     false,
                 },
@@ -420,7 +438,7 @@ namespace EasyEplanner.Tests
 
         [TestCase("parameter1", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter1")]
         [TestCase("parameter2", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter2")]
-        [TestCase("other", "", "")]
+        [TestCase("other", "", "LuaName = other")]
         public void SaveToPrgLua_CheckBaseOperationOwner(string value, string prefix,
             string expected)
         {
@@ -545,6 +563,26 @@ namespace EasyEplanner.Tests
 
             return deviceManagerMock;
         }
+
+        [Test]
+        public void Check()
+        {
+            var baseOperation = new BaseOperation("", "", new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+
+            var baseParamter = new ActiveParameter("bp", "");
+
+            baseParamter.Check();
+
+            baseParamter.SetNewValue("qwe");
+            baseParamter.Check();
+
+            baseParamter.Owner = baseOperation;
+            baseParamter.Check();
+
+            Assert.AreEqual("", baseParamter.Value);
+        }
+
+
 
         string stub = string.Empty;
     }
