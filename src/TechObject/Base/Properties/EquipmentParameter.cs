@@ -215,7 +215,7 @@ namespace TechObject
             out DeviceSubType[] devSubTypes,
             out bool displayParameters)
         {
-            devTypes = [.. DeviceTypeExtensions.DeviceTypes];
+            devTypes = null;
             devSubTypes = null;
             displayParameters = LuaName.EndsWith("SET_VALUE");
         }
