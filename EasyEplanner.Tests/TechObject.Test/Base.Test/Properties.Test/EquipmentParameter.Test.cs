@@ -137,6 +137,12 @@ namespace EasyEplannerTests.TechObjectTest.BasePropertiesTest
                 equip.SetDeviceByDefault("DEV", 1);
                 Assert.AreEqual("DEV1LS1", equip.Value);
             });
+
+
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static)
+                .SetValue(null, DeviceManager.GetInstance());
         }
     }
 }
