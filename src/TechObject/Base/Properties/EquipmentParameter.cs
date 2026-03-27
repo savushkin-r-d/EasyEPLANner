@@ -306,7 +306,7 @@ namespace TechObject
             var err = new StringBuilder();
             var wrongDevices = Value.Split(' ').Where(v => !CheckValue(v));
 
-            if (wrongDevices.Count() > 0)
+            if (wrongDevices.Any())
             {
                 err.Append($"Проверьте оборудование: \"{Name}\" в объекте \"{techObjectName}\". Некорректные значения: {string.Join(", ", wrongDevices)}.\n");
             }
@@ -355,6 +355,6 @@ namespace TechObject
         /// </summary>
         private List<int> parameterIndexes;
 
-        private List<EquipmentParameter> relatedParameters = [];
+        private readonly List<EquipmentParameter> relatedParameters = [];
     }
 }

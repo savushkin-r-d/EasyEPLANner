@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Editor;
 using Eplan.EplApi.Base;
 using EplanDevice;
@@ -147,14 +148,14 @@ namespace TechObject
         #region Проверка и автоматическое заполнение оборудования
         public string Check()
         {
-            var errors = "";
+            var errors = new StringBuilder();
 
             foreach (var equip in items.OfType<EquipmentParameter>())
             {
-                errors += equip.Check(owner.NameEplan, owner.TechNumber, owner.DisplayText[0]);
+                errors.Append(equip.Check(owner.NameEplan, owner.TechNumber, owner.DisplayText[0]));
             }
 
-            return errors;
+            return errors.ToString();
         }
         #endregion
 
@@ -219,14 +220,10 @@ namespace TechObject
         /// индексов.</param>
         public void Synch(int[] array)
         {
-            foreach(var treeViewItem in items)
+            foreach(var equipmentParameter in GetDescendantsParameters()
+                .OfType<EquipmentParameter>())
             {
-                var equipmentParameter = treeViewItem as EquipmentParameter;
-                bool validParameter = equipmentParameter != null;
-                if(validParameter)
-                {
-                    equipmentParameter.Synch(array);
-                }
+                equipmentParameter.Synch(array);
             }
         }
         #endregion
@@ -256,7 +253,7 @@ namespace TechObject
         {
             foreach (var index in Enumerable.Range(0, items.Count))
             {
-                var equipmentItem = genericEquipment.items[index] as BaseParameter;
+                var equipmentItem = genericEquipment.items[index];
                 if (equipmentItem.IsFilled is false)
                     continue;
 
@@ -276,8 +273,8 @@ namespace TechObject
 
             foreach (var index in Enumerable.Range(0, refEquipment.items.Count))
             {
-                var refEquipmentItem = refEquipment.items[index] as BaseParameter;
-                if (equipmentList.TrueForAll(equipmentItem => (equipmentItem.items[index] as BaseParameter).Value == refEquipmentItem.Value))
+                var refEquipmentItem = refEquipment.items[index];
+                if (equipmentList.TrueForAll(equipmentItem => (equipmentItem.items[index]).Value == refEquipmentItem.Value))
                     items[index].SetNewValue(refEquipmentItem.Value);
                 else
                     items[index].SetNewValue("");
@@ -310,8 +307,8 @@ namespace TechObject
             return [.. items.SelectMany(i => i.GetDescendants())];
         }
 
-        private TechObject owner;
-        private List<BaseParameter> items = [];
+        private readonly TechObject owner;
+        private readonly List<BaseParameter> items = [];
 
         private static IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
     }

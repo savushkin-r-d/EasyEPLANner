@@ -206,6 +206,48 @@ namespace TechObjectTests
         }
 
         [Test]
+        public void Sync_Test()
+        {
+            var LS1 = new LS("DEV1LS1", "+DEV1-LS1", "description", 1, "DEV", 1, "");
+            var STUB = new LS(CommonConst.Cap, "+DEV1-LS1", CommonConst.Cap, 1, "DEV", 1, "");
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static)
+                .SetValue(null, Mock.Of<IDeviceManager>(m =>
+                    m.GetDevice("DEV1LS1") == LS1 &&
+                    m.GetDeviceByEplanName("DEV1LS1") == LS1 &&
+                    m.GetDeviceIndex("DEV1LS1") == 1 &&
+                    m.GetDeviceByIndex(1) == LS1 &&
+                    m.GetDeviceByIndex(0) == STUB
+                ));
+
+            var equipment = new Equipment(null);
+
+            var equip = new EquipmentParameter("EQ", "name");
+            var par = equip.AddEquipment("EQ_SET_VALUE", "name", "");
+            equip.Owner = equipment;
+
+            equipment.AddItems(new List<BaseParameter>() { equip });
+
+            equip.SetNewValue("DEV1LS1");
+            par.SetNewValue("DEV1LS1");
+
+
+            Assert.Multiple(() =>
+            {
+                equipment.Synch(new int[] { 0, 1 });
+
+                Assert.AreEqual("DEV1LS1", equip.Value);
+                Assert.AreEqual("DEV1LS1", par.Value);
+
+                equipment.Synch(new int[] { 0, -1 });
+
+                Assert.AreEqual("", equip.Value);
+                Assert.AreEqual("", par.Value);
+            });
+        }
+
+        [Test]
         public void Props_Test()
         {
             var equipment = new Equipment(null);
