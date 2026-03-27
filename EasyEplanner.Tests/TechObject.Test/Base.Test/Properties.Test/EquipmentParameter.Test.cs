@@ -24,6 +24,8 @@ namespace EasyEplannerTests.TechObjectTest.BasePropertiesTest
                 Assert.AreEqual("value", rpar.Value);
                 Assert.IsTrue(equip.Delete(rpar));
                 Assert.AreEqual("", rpar.Value);
+
+                Assert.IsFalse (equip.Delete(1));
             });
         }
 
@@ -43,6 +45,8 @@ namespace EasyEplannerTests.TechObjectTest.BasePropertiesTest
                 Assert.IsNull(equip.Replace(rpar, "-"));
                 Assert.AreSame(rpar, equip.Replace(rpar, copy));
                 Assert.AreEqual("", rpar.Value); // b.c. for SetNewValue need DeviceManager; 
+
+                Assert.IsNull(equip.Replace(0, "-"));
             });
         }
 
@@ -82,6 +86,27 @@ namespace EasyEplannerTests.TechObjectTest.BasePropertiesTest
                 Assert.IsNull(devTypes);
                 Assert.IsNull(devSubTypes);
                 Assert.IsTrue(displayParameters);
+            });
+        }
+
+        [Test]
+        public void Props_Test()
+        {
+            var equip = new EquipmentParameter("equip", "equip name", "");
+            Assert.Multiple(() =>
+            {
+
+                Assert.IsTrue(equip.IsCopyable);
+                Assert.IsTrue(equip.IsReplaceable);
+                Assert.IsTrue(equip.IsDeletable);
+                Assert.IsTrue(equip.IsInsertableCopy);
+
+                Assert.AreEqual("equip name", equip.DisplayText[0]);
+
+                Assert.AreEqual("Нет", equip.DisplayText[1]);
+
+                equip.SetValue("value");
+                Assert.AreEqual("value", equip.DisplayText[1]);
             });
         }
     }

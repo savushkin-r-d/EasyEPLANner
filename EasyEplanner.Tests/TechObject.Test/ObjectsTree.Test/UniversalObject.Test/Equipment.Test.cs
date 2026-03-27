@@ -204,5 +204,26 @@ namespace TechObjectTests
                 Assert.IsFalse(equipment.Delete(1));
             });
         }
+
+        [Test]
+        public void Props_Test()
+        {
+            var equipment = new Equipment(null);
+
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(equipment.IsCopyable);
+                Assert.IsTrue(equipment.IsDeletable);
+                Assert.IsTrue(equipment.ShowWarningBeforeDelete);
+                Assert.IsTrue((equipment as IAutocompletable)?.CanExecute);
+
+                Assert.AreEqual("", equipment.DisplayText[1]);
+                Assert.AreEqual("Оборудование", equipment.DisplayText[0]);
+
+                equipment.AddItems(new List<BaseParameter>() { new EquipmentParameter("", "") });
+                Assert.AreEqual("Оборудование (1)", equipment.DisplayText[0]);
+            });
+        }
     }
 }

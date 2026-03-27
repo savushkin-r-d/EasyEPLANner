@@ -161,7 +161,7 @@ namespace TechObject
         #region Реализация ITreeViewItem
         public override string[] DisplayText => [Name, ""];
 
-        public string Name => items.Count() > 0 ? $"Оборудование ({items.Count()})" : "Оборудование";
+        public string Name => items.Count > 0 ? $"Оборудование ({items.Count})" : "Оборудование";
 
 
         public override ITreeViewItem[] Items => [.. items];
