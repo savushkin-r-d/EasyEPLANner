@@ -1,5 +1,7 @@
 ﻿using EplanDevice;
+using Moq;
 using NUnit.Framework;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,6 +109,33 @@ namespace EasyEplannerTests.TechObjectTest.BasePropertiesTest
 
                 equip.SetValue("value");
                 Assert.AreEqual("value", equip.DisplayText[1]);
+            });
+        }
+
+        [Test]
+        public void SetDeviceByDefault()
+        {
+            var LS1 = new LS("DEV1LS1", "+DEV1-LS1", "description", 1, "DEV", 1, "");
+            var STUB = new LS(CommonConst.Cap, "+DEV1-LS1", CommonConst.Cap, 1, "DEV", 1, "");
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static)
+                .SetValue(null, Mock.Of<IDeviceManager>(m =>
+                    m.GetDevice("DEV1LS1") == LS1 &&
+                    m.GetDeviceByEplanName("DEV1LS1") == LS1 &&
+                    m.GetDeviceIndex("DEV1LS1") == 1 &&
+                    m.GetDeviceByIndex(1) == LS1 &&
+                    m.GetDeviceByIndex(0) == STUB
+                ));
+
+            var equip = new EquipmentParameter("equip", "equip", "LS1");
+
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("LS1", equip.Value);
+                equip.SetDeviceByDefault("DEV", 1);
+                Assert.AreEqual("DEV1LS1", equip.Value);
             });
         }
     }

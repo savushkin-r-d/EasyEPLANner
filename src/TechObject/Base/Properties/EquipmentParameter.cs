@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using static TechObject.TechObject;
 
 namespace TechObject
 {
@@ -288,21 +289,8 @@ namespace TechObject
         /// <param name="nameEplan">ОУ</param>
         /// <param name="techNumber">Номер объекита</param>
         /// <param name="techObjectName">Отображаемое название объекта для ошибки</param>
-        public StringBuilder Check(string nameEplan, int techNumber, string techObjectName)
+        public StringBuilder Check(string techObjectName)
         {
-            if (DefaultValue != "" && Value == DefaultValue)
-            {
-                string deviceName = $"{nameEplan}{techNumber}{DefaultValue}";
-                var device = deviceManager.GetDevice(deviceName);
-                if (device.Description != CommonConst.Cap)
-                {
-                    SetNewValue(deviceName);
-                }
-                else
-                {
-                    SetNewValue("");
-                }
-            }
             var err = new StringBuilder();
             var wrongDevices = Value.Split(' ').Where(v => !CheckValue(v));
 
@@ -320,13 +308,30 @@ namespace TechObject
                         err.Append($"Проверьте оборудование: \"{Name}\" в объекте \"{techObjectName}\". Поле не заполнено.\n");
                     }
 
-                    err.Append(parameter.Check(nameEplan, techNumber, techObjectName));
+                    err.Append(parameter.Check(techObjectName));
                 }
             }
 
             return err;
         }
 
+
+        public void SetDeviceByDefault(string nameEplan, int techNumber)
+        {
+            if (DefaultValue != "" && Value == DefaultValue)
+            {
+                string deviceName = $"{nameEplan}{techNumber}{DefaultValue}";
+                var device = deviceManager.GetDevice(deviceName);
+                if (device.Description != CommonConst.Cap)
+                {
+                    SetNewValue(deviceName);
+                }
+                else
+                {
+                    SetNewValue("");
+                }
+            }
+        }
 
         /// <summary>
         /// Проверить строковое значение параметра

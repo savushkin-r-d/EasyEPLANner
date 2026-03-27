@@ -150,9 +150,14 @@ namespace TechObject
         {
             var errors = new StringBuilder();
 
+            foreach (var equip in GetDescendantsParameters().OfType<EquipmentParameter>())
+            {
+                equip.SetDeviceByDefault(owner.NameEplan, owner.TechNumber);
+            }
+
             foreach (var equip in items.OfType<EquipmentParameter>())
             {
-                errors.Append(equip.Check(owner.NameEplan, owner.TechNumber, owner.DisplayText[0]));
+                errors.Append(equip.Check(owner.DisplayText[0]));
             }
 
             return errors.ToString();
