@@ -168,20 +168,11 @@ namespace TechObject
 
         public override bool IsReplaceable => true;
 
-        public override ITreeViewItem Replace(object child, 
-            object copyObject)
+        public override ITreeViewItem Replace(object child, object copyObject)
         {
-            var property = child as EquipmentParameter;
-            var copiedObject = copyObject as EquipmentParameter;
-            bool objectsNotNull = property != null && copiedObject != null;
-            if (objectsNotNull)
-            {
-                property.SetNewValue(copiedObject.Value);
-                property.ModifyDevNames(Owner.NameEplan, owner.TechNumber);
-
-                property.AddParent(this);
-                return property;
-            }
+            if (child is EquipmentParameter equip)
+                return equip.InsertCopy(copyObject);
+            
             return null;
         }
 

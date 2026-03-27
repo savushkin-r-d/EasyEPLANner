@@ -188,14 +188,9 @@ namespace TechObject
 
         public override ITreeViewItem Replace(object child, object copyObject)
         {
-            if (child is EquipmentParameter equip && copyObject is EquipmentParameter copiedEquip)
-            {
-                equip.SetNewValue(copiedEquip.Value);
-                ModifyDevNames();
+            if (child is EquipmentParameter equip)
+                return equip.InsertCopy(copyObject);
 
-                equip.AddParent(this);
-                return equip;
-            }
             return null;
         }
 
