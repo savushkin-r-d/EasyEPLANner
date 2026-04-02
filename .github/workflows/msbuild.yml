@@ -51,6 +51,7 @@ jobs:
       if: >-
         (github.event.action == 'labeled' && github.event.label.name == 'safe to test') ||
         ((github.event.action == 'synchronize' || github.event.action == 'opened') && steps.is_organization_member.outputs.response == '204') ||
+        github.actor == 'dependabot[bot]' ||
         github.event_name == 'merge_group' ||
         startsWith(github.ref, 'refs/tags/')
       run: echo "result=success" >> $env:GITHUB_OUTPUT
