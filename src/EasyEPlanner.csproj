@@ -17,6 +17,8 @@
     <SccAuxPath>Svn</SccAuxPath>
     <SccProvider>SubversionScc</SccProvider>
     <TargetFrameworkProfile />
+    <RunSettingsFilePath>
+    </RunSettingsFilePath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -127,6 +129,14 @@
     <Compile Include="Device\IODevices\WATCHDOG.cs" />
     <Compile Include="Device\ISetupTerminal.cs" />
     <Compile Include="Device\ITag.cs" />
+    <Compile Include="Editor\Dialogs\IInsertDialog.cs" />
+    <Compile Include="Editor\Dialogs\IDialogFactory.cs" />
+    <Compile Include="Editor\Dialogs\StatesCreatorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editor\Dialogs\StatesCreatorDialog.Designer.cs">
+      <DependentUpon>StatesCreatorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="FileSavers\XML\Chbase\Channel.cs" />
     <Compile Include="FileSavers\XML\Chbase\Driver.cs" />
@@ -290,10 +300,10 @@
     </Compile>
     <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Editor\ObjectProperty.cs" />
-    <Compile Include="Editor\ObjectAdder\ObjectAdder.cs">
+    <Compile Include="Editor\Dialogs\ObjectAdder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Editor\ObjectAdder\ObjectAdder.Designer.cs">
+    <Compile Include="Editor\Dialogs\ObjectAdder.Designer.cs">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\TreeViewItem.cs" />
@@ -546,6 +556,9 @@
     <EmbeddedResource Include="Editor\Controls\SearchIterator.resx">
       <DependentUpon>SearchIterator.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Editor\Dialogs\StatesCreatorDialog.resx">
+      <DependentUpon>StatesCreatorDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editor\ImportExport\TechObjectsExportForm.resx">
       <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -556,7 +569,7 @@
       <DependentUpon>NewEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\ObjectAdder\ObjectAdder.resx">
+    <EmbeddedResource Include="Editor\Dialogs\ObjectAdder.resx">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileSavers\XML\Chbase\XMLReporterDialog.resx">
