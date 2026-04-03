@@ -54,7 +54,7 @@ namespace TechObjectTests
 
             Assert.Multiple(() => {
                 var system = root["SYSTEM"];
-                Assert.AreEqual(11, system.Channels.Count);
+                Assert.AreEqual(14, system.Channels.Count);
                 Assert.NotNull(system["SYSTEM.UP_TIME"]);
                 Assert.NotNull(system["SYSTEM.WASH_VALVE_SEAT_PERIOD"]);
                 Assert.NotNull(system["SYSTEM.P_V_OFF_DELAY_TIME"]);
@@ -66,6 +66,9 @@ namespace TechObjectTests
                 Assert.NotNull(system["SYSTEM.P_RESTRICTIONS_MANUAL_TIME"]);
                 Assert.NotNull(system["SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR"]);
                 Assert.NotNull(system["SYSTEM.VERSION"]);
+                Assert.NotNull(system["SYSTEM.NODES_COMM_ERROR"]);
+                Assert.NotNull(system["SYSTEM.WATCHDOG_ERROR"]);
+                Assert.NotNull(system["SYSTEM.COMMUN_ERROR"]);
 
                 var tankObj = root["TankObj1"];
                 Assert.AreEqual(11, tankObj.Channels.Count);

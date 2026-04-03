@@ -179,6 +179,9 @@ namespace TechObject
             root.AddChannel(SYSTEM, $"{SYSTEM}.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
             root.AddChannel(SYSTEM, $"{SYSTEM}.VERSION")
                 .WithParameter("IsString", "1");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.NODES_COMM_ERROR");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.WATCHDOG_ERROR");
+            root.AddChannel(SYSTEM, $"{SYSTEM}.COMMUN_ERROR");
 
             var nodes = IO.IOManager.GetInstance().IONodes;
             if (nodes.Count is 0 or 1)
