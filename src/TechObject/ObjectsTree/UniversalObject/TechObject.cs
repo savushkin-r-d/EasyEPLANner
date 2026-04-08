@@ -944,19 +944,12 @@ namespace TechObject
             bool equipmentNotNull = equipment != null && copyEquipment != null;
             if (equipmentNotNull)
             {
-                BaseParameter[] objEquips = equipment.Items
-                    .Select(x => x as BaseParameter).ToArray();
-                BaseParameter[] copyEquips = copyEquipment.Items
-                    .Select(x => x as BaseParameter).ToArray();
+                BaseParameter[] objEquips = [.. equipment.GetDescendantsParameters()];
+                BaseParameter[] copyEquips = [.. copyEquipment.GetDescendantsParameters()];
+                
                 foreach (var objEquip in objEquips)
                 {
-                    foreach (var copyEquip in copyEquips)
-                    {
-                        if (objEquip.LuaName == copyEquip.LuaName)
-                        {
-                            objEquip.SetNewValue(copyEquip.Value);
-                        }
-                    }
+                    objEquip.SetNewValue(copyEquips.FirstOrDefault(eq => eq.LuaName == objEquip.LuaName)?.Value ?? "");
                 }
                 equipment.ModifyDevNames();
 

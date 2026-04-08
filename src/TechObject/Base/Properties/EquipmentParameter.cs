@@ -1,6 +1,14 @@
 ﻿using EasyEPlanner;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Editor;
+using EplanDevice;
+using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using static TechObject.TechObject;
 
 namespace TechObject
 {
@@ -12,7 +20,7 @@ namespace TechObject
         public EquipmentParameter(string luaName, string name,
             string defaultValue = "", List<DisplayObject> displayObjects = null)
             : base(luaName, name, defaultValue, displayObjects) 
-        {
+        { 
             parameterIndexes = new List<int>();
         }
 
@@ -22,6 +30,9 @@ namespace TechObject
                 DefaultValue, DisplayObjects);
             newProperty.SetNewValue(Value);
             newProperty.NeedDisable = NeedDisable;
+            newProperty.relatedParameters
+                .AddRange(relatedParameters.Select(rp => rp.Clone()).OfType<EquipmentParameter>());
+            
             return newProperty;
         }
 
@@ -41,50 +52,12 @@ namespace TechObject
         }
         #endregion
 
-        public override bool IsEmpty
-        {
-            get
-            {
-                bool isEmpty = Value == DefaultValue &&
-                    DefaultValue == "";
-                if (isEmpty)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public override bool IsEmpty => Value == "" || Value == "" && DefaultValue == "";
 
         #region Реализация ITreeViewItem
-        public override string[] DisplayText
-        {
-            get
-            {
-                if(Value == "")
-                {
-                    return new string[] 
-                    { 
-                        Name, 
-                        StaticHelper.CommonConst.StubForCells 
-                    };
-                }
-                else
-                {
-                    return new string[] { Name, Value };
-                }
-            }
-        }
+        public override string[] DisplayText => [Name, Value == "" ? StaticHelper.CommonConst.StubForCells : Value];
 
-        public override string[] EditText
-        {
-            get
-            {
-                return new string[] { Name, Value };
-            }
-        }
+        public override string[] EditText => [Name, Value];
 
         public override bool SetNewValue(string newValue)
         {
@@ -183,34 +156,210 @@ namespace TechObject
             return string.Join(" ", parameters);
         }
 
-        public override bool IsReplaceable
+        public override object Owner
         {
-            get
+            get => base.Owner;
+            set
             {
-                return true;
+                base.Owner = value;
+                relatedParameters.ForEach(p => p.Owner = value);
             }
         }
 
-        override public bool IsCopyable
+        public Equipment Equipment => Owner as Equipment;
+
+        public override bool IsReplaceable => true;
+
+        override public bool IsCopyable => true;
+
+        public override bool IsDeletable => true;
+
+        public override bool IsInsertableCopy => true;
+
+        public override ITreeViewItem[] Items => [.. relatedParameters];
+
+        public override bool Delete(object child)
         {
-            get
-            {
-                return true;
-            }
+            if (child is not EquipmentParameter equip)
+                return false;
+
+            equip.SetNewValue("");
+            return true;
         }
 
-        public override bool IsDeletable
+        public override ITreeViewItem Replace(object child, object copyObject)
         {
-            get
+            if (child is EquipmentParameter equip)
+                return equip.InsertCopy(copyObject);
+
+            return null;
+        }
+
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            if (obj is EquipmentParameter equip)
             {
-                return true;
+                SetNewValue(equip.Value);
+                ModifyDevNames();
+                return this;
             }
+
+            return null;
+        }
+
+        public override void GetDisplayObjects(out DeviceType[] devTypes,
+            out DeviceSubType[] devSubTypes,
+            out bool displayParameters)
+        {
+            devTypes = null;
+            devSubTypes = null;
+            displayParameters = LuaName.EndsWith("SET_VALUE");
         }
         #endregion
+
+        /// <summary>
+        /// Модифицировать значения параметров в соответсвиии с объектом
+        /// </summary>
+        /// <param name="techObjName">ОУ</param>
+        /// <param name="techNumber">Номер тех.объекта</param>
+        public void ModifyDevNames(string techObjName, int techNumber)
+        {
+            var newValues = Value.Split(' ')
+                .Select(deviceManager.GetDeviceByEplanName)
+                .Where(dev => dev.ObjectName == techObjName)
+                .Select(dev => $"{techObjName}{techNumber}{dev.DeviceDesignation}")
+                .Where(name => deviceManager.GetDeviceByEplanName(name).Description != CommonConst.Cap);
+
+            if (newValues.Any())
+            {
+                SetNewValue(string.Join(" ", newValues));
+            }
+        }
+
+        /// <summary>
+        /// Модифицировать значения параметров в соответсвиии с объектом
+        /// </summary>
+        public void ModifyDevNames()
+        {
+            if (Owner is Equipment equipment)
+            {
+                var number = equipment.Owner.TechNumber;
+                string eplanName = equipment.Owner.NameEplan;
+
+                ModifyDevNames(eplanName, number);
+            }
+        }
+
+        /// <summary>
+        /// Получить все параметры, включая вложенные
+        /// </summary>
+        public override List<BaseParameter> GetDescendants()
+        {
+            var r = new List<BaseParameter>
+            {
+                this
+            };
+
+            r.AddRange(relatedParameters.SelectMany(p => p.GetDescendants()));
+            return r;
+        }
+
+        /// <summary>
+        /// Добавить параметр оборудования
+        /// </summary>
+        /// <param name="luaName">Lua-название параметра</param>
+        /// <param name="name">Обозначение параметра</param>
+        /// <param name="defaultValue">Значение по умолчанию</param>
+        /// <returns>Добавленные параметр</returns>
+        public BaseParameter AddEquipment(string luaName, string name, string defaultValue)
+        {
+            var related = new EquipmentParameter(luaName, name, defaultValue)
+            {
+                Owner = Owner,
+            };
+
+            relatedParameters.Add(related);
+            return related;
+        }
+
+
+        /// <summary>
+        /// Проверка значений параметра
+        /// </summary>
+        /// <param name="nameEplan">ОУ</param>
+        /// <param name="techNumber">Номер объекита</param>
+        /// <param name="techObjectName">Отображаемое название объекта для ошибки</param>
+        public StringBuilder Check(string techObjectName)
+        {
+            var err = new StringBuilder();
+            var wrongDevices = Value.Split(' ').Where(v => !CheckValue(v));
+
+            if (wrongDevices.Any())
+            {
+                err.Append($"Проверьте оборудование: \"{Name}\" в объекте \"{techObjectName}\". Некорректные значения: {string.Join(", ", wrongDevices)}.\n");
+            }
+
+            if (!IsEmpty)
+            {
+                foreach (var parameter in relatedParameters)
+                {
+                    if (parameter.IsEmpty)
+                    {
+                        err.Append($"Проверьте оборудование: \"{Name}\" в объекте \"{techObjectName}\". Поле не заполнено.\n");
+                    }
+
+                    err.Append(parameter.Check(techObjectName));
+                }
+            }
+
+            return err;
+        }
+
+
+        public void SetDeviceByDefault(string nameEplan, int techNumber)
+        {
+            if (DefaultValue != "" && Value == DefaultValue)
+            {
+                string deviceName = $"{nameEplan}{techNumber}{DefaultValue}";
+                var device = deviceManager.GetDevice(deviceName);
+                if (device.Description != CommonConst.Cap)
+                {
+                    SetNewValue(deviceName);
+                }
+                else
+                {
+                    SetNewValue("");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Проверить строковое значение параметра
+        /// </summary>
+        /// <param name="value">Значание</param>
+        public bool CheckValue(string value)
+        {
+            if (value == "" || value == DefaultValue)
+                return true;
+
+            var device = DeviceManager.GetInstance().GetDeviceByEplanName(value);
+            if (device.Description != CommonConst.Cap)
+                return true;
+
+            // EquipmentParameter может использовать параметр объекта
+            if (LuaName.EndsWith("SET_VALUE"))
+            {
+                return Equipment?.Owner.GetParamsManager().Float.GetParam(value) != null;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Индексы параметров
         /// </summary>
         private List<int> parameterIndexes;
+
+        private readonly List<EquipmentParameter> relatedParameters = [];
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EplanDevice;
 using Moq;
 using NUnit.Framework;
+using StaticHelper;
 using TechObject;
 
 namespace TechObjectTests
@@ -142,9 +143,129 @@ namespace TechObjectTests
             res += equipment.Check();
 
             Assert.AreEqual(
-                "Проверьте оборудование: \"\" в объекте \"1.  №1 (#0)\". Некорректное значение: UNKNOWN.\n" +
+                "Проверьте оборудование: \"\" в объекте \"1.  №1 (#0)\". Некорректные значения: UNKNOWN.\n" +
                 "Проверьте оборудование: \"\" в объекте \"1.  №1 (#0)\". Некорректные значения: UNKNOWN1, UNKNOWN2.\n",
                 res);
+        }
+
+        [Test]
+        public void SaveAsLuaTable_Test()
+        {
+            var techObject = new TechObject.TechObject(string.Empty, GetN => 1, 1, 2,
+                "OBJ", -1, string.Empty, string.Empty, new BaseTechObject());
+            techObject.GetParamsManager().AddFloatParam("PAR 1", 10, "м.", "PARAMETER_1");
+
+            var LS1 = new LS("DEV1LS1", "+DEV1-LS1", "description", 1, "DEV", 1, "");
+            var STUB = new LS(CommonConst.Cap, "+DEV1-LS1", CommonConst.Cap, 1, "DEV", 1, "");
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static)
+                .SetValue(null, Mock.Of<IDeviceManager>(m =>
+                    m.GetDevice("DEV1LS1") == LS1 &&
+                    m.GetDeviceByEplanName("DEV1LS1") == LS1 &&
+                    m.GetDeviceIndex("DEV1LS1") == 1 &&
+                    m.GetDeviceByIndex(1) == LS1 &&
+                    m.GetDeviceByIndex(0) == STUB
+                ));
+
+            var equipment = new Equipment(techObject);
+
+            var equip = new EquipmentParameter("EQ", "name");
+            var par = equip.AddEquipment("EQ_SET_VALUE", "name", "");
+            equip.Owner = equipment;
+
+            equip.SetNewValue("DEV1LS1");
+            par.SetNewValue("PARAMETER_1");
+
+            equipment.AddItems(new List<BaseParameter>() { equip });
+
+            Assert.AreEqual(
+                "equipment =\n" +
+                "\t{\n" +
+                "\tEQ = 'DEV1LS1',\n" +
+                "\tEQ_SET_VALUE = 'PARAMETER_1',\n" +
+                "\t},\n",
+                equipment.SaveAsLuaTable(""));
+        }
+
+        [Test]
+        public void Delete_Test()
+        {
+            var equipment = new Equipment(null);
+            var equip = new EquipmentParameter("EQ", "name");
+            equip.SetValue("value");
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("value", equip.Value);
+                Assert.IsTrue(equipment.Delete(equip));
+                Assert.AreEqual("", equip.Value);
+
+                Assert.IsFalse(equipment.Delete(1));
+            });
+        }
+
+        [Test]
+        public void Sync_Test()
+        {
+            var LS1 = new LS("DEV1LS1", "+DEV1-LS1", "description", 1, "DEV", 1, "");
+            var STUB = new LS(CommonConst.Cap, "+DEV1-LS1", CommonConst.Cap, 1, "DEV", 1, "");
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static)
+                .SetValue(null, Mock.Of<IDeviceManager>(m =>
+                    m.GetDevice("DEV1LS1") == LS1 &&
+                    m.GetDeviceByEplanName("DEV1LS1") == LS1 &&
+                    m.GetDeviceIndex("DEV1LS1") == 1 &&
+                    m.GetDeviceByIndex(1) == LS1 &&
+                    m.GetDeviceByIndex(0) == STUB
+                ));
+
+            var equipment = new Equipment(null);
+
+            var equip = new EquipmentParameter("EQ", "name");
+            var par = equip.AddEquipment("EQ_SET_VALUE", "name", "");
+            equip.Owner = equipment;
+
+            equipment.AddItems(new List<BaseParameter>() { equip });
+
+            equip.SetNewValue("DEV1LS1");
+            par.SetNewValue("DEV1LS1");
+
+
+            Assert.Multiple(() =>
+            {
+                equipment.Synch(new int[] { 0, 1 });
+
+                Assert.AreEqual("DEV1LS1", equip.Value);
+                Assert.AreEqual("DEV1LS1", par.Value);
+
+                equipment.Synch(new int[] { 0, -1 });
+
+                Assert.AreEqual("", equip.Value);
+                Assert.AreEqual("", par.Value);
+            });
+        }
+
+        [Test]
+        public void Props_Test()
+        {
+            var equipment = new Equipment(null);
+
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(equipment.IsCopyable);
+                Assert.IsTrue(equipment.IsDeletable);
+                Assert.IsTrue(equipment.ShowWarningBeforeDelete);
+                Assert.IsTrue((equipment as IAutocompletable)?.CanExecute);
+
+                Assert.AreEqual("", equipment.DisplayText[1]);
+                Assert.AreEqual("Оборудование", equipment.DisplayText[0]);
+
+                equipment.AddItems(new List<BaseParameter>() { new EquipmentParameter("", "") });
+                Assert.AreEqual("Оборудование (1)", equipment.DisplayText[0]);
+            });
         }
     }
 }
