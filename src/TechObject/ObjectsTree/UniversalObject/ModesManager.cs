@@ -1,4 +1,4 @@
-﻿using Editor;
+using Editor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -145,7 +145,7 @@ namespace TechObject
             // Установка параметров базовой операции
             newMode.SetBaseOperExtraParams(extraParams);
 
-            newMode.BaseOperation.Check();
+            newMode.BaseOperation.Check(true);
 
             ChangeRestrictionModeOwner(newMode);
 
