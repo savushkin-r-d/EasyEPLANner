@@ -353,15 +353,25 @@ namespace TechObject
             }
         }
 
-        public TechObject Clone(GetN getLocalNum, int newNumber,
-            int oldGlobalNum, int newGlobalNum)
+        public ITechObjectIdentifyData IdentifyData => 
+            new TechObjectIdentifyData(TechNumber, TechType, NameEplan, NameBC);
+
+        public TechObject Clone(GetN getLocalNum, int oldGlobalNum, int newGlobalNum) => 
+            Clone(getLocalNum, oldGlobalNum, newGlobalNum, IdentifyData);
+
+        public TechObject Clone(GetN getLocalNum, int newTechNumber, int oldGlobalNum, int newGlobalNum) =>
+            Clone(getLocalNum, oldGlobalNum, newGlobalNum, IdentifyData.WithTechNumber(newTechNumber));
+
+        public TechObject Clone(GetN getLocalNum, int oldGlobalNum, int newGlobalNum,
+            ITechObjectIdentifyData dataSource)
         {
             TechObject clone = (TechObject)MemberwiseClone();
 
-            clone.techNumber = new TechObjectN(clone, newNumber);
-            clone.techType = new ObjectProperty("Тип", TechType);
-            clone.nameBC = new ObjectProperty("Имя объекта Monitor", NameBC);
-            clone.nameEplan = new NameInEplan(NameEplan, clone);
+            clone.techNumber = new TechObjectN(clone, dataSource.TechNumber);
+            clone.techType = new ObjectProperty("Тип", dataSource.TechType);
+            clone.nameBC = new ObjectProperty("Имя объекта Monitor", dataSource.NameBC);
+            clone.nameEplan = new NameInEplan(dataSource.NameEplan, clone);
+
             clone.attachedObjects = new AttachedObjects(AttachedObjects.Value,
                 clone, AttachedObjects.WorkStrategy);
             clone.cooperParamNumber = cooperParamNumber.Clone();
@@ -378,7 +388,7 @@ namespace TechObject
             clone.systemParams = systemParams.Clone();
 
             clone.modes = modes.Clone(clone);
-            clone.modes.ModifyDevNames(new DevModifyOptions(clone, clone.NameEplan, TechNumber));
+            clone.modes.ModifyDevNames(new DevModifyOptions(clone, NameEplan, TechNumber));
 
             clone.modes.ModifyRestrictObj(oldGlobalNum, newGlobalNum);
 

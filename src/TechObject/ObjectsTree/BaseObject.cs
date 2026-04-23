@@ -435,7 +435,7 @@ namespace TechObject
                 int oldObjN = globalObjectsList.IndexOf(techObj) + 1;
                 int newObjN = globalObjectsList.Count + 1;
 
-                var newObject = CloneObject(techObj, newN, oldObjN, newObjN);
+                var newObject = CloneObject(techObj, oldObjN, newObjN, techObj.IdentifyData.WithTechNumber(newN));
 
                 // Работа со списком в дереве и общим списком объектов.
                 techObjects.Add(newObject);
@@ -515,15 +515,12 @@ namespace TechObject
                 copiedObject?.BaseTechObject.Name == baseTechObject.Name;
             if (objectsNotNull && sameBaseObjectName)
             {
-                int newN = techObject.TechNumber;
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjNum = globalObjectsList
-                    .IndexOf(copiedObject) + 1;
-                int newObjNum = globalObjectsList
-                    .IndexOf(techObject) + 1;
+                int oldObjNum = copiedObject.GetLocalNum;
+                int newObjNum = techObject.GetLocalNum;
 
-                var newObject = CloneObject(copyObject, newN, oldObjNum,
-                    newObjNum);
+                var newObject = CloneObject(copyObject, oldObjNum,
+                    newObjNum, techObject.IdentifyData);
 
                 // Список тех. объектов вне групп
                 int toindex = techObjects.IndexOf(techObject);
@@ -561,23 +558,22 @@ namespace TechObject
         /// <param name="oldObjNum">Старый глобальный номер</param>
         /// <param name="newObjNum">Новый глобальный номер</param>
         /// <returns></returns>
-        private TechObject CloneObject(object obj, int newN, int oldObjNum,
-            int newObjNum)
+        private TechObject CloneObject(object obj, int oldObjNum,
+            int newObjNum, ITechObjectIdentifyData techObjectIdentifyData)
         {
             var techObject = obj as TechObject;
-            var stubObject = techObject.Clone(GetTechObjectLocalNum, newN,
-                    oldObjNum, newObjNum);
+            var stubObject = techObject.Clone(GetTechObjectLocalNum,
+                techObjectIdentifyData.TechNumber, oldObjNum, newObjNum);
 
-            bool isInsertCopy = newObjNum > globalObjectsList.Count;
-            if (isInsertCopy)
+            if (newObjNum > globalObjectsList.Count)
             {
-                return CloneForInsert(techObject, stubObject, newN, oldObjNum,
-                    newObjNum);
+                return CloneForInsert(techObject, stubObject, oldObjNum,
+                    newObjNum, techObjectIdentifyData);
             }
             else
             {
-                return CloneForReplace(techObject, stubObject, newN, oldObjNum,
-                    newObjNum);
+                return CloneForReplace(techObject, stubObject, oldObjNum,
+                    newObjNum, techObjectIdentifyData);
             }
         }
 
@@ -591,11 +587,12 @@ namespace TechObject
         /// <param name="newObjNum">Новый глобальный номер</param>
         /// <returns></returns>
         private TechObject CloneForInsert(TechObject cloningObject,
-            TechObject stubObject, int newN, int oldObjNum, int newObjNum)
+            TechObject stubObject, int oldObjNum, int newObjNum,
+            ITechObjectIdentifyData techObjectIdentifyData)
         {
             globalObjectsList.Add(stubObject);
-            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum, newN,
-                oldObjNum, newObjNum);
+            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum,
+                oldObjNum, newObjNum, techObjectIdentifyData);
             globalObjectsList.Remove(stubObject);
             return clonedObject;
         }
@@ -610,12 +607,13 @@ namespace TechObject
         /// <param name="newObjNum">Новый глобальный номер</param>
         /// <returns></returns>
         private TechObject CloneForReplace(TechObject cloningObject,
-            TechObject stubObject, int newN, int oldObjNum, int newObjNum)
+            TechObject stubObject, int oldObjNum, int newObjNum,
+            ITechObjectIdentifyData techObjectIdentifyData)
         {
             var objectFromGlobalList = globalObjectsList[newObjNum - 1];
             globalObjectsList[newObjNum - 1] = stubObject;
-            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum, newN,
-                oldObjNum, newObjNum);
+            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum,
+                oldObjNum, newObjNum, techObjectIdentifyData);
             globalObjectsList[newObjNum - 1] = objectFromGlobalList;
             return clonedObject;
         }
