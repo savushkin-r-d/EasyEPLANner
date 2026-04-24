@@ -515,14 +515,13 @@ namespace TechObject
         /// <summary>
         /// Проверка базовой операции
         /// </summary>
-        public string Check(bool init = false)
+        public string Check()
         {
             string errors = string.Empty;
             foreach (var property in Properties)
             {
-                if (!init)
-                    property.Check();
-   
+                property.Check();
+
                 bool notStub = !property.Value.ToLower()
                     .Contains(StaticHelper.CommonConst.StubForCells
                     .ToLower());
