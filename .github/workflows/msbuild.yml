@@ -1,9 +1,5 @@
 name: MSBuild
 
-permissions:
-  contents: read
-  pull-requests: read
-
 concurrency:
   group: "${{ github.workflow }}:${{ github.event_name }}:${{ github.head_ref || github.ref_name }}"
   cancel-in-progress: true
@@ -34,6 +30,9 @@ jobs:
   check:
     name: Check
     runs-on: windows-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       result: ${{ steps.pass.outputs.result }}
     steps:
@@ -69,6 +68,9 @@ jobs:
     runs-on: windows-latest
     needs: check
     if: needs.check.outputs.result == 'success'
+    permissions:
+      contents: read
+      pull-requests: read
 
     steps:
     - name: Set Timezone
