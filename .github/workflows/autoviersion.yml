@@ -1,5 +1,8 @@
 name: Auto-update version
 
+permissions:
+  contents: write
+
 on:
   schedule:
   - cron: '43 4 1 * *'
