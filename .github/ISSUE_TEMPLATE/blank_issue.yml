@@ -1,10 +1,6 @@
----
 name: Blank issue
 about: Пустой запрос
 title: ''
 labels: ''
+projects: [ "savushkin-r-d/8" ]
 assignees: KirillGutyrchik
-
----
-
-
