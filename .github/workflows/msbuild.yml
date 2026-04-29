@@ -28,6 +28,9 @@ env:
   BUILD_CONFIGURATION: Release
 
 jobs:
+  # --------------------
+  # Gatekeeper check
+  # --------------------
   check:
     name: Check
     runs-on: windows-latest
@@ -36,38 +39,31 @@ jobs:
     steps:
     - id: organization_membership
       run: >
-        $headers = @(
-        '-H "Accept: application/vnd.github+json"',
-        '-H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"',
-        '-H "X-GitHub-Api-Version: 2022-11-28"'
-        ) -join ' ';
+        $response = (curl -L
+        -w '%{http_code}'
+        -H "Accept: application/vnd.github+json"
+        -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+        -H "X-GitHub-Api-Version: 2022-11-28"
+        https://api.github.com/orgs/savushkin-r-d/members/${{ github.triggering_actor }})
         
-        $senderResponse = (Invoke-Expression "curl -L -w '%{http_code}' $headers https://api.github.com/orgs/savushkin-r-d/members/${{ github.event.sender.login }}");
-        $triggeringActorResponse = (Invoke-Expression "curl -L -w '%{http_code}' $headers https://api.github.com/orgs/savushkin-r-d/members/${{ github.triggering_actor }}");
-        
-        echo "sender_response=$senderResponse" >> $env:GITHUB_OUTPUT;
-        echo "triggering_actor_response=$triggeringActorResponse" >> $env:GITHUB_OUTPUT
+        echo "response=$response" >> $env:GITHUB_OUTPUT
       continue-on-error: true
-    # --On linux--
-    # run: |
-    #   response=`curl -L \
-    #   ... \
-    #   ...`
-    #   echo "response=$response" >> $GITHUB_OUTPUT
+
     - id: pass
       if: >-
-        ((github.event.action == 'synchronize' || github.event.action == 'opened' || github.event.action == 'reopened') &&
-         (steps.organization_membership.outputs.sender_response == '204' || steps.organization_membership.outputs.triggering_actor_response == '204')) ||
+        (github.event_name == 'pull_request_target' && steps.organization_membership.outputs.response == '204') ||
         github.actor == 'dependabot[bot]' ||
         github.event_name == 'merge_group' ||
         startsWith(github.ref, 'refs/tags/')
       run: echo "result=success" >> $env:GITHUB_OUTPUT
-    # On linux: >> $GITHUB_OUTPUT
     
     - name: exit with failure
       if: steps.pass.outputs.result != 'success'
       run: exit 1
 
+  # --------------------
+  # Build and test
+  # --------------------
   build:
     name: Build, analyze and test
     runs-on: windows-latest
@@ -188,6 +184,9 @@ jobs:
         name: EasyEPLANner
         path: src/bin/${{env.BUILD_CONFIGURATION}}
     
+  # --------------------
+  # Release on tags
+  # --------------------
   release:
     if: startsWith(github.ref, 'refs/tags/')
     name: Release
