@@ -1,5 +1,9 @@
 name: MSBuild
 
+permissions:
+  contents: read
+  pull-requests: read
+
 concurrency:
   group: "${{ github.workflow }}:${{ github.event_name }}:${{ github.head_ref || github.ref_name }}"
   cancel-in-progress: true
@@ -7,7 +11,7 @@ concurrency:
 on:
   pull_request_target:
     branches: [ master ]
-    types: [ opened, synchronize, labeled ]
+    types: [ opened, synchronize, reopened ]
   push:
     tags:
       - '*'
@@ -30,16 +34,19 @@ jobs:
     outputs:
       result: ${{ steps.pass.outputs.result }}
     steps:
-    - id: is_organization_member
+    - id: organization_membership
       run: >
-        $response = (curl -L
-        -w '%{http_code}'
-        -H "Accept: application/vnd.github+json"
-        -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
-        -H "X-GitHub-Api-Version: 2022-11-28"
-        https://api.github.com/orgs/savushkin-r-d/members/${{ github.event.sender.login }})
+        $headers = @(
+        '-H "Accept: application/vnd.github+json"',
+        '-H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"',
+        '-H "X-GitHub-Api-Version: 2022-11-28"'
+        ) -join ' ';
         
-        echo "response=$response" >> $env:GITHUB_OUTPUT
+        $senderResponse = (Invoke-Expression "curl -L -w '%{http_code}' $headers https://api.github.com/orgs/savushkin-r-d/members/${{ github.event.sender.login }}");
+        $triggeringActorResponse = (Invoke-Expression "curl -L -w '%{http_code}' $headers https://api.github.com/orgs/savushkin-r-d/members/${{ github.triggering_actor }}");
+        
+        echo "sender_response=$senderResponse" >> $env:GITHUB_OUTPUT;
+        echo "triggering_actor_response=$triggeringActorResponse" >> $env:GITHUB_OUTPUT
       continue-on-error: true
     # --On linux--
     # run: |
@@ -49,8 +56,8 @@ jobs:
     #   echo "response=$response" >> $GITHUB_OUTPUT
     - id: pass
       if: >-
-        (github.event.action == 'labeled' && github.event.label.name == 'safe to test') ||
-        ((github.event.action == 'synchronize' || github.event.action == 'opened') && steps.is_organization_member.outputs.response == '204') ||
+        ((github.event.action == 'synchronize' || github.event.action == 'opened' || github.event.action == 'reopened') &&
+         (steps.organization_membership.outputs.sender_response == '204' || steps.organization_membership.outputs.triggering_actor_response == '204')) ||
         github.actor == 'dependabot[bot]' ||
         github.event_name == 'merge_group' ||
         startsWith(github.ref, 'refs/tags/')
@@ -186,6 +193,8 @@ jobs:
     name: Release
     runs-on: windows-latest
     needs: build
+    permissions:
+      contents: write
 
     steps:
     - name: Set Timezone
