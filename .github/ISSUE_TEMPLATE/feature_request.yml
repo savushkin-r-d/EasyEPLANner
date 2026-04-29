@@ -1,5 +1,5 @@
 name: "[💡]: Feature request"
-about: "Предложить новую функцию или улучшение."
+description: "Предложить новую функцию или улучшение."
 title: "[💡]: "
 labels: [ "Status: To Do", "Priority: Long-term plans" ]
 projects: [ "savushkin-r-d/8" ]
@@ -9,14 +9,14 @@ assignees: KirillGutyrchik
 body:
   - type: textarea
     id: feature_description
-    validation: 
+    validations: 
       required: true
     attributes:
       label: "Что бы вы хотели, чтобы было добавлено/изменено?"
       
   - type: textarea
     id: additional_info
-    validation: 
+    validations: 
       required: false
     attributes:
       label: "Дополнительная информация"

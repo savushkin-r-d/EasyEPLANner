@@ -1,5 +1,5 @@
 name: "[💥]: Exception report"
-about: "Отчет об ошибке, которая приводит к вызову исключению / сбою программы."
+description: "Отчет об ошибке, которая приводит к вызову исключению / сбою программы."
 title: "[💥]: "
 labels: [ "Status: To Do", "Priority: Critical" ]
 projects: [ "savushkin-r-d/8" ]
@@ -9,7 +9,7 @@ assignees: KirillGutyrchik
 body:
   - type: textarea
     id: exception_description
-    validation: 
+    validations: 
       required: true
     attributes:
       label: "Опишите ошибку"
@@ -17,14 +17,14 @@ body:
 
   - type: textarea
     id: reproduction_steps
-    validation: 
+    validations: 
       required: true
     attributes:
       label: "Шаги для воспроизведения проблемы"
 
   - type: textarea
     id: exception_info
-    validation: 
+    validations: 
       required: false
     attributes:
       label: "Информация о исключении"

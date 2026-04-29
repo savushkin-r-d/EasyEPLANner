@@ -1,6 +1,12 @@
-name: Blank issue
-about: Пустой запрос
-title: ''
-labels: ''
+name: "Blank issue"
+description: "Пустой запрос"
 projects: [ "savushkin-r-d/8" ]
 assignees: KirillGutyrchik
+
+body:
+  - type: textarea
+    id: issue_description
+    validations: 
+      required: false
+    attributes:
+      label: "Опишите проблему"
