@@ -1,0 +1,41 @@
+name: "[🐛]: Bug report"
+description: "Отчет об ошибке. Что-то работает не так, как ожидалось."
+title: "[🐛]: "
+labels: [ "Status: To Do", "Priority: High" ]
+projects: [ "savushkin-r-d/8" ]
+type: "Bug"
+assignees: KirillGutyrchik
+
+body:
+  - type: textarea
+    id: bug_description
+    validations: 
+      required: true
+    attributes:
+      label: "Опишите ошибку"
+      description: "Описание проблемы / скриншоты."
+
+  - type: textarea
+    id: expected_behavior
+    validations: 
+      required: true
+    attributes:
+      label: "Ожидаемое поведение"
+      description: "Четкое и краткое описание того, что Вы ожидали."
+
+  - type: textarea
+    id: reproduction_steps
+    validations: 
+      required: true
+    attributes:
+      label: "Шаги для воспроизведения проблемы"
+      description: "Шаги для воспроизведения проблемы."
+
+
+  - type: textarea
+    id: additional_info
+    validations: 
+      required: false
+    attributes:
+      label: "Дополнительная информация"
+      description: "Добавьте дополнительную информацию, которая может помочь решить проблему."
