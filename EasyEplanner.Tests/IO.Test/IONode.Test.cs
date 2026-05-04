@@ -51,10 +51,14 @@ namespace IOTests
             testData.Add(new object[] { "AXL F BK ETH", pxcCoupler });
             testData.Add(new object[] { "AXL F BK ETH NET2", pxcCoupler });
 
-            IONode.TYPES pxcController = IONode.TYPES.T_PHOENIX_CONTACT_MAIN;
-            testData.Add(new object[] { "AXC F 1152", pxcController });
-            testData.Add(new object[] { "AXC F 2152", pxcController });
-            testData.Add(new object[] { "AXC F 3152", pxcController });
+            IONode.TYPES pxcController_1152 = IONode.TYPES.T_PHOENIX_CONTACT_1152;
+            testData.Add(new object[] { "AXC F 1152", pxcController_1152 });
+
+            IONode.TYPES pxcController_2152 = IONode.TYPES.T_PHOENIX_CONTACT_2152;
+            testData.Add(new object[] { "AXC F 2152", pxcController_2152 });
+
+            IONode.TYPES pxcController_3152 = IONode.TYPES.T_PHOENIX_CONTACT_3152;
+            testData.Add(new object[] { "AXC F 3152", pxcController_3152 });
 
             IONode.TYPES emptyType = IONode.TYPES.T_EMPTY;
             testData.Add(new object[] { "", emptyType });
