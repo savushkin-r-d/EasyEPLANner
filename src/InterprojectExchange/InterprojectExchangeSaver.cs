@@ -646,7 +646,7 @@ namespace InterprojectExchange
 
             string previousFileData = File.ReadAllText(path);
             string[] previousVersion = Regex.Split(previousFileData,
-                splitPattern);
+                splitPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
             var currentFileData = new StringBuilder();
             foreach (string line in sharedFileData)
@@ -655,7 +655,7 @@ namespace InterprojectExchange
             }
 
             string[] currentVersion = Regex.Split(currentFileData.ToString(),
-                splitPattern);
+                splitPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
             bool cantCheckVersion =
                 previousVersion.Length <= eplannerVersionId ||
