@@ -611,7 +611,7 @@ namespace InterprojectExchange
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 WriteSharedFileData(path, sharedFileData,
-                    EasyEPlanner.EncodingDetector.MainFilesEncoding);
+                    EasyEPlanner.EncodingDetector.DetectFileEncoding(path));
                 return;
             }
 
@@ -628,6 +628,7 @@ namespace InterprojectExchange
         private static void WriteSharedFileData(string path,
             List<string> sharedFileData, Encoding encoding)
         {
+            encoding ??= EasyEPlanner.EncodingDetector.UTF8;
             using (var writer = new StreamWriter(path, false, encoding))
             {
                 foreach (string line in sharedFileData)
