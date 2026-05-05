@@ -530,12 +530,12 @@ namespace TechObject
                     DisplayObjects.Contains(DisplayObject.Signals) ||
                     Value.Split(' ').Select(deviceManager.GetDevice).All(d => deviceTypes.Contains(d.DeviceType))
                         ? string.Empty
-                        : $"{errContext} заполнено сигналами неверного типа; (допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})\n",
+                        : $"{errContext} заполнено сигналами неверного типа: {Value}; (допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})\n",
 
                 ValueType.Parameter =>
                     DisplayObjects.Contains(DisplayObject.Parameters)
                         ? string.Empty
-                        : $"{errContext} не может быть заполненно параметрами\n",
+                        : $"{errContext} не может быть заполненно параметрами: {Value}\n",
 
                 _ => DisplayObjects.Contains(DisplayObject.None)
                     ? string.Empty
@@ -543,7 +543,10 @@ namespace TechObject
             };
 
             if (!string.IsNullOrEmpty(err))
+            {
+                SetNewValue(string.Empty);
                 Logs.AddMessage(err);
+            }
         }
 
         public virtual void ModifyDevNames(IDevModifyOptions options)
