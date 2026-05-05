@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using static IO.IONode;
 
 namespace TechObject
 {
@@ -521,27 +522,28 @@ namespace TechObject
 
             var operation = baseOperation.Owner;
             var techObject = operation?.Owner?.Owner;
+            var errContext = $"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\"";
 
-            switch (CurrentValueType)
+            var err = CurrentValueType switch
             {
-                case ValueType.Other:
-                    // Сброс поля параметра в доп. свойствах операции,
-                    // если указан несуществующий параметр.
-                    SetNewValue(string.Empty);
-                    Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" имеет неопределенное значение: {Value};\n");
-                    break;
+                ValueType.Device or ValueType.ManyDevices =>
+                    DisplayObjects.Contains(DisplayObject.Signals) ||
+                    Value.Split(' ').Select(deviceManager.GetDevice).All(d => deviceTypes.Contains(d.DeviceType))
+                        ? string.Empty
+                        : $"{errContext} заполнено сигналами неверного типа; (допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})\n",
 
-                case ValueType.Device:
-                case ValueType.ManyDevices:
-                    if (!DisplayObjects.Contains(DisplayObject.Signals) &&
-                        Value.Split(' ').Select(deviceManager.GetDevice)
-                            .Any(d => !deviceTypes.Contains(d.DeviceType)))
-                    {
-                        var types = string.Join(", ", [.. deviceTypes.Select(d => d.ToString())]);
-                        Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
-                    }
-                    break;
-            }
+                ValueType.Parameter =>
+                    DisplayObjects.Contains(DisplayObject.Parameters)
+                        ? string.Empty
+                        : $"{errContext} не может быть заполненно параметрами\n",
+
+                _ => DisplayObjects.Contains(DisplayObject.None)
+                    ? string.Empty
+                    : $"{errContext} заполненно неверно: {Value};\n",
+            };
+
+            if (!string.IsNullOrEmpty(err))
+                Logs.AddMessage(err);
         }
 
         public virtual void ModifyDevNames(IDevModifyOptions options)

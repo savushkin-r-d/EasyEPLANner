@@ -570,16 +570,17 @@ namespace EasyEplanner.Tests
             var baseOperation = new BaseOperation("", "", new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
 
             var baseParamter = new ActiveParameter("bp", "");
+            var expectedValue = "qwe";
 
             baseParamter.Check();
 
-            baseParamter.SetNewValue("qwe");
+            baseParamter.SetNewValue(expectedValue);
             baseParamter.Check();
 
             baseParamter.Owner = baseOperation;
             baseParamter.Check();
 
-            Assert.AreEqual("", baseParamter.Value);
+            Assert.AreEqual(expectedValue, baseParamter.Value);
         }
 
 
