@@ -27,7 +27,10 @@ namespace TechObject
                     EplanDevice.DeviceType.GS,
                     EplanDevice.DeviceType.LS,
                     EplanDevice.DeviceType.FS
-                }));
+                })
+            {
+                ToolTipText = ("Логика 'И'", null),
+            });
             SubActions.Add(new Action("DO", owner, "DO",
                 new EplanDevice.DeviceType[]
                 { 
