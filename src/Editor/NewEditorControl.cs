@@ -64,11 +64,15 @@ namespace Editor
                     }
 
                     var toolTipText = (obj as IToolTip)?.ToolTipText;
+                    string BuildToolTip(string displayText, string additionalText) =>
+                        string.IsNullOrEmpty(additionalText)
+                            ? displayText
+                            : $"{displayText}\n\n{additionalText}";
 
                     return column.Index switch
                     {
-                        0 => obj.DisplayText[0] + "\n\n" + toolTipText?.Name ?? string.Empty,
-                        1 => obj.DisplayText[1] + "\n\n" + toolTipText?.Value ?? string.Empty,
+                        0 => BuildToolTip(obj.DisplayText[0], toolTipText?.Name),
+                        1 => BuildToolTip(obj.DisplayText[1], toolTipText?.Value),
                         _ => null
                     };
                 };
