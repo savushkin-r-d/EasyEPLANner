@@ -596,6 +596,22 @@ namespace EasyEplanner.Tests
             noOwnerParameter.Check();
             Assert.AreEqual(0, logMessages.Count);
 
+            // Disabled -> ранний выход
+            var disabledParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                })
+            {
+                Disabled = true,
+                Owner = new BaseOperation("", "",
+                    new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>())
+            };
+            disabledParameter.SetNewValue("qwe");
+            disabledParameter.Check();
+            Assert.AreEqual("qwe", disabledParameter.Value);
+            Assert.AreEqual(0, logMessages.Count);
+
             // ValueType.Device + Signals -> без ошибки
             var allowedDeviceParameter = new ActiveParameter("bp", "",
                 "", new List<BaseParameter.DisplayObject>
@@ -624,6 +640,19 @@ namespace EasyEplanner.Tests
             Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("могут быть установлены только сигналы"));
             Assert.AreEqual(string.Empty, badDeviceParameter.Value);
 
+            // ManyDevices + DI: неподходящие устройства сбрасываются, подходящие остаются
+            var partiallyBadSignalsParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI
+                });
+            partiallyBadSignalsParameter.SetNewValue("NORM1DEV1 NORM1DEV2");
+            partiallyBadSignalsParameter.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            partiallyBadSignalsParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("могут быть установлены только сигналы"));
+            Assert.AreEqual("NORM1DEV1", partiallyBadSignalsParameter.Value);
+
             // ValueType.Parameter + Parameters -> без ошибки
             var allowedParameterValue = new ActiveParameter("bp", "",
                 "", new List<BaseParameter.DisplayObject>
@@ -636,12 +665,42 @@ namespace EasyEplanner.Tests
             allowedParameterValue.Check();
             Assert.AreEqual(logsCountBeforeAllowedParameter, logMessages.Count);
 
-            // ValueType.Parameter + не Parameters -> ошибка
-            var badParameterValue = new ActiveParameter("bp", "");
-            SetUpParameterBaseOperationOwner(badParameterValue);
-            badParameterValue.SetNewValue("parameter1");
-            badParameterValue.Check();
-            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("не может быть заполнено параметрами"));
+            // Signals + Parameters: параметр разрешен
+            var allowedSignalOrParameterValue = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI,
+                    BaseParameter.DisplayObject.Parameters
+                });
+            SetUpParameterBaseOperationOwner(allowedSignalOrParameterValue);
+            allowedSignalOrParameterValue.SetNewValue("parameter1");
+            var logsCountBeforeAllowedSignalOrParameter = logMessages.Count;
+            allowedSignalOrParameterValue.Check();
+            Assert.AreEqual(logsCountBeforeAllowedSignalOrParameter, logMessages.Count);
+
+            // Signals + Parameters: сигнал неверного типа сбрасывается частично
+            var badSignalOrParameterValue = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI,
+                    BaseParameter.DisplayObject.Parameters
+                });
+            badSignalOrParameterValue.SetNewValue("NORM1DEV1 NORM1DEV2");
+            badSignalOrParameterValue.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            badSignalOrParameterValue.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("Могут быть установлены только параметры или сигналы"));
+            Assert.AreEqual("NORM1DEV1", badSignalOrParameterValue.Value);
+
+            // ValueType.Parameter + не Parameters -> без ошибки
+            var parameterValueWithoutDisplayObject = new ActiveParameter("bp", "");
+            SetUpParameterBaseOperationOwner(parameterValueWithoutDisplayObject);
+            parameterValueWithoutDisplayObject.SetNewValue("parameter1");
+            var logsCountBeforeParameterWithoutDisplayObject = logMessages.Count;
+            parameterValueWithoutDisplayObject.Check();
+            Assert.AreEqual(logsCountBeforeParameterWithoutDisplayObject,
+                logMessages.Count);
+            Assert.AreEqual("parameter1", parameterValueWithoutDisplayObject.Value);
 
             // Default + None -> без ошибки
             var noneDisplayObjectParameter = new ActiveParameter("bp", "");
@@ -664,9 +723,20 @@ namespace EasyEplanner.Tests
             invalidValueParameter.Check();
             Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("заполнено неверно: 'qwe'"));
             Assert.AreEqual(string.Empty, invalidValueParameter.Value);
+
+            // ActiveAggregateParameter получает контекст через BaseTechObject + BaseOperation
+            var aggregateParameter = new ActiveAggregateParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                });
+            SetUpParameterBaseTechObjectOwner(aggregateParameter);
+            aggregateParameter.SetNewValue("qwe");
+            aggregateParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("techObjectName"));
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("modeName_1"));
+            Assert.AreEqual(string.Empty, aggregateParameter.Value);
         }
-
-
 
         string stub = string.Empty;
     }
