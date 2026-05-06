@@ -522,30 +522,65 @@ namespace TechObject
 
             var operation = baseOperation.Owner;
             var techObject = operation?.Owner?.Owner;
-            var errContext = $"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\"";
 
-            var err = CurrentValueType switch
+            var signalDisplayObjects = new[]
             {
-                ValueType.Device or ValueType.ManyDevices =>
-                    DisplayObjects.Contains(DisplayObject.Signals) ||
-                    Value.Split(' ').Select(deviceManager.GetDevice).All(d => deviceTypes.Contains(d.DeviceType))
-                        ? string.Empty
-                        : $"{errContext} заполнено сигналами неверного типа: {Value}; (допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})\n",
-
-                ValueType.Parameter =>
-                    DisplayObjects.Contains(DisplayObject.Parameters)
-                        ? string.Empty
-                        : $"{errContext} не может быть заполненно параметрами: {Value}\n",
-
-                _ => DisplayObjects.Contains(DisplayObject.None)
-                    ? string.Empty
-                    : $"{errContext} заполненно неверно: {Value};\n",
+                DisplayObject.Signals,
+                DisplayObject.DI,
+                DisplayObject.DO,
+                DisplayObject.AI,
+                DisplayObject.AO,
             };
 
-            if (!string.IsNullOrEmpty(err))
+            var hasSignal = DisplayObjects.Any(signalDisplayObjects.Contains);
+            var hasParameter = DisplayObjects.Contains(DisplayObject.Parameters);
+            var errContext = $"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\": поле заполнено неверно: '{Value}'";
+            var devTypesContext = $"(допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})";
+            var devices = hasSignal
+                ? Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(deviceManager.GetDevice)
+                    .ToList()
+                : new List<IODevice>();
+            var correctSignalNames = devices
+                .Where(d => d != null && deviceTypes.Contains(d.DeviceType))
+                .Select(d => d.Name)
+                .ToList();
+            var hasCorrectSignals = devices.Count == correctSignalNames.Count;
+
+            if (hasSignal && hasParameter) 
+            {
+                if (CurrentValueType is ValueType.Parameter)
+                    return;
+
+                if (CurrentValueType is ValueType.Device or ValueType.ManyDevices)
+                {
+                    if (hasCorrectSignals)
+                        return;
+
+                    SetNewValue(string.Join(" ", correctSignalNames));
+                }
+                else
+                    SetNewValue(string.Empty);
+
+                Logs.AddMessage($"{errContext} - Могут быть установлены только параметры или сигналы {devTypesContext};\n");
+            }
+            else if (hasSignal)
+            {
+                if (CurrentValueType is ValueType.Device or ValueType.ManyDevices && hasCorrectSignals)
+                    return;
+
+                SetNewValue(string.Join(" ", correctSignalNames));
+                Logs.AddMessage($"{errContext} - могут быть установлены только сигналы {devTypesContext};\n");
+            }
+            else if (hasParameter && CurrentValueType is not ValueType.Parameter)
             {
                 SetNewValue(string.Empty);
-                Logs.AddMessage(err);
+                Logs.AddMessage($"{errContext} - могут быть установлены только параметры;\n");
+            }
+            else if (!hasParameter && CurrentValueType is ValueType.Parameter)
+            {
+                SetNewValue(string.Empty);
+                Logs.AddMessage($"{errContext} - не может быть заполнено параметрами;\n");
             }
         }
 

@@ -621,7 +621,8 @@ namespace EasyEplanner.Tests
             badDeviceParameter.Check();
             Assert.That(logMessages, Is.Not.Empty,
                 "ожидалась запись в лог при неверном типе устройства для ограничения только AI");
-            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("заполнено сигналами неверного типа"));
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("могут быть установлены только сигналы"));
+            Assert.AreEqual(string.Empty, badDeviceParameter.Value);
 
             // ValueType.Parameter + Parameters -> без ошибки
             var allowedParameterValue = new ActiveParameter("bp", "",
@@ -640,7 +641,7 @@ namespace EasyEplanner.Tests
             SetUpParameterBaseOperationOwner(badParameterValue);
             badParameterValue.SetNewValue("parameter1");
             badParameterValue.Check();
-            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("не может быть заполненно параметрами"));
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("не может быть заполнено параметрами"));
 
             // Default + None -> без ошибки
             var noneDisplayObjectParameter = new ActiveParameter("bp", "");
@@ -661,7 +662,8 @@ namespace EasyEplanner.Tests
             invalidValueParameter.Owner = new BaseOperation("", "",
                 new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
             invalidValueParameter.Check();
-            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("заполненно неверно: qwe"));
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("заполнено неверно: 'qwe'"));
+            Assert.AreEqual(string.Empty, invalidValueParameter.Value);
         }
 
 
