@@ -301,7 +301,10 @@ namespace TechObject
                             EplanDevice.DeviceType.PDS,
                         }));
                     return enableStepBySignalAction;
-                });
+                })
+            {
+                ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+            };
             enableStepBySignal.CreateParameter(new ActiveBoolParameter("",
                 "Выключать шаг по пропаданию сигнала", "true"));
 
@@ -326,7 +329,9 @@ namespace TechObject
                     toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
                        "Шаг"));
                     return toStepByCondition;
-                });
+                }){
+                    ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+                };
                 actions.Add(toStepByConditionAction);
                 items.Add(toStepByConditionAction);
 
@@ -384,7 +389,9 @@ namespace TechObject
                 CBParameterValues
                 ));
                 return toStateByCondition;
-            });
+            }) {
+                ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+            };
             actions.Add(toStateByConditionAction);
             items.Add(toStateByConditionAction);
         }

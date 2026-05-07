@@ -58,18 +58,23 @@ namespace Editor
             editorTView.CellToolTipGetter =
                 delegate (OLVColumn column, object displayingObject)
                 {
-                    if (displayingObject is ITreeViewItem obj)
+                    if (displayingObject is not ITreeViewItem obj)
                     {
-                        switch (column.Index)
-                        {
-                            case 0:
-                                return obj.DisplayText[0];
-                            case 1:
-                                return obj.DisplayText[1];
-                        }
+                        return null;
                     }
 
-                    return null;
+                    var toolTipText = (obj as IToolTip)?.ToolTipText;
+                    string BuildToolTip(string displayText, string additionalText) =>
+                        string.IsNullOrEmpty(additionalText)
+                            ? displayText
+                            : $"{displayText}\n\n{additionalText}";
+
+                    return column.Index switch
+                    {
+                        0 => BuildToolTip(obj.DisplayText[0], toolTipText?.Name),
+                        1 => BuildToolTip(obj.DisplayText[1], toolTipText?.Value),
+                        _ => null
+                    };
                 };
 
             // Делегат для Expand
