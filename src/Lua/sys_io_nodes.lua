@@ -11,7 +11,9 @@
 -- 2 - Модули в контроллере PFC200.
 -- 100 - Удаленный Ethernet узел.
 -- 200 - Модули в контроллере Phoenix Contact.
--- 201 - Контроллер Phoenix Contact
+-- 201 - Контроллер Phoenix Contact AXC F 1152
+-- 202 - Контроллер Phoenix Contact AXC F 2152
+-- 203 - Контроллер Phoenix Contact AXC F 3152
 
 local io_nodes =
 {
@@ -85,13 +87,13 @@ local io_nodes =
     {
         name = "AXC F 2152",
         isCoupler = false,
-        type = 201
+        type = 202
     },
     [ 13 ] =
     {
         name = "AXC F 3152",
         isCoupler = false,
-        type = 201
+        type = 203
     },
     [ 14 ] =
     {

@@ -1,0 +1,34 @@
+name: "[💥]: Exception report"
+description: "Отчет об ошибке, которая приводит к вызову исключению / сбою программы."
+title: "[💥]: "
+labels: [ "Status: To Do", "Priority: Critical" ]
+projects: [ "savushkin-r-d/8" ]
+type: "Bug"
+assignees: KirillGutyrchik
+
+body:
+  - type: textarea
+    id: exception_description
+    validations: 
+      required: true
+    attributes:
+      label: "Опишите ошибку"
+      description: "Описание проблемы/ скриншоты."
+
+  - type: textarea
+    id: reproduction_steps
+    validations: 
+      required: true
+    attributes:
+      label: "Шаги для воспроизведения проблемы"
+
+  - type: textarea
+    id: exception_info
+    validations: 
+      required: false
+    attributes:
+      label: "Информация о исключении"
+      description: "Копия лога вызванного исключения."
+      placeholder: "Exception - System.NullReferenceException: Ссылка на объект не указывает на экземпляр объекта..."
+
+
