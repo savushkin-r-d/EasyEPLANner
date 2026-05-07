@@ -302,11 +302,14 @@ namespace TechObject
         /// <returns></returns>
         private ValueType GetParameterValueType(string value)
         {
-            var result = ValueType.Other;
-
             if (string.IsNullOrEmpty(value))
             {
                 return ValueType.None;
+            }
+
+            if (IsStubValue(value))
+            {
+                return ValueType.Stub;
             }
 
             if (IsBoolParameter)
@@ -356,14 +359,14 @@ namespace TechObject
                 return ValueType.Parameter;
             }
 
-            bool stub = value.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
-            if (stub)
-            {
-                return ValueType.Stub;
-            }
+            return ValueType.Other;
+        }
 
-            return result;
+        protected static bool IsStubValue(string value)
+        {
+            return string.Equals(value?.Trim(),
+                StaticHelper.CommonConst.StubForCells,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         #region сохранение prg.lua
@@ -514,6 +517,11 @@ namespace TechObject
             }
 
             SetParameterValueType(Value);
+
+            if (CurrentValueType is ValueType.Stub)
+            {
+                return;
+            }
 
             if (!TryGetCheckContext(out var operation, out var techObject))
             {

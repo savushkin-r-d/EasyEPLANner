@@ -716,6 +716,56 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(SetExtraPropertiesExpected, baseOperation.Properties[0].Value);
         }
 
+        [Test]
+        public void SaveAsLuaTable_StubExtraProperty_SavesStubValue()
+        {
+            var baseOperation = new BaseOperation(
+                string.Empty, string.Empty,
+                new List<BaseParameter>()
+                {
+                    new ActiveParameter("extra_property", "Доп. свойство")
+                },
+                null);
+
+            baseOperation.Properties[0].SetNewValue("Нет");
+
+            var expected = new StringBuilder()
+                .Append("props =\n")
+                .Append("\t{\n")
+                .Append("\textra_property = 'Нет',\n")
+                .Append("\t},\n")
+                .ToString();
+
+            Assert.AreEqual(expected, baseOperation.SaveAsLuaTable(string.Empty));
+        }
+
+        [Test]
+        public void SetExtraProperties_SignalStubProperty_LoadsStubValue()
+        {
+            var baseOperation = new BaseOperation(
+                string.Empty, string.Empty,
+                new List<BaseParameter>()
+                {
+                    new ActiveParameter(
+                        "signal_property",
+                        "Сигнальное свойство",
+                        string.Empty,
+                        new List<BaseParameter.DisplayObject>
+                        {
+                            BaseParameter.DisplayObject.Signals
+                        })
+                },
+                null);
+
+            baseOperation.SetExtraProperties(new Editor.ObjectProperty[]
+            {
+                new Editor.ObjectProperty("signal_property", "Нет")
+            });
+            baseOperation.Check();
+
+            Assert.AreEqual("Нет", baseOperation.Properties[0].Value);
+        }
+
         /// <summary>
         /// Тестирование копирования параметров между базовыми операциями
         /// </summary>
