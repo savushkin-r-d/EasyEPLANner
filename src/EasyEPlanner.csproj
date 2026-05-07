@@ -536,6 +536,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\TechObject.cs" />
     <Compile Include="TechObject\ObjectsTree\UserObject.cs" />
     <Compile Include="TechObject\TechObjectCheckStrategy.cs" />
+    <Compile Include="TechObject\TechObjectIdentifyData.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
     <Compile Include="TechObject\TechObjectChecker.cs" />
     <Compile Include="TechObject\TechObjectXMLMaker.cs" />
