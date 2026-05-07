@@ -68,9 +68,12 @@ init_equipment = function(object, equipment)
         -- Данные для добавления оборудования
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
-
+        
         -- Добавить оборудование
-        object:AddEquipment(luaName, name, defaultValue)
+        local equip_parameter = object:AddEquipment(luaName, name, defaultValue)
+        if value.related ~= nil then
+            init_equipment(equip_parameter, value.related)
+        end
     end
 end
 
