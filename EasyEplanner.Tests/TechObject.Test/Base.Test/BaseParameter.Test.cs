@@ -412,10 +412,13 @@ namespace EasyEplanner.Tests
 
         private void SetUpParameterBaseTechObjectOwner(BaseParameter parameter)
         {
-            parameter.Owner = new BaseTechObject(new TechObject
+            var techObject = new TechObject
                .TechObject("techObjectName", getN => 0, 0,
                    0, "techObjectEplanName", 0, "techObjectNameBC",
-                   "attachedObjects", null));
+                   "attachedObjects", null);
+            techObject.GetParamsManager().CompleteInit();
+
+            parameter.Owner = new BaseTechObject(techObject);
             var modesManager = (parameter.Owner as BaseTechObject)
                 .Owner.ModesManager;
             var modes = new List<Mode>
@@ -458,6 +461,7 @@ namespace EasyEplanner.Tests
             techObject.NameEplanForFile = "TechObject";
             techObject.GetParamsManager().AddFloatParam("параметр 1", 1, "unit", "parameter1");
             techObject.GetParamsManager().AddFloatParam("параметр 2", 5, "unit", "parameter2");
+            techObject.GetParamsManager().CompleteInit();
 
             var operation = new Mode("operation1", getN => 1, new ModesManager(techObject));
             

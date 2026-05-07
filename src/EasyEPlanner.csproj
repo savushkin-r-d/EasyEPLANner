@@ -516,6 +516,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\GroupableAction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\GenericTechObject.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Interfaces\IAutocompletable.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Interfaces\IToolTip.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />
@@ -535,6 +536,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\TechObject.cs" />
     <Compile Include="TechObject\ObjectsTree\UserObject.cs" />
     <Compile Include="TechObject\TechObjectCheckStrategy.cs" />
+    <Compile Include="TechObject\TechObjectIdentifyData.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
     <Compile Include="TechObject\TechObjectChecker.cs" />
     <Compile Include="TechObject\TechObjectXMLMaker.cs" />

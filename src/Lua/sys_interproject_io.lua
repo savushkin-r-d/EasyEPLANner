@@ -29,7 +29,7 @@ end
 add_nodes = function(model, isMainModel)
     for key, value in pairs(nodes) do
         -- Контроллер PXC и WAGO
-        if (value.ntype == 201 or value.ntype == 2) then
+        if (value.ntype == 201 or value.ntype == 202 or value.ntype == 203 or value.ntype == 2) then
             local IP = value.IP or ""
 
             if(isMainModel == true) then

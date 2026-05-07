@@ -319,13 +319,6 @@ namespace TechObject
                 return ValueType.Number;
             }
 
-            bool isParameter = GetCurrentTechObject()?.GetParamsManager()
-                .Float.GetParam(value) != null;
-            if (isParameter)
-            {
-                return ValueType.Parameter;
-            }
-
             bool isDevice = deviceManager.GetDeviceByEplanName(value)
                 .Description != StaticHelper.CommonConst.Cap;
             if (isDevice)
@@ -354,6 +347,13 @@ namespace TechObject
                 {
                     return ValueType.ManyDevices;
                 }
+            }
+
+            bool isParameter = GetCurrentTechObject()?.GetParamsManager() is { } pm &&
+                (pm.Float.GetParam(value) != null || !pm.Initialized);
+            if (isParameter)
+            {
+                return ValueType.Parameter;
             }
 
             bool stub = value.ToLower()
