@@ -682,6 +682,19 @@ namespace EasyEplanner.Tests
             allowedSignalOrParameterValue.Check();
             Assert.AreEqual(logsCountBeforeAllowedSignalOrParameter, logMessages.Count);
 
+            // Stub -> без ошибки и без сброса значения
+            var stubValue = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                });
+            SetUpParameterBaseOperationOwner(stubValue);
+            stubValue.SetNewValue("Нет");
+            var logsCountBeforeStub = logMessages.Count;
+            stubValue.Check();
+            Assert.AreEqual(logsCountBeforeStub, logMessages.Count);
+            Assert.AreEqual("Нет", stubValue.Value);
+
             // Signals + Parameters: сигнал неверного типа сбрасывается частично
             var badSignalOrParameterValue = new ActiveParameter("bp", "",
                 "", new List<BaseParameter.DisplayObject>
