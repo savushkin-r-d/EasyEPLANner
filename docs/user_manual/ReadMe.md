@@ -604,7 +604,8 @@ ProjectTestEnabled=True
 
 Операции состоят из шагов. Операция может находиться в состоянии __простой__, __выполнение__, __пауза__, __остановка__, __запуск__, __становится в паузу__, __выходит из паузы__, __останавливается__.
 
-<p align="center"><img src="images/transition_between_operations.svg"></p>
+
+<p align="center"><img src="images/states_transition.svg"></p>
 
 <p align="center"><b>Рисунок</b> - <i>Переход между состояниями операций</i></p>
 
