@@ -558,14 +558,14 @@ namespace TechObject
                 return true;
             }
 
-            if (this is ActiveAggregateParameter)
-            {
-                operation = BaseOperation?.Owner;
-                techObject = (Owner as BaseTechObject)?.Owner
-                    ?? operation?.Owner?.Owner;
-                return true;
-            }
+            return TryGetCheckContextCore(out operation, out techObject);
+        }
 
+        protected virtual bool TryGetCheckContextCore(out Mode operation,
+            out TechObject techObject)
+        {
+            operation = null;
+            techObject = null;
             return false;
         }
 
