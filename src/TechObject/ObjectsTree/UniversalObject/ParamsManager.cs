@@ -444,6 +444,19 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Отметить все параметры инициализированными
+        /// </summary>
+        public void CompleteInit()
+        {
+            Initialized = true;
+        }
+
+        /// <summary>
+        /// Отметка о том, что параметры уже инициализированны
+        /// </summary>
+        public bool Initialized { get; private set; } = false;
+
         public TechObject TechObject => Parent as TechObject;
 
         private Params parFloat;
