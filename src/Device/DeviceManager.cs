@@ -35,6 +35,13 @@ namespace EplanDevice
         IDevice GetDeviceByEplanName(string devName);
 
         /// <summary>
+        /// Существует ли устройство с указанным именем в Eplan.
+        /// </summary>
+        /// <param name="devName">Имя устройств в Eplan</param>
+        /// <returns></returns>
+        bool IsExistingDeviceByEplanName(string devName);
+
+        /// <summary>
         /// Получить устройство по индексу
         /// </summary>
         /// <param name="index">Индекс устройства</param>
@@ -276,6 +283,11 @@ namespace EplanDevice
                 out objectNumber, out deviceType, out deviceNumber);
             return new IODevice(name, eplanName, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
+        }
+
+        public bool IsExistingDeviceByEplanName(string devName)
+        {
+            return GetDeviceByEplanName(devName)?.Description != CommonConst.Cap;
         }
 
         public IODevice GetDevice(string devName)

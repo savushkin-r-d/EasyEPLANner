@@ -319,8 +319,7 @@ namespace TechObject
                 return ValueType.Number;
             }
 
-            bool isDevice = deviceManager.GetDeviceByEplanName(value)
-                .Description != StaticHelper.CommonConst.Cap;
+            bool isDevice = deviceManager.IsExistingDeviceByEplanName(value);
             if (isDevice)
             {
                 return ValueType.Device;
@@ -333,8 +332,7 @@ namespace TechObject
                 var validDevices = new List<bool>();
                 foreach (var device in devices)
                 {
-                    isDevice = deviceManager.GetDeviceByEplanName(device)
-                        .Description != StaticHelper.CommonConst.Cap;
+                    isDevice = deviceManager.IsExistingDeviceByEplanName(device);
                     if (isDevice == false)
                     {
                         haveBadDevices = true;

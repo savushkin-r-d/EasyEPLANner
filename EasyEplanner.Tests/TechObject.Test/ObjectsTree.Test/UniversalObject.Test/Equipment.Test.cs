@@ -163,6 +163,8 @@ namespace TechObjectTests
                 .SetValue(null, Mock.Of<IDeviceManager>(m =>
                     m.GetDevice("DEV1LS1") == LS1 &&
                     m.GetDeviceByEplanName("DEV1LS1") == LS1 &&
+                    m.IsExistingDeviceByEplanName("DEV1LS1") == true &&
+                    m.IsExistingDeviceByEplanName("PARAMETER_1") == false &&
                     m.GetDeviceIndex("DEV1LS1") == 1 &&
                     m.GetDeviceByIndex(1) == LS1 &&
                     m.GetDeviceByIndex(0) == STUB
@@ -216,6 +218,7 @@ namespace TechObjectTests
                 .SetValue(null, Mock.Of<IDeviceManager>(m =>
                     m.GetDevice("DEV1LS1") == LS1 &&
                     m.GetDeviceByEplanName("DEV1LS1") == LS1 &&
+                    m.IsExistingDeviceByEplanName("DEV1LS1") == true &&
                     m.GetDeviceIndex("DEV1LS1") == 1 &&
                     m.GetDeviceByIndex(1) == LS1 &&
                     m.GetDeviceByIndex(0) == STUB

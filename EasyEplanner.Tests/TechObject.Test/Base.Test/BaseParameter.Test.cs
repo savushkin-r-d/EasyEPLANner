@@ -554,6 +554,12 @@ namespace EasyEplanner.Tests
                 d.GetDeviceByEplanName(norm_1_dev_2_name) == norm_1_dev_2 &&
                 d.GetDeviceByEplanName(norm_2_dev_2_name) == norm_2_dev_2 &&
                 d.GetDeviceByEplanName(other_1_dev_2_name) == other_1_dev_2 &&
+                d.IsExistingDeviceByEplanName(stubDev1Name) == false &&
+                d.IsExistingDeviceByEplanName(stubDev2Name) == false &&
+                d.IsExistingDeviceByEplanName(norm_1_dev_1_name) == true &&
+                d.IsExistingDeviceByEplanName(norm_1_dev_2_name) == true &&
+                d.IsExistingDeviceByEplanName(norm_2_dev_2_name) == true &&
+                d.IsExistingDeviceByEplanName(other_1_dev_2_name) == true &&
                 d.GetDevice(stubDev1Name) == stubDevice1 &&
                 d.GetDevice(stubDev2Name) == stubDevice2 &&
                 d.GetDevice(norm_1_dev_1_name) == norm_1_dev_1 &&
