@@ -501,6 +501,18 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expected, parameter.Value);
         }
 
+        /// <summary>
+        /// Реальный <see cref="IODevice"/> для тестов: <see cref="IDeviceManager.GetDevice"/>
+        /// возвращает именно тип <see cref="IODevice"/>, мок-только <see cref="IDevice"/> нельзя безопасно привести.
+        /// </summary>
+        private sealed class TestIODevice : IODevice
+        {
+            public TestIODevice(string name, string description, DeviceType deviceType)
+                : base(name, name, description, deviceType.ToString(), 1, "O", 1)
+            {
+            }
+        }
+
         private EplanDevice.IDeviceManager GetMoqForSetValuesAndDisplayTextTest()
         {
             string stubDev1Name = "STUB1DEV1";
@@ -518,27 +530,21 @@ namespace EasyEplanner.Tests
             int norm_2_dev_2_index = 5;
             int other_1_dev_2_index = 6;
 
-            var stubDevice1 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == stubDev1Name &&
-                dev.Description == StaticHelper.CommonConst.Cap);
-            var stubDevice2 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == stubDev2Name &&
-                dev.Description == StaticHelper.CommonConst.Cap);
+            var stubDevice1 = new TestIODevice(stubDev1Name, StaticHelper.CommonConst.Cap,
+                DeviceType.NONE);
+            var stubDevice2 = new TestIODevice(stubDev2Name, StaticHelper.CommonConst.Cap,
+                DeviceType.NONE);
 
-            var norm_1_dev_1 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == norm_1_dev_1_name &&
-                dev.Description == "Description 1");
-            var norm_1_dev_2 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == norm_1_dev_2_name &&
-                dev.Description == "Description 2");
+            var norm_1_dev_1 = new TestIODevice(norm_1_dev_1_name, "Description 1",
+                DeviceType.AI);
+            var norm_1_dev_2 = new TestIODevice(norm_1_dev_2_name, "Description 2",
+                DeviceType.DO);
 
-            var norm_2_dev_2 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == norm_2_dev_2_name &&
-                dev.Description == "Description");
+            var norm_2_dev_2 = new TestIODevice(norm_2_dev_2_name, "Description",
+                DeviceType.DO);
 
-            var other_1_dev_2 = Mock.Of<EplanDevice.IDevice>(
-                dev => dev.Name == other_1_dev_2_name &&
-                dev.Description == "Description");
+            var other_1_dev_2 = new TestIODevice(other_1_dev_2_name, "Description",
+                DeviceType.DO);
 
             var deviceManagerMock = Mock.Of<EplanDevice.IDeviceManager>(
                 d => d.GetDeviceByEplanName(stubDev1Name) == stubDevice1 &&
@@ -548,6 +554,12 @@ namespace EasyEplanner.Tests
                 d.GetDeviceByEplanName(norm_1_dev_2_name) == norm_1_dev_2 &&
                 d.GetDeviceByEplanName(norm_2_dev_2_name) == norm_2_dev_2 &&
                 d.GetDeviceByEplanName(other_1_dev_2_name) == other_1_dev_2 &&
+                d.GetDevice(stubDev1Name) == stubDevice1 &&
+                d.GetDevice(stubDev2Name) == stubDevice2 &&
+                d.GetDevice(norm_1_dev_1_name) == norm_1_dev_1 &&
+                d.GetDevice(norm_1_dev_2_name) == norm_1_dev_2 &&
+                d.GetDevice(norm_2_dev_2_name) == norm_2_dev_2 &&
+                d.GetDevice(other_1_dev_2_name) == other_1_dev_2 &&
                 d.GetDeviceByIndex(It.IsAny<int>()) == stubDevice1 &&
                 d.GetDeviceByIndex(norm_1_dev_1_index) == norm_1_dev_1 &&
                 d.GetDeviceByIndex(norm_1_dev_2_index) == norm_1_dev_2 &&
@@ -571,22 +583,164 @@ namespace EasyEplanner.Tests
         [Test]
         public void Check()
         {
-            var baseOperation = new BaseOperation("", "", new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            var logMock = new Mock<EasyEPlanner.ILog>();
+            var logMessages = new List<string>();
+            logMock.Setup(l => l.AddMessage(It.IsAny<string>()))
+                .Callback<string>(msg => logMessages.Add(msg));
+            EasyEPlanner.Logs.Init(logMock.Object);
 
-            var baseParamter = new ActiveParameter("bp", "");
+            // IsEmpty -> ранний выход
+            var emptyParameter = new ActiveParameter("bp", "");
+            emptyParameter.Check();
+            Assert.AreEqual(0, logMessages.Count);
 
-            baseParamter.Check();
+            // Owner не BaseOperation -> ранний выход
+            var noOwnerParameter = new ActiveParameter("bp", "");
+            noOwnerParameter.SetNewValue("qwe");
+            noOwnerParameter.Check();
+            Assert.AreEqual(0, logMessages.Count);
 
-            baseParamter.SetNewValue("qwe");
-            baseParamter.Check();
+            // Disabled -> ранний выход
+            var disabledParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                })
+            {
+                Disabled = true,
+                Owner = new BaseOperation("", "",
+                    new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>())
+            };
+            disabledParameter.SetNewValue("qwe");
+            disabledParameter.Check();
+            Assert.AreEqual("qwe", disabledParameter.Value);
+            Assert.AreEqual(0, logMessages.Count);
 
-            baseParamter.Owner = baseOperation;
-            baseParamter.Check();
+            // ValueType.Device + Signals -> без ошибки
+            var allowedDeviceParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Signals
+                });
+            allowedDeviceParameter.SetNewValue("NORM1DEV1");
+            allowedDeviceParameter.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            allowedDeviceParameter.Check();
+            Assert.AreEqual(0, logMessages.Count);
 
-            Assert.AreEqual("", baseParamter.Value);
+            // ValueType.Device + не Signals -> ошибка типа сигнала
+            var badDeviceParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI
+                });
+            // NORM1DEV2 — DO, при допуске только AI должна быть ошибка типа.
+            badDeviceParameter.SetNewValue("NORM1DEV2");
+            badDeviceParameter.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            badDeviceParameter.Check();
+            Assert.That(logMessages, Is.Not.Empty,
+                "ожидалась запись в лог при неверном типе устройства для ограничения только AI");
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("могут быть установлены только сигналы"));
+            Assert.AreEqual(string.Empty, badDeviceParameter.Value);
+
+            // ManyDevices + DI: неподходящие устройства сбрасываются, подходящие остаются
+            var partiallyBadSignalsParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI
+                });
+            partiallyBadSignalsParameter.SetNewValue("NORM1DEV1 NORM1DEV2");
+            partiallyBadSignalsParameter.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            partiallyBadSignalsParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("могут быть установлены только сигналы"));
+            Assert.AreEqual("NORM1DEV1", partiallyBadSignalsParameter.Value);
+
+            // ValueType.Parameter + Parameters -> без ошибки
+            var allowedParameterValue = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                });
+            SetUpParameterBaseOperationOwner(allowedParameterValue);
+            allowedParameterValue.SetNewValue("parameter1");
+            var logsCountBeforeAllowedParameter = logMessages.Count;
+            allowedParameterValue.Check();
+            Assert.AreEqual(logsCountBeforeAllowedParameter, logMessages.Count);
+
+            // Signals + Parameters: параметр разрешен
+            var allowedSignalOrParameterValue = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI,
+                    BaseParameter.DisplayObject.Parameters
+                });
+            SetUpParameterBaseOperationOwner(allowedSignalOrParameterValue);
+            allowedSignalOrParameterValue.SetNewValue("parameter1");
+            var logsCountBeforeAllowedSignalOrParameter = logMessages.Count;
+            allowedSignalOrParameterValue.Check();
+            Assert.AreEqual(logsCountBeforeAllowedSignalOrParameter, logMessages.Count);
+
+            // Signals + Parameters: сигнал неверного типа сбрасывается частично
+            var badSignalOrParameterValue = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.AI,
+                    BaseParameter.DisplayObject.Parameters
+                });
+            badSignalOrParameterValue.SetNewValue("NORM1DEV1 NORM1DEV2");
+            badSignalOrParameterValue.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            badSignalOrParameterValue.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("Могут быть установлены только параметры или сигналы"));
+            Assert.AreEqual("NORM1DEV1", badSignalOrParameterValue.Value);
+
+            // ValueType.Parameter + не Parameters -> без ошибки
+            var parameterValueWithoutDisplayObject = new ActiveParameter("bp", "");
+            SetUpParameterBaseOperationOwner(parameterValueWithoutDisplayObject);
+            parameterValueWithoutDisplayObject.SetNewValue("parameter1");
+            var logsCountBeforeParameterWithoutDisplayObject = logMessages.Count;
+            parameterValueWithoutDisplayObject.Check();
+            Assert.AreEqual(logsCountBeforeParameterWithoutDisplayObject,
+                logMessages.Count);
+            Assert.AreEqual("parameter1", parameterValueWithoutDisplayObject.Value);
+
+            // Default + None -> без ошибки
+            var noneDisplayObjectParameter = new ActiveParameter("bp", "");
+            noneDisplayObjectParameter.SetNewValue("qwe");
+            noneDisplayObjectParameter.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            var logsCountBeforeNoneDisplayObject = logMessages.Count;
+            noneDisplayObjectParameter.Check();
+            Assert.AreEqual(logsCountBeforeNoneDisplayObject, logMessages.Count);
+
+            // Default + не None -> ошибка
+            var invalidValueParameter = new ActiveParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                });
+            invalidValueParameter.SetNewValue("qwe");
+            invalidValueParameter.Owner = new BaseOperation("", "",
+                new List<BaseParameter>(), new Dictionary<string, List<BaseStep>>());
+            invalidValueParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("заполнено неверно: 'qwe'"));
+            Assert.AreEqual(string.Empty, invalidValueParameter.Value);
+
+            // ActiveAggregateParameter получает контекст через BaseTechObject + BaseOperation
+            var aggregateParameter = new ActiveAggregateParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters
+                });
+            SetUpParameterBaseTechObjectOwner(aggregateParameter);
+            aggregateParameter.SetNewValue("qwe");
+            aggregateParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("techObjectName"));
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("modeName_1"));
+            Assert.AreEqual(string.Empty, aggregateParameter.Value);
         }
-
-
 
         string stub = string.Empty;
     }

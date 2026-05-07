@@ -61,5 +61,14 @@ namespace TechObject
             get => parameter;
             private set => parameter = value;
         }
+
+        protected override bool TryGetCheckContextCore(out Mode operation,
+            out TechObject techObject)
+        {
+            operation = BaseOperation?.Owner;
+            techObject = (Owner as BaseTechObject)?.Owner
+                ?? operation?.Owner?.Owner;
+            return true;
+        }
     }
 }
