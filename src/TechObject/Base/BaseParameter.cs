@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using static IO.IONode;
 
 namespace TechObject
 {
@@ -514,34 +515,129 @@ namespace TechObject
 
             SetParameterValueType(Value);
 
-            if (Owner is not BaseOperation baseOperation)
+            if (!TryGetCheckContext(out var operation, out var techObject))
             {
                 return;
             }
 
-            var operation = baseOperation.Owner;
-            var techObject = operation?.Owner?.Owner;
+            var hasSignal = HasSignalDisplayObject();
+            var hasParameter = DisplayObjects.Contains(DisplayObject.Parameters);
+            var errContext = $"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\": поле заполнено неверно: '{Value}'";
+            var devTypesContext = $"(допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})";
 
-            switch (CurrentValueType)
+            if (hasSignal)
             {
-                case ValueType.Other:
-                    // Сброс поля параметра в доп. свойствах операции,
-                    // если указан несуществующий параметр.
-                    SetNewValue(string.Empty);
-                    Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" имеет неопределенное значение: {Value};\n");
-                    break;
+                var devices = GetDevicesFromValue();
+                var correctSignalNames = GetCorrectSignalNames(devices);
+                var hasCorrectSignals = devices.Count == correctSignalNames.Count;
 
-                case ValueType.Device:
-                case ValueType.ManyDevices:
-                    if (!DisplayObjects.Contains(DisplayObject.Signals) &&
-                        Value.Split(' ').Select(deviceManager.GetDevice)
-                            .Any(d => !deviceTypes.Contains(d.DeviceType)))
-                    {
-                        var types = string.Join(", ", [.. deviceTypes.Select(d => d.ToString())]);
-                        Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
-                    }
-                    break;
+                if (hasParameter)
+                {
+                    CheckSignalsOrParameters(errContext, devTypesContext,
+                        correctSignalNames, hasCorrectSignals);
+                    return;
+                }
+
+                CheckSignals(errContext, devTypesContext, correctSignalNames,
+                    hasCorrectSignals);
+                return;
             }
+
+            CheckParameters(errContext);
+        }
+
+        private bool TryGetCheckContext(out Mode operation, out TechObject techObject)
+        {
+            operation = null;
+            techObject = null;
+
+            if (Owner is BaseOperation baseOperation)
+            {
+                operation = baseOperation.Owner;
+                techObject = operation?.Owner?.Owner;
+                return true;
+            }
+
+            return TryGetCheckContextCore(out operation, out techObject);
+        }
+
+        protected virtual bool TryGetCheckContextCore(out Mode operation,
+            out TechObject techObject)
+        {
+            operation = null;
+            techObject = null;
+            return false;
+        }
+
+        private bool HasSignalDisplayObject()
+        {
+            var signalDisplayObjects = new[]
+            {
+                DisplayObject.Signals,
+                DisplayObject.DI,
+                DisplayObject.DO,
+                DisplayObject.AI,
+                DisplayObject.AO,
+            };
+
+            return DisplayObjects.Any(signalDisplayObjects.Contains);
+        }
+
+        private List<IODevice> GetDevicesFromValue()
+        {
+            return [.. Value.Split([' '], StringSplitOptions.RemoveEmptyEntries)
+                .Select(deviceManager.GetDevice)];
+        }
+
+        private List<string> GetCorrectSignalNames(List<IODevice> devices)
+        {
+            return devices
+                .Where(d => d != null && deviceTypes.Contains(d.DeviceType))
+                .Select(d => d.Name)
+                .ToList();
+        }
+
+        private void CheckSignalsOrParameters(string errContext,
+            string devTypesContext, List<string> correctSignalNames,
+            bool hasCorrectSignals)
+        {
+            if (CurrentValueType is ValueType.Parameter)
+                return;
+
+            if (CurrentValueType is ValueType.Device or ValueType.ManyDevices)
+            {
+                if (hasCorrectSignals)
+                    return;
+
+                SetNewValue(string.Join(" ", correctSignalNames));
+            }
+            else
+            {
+                SetNewValue(string.Empty);
+            }
+
+            Logs.AddMessage($"{errContext} - Могут быть установлены только параметры или сигналы {devTypesContext};\n");
+        }
+
+        private void CheckSignals(string errContext, string devTypesContext,
+            List<string> correctSignalNames, bool hasCorrectSignals)
+        {
+            if (CurrentValueType is ValueType.Device or ValueType.ManyDevices &&
+                hasCorrectSignals)
+                return;
+
+            SetNewValue(string.Join(" ", correctSignalNames));
+            Logs.AddMessage($"{errContext} - могут быть установлены только сигналы {devTypesContext};\n");
+        }
+
+        private void CheckParameters(string errContext)
+        {
+            if (!DisplayObjects.Contains(DisplayObject.Parameters) ||
+                CurrentValueType is ValueType.Parameter)
+                return;
+
+            SetNewValue(string.Empty);
+            Logs.AddMessage($"{errContext} - могут быть установлены только параметры;\n");
         }
 
         public virtual void ModifyDevNames(IDevModifyOptions options)
