@@ -103,7 +103,6 @@ namespace TechObject
 
             string equipmentForSave = GetDescendantsParameters()
                 .OfType<EquipmentParameter>()
-                .Where(p => !p.IsEmpty)
                 .Select(p => $"{prefix}\t{p.LuaName} = \'{p.Value}\',\n")
                 .Aggregate("", (r, p) => r + p);
 
