@@ -168,6 +168,7 @@ namespace IO
             return extensionNode;
         }
 
+        [ExcludeFromCodeCoverage]
         public class ExtensionNodeInfo
         {
             public int ExtensionNumber { get; set; }
