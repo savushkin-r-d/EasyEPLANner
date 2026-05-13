@@ -205,6 +205,37 @@ namespace IOTests
         }
 
         [Test]
+        public void ExtensionModules_NewNode_ReturnsEmptyCollection()
+        {
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
+
+            CollectionAssert.IsEmpty(testNode.ExtensionModules);
+        }
+
+        [Test]
+        public void AddExtensionModule_NewExtension_AddsModule()
+        {
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, "A100", StrStub, StrStub);
+            var extensionNode = new IONode(StrStub, 1, 100, StrStub, "A100.1", StrStub, StrStub);
+
+            testNode.AddExtensionModule(extensionNode);
+
+            CollectionAssert.AreEqual(new[] { extensionNode }, testNode.ExtensionModules);
+        }
+
+        [Test]
+        public void AddExtensionModule_DuplicateName_ThrowsInvalidOperationException()
+        {
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, "A100", StrStub, StrStub);
+            var firstExtension = new IONode(StrStub, 1, 100, StrStub, "A100.1", StrStub, StrStub);
+            var duplicateExtension = new IONode(StrStub, 1, 100, StrStub, "A100.1", StrStub, StrStub);
+
+            testNode.AddExtensionModule(firstExtension);
+
+            Assert.Throws<InvalidOperationException>(() => testNode.AddExtensionModule(duplicateExtension));
+        }
+
+        [Test]
         public void SetModule_CorrectSet()
         {
             const string moduleName = "A101";
