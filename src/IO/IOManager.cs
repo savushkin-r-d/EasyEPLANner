@@ -339,7 +339,6 @@ namespace IO
             return errors;
         }
 
-        [ExcludeFromCodeCoverage]
         private IEnumerable<IIONode> GetNodesWithExtensions()
         {
             foreach (var node in iONodes)
