@@ -14,6 +14,7 @@
 -- 201 - Контроллер Phoenix Contact AXC F 1152
 -- 202 - Контроллер Phoenix Contact AXC F 2152
 -- 203 - Контроллер Phoenix Contact AXC F 3152
+-- 300 - Модуль расширения Phoenix Contact
 
 local io_nodes =
 {
@@ -101,6 +102,12 @@ local io_nodes =
         isCoupler = true,
         type = 100
     },
+    [ 15 ] = 
+    {
+        name = "AXC F XT ETH 1TX",
+        isCoupler = false,
+        type = 300,
+    }
 }
 
 return io_nodes

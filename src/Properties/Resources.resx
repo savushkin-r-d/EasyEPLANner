@@ -613,6 +613,7 @@ shared_devices =
 -- 201 - Контроллер Phoenix Contact AXC F 1152
 -- 202 - Контроллер Phoenix Contact AXC F 2152
 -- 203 - Контроллер Phoenix Contact AXC F 3152
+-- 300 - Модуль расширения Phoenix Contact
 
 local io_nodes =
 {

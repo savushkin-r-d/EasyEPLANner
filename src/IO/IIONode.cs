@@ -12,6 +12,11 @@ namespace IO
         List<IIOModule> IOModules { get; }
 
         /// <summary>
+        /// Модули расширения узла.
+        /// </summary>
+        List<IIONode> ExtensionModules { get; }
+
+        /// <summary>
         /// Тип узла.
         /// </summary>
         IONode.TYPES Type { get; }
@@ -96,6 +101,12 @@ namespace IO
         /// <param name="iOModule">Вставляемый модуль.</param>
         /// <param name="position">Позиция модуля, начиная с 1.</param>
         void SetModule(IIOModule iOModule, int position);
+
+        /// <summary>
+        /// Добавление модуля расширения.
+        /// </summary>
+        /// <param name="extensionModule">Модуль расширения.</param>
+        void AddExtensionModule(IIONode extensionModule);
 
         /// <summary>
         /// Получение модуля.

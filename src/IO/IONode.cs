@@ -38,6 +38,7 @@ namespace IO
             LocationDescription = locationDescription;
 
             iOModules = new List<IIOModule>();
+            extensionModules = new List<IIONode>();
 
             DI_count = 0;
             DO_count = 0;
@@ -112,6 +113,17 @@ namespace IO
                 throw new AddressAreaOutOfRangeException(
                     $"До модуля \"{iOModule.Name}\" {iOModule.ArticleName} не определено {indefiniteCount} модулей;\n");
             }
+        }
+
+        public void AddExtensionModule(IIONode extensionModule)
+        {
+            if (extensionModules.Any(module => module.Name == extensionModule.Name))
+            {
+                throw new InvalidOperationException($"Модуль расширения \"{extensionModule.Name}\" " +
+                    $"для узла \"{name}\" определяется дважды.");
+            }
+
+            extensionModules.Add(extensionModule);
         }
 
         [ExcludeFromCodeCoverage]
@@ -190,6 +202,7 @@ namespace IO
             T_PHOENIX_CONTACT_1152 = 201, /// Контроллер Phoenix Contact AXC F 1152
             T_PHOENIX_CONTACT_2152 = 202, /// Контроллер Phoenix Contact AXC F 2152
             T_PHOENIX_CONTACT_3152 = 203, /// Контроллер Phoenix Contact AXC F 3152
+            T_PXC_EXTENSION = 300, /// Модуль расширения
         };
 
         /// <summary>
@@ -243,6 +256,14 @@ namespace IO
             get
             {
                 return iOModules;
+            }
+        }
+
+        public List<IIONode> ExtensionModules
+        {
+            get
+            {
+                return extensionModules;
             }
         }
 
@@ -327,6 +348,11 @@ namespace IO
         /// Модули узла.
         /// </summary>
         private List<IIOModule> iOModules;
+
+        /// <summary>
+        /// Модули расширения узла.
+        /// </summary>
+        private readonly List<IIONode> extensionModules;
 
         /// <summary>
         /// Тип узла (строка).

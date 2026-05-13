@@ -22,6 +22,7 @@ namespace IOTests
                 n.Name == "A100" &&
                 n.TypeStr == "AO" &&
                 n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>() &&
                 n.Function.IP == "ip" &&
                 n.Function.SubnetMask == "mask" &&
                 n.Function.Gateway == "gateway" && 
@@ -48,6 +49,60 @@ namespace IOTests
                     new List<string>() { "ip", "mask", "gateway" },
                     node.Items.Select(i => i.Description));
             });
+        }
+
+        [Test]
+        public void Name_ExtensionNode_ReturnsFullNameWithoutPrefix()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == "A100.1" &&
+                n.TypeStr == "AXC F XT ETH 1TX" &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>());
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.AreEqual("A100.1", node.Name);
+        }
+
+        [Test]
+        public void Name_NullNodeName_ReturnsNumberWithEmptyName()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == null &&
+                n.TypeStr == "AO" &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>());
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.AreEqual("1. ", node.Name);
+        }
+
+        [Test]
+        public void Items_NodeWithExtension_AddsExtensionNode()
+        {
+            var extensionNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == "A100.1" &&
+                n.TypeStr == "AXC F XT ETH 1TX" &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>());
+
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == "A100" &&
+                n.TypeStr == "AO" &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>() { extensionNode });
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            CollectionAssert.AreEqual(
+                new List<string>() { "IP-адрес", "Маска подсети", "Сетевой шлюз", "A100.1" },
+                node.Items.Select(i => i.Name));
         }
     }
 }

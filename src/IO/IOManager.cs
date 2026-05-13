@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IO
@@ -130,21 +131,75 @@ namespace IO
                 }
             }
 
-            if (ProjectConfiguration.GetInstance()?.
-                BelongToRangesIP(IPConverter.ConvertIPStrToLong(IP)) is false)
-            {
-                Logs.AddMessage($"IP-адрес узла '{name}' ({IP}) выходит за диапазон ip-адресов проекта;");
-            }
-
-            if (iONodes.Find(node => node.IP == IP) is IONode nodeWithSameIp)
-            {
-                Logs.AddMessage($"IP-адрес узла '{name}' совпадает с адресом узла '{nodeWithSameIp.Name}': ({IP});");
-            }
+            CheckNodeIP(name, IP);
 
             var node = new IONode(type, n, nodeNumber, IP, name, location, locationDescription);
             iONodes[n - 1] = node;
 
             return node;
+        }
+
+        /// <summary>
+        /// Добавление модуля расширения в узел.
+        /// </summary>
+        /// <param name="nodeIdx">Индекс родительского узла.</param>
+        /// <param name="extensionNodeInfo">Информация о модуле расширения.</param>
+        [ExcludeFromCodeCoverage]
+        public IONode AddExtensionNode(int nodeIdx,
+            ExtensionNodeInfo extensionNodeInfo)
+        {
+            var parentNode = this[nodeIdx];
+            if (parentNode is null)
+            {
+                return null;
+            }
+
+            CheckNodeIP(extensionNodeInfo.Name, extensionNodeInfo.IP);
+
+            var extensionNode = new IONode(extensionNodeInfo.Type,
+                extensionNodeInfo.ExtensionNumber,
+                extensionNodeInfo.NodeNumber,
+                extensionNodeInfo.IP,
+                extensionNodeInfo.Name,
+                extensionNodeInfo.Location,
+                extensionNodeInfo.LocationDescription);
+            parentNode.AddExtensionModule(extensionNode);
+
+            return extensionNode;
+        }
+
+        [ExcludeFromCodeCoverage]
+        public class ExtensionNodeInfo
+        {
+            public int ExtensionNumber { get; set; }
+
+            public int NodeNumber { get; set; }
+
+            public string Type { get; set; }
+
+            public string IP { get; set; }
+
+            public string Name { get; set; }
+
+            public string Location { get; set; }
+
+            public string LocationDescription { get; set; }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void CheckNodeIP(string name, string IP)
+        {
+            if (ProjectConfiguration.GetInstance()?.
+                BelongToRangesIP(IPConverter.ConvertIPStrToLong(IP)) == false)
+            {
+                Logs.AddMessage($"IP-адрес узла '{name}' ({IP}) выходит за диапазон ip-адресов проекта;");
+            }
+
+            if (IP != "" && GetNodesWithExtensions()
+                .FirstOrDefault(node => node.IP == IP) is IONode nodeWithSameIp)
+            {
+                Logs.AddMessage($"IP-адрес узла '{name}' совпадает с адресом узла '{nodeWithSameIp.Name}': ({IP});");
+            }
         }
 
         /// <summary>
@@ -240,7 +295,7 @@ namespace IO
         private string CheckNodeIPEquality(IIONode node)
         {
             string str = string.Empty;
-            foreach (var node2 in iONodes)
+            foreach (var node2 in GetNodesWithExtensions())
             {
                 if (node == node2) continue;
 
@@ -263,7 +318,7 @@ namespace IO
         private string CheckIONodesIPRange(long startingIP, long endingIP)
         {
             string errors = "";
-            var plcWithIP = IONodes;
+            var plcWithIP = GetNodesWithExtensions();
             foreach (var node in plcWithIP)
             {
                 string IPstr = node.IP;
@@ -282,6 +337,24 @@ namespace IO
             }
 
             return errors;
+        }
+
+        private IEnumerable<IIONode> GetNodesWithExtensions()
+        {
+            foreach (var node in iONodes)
+            {
+                if (node is null)
+                {
+                    continue;
+                }
+
+                yield return node;
+
+                foreach (var extensionModule in node.ExtensionModules)
+                {
+                    yield return extensionModule;
+                }
+            }
         }
 
         public void CalculateIOLinkAdresses()
@@ -460,7 +533,7 @@ namespace IO
         /// <summary>
         /// Шаблон для разбора имени узла, модуля ввода-вывода (прим., А100).
         /// </summary>
-        public const string IONamePattern = @"=*-A(?<n>\d+)";
+        public const string IONamePattern = @"=*-A(?<n>\d+)(\.(?<ext>\d+))?$";
 
         #region Закрытые поля.
         private List<IIONode> iONodes;     ///Узлы проекта.
