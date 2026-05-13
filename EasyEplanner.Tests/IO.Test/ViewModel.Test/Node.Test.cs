@@ -22,6 +22,7 @@ namespace IOTests
                 n.Name == "A100" &&
                 n.TypeStr == "AO" &&
                 n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>() &&
                 n.Function.IP == "ip" &&
                 n.Function.SubnetMask == "mask" &&
                 n.Function.Gateway == "gateway" && 
