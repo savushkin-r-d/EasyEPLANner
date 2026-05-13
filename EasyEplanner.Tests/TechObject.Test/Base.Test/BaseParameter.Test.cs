@@ -169,6 +169,17 @@ namespace EasyEplanner.Tests
                 {
                     new List<string>
                     {
+                        "operation"
+                    },
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Operation,
+                    },
+                },
+                new object[]
+                {
+                    new List<string>
+                    {
                         "parameters",
                         "signals"
                     },
@@ -262,6 +273,16 @@ namespace EasyEplanner.Tests
                     new DeviceType[] { },
                     null,
                     true,
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Operation
+                    },
+                    new DeviceType[] { },
+                    null,
+                    false,
                 },
                 new object[]
                 {
@@ -363,6 +384,83 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedDisplayText, parameter.DisplayText);
         }
 
+        [Test]
+        public void DisplayText_OperationDisplayObjectWithExistingNumber_ReturnsOperationDisplayText()
+        {
+            string name = "Name";
+            var parameter = new BaseParameterImplementation("LuaName", name,
+                stub, new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpParameterBaseTechObjectOwner(parameter);
+
+            parameter.SetNewValue("2");
+
+            Assert.AreEqual(new[] { name, "2. modeName_2" }, parameter.DisplayText);
+        }
+
+        [Test]
+        public void DisplayText_OperationDisplayObjectWithUnknownNumber_ReturnsRawValue()
+        {
+            string name = "Name";
+            var parameter = new BaseParameterImplementation("LuaName", name,
+                stub, new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpParameterBaseTechObjectOwner(parameter);
+
+            parameter.SetNewValue("3");
+
+            Assert.AreEqual(new[] { name, "3" }, parameter.DisplayText);
+        }
+
+        [Test]
+        public void DisplayText_AggregateParameterWithOperationDisplayObject_ReturnsAggregateOperationDisplayText()
+        {
+            string name = "Name";
+            var parameter = new ActiveAggregateParameter("LuaName", name,
+                stub, new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpAggregateParameterWithDifferentOwnerOperations(parameter);
+
+            parameter.SetNewValue("2");
+
+            Assert.AreEqual(new[] { name, "2. aggregateMode_2" },
+                parameter.DisplayText);
+        }
+
+        [Test]
+        public void Check_AggregateParameterWithOperationDisplayObject_ChecksAggregateOperations()
+        {
+            var logMock = new Mock<EasyEPlanner.ILog>();
+            var logMessages = new List<string>();
+            logMock.Setup(l => l.AddMessage(It.IsAny<string>()))
+                .Callback<string>(msg => logMessages.Add(msg));
+            EasyEPlanner.Logs.Init(logMock.Object);
+
+            var parameter = new ActiveAggregateParameter("LuaName", "Name",
+                stub, new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpAggregateParameterWithDifferentOwnerOperations(parameter);
+
+            parameter.SetNewValue("3");
+            parameter.Check();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("3", parameter.Value);
+                Assert.AreEqual(1, logMessages.Count);
+                Assert.IsTrue(logMessages[0].Contains(
+                    "может быть установлен только номер существующей операции"));
+            });
+        }
+
         [TestCase("1", BaseParameter.ValueType.Number)]
         [TestCase("200", BaseParameter.ValueType.Number)]
         [TestCase("-300", BaseParameter.ValueType.Number)]
@@ -437,6 +535,39 @@ namespace EasyEplanner.Tests
             parameter.Parent = parameter.BaseOperation;
 
             modesManager.Modes.AddRange(modes);
+        }
+
+        private void SetUpAggregateParameterWithDifferentOwnerOperations(
+            BaseParameter parameter)
+        {
+            var mainTechObject = new TechObject.TechObject("mainTechObject",
+                getN => 0, 0, 0, "mainTechObjectEplanName", 0,
+                "mainTechObjectNameBC", "attachedObjects", null);
+            var aggregateTechObject = new TechObject.TechObject(
+                "aggregateTechObject", getN => 0, 0, 0,
+                "aggregateTechObjectEplanName", 0,
+                "aggregateTechObjectNameBC", "attachedObjects", null);
+
+            var mainModesManager = mainTechObject.ModesManager;
+            var aggregateModesManager = aggregateTechObject.ModesManager;
+            var mainModes = new List<Mode>
+            {
+                new Mode("mainMode_1", getN => 1, mainModesManager),
+                new Mode("mainMode_2", getN => 2, mainModesManager),
+                new Mode("mainMode_3", getN => 3, mainModesManager),
+            };
+            var aggregateModes = new List<Mode>
+            {
+                new Mode("aggregateMode_1", getN => 1, aggregateModesManager),
+                new Mode("aggregateMode_2", getN => 2, aggregateModesManager),
+            };
+
+            mainModesManager.Modes.AddRange(mainModes);
+            aggregateModesManager.Modes.AddRange(aggregateModes);
+
+            parameter.Owner = new BaseTechObject(aggregateTechObject);
+            parameter.BaseOperation = new BaseOperation(mainModes[0]);
+            parameter.Parent = parameter.BaseOperation;
         }
 
         [TestCase("parameter1", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter1")]
@@ -759,6 +890,45 @@ namespace EasyEplanner.Tests
             Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("techObjectName"));
             Assert.IsTrue(logMessages[logMessages.Count - 1].Contains("modeName_1"));
             Assert.AreEqual(string.Empty, aggregateParameter.Value);
+
+            // Operation: существующий номер операции разрешен
+            var allowedOperationParameter = new ActiveAggregateParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpParameterBaseTechObjectOwner(allowedOperationParameter);
+            allowedOperationParameter.SetNewValue("2");
+            var logsCountBeforeAllowedOperation = logMessages.Count;
+            allowedOperationParameter.Check();
+            Assert.AreEqual(logsCountBeforeAllowedOperation, logMessages.Count);
+            Assert.AreEqual("2", allowedOperationParameter.Value);
+
+            // Operation: несуществующий номер операции сохраняется
+            var unknownOperationParameter = new ActiveAggregateParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpParameterBaseTechObjectOwner(unknownOperationParameter);
+            unknownOperationParameter.SetNewValue("3");
+            unknownOperationParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains(
+                "может быть установлен только номер существующей операции"));
+            Assert.AreEqual("3", unknownOperationParameter.Value);
+
+            // Operation: нечисловое значение сохраняется
+            var notNumberOperationParameter = new ActiveAggregateParameter("bp", "",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Operation
+                });
+            SetUpParameterBaseTechObjectOwner(notNumberOperationParameter);
+            notNumberOperationParameter.SetNewValue("qwe");
+            notNumberOperationParameter.Check();
+            Assert.IsTrue(logMessages[logMessages.Count - 1].Contains(
+                "может быть установлен только номер существующей операции"));
+            Assert.AreEqual("qwe", notNumberOperationParameter.Value);
         }
 
         string stub = string.Empty;

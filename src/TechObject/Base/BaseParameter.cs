@@ -225,20 +225,14 @@ namespace TechObject
 
         override public string[] EditText => [LuaName, Value];
 
-        override public string[] DisplayText
+        override public string[] DisplayText => CurrentValueType switch
         {
-            get
-            {
-                if (OnlyDevicesInParameter)
-                {
-                    return new string[] { Name, GetDevicesString() };
-                }
-                else
-                {
-                    return new string[] { Name, Value };
-                }
-            }
-        }
+            ValueType.Device or ValueType.ManyDevices => [Name, GetDevicesString()],
+            ValueType.Number when 
+                DisplayObjects.Contains(DisplayObject.Operation) && 
+                TryGetOperationByNumber(Value, out var operation) => [Name, operation.DisplayText[0]],
+            _ => [Name, Value],
+        };
         
         /// <summary>
         /// Отображение: true - параметер; false - устройства
@@ -493,7 +487,7 @@ namespace TechObject
         {
             if (Owner is BaseTechObject)
             {
-                return BaseOperation.Owner.Owner.Owner;
+                return BaseOperation?.Owner?.Owner?.Owner;
             }
             else if (Owner is BaseOperation operation)
             {
@@ -528,8 +522,15 @@ namespace TechObject
 
             var hasSignal = HasSignalDisplayObject();
             var hasParameter = DisplayObjects.Contains(DisplayObject.Parameters);
+            var hasOperation = DisplayObjects.Contains(DisplayObject.Operation);
             var errContext = $"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\": поле заполнено неверно: '{Value}'";
             var devTypesContext = $"(допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})";
+
+            if (hasOperation)
+            {
+                CheckOperations(errContext);
+                return;
+            }
 
             if (hasSignal)
             {
@@ -646,6 +647,42 @@ namespace TechObject
             Logs.AddMessage($"{errContext} - могут быть установлены только параметры;\n");
         }
 
+        private void CheckOperations(string errContext)
+        {
+            if (CurrentValueType is ValueType.Number &&
+                TryGetOperationByNumber(Value, out _))
+                return;
+
+            Logs.AddMessage($"{errContext} - может быть установлен только номер существующей операции;\n");
+        }
+
+        private bool TryGetOperationByNumber(string value, out Mode operation)
+        {
+            operation = null;
+
+            if (!int.TryParse(value, out int operationNumber))
+                return false;
+
+            return TryGetOperationByNumber(operationNumber, out operation);
+        }
+
+        private bool TryGetOperationByNumber(int operationNumber,
+            out Mode operation)
+        {
+            operation = GetOperationReferenceTechObject()?.ModesManager.Modes
+                .FirstOrDefault(mode => mode.GetModeNumber() == operationNumber);
+
+            return operation != null;
+        }
+
+        private TechObject GetOperationReferenceTechObject()
+        {
+            if (Owner is BaseTechObject baseTechObject)
+                return baseTechObject.Owner;
+
+            return GetCurrentTechObject();
+        }
+
         public virtual void ModifyDevNames(IDevModifyOptions options)
         {
             if (!OnlyDevicesInParameter)
@@ -696,6 +733,7 @@ namespace TechObject
             AO,
             DI,
             DO,
+            Operation,
         }
 
         /// <summary>
