@@ -99,7 +99,7 @@ namespace EasyEPlanner
             foreach (var function in functionsForSearching)
             {
                 Match match = IONameRegex.Match(function.VisibleName);
-                if (match.Success)
+                if (match.Success && IsExtensionNode(match) == false)
                 {
                     int number = Convert.ToInt32(match.Groups["n"].Value);
                     theNumbers.Add(number);
@@ -127,8 +127,14 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                isContainsNodes = true;
                 var match = IONameRegex.Match(function.VisibleName);
+                if (IsExtensionNode(match))
+                {
+                    ReadExtensionNode(function, match);
+                    continue;
+                }
+
+                isContainsNodes = true;
                 int nodeNumber = Convert.ToInt32(match.Groups["n"].Value);
                 string name = $"A{nodeNumber}";
                 string ipAdress = GetIPAdressFromFunction(function);
@@ -155,6 +161,52 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Чтение модуля расширения узла.
+        /// </summary>
+        /// <param name="function">Функция модуля расширения.</param>
+        /// <param name="match">Результат разбора имени функции.</param>
+        private void ReadExtensionNode(Function function, Match match)
+        {
+            int nodeNumber = Convert.ToInt32(match.Groups["n"].Value);
+            int extensionNumber = Convert.ToInt32(match.Groups["ext"].Value);
+            string name = $"A{nodeNumber}.{extensionNumber}";
+            string ipAdress = GetIPAdressFromFunction(function);
+            string type = GetNodeTypeFromFunction(function);
+            string location = function.Properties
+                .DESIGNATION_FULLLOCATION_WITHPREFIX;
+            string locationDescription = function.Properties.DESIGNATION_FULLLOCATION_DESCR.GetString();
+
+            if (type == "")
+            {
+                Logs.AddMessage($"У модуля \"" +
+                    $"{function.VisibleName}\" не задан параметр изделия" +
+                    $" (номер типа изделия).");
+                return;
+            }
+
+            int parentNodeIdx = GetNodeIdx(nodeNumber);
+            try
+            {
+                var extensionNode = IOManager.AddExtensionNode(parentNodeIdx,
+                    extensionNumber, nodeNumber, type, ipAdress, name, location,
+                    locationDescription);
+
+                if (extensionNode is null)
+                {
+                    Logs.AddMessage($"Для модуля расширения \"{function.VisibleName}\" - \"{type}\"" +
+                        $", не найден узел \"A{nodeNumber}\".");
+                    return;
+                }
+
+                extensionNode.SetEplanFunction(new EplanFunction(function));
+            }
+            catch (Exception ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Нужно ли пропустить узел ввода-вывода.
         /// </summary>
         /// <param name="function">Функция</param>
@@ -169,6 +221,11 @@ namespace EasyEPlanner
 
             var match = IONameRegex.Match(function.VisibleName);
             int nodeNumber = Convert.ToInt32(match.Groups["n"].Value);
+            if (IsExtensionNode(match))
+            {
+                return nodeNumber % 100 != 0 && nodeNumber != numberA1;
+            }
+
             if (nodeNumber % 100 != 0 && nodeNumber != numberA1)
             {
                 skip = true;
@@ -176,6 +233,32 @@ namespace EasyEPlanner
             }
 
             return skip;
+        }
+
+        /// <summary>
+        /// Является ли имя функции модулем расширения.
+        /// </summary>
+        /// <param name="match">Результат разбора имени функции.</param>
+        /// <returns></returns>
+        private bool IsExtensionNode(Match match)
+        {
+            return match.Groups["ext"].Success &&
+                string.IsNullOrEmpty(match.Groups["ext"].Value) == false;
+        }
+
+        /// <summary>
+        /// Получить индекс родительского узла.
+        /// </summary>
+        /// <param name="nodeNumber">Физический номер узла.</param>
+        /// <returns>Индекс родительского узла.</returns>
+        private int GetNodeIdx(int nodeNumber)
+        {
+            if (nodeNumber == numberA1)
+            {
+                return isContainsA1 ? 0 : -1;
+            }
+
+            return nodeNumber / 100 + (isContainsA1 ? 1 : 0) - 1;
         }
 
         /// <summary>
