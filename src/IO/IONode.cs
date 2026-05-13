@@ -352,7 +352,7 @@ namespace IO
         /// <summary>
         /// Модули расширения узла.
         /// </summary>
-        private List<IIONode> extensionModules;
+        private readonly List<IIONode> extensionModules;
 
         /// <summary>
         /// Тип узла (строка).

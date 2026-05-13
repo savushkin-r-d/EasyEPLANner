@@ -143,14 +143,10 @@ namespace IO
         /// Добавление модуля расширения в узел.
         /// </summary>
         /// <param name="nodeIdx">Индекс родительского узла.</param>
-        /// <param name="extensionNumber">Номер модуля расширения.</param>
-        /// <param name="nodeNumber">Физический номер родительского узла.</param>
-        /// <param name="type">Тип модуля расширения.</param>
-        /// <param name="IP">IP-адрес.</param>
+        /// <param name="extensionNodeInfo">Информация о модуле расширения.</param>
         [ExcludeFromCodeCoverage]
-        public IONode AddExtensionNode(int nodeIdx, int extensionNumber,
-            int nodeNumber, string type, string IP, string name, string location,
-            string locationDescription)
+        public IONode AddExtensionNode(int nodeIdx,
+            ExtensionNodeInfo extensionNodeInfo)
         {
             var parentNode = this[nodeIdx];
             if (parentNode is null)
@@ -158,15 +154,38 @@ namespace IO
                 return null;
             }
 
-            CheckNodeIP(name, IP);
+            CheckNodeIP(extensionNodeInfo.Name, extensionNodeInfo.IP);
 
-            var extensionNode = new IONode(type, extensionNumber, nodeNumber,
-                IP, name, location, locationDescription);
+            var extensionNode = new IONode(extensionNodeInfo.Type,
+                extensionNodeInfo.ExtensionNumber,
+                extensionNodeInfo.NodeNumber,
+                extensionNodeInfo.IP,
+                extensionNodeInfo.Name,
+                extensionNodeInfo.Location,
+                extensionNodeInfo.LocationDescription);
             parentNode.AddExtensionModule(extensionNode);
 
             return extensionNode;
         }
 
+        public class ExtensionNodeInfo
+        {
+            public int ExtensionNumber { get; set; }
+
+            public int NodeNumber { get; set; }
+
+            public string Type { get; set; }
+
+            public string IP { get; set; }
+
+            public string Name { get; set; }
+
+            public string Location { get; set; }
+
+            public string LocationDescription { get; set; }
+        }
+
+        [ExcludeFromCodeCoverage]
         private void CheckNodeIP(string name, string IP)
         {
             if (ProjectConfiguration.GetInstance()?.
@@ -319,6 +338,7 @@ namespace IO
             return errors;
         }
 
+        [ExcludeFromCodeCoverage]
         private IEnumerable<IIONode> GetNodesWithExtensions()
         {
             foreach (var node in iONodes)

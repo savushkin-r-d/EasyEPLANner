@@ -45,8 +45,23 @@ namespace IO.ViewModel
 
         public IEnumerable<IViewItem> Items => items;
 
-        public string Name => IONode.Type is IO.IONode.TYPES.T_EMPTY ? $"{IONode.N}. Заглушка" :
-            (IONode.Name?.Contains('.') ?? false) ? IONode.Name : $"{IONode.N}. {IONode.Name}";
+        public string Name
+        {
+            get
+            {
+                if (IONode.Type is IO.IONode.TYPES.T_EMPTY)
+                {
+                    return $"{IONode.N}. Заглушка";
+                }
+
+                if (IONode.Name?.Contains('.') ?? false)
+                {
+                    return IONode.Name;
+                }
+
+                return $"{IONode.N}. {IONode.Name}";
+            }
+        }
 
         public string Description => IONode.TypeStr;
 

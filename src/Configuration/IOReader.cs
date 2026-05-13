@@ -193,8 +193,16 @@ namespace EasyEPlanner
             try
             {
                 var extensionNode = IOManager.AddExtensionNode(parentNodeIdx,
-                    extensionNumber, nodeNumber, type, ipAdress, name, location,
-                    locationDescription);
+                    new IO.IOManager.ExtensionNodeInfo
+                    {
+                        ExtensionNumber = extensionNumber,
+                        NodeNumber = nodeNumber,
+                        Type = type,
+                        IP = ipAdress,
+                        Name = name,
+                        Location = location,
+                        LocationDescription = locationDescription
+                    });
 
                 if (extensionNode is null)
                 {
@@ -254,7 +262,8 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="match">Результат разбора имени функции.</param>
         /// <returns></returns>
-        private bool IsExtensionNode(Match match)
+        [ExcludeFromCodeCoverage]
+        private static bool IsExtensionNode(Match match)
         {
             return match.Groups["ext"].Success &&
                 !string.IsNullOrEmpty(match.Groups["ext"].Value);
@@ -265,6 +274,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="nodeNumber">Физический номер узла.</param>
         /// <returns>Индекс родительского узла.</returns>
+        [ExcludeFromCodeCoverage]
         private int GetNodeIdx(int nodeNumber)
         {
             if (nodeNumber == numberA1)
@@ -331,69 +341,104 @@ namespace EasyEPlanner
             foreach (var function in functionsForSearching)
             {
                 if (NeedSkipModule(function))
-                    continue;
-
-                var match = IONameRegex.Match(function.VisibleName);
-                int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
-                int shortModuleNumber = moduleNumber % 100;
-                int shortNodeNumber = moduleNumber / 100 - (isContainsA1 ? 0 : 1);
-
-                string type = GetModuleTypeFromFunction(function);
-                IO.IIONode node = IOManager[shortNodeNumber];
-
-                if (IOManager[shortNodeNumber] is null)
                 {
-                    Logs.AddMessage($"Для \"{function.VisibleName}\" - \"{type}\"," +
-                        $" не найден узел номер {++shortNodeNumber}.");
                     continue;
                 }
 
-                IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function,
-                        type);
-
-                GetInAndOutOffset(shortNodeNumber, moduleInfo,
-                    out int inOffset, out int outOffset);
-
-                IO.IOModule nodeModule = new IO.IOModule(inOffset,
-                    outOffset, moduleInfo, moduleNumber,
-                    deviceHelper.GetArticleName(function), new EplanFunction(function));
-
-                node.DI_count += moduleInfo.DICount;
-                node.DO_count += moduleInfo.DOCount;
-                node.AI_count += moduleInfo.AICount;
-                node.AO_count += moduleInfo.AOCount;
-
-                if (node[shortModuleNumber - 1] is null)
-                {
-                    try
-                    {
-                        node.SetModule(nodeModule, shortModuleNumber);
-                    }
-                    catch (IO.IONode.AddressAreaNullReferenceException ex)
-                    {
-                        Logs.AddMessage(ex.Message);
-                    }
-                    catch (IO.IONode.ModulesPerNodeOutOfRageException ex)
-                    {
-                        Logs.AddMessage(ex.Message);
-                    }
-                    catch (IO.IONode.AddressAreaOutOfRangeException ex)
-                    {
-                        Logs.AddMessage(ex.Message);
-                    }
-                    catch (IO.IONode.IndefiniteModulesException ex)
-                    {
-                        Logs.AddMessage(ex.Message);
-                    }
-                }
-                else
-                {
-                    Logs.AddMessage($"Главная функция модуля " +
-                        $"ввода-вывода \'{function.VisibleName}\' " +
-                        $"определяется дважды, проверьте расстановку " +
-                        $"главных функций на модулях. ");
-                }
+                ReadModule(function);
             }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void ReadModule(Function function)
+        {
+            var match = IONameRegex.Match(function.VisibleName);
+            int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
+            int shortModuleNumber = moduleNumber % 100;
+            int shortNodeNumber = moduleNumber / 100 - (isContainsA1 ? 0 : 1);
+
+            string type = GetModuleTypeFromFunction(function);
+            IO.IIONode node = IOManager[shortNodeNumber];
+
+            if (node is null)
+            {
+                LogMissingNode(function.VisibleName, type, shortNodeNumber + 1);
+                return;
+            }
+
+            IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, type);
+
+            GetInAndOutOffset(shortNodeNumber, moduleInfo,
+                out int inOffset, out int outOffset);
+
+            IO.IOModule nodeModule = new IO.IOModule(inOffset,
+                outOffset, moduleInfo, moduleNumber,
+                deviceHelper.GetArticleName(function), new EplanFunction(function));
+
+            AddModuleToNode(node, nodeModule, moduleInfo,
+                shortModuleNumber, function.VisibleName);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static void AddModuleToNode(IO.IIONode node,
+            IO.IOModule nodeModule, IO.IOModuleInfo moduleInfo,
+            int shortModuleNumber, string visibleName)
+        {
+            node.DI_count += moduleInfo.DICount;
+            node.DO_count += moduleInfo.DOCount;
+            node.AI_count += moduleInfo.AICount;
+            node.AO_count += moduleInfo.AOCount;
+
+            if (node[shortModuleNumber - 1] is null)
+            {
+                SetModule(node, nodeModule, shortModuleNumber);
+                return;
+            }
+
+            LogDuplicateModule(visibleName);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static void SetModule(IO.IIONode node,
+            IO.IOModule nodeModule, int shortModuleNumber)
+        {
+            try
+            {
+                node.SetModule(nodeModule, shortModuleNumber);
+            }
+            catch (IO.IONode.AddressAreaNullReferenceException ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+            catch (IO.IONode.ModulesPerNodeOutOfRageException ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+            catch (IO.IONode.AddressAreaOutOfRangeException ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+            catch (IO.IONode.IndefiniteModulesException ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static void LogMissingNode(string visibleName, string type,
+            int nodeNumber)
+        {
+            Logs.AddMessage($"Для \"{visibleName}\" - \"{type}\"," +
+                $" не найден узел номер {nodeNumber}.");
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static void LogDuplicateModule(string visibleName)
+        {
+            Logs.AddMessage($"Главная функция модуля " +
+                $"ввода-вывода \'{visibleName}\' " +
+                $"определяется дважды, проверьте расстановку " +
+                $"главных функций на модулях. ");
         }
 
         /// <summary>
