@@ -49,6 +49,7 @@ namespace EasyEPlanner
         /// элементы, если длина списка короче номера нового добавляемого 
         /// модуля).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public void Read()
         {
             PrepareForReading();
@@ -67,6 +68,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Подготовка к чтению IO.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void PrepareForReading()
         {
             var project = (projectHelper as ProjectHelper).GetProject();
@@ -93,6 +95,7 @@ namespace EasyEPlanner
         /// типа А1, на котором находится управляющая
         /// программа (для Phoenix Contact)
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private bool CheckA1()
         {
             List<int> theNumbers = new List<int>();
@@ -117,6 +120,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Чтение узлов ввода-вывода.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ReadNodes()
         {
             foreach (var function in functionsForSearching)
@@ -165,6 +169,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция модуля расширения.</param>
         /// <param name="match">Результат разбора имени функции.</param>
+        [ExcludeFromCodeCoverage]
         private void ReadExtensionNode(Function function, Match match)
         {
             int nodeNumber = Convert.ToInt32(match.Groups["n"].Value);
@@ -219,6 +224,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private bool NeedSkipNode(Function function)
         {            
             bool skip = NeedSkipFunction(function);
@@ -274,6 +280,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция для поиска</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private string GetIPAdressFromFunction(Function function)
         {
             var ipAddress = "";
@@ -295,6 +302,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция для поиска</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private string GetNodeTypeFromFunction(Function function)
         {
             var type = string.Empty;
@@ -393,6 +401,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция для проверки</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private bool NeedSkipModule(Function function)
         {            
             bool skip = NeedSkipFunction(function);
@@ -417,6 +426,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция для проверки</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private string GetModuleTypeFromFunction(Function function)
         {
             var type = "";
@@ -443,6 +453,7 @@ namespace EasyEPlanner
         /// <param name="function">Функция</param>
         /// <param name="type">Тип модуля ввода-вывода</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private IO.IOModuleInfo GetIOModuleInfo(Function function, string type)
         {
             bool isStub;
@@ -497,6 +508,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="function">Функция для проверки</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private bool NeedSkipFunction(Function function)
         {
             var skip = false;
@@ -524,6 +536,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="x">Функция 1</param>
         /// <param name="y">Функция 2</param>
+        [ExcludeFromCodeCoverage]
         private static int CompareFunctions(Function x, Function y)
         {
             return x.VisibleName.CompareTo(y.VisibleName);
