@@ -119,7 +119,7 @@ namespace IO
         {
             if (extensionModules.Any(module => module.Name == extensionModule.Name))
             {
-                throw new Exception($"Модуль расширения \"{extensionModule.Name}\" " +
+                throw new InvalidOperationException($"Модуль расширения \"{extensionModule.Name}\" " +
                     $"для узла \"{name}\" определяется дважды.");
             }
 

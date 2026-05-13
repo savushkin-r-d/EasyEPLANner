@@ -170,7 +170,7 @@ namespace IO
         private void CheckNodeIP(string name, string IP)
         {
             if (ProjectConfiguration.GetInstance()?.
-                BelongToRangesIP(IPConverter.ConvertIPStrToLong(IP)) is false)
+                BelongToRangesIP(IPConverter.ConvertIPStrToLong(IP)) == false)
             {
                 Logs.AddMessage($"IP-адрес узла '{name}' ({IP}) выходит за диапазон ip-адресов проекта;");
             }

@@ -54,7 +54,7 @@ namespace EasyEPlanner
             PrepareForReading();
             ReadNodes();
             
-            if (isContainsNodes == false)
+            if (!isContainsNodes)
             {
                 Logs.AddMessage($"Не найден ни один узловой модуль " +
                     $"(A100, A200, ...).");
@@ -99,14 +99,14 @@ namespace EasyEPlanner
             foreach (var function in functionsForSearching)
             {
                 Match match = IONameRegex.Match(function.VisibleName);
-                if (match.Success && IsExtensionNode(match) == false)
+                if (match.Success && !IsExtensionNode(match))
                 {
                     int number = Convert.ToInt32(match.Groups["n"].Value);
                     theNumbers.Add(number);
                 }
             }
 
-            if (theNumbers.Contains(numberA1) == true)
+            if (theNumbers.Contains(numberA1))
             {
                 return true;
             }
@@ -122,7 +122,7 @@ namespace EasyEPlanner
             foreach (var function in functionsForSearching)
             {
                 bool needToSkip = NeedSkipNode(function);
-                if (needToSkip == true)
+                if (needToSkip)
                 {
                     continue;
                 }
@@ -200,7 +200,15 @@ namespace EasyEPlanner
 
                 extensionNode.SetEplanFunction(new EplanFunction(function));
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+            catch (FormatException ex)
+            {
+                Logs.AddMessage(ex.Message);
+            }
+            catch (OverflowException ex)
             {
                 Logs.AddMessage(ex.Message);
             }
@@ -214,7 +222,7 @@ namespace EasyEPlanner
         private bool NeedSkipNode(Function function)
         {            
             bool skip = NeedSkipFunction(function);
-            if (skip == true)
+            if (skip)
             {
                 return skip;
             }
@@ -243,7 +251,7 @@ namespace EasyEPlanner
         private bool IsExtensionNode(Match match)
         {
             return match.Groups["ext"].Success &&
-                string.IsNullOrEmpty(match.Groups["ext"].Value) == false;
+                !string.IsNullOrEmpty(match.Groups["ext"].Value);
         }
 
         /// <summary>
@@ -299,7 +307,7 @@ namespace EasyEPlanner
                         .Properties.Article.ARTICLE_TYPENR];
 
                     IO.IONodeInfo.GetNodeInfo(type, out bool isStub);
-                    if (isStub == false) break;
+                    if (!isStub) break;
                 }
             }
 
@@ -353,7 +361,19 @@ namespace EasyEPlanner
                     {
                         node.SetModule(nodeModule, shortModuleNumber);
                     }
-                    catch (Exception ex)
+                    catch (IO.IONode.AddressAreaNullReferenceException ex)
+                    {
+                        Logs.AddMessage(ex.Message);
+                    }
+                    catch (IO.IONode.ModulesPerNodeOutOfRageException ex)
+                    {
+                        Logs.AddMessage(ex.Message);
+                    }
+                    catch (IO.IONode.AddressAreaOutOfRangeException ex)
+                    {
+                        Logs.AddMessage(ex.Message);
+                    }
+                    catch (IO.IONode.IndefiniteModulesException ex)
                     {
                         Logs.AddMessage(ex.Message);
                     }
@@ -376,7 +396,7 @@ namespace EasyEPlanner
         private bool NeedSkipModule(Function function)
         {            
             bool skip = NeedSkipFunction(function);
-            if (skip == true)
+            if (skip)
             {
                 return skip;
             }
@@ -481,7 +501,7 @@ namespace EasyEPlanner
         {
             var skip = false;
             var match = IONameRegex.Match(function.VisibleName);
-            if (match.Success == false ||
+            if (!match.Success ||
                 !function.Properties.FUNC_SUPPLEMENTARYFIELD[1].IsEmpty)
             {
                 skip = true;
