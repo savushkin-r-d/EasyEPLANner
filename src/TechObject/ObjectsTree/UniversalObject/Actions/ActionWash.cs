@@ -37,57 +37,12 @@ namespace TechObject
                     EplanDevice.DeviceType.DO
                 }));
 
-            SubActions.Add(new Action("Устройства", owner, "devices",
-                new EplanDevice.DeviceType[] 
-                { 
-                    EplanDevice.DeviceType.M,
-                    EplanDevice.DeviceType.V,
-                    EplanDevice.DeviceType.DO,
-                    EplanDevice.DeviceType.AO,
-                    EplanDevice.DeviceType.VC,
-                    EplanDevice.DeviceType.C
-                },
-                new EplanDevice.DeviceSubType[]
-                {
-                    EplanDevice.DeviceSubType.M_FREQ,
-                    EplanDevice.DeviceSubType.M_REV_FREQ,
-                    EplanDevice.DeviceSubType.M_REV_FREQ_2,
-                    EplanDevice.DeviceSubType.M_REV_FREQ_2_ERROR,
-                    EplanDevice.DeviceSubType.M_ATV,
-                    EplanDevice.DeviceSubType.M_ATV_LINEAR,
-                    EplanDevice.DeviceSubType.M,
-                    EplanDevice.DeviceSubType.M_VIRT,
-                    EplanDevice.DeviceSubType.V_AS_DO1_DI2,
-                    EplanDevice.DeviceSubType.V_AS_MIXPROOF,
-                    EplanDevice.DeviceSubType.V_BOTTOM_MIXPROOF,
-                    EplanDevice.DeviceSubType.V_DO1,
-                    EplanDevice.DeviceSubType.V_DO1_DI1_FB_OFF,
-                    EplanDevice.DeviceSubType.V_DO1_DI1_FB_ON,
-                    EplanDevice.DeviceSubType.V_DO1_DI2,
-                    EplanDevice.DeviceSubType.V_DO2,
-                    EplanDevice.DeviceSubType.V_DO2_DI2,
-                    EplanDevice.DeviceSubType.V_DO2_DI2_BISTABLE,
-                    EplanDevice.DeviceSubType.V_IOLINK_DO1_DI2,
-                    EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
-                    EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1,
-                    EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
-                    EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
-                    EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
-                    EplanDevice.DeviceSubType.V_MIXPROOF,
-                    EplanDevice.DeviceSubType.V_VIRT,
-                    EplanDevice.DeviceSubType.V_MINI_FLUSHING,
-                    EplanDevice.DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3,
-                    EplanDevice.DeviceSubType.AO,
-                    EplanDevice.DeviceSubType.AO_VIRT,
-                    EplanDevice.DeviceSubType.DO,
-                    EplanDevice.DeviceSubType.DO_VIRT,
-                    EplanDevice.DeviceSubType.VC,
-                    EplanDevice.DeviceSubType.VC_IOLINK,
-                    EplanDevice.DeviceSubType.VC_VIRT,
-                    EplanDevice.DeviceSubType.C_PID,
-                    EplanDevice.DeviceSubType.C_THLD,
-                    EplanDevice.DeviceSubType.NONE
-                }));
+            SubActions.Add(new Action("Активируемые устройства", owner, "devices",
+                ControllableDeviceTypes, ControllableDeviceSubTypes));
+
+            SubActions.Add(new Action("Деактивируемые устройства", owner,
+                "deactivate_devices",
+                ControllableDeviceTypes, ControllableDeviceSubTypes));
 
             SubActions.Add(new Action("Реверсивные устройства", owner,
                 "rev_devices",
@@ -326,5 +281,57 @@ namespace TechObject
 
             return res;
         }
+
+        private static readonly EplanDevice.DeviceType[] ControllableDeviceTypes =
+        {
+            EplanDevice.DeviceType.M,
+            EplanDevice.DeviceType.V,
+            EplanDevice.DeviceType.DO,
+            EplanDevice.DeviceType.AO,
+            EplanDevice.DeviceType.VC,
+            EplanDevice.DeviceType.C
+        };
+
+        private static readonly EplanDevice.DeviceSubType[] ControllableDeviceSubTypes =
+        {
+            EplanDevice.DeviceSubType.M_FREQ,
+            EplanDevice.DeviceSubType.M_REV_FREQ,
+            EplanDevice.DeviceSubType.M_REV_FREQ_2,
+            EplanDevice.DeviceSubType.M_REV_FREQ_2_ERROR,
+            EplanDevice.DeviceSubType.M_ATV,
+            EplanDevice.DeviceSubType.M_ATV_LINEAR,
+            EplanDevice.DeviceSubType.M,
+            EplanDevice.DeviceSubType.M_VIRT,
+            EplanDevice.DeviceSubType.V_AS_DO1_DI2,
+            EplanDevice.DeviceSubType.V_AS_MIXPROOF,
+            EplanDevice.DeviceSubType.V_BOTTOM_MIXPROOF,
+            EplanDevice.DeviceSubType.V_DO1,
+            EplanDevice.DeviceSubType.V_DO1_DI1_FB_OFF,
+            EplanDevice.DeviceSubType.V_DO1_DI1_FB_ON,
+            EplanDevice.DeviceSubType.V_DO1_DI2,
+            EplanDevice.DeviceSubType.V_DO2,
+            EplanDevice.DeviceSubType.V_DO2_DI2,
+            EplanDevice.DeviceSubType.V_DO2_DI2_BISTABLE,
+            EplanDevice.DeviceSubType.V_IOLINK_DO1_DI2,
+            EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1,
+            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
+            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
+            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
+            EplanDevice.DeviceSubType.V_MIXPROOF,
+            EplanDevice.DeviceSubType.V_VIRT,
+            EplanDevice.DeviceSubType.V_MINI_FLUSHING,
+            EplanDevice.DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3,
+            EplanDevice.DeviceSubType.AO,
+            EplanDevice.DeviceSubType.AO_VIRT,
+            EplanDevice.DeviceSubType.DO,
+            EplanDevice.DeviceSubType.DO_VIRT,
+            EplanDevice.DeviceSubType.VC,
+            EplanDevice.DeviceSubType.VC_IOLINK,
+            EplanDevice.DeviceSubType.VC_VIRT,
+            EplanDevice.DeviceSubType.C_PID,
+            EplanDevice.DeviceSubType.C_THLD,
+            EplanDevice.DeviceSubType.NONE
+        };
     }
 }
