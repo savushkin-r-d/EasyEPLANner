@@ -1,19 +1,33 @@
 name: "[💡]: Feature request"
 description: "Предложить новую функцию или улучшение."
 title: "[💡]: "
-labels: [ "Status: To Do", "Priority: Long-term plans" ]
 projects: [ "savushkin-r-d/8" ]
 type: "Feature"
 assignees: KirillGutyrchik
 
 body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "Выберите приоритет задачи"
+      options:
+        - Low
+        - Long-term plans
+        - Medium
+        - High
+        - Critical
+      default: Long-term plans
+    validations:
+      required: true
+ 
   - type: textarea
     id: feature_description
     validations: 
       required: true
     attributes:
       label: "Что бы вы хотели, чтобы было добавлено/изменено?"
-      
+
   - type: textarea
     id: additional_info
     validations: 

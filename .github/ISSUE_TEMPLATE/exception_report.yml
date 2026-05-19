@@ -1,12 +1,26 @@
 name: "[💥]: Exception report"
 description: "Отчет об ошибке, которая приводит к вызову исключению / сбою программы."
 title: "[💥]: "
-labels: [ "Status: To Do", "Priority: Critical" ]
 projects: [ "savushkin-r-d/8" ]
 type: "Bug"
 assignees: KirillGutyrchik
 
 body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "Выберите приоритет задачи"
+      options:
+        - Low
+        - Long-term plans
+        - Medium
+        - High
+        - Critical
+      default: Critical
+    validations:
+      required: true
+
   - type: textarea
     id: exception_description
     validations: 
@@ -21,7 +35,7 @@ body:
       required: true
     attributes:
       label: "Шаги для воспроизведения проблемы"
-
+      
   - type: textarea
     id: exception_info
     validations: 

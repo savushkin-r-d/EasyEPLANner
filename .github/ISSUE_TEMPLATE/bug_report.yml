@@ -1,12 +1,26 @@
 name: "[🐛]: Bug report"
 description: "Отчет об ошибке. Что-то работает не так, как ожидалось."
 title: "[🐛]: "
-labels: [ "Status: To Do", "Priority: High" ]
 projects: [ "savushkin-r-d/8" ]
 type: "Bug"
 assignees: KirillGutyrchik
 
 body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "Выберите приоритет задачи"
+      options:
+        - Low
+        - Long-term plans
+        - Medium
+        - High
+        - Critical
+      default: High
+    validations:
+      required: true
+
   - type: textarea
     id: bug_description
     validations: 
@@ -30,7 +44,6 @@ body:
     attributes:
       label: "Шаги для воспроизведения проблемы"
       description: "Шаги для воспроизведения проблемы."
-
 
   - type: textarea
     id: additional_info
