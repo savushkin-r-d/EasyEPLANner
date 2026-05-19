@@ -40,7 +40,7 @@ jobs:
 
             const optionByPriority = {
               Low: process.env.PRIORITY_LOW_ID,
-              Long-term plans: process.env.PRIORITY_LONG_TERM_PLANS_ID,
+              "Long-term plans": process.env.PRIORITY_LONG_TERM_PLANS_ID,
               Medium: process.env.PRIORITY_MEDIUM_ID,
               High: process.env.PRIORITY_HIGH_ID,
               Critical: process.env.PRIORITY_CRITICAL_ID,
