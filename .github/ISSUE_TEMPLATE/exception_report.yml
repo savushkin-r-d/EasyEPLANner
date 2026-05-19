@@ -2,7 +2,6 @@ name: "[💥]: Exception report"
 description: "Отчет об ошибке, которая приводит к вызову исключению / сбою программы."
 title: "[💥]: "
 projects: [ "savushkin-r-d/8" ]
-type: "Bug"
 assignees: KirillGutyrchik
 
 body:
@@ -17,7 +16,7 @@ body:
         - Medium
         - High
         - Critical
-      default: Critical
+      default: 4
     validations:
       required: true
 

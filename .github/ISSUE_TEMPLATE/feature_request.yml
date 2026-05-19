@@ -2,7 +2,6 @@ name: "[💡]: Feature request"
 description: "Предложить новую функцию или улучшение."
 title: "[💡]: "
 projects: [ "savushkin-r-d/8" ]
-type: "Feature"
 assignees: KirillGutyrchik
 
 body:
@@ -17,7 +16,7 @@ body:
         - Medium
         - High
         - Critical
-      default: Long-term plans
+      default: 1
     validations:
       required: true
  
