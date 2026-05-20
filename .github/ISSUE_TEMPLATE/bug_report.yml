@@ -31,7 +31,7 @@ body:
         - Backlog - do not assign to an iteration
       default: 0
     validations:
-      required: false
+      required: true
 
   - type: textarea
     id: bug_description

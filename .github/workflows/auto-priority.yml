@@ -59,23 +59,48 @@ jobs:
             const projectId = process.env.PROJECT_ID;
             const fieldId = process.env.PRIORITY_FIELD_ID;
 
-            const addResult = await github.graphql(`
-              mutation($projectId: ID!, $contentId: ID!) {
-                addProjectV2ItemById(input: {
-                  projectId: $projectId,
-                  contentId: $contentId
-                }) {
-                  item {
-                    id
+            const projectItems = await github.graphql(`
+              query($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            id
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
             `, {
               projectId,
-              contentId: issue.node_id,
             });
 
-            const itemId = addResult.addProjectV2ItemById.item.id;
+            let itemId = projectItems.node?.items?.nodes?.find(node => node.content?.id === issue.node_id)?.id || null;
+
+            if (!itemId) {
+              const addResult = await github.graphql(`
+                mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: {
+                    projectId: $projectId,
+                    contentId: $contentId
+                  }) {
+                    item {
+                      id
+                    }
+                  }
+                }
+              `, {
+                projectId,
+                contentId: issue.node_id,
+              });
+
+              itemId = addResult.addProjectV2ItemById.item.id;
+            }
 
             // Update priority
             await github.graphql(`
