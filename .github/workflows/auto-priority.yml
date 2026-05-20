@@ -53,9 +53,8 @@ jobs:
               return;
             }
 
-            // Parse desired completion date
-            const dateMatch = body.match(/### Желаемая дата выполнения\s+([\d\-]+)/);
-            const desiredDate = dateMatch ? dateMatch[1].trim() : null;
+            const plannedIterationMatch = body.match(/### Планируемая итерация\s+([\s\S]*?)(?:\n### |\s*$)/);
+            const plannedIteration = plannedIterationMatch ? plannedIterationMatch[1].trim() : "Current sprint";
 
             const projectId = process.env.PROJECT_ID;
             const fieldId = process.env.PRIORITY_FIELD_ID;
@@ -103,11 +102,10 @@ jobs:
 
             core.info(`Synced priority: ${priority}`);
 
-            // Sync iteration if date is provided
-            if (desiredDate && process.env.ITERATION_FIELD_ID) {
+            // Sync iteration from dropdown selection
+            if (process.env.ITERATION_FIELD_ID) {
               const iterationFieldId = process.env.ITERATION_FIELD_ID;
-              
-              // Get all iterations from project
+
               const projectData = await github.graphql(`
                 query($projectId: ID!) {
                   node(id: $projectId) {
@@ -118,6 +116,7 @@ jobs:
                           configuration {
                             iterations {
                               startDate
+                              duration
                               id
                               title
                             }
@@ -131,17 +130,41 @@ jobs:
                 projectId,
               });
 
-              const iterations = projectData.node?.field?.configuration?.iterations || [];
-              let matchedIteration = null;
+              const iterations = (projectData.node?.field?.configuration?.iterations || [])
+                .filter(iteration => iteration.startDate)
+                .sort((left, right) => new Date(left.startDate) - new Date(right.startDate));
 
+              const now = new Date();
+
+              let currentIteration = null;
               for (const iteration of iterations) {
-                if (iteration.startDate && desiredDate >= iteration.startDate) {
-                  matchedIteration = iteration;
+                const startDate = new Date(iteration.startDate);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + (iteration.duration || 14));
+
+                if (now >= startDate && now < endDate) {
+                  currentIteration = iteration;
                   break;
                 }
               }
 
-              if (matchedIteration) {
+              if (!currentIteration && iterations.length > 0) {
+                currentIteration = iterations.filter(iteration => new Date(iteration.startDate) <= now).pop() || iterations[0];
+              }
+
+              const currentIndex = currentIteration ? iterations.findIndex(iteration => iteration.id === currentIteration.id) : -1;
+              const nextIteration = currentIndex >= 0 && currentIndex + 1 < iterations.length ? iterations[currentIndex + 1] : null;
+
+              let targetIteration = null;
+              if (plannedIteration === "Next sprint") {
+                targetIteration = nextIteration || currentIteration;
+              } else if (plannedIteration === "Backlog") {
+                targetIteration = null;
+              } else {
+                targetIteration = currentIteration;
+              }
+
+              if (targetIteration) {
                 await github.graphql(`
                   mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $iterationId: String!) {
                     updateProjectV2ItemFieldValue(input: {
@@ -161,10 +184,11 @@ jobs:
                   projectId,
                   itemId,
                   fieldId: iterationFieldId,
-                  iterationId: matchedIteration.id,
+                  iterationId: targetIteration.id,
                 });
-                core.info(`Synced iteration: ${matchedIteration.title}`);
+
+                core.info(`Synced iteration: ${targetIteration.title} (${plannedIteration})`);
               } else {
-                core.info(`No suitable iteration found for date: ${desiredDate}`);
+                core.info(`Iteration sync skipped for selection: ${plannedIteration}`);
               }
             }
