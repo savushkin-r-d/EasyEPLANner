@@ -156,8 +156,13 @@ jobs:
               const nextIteration = currentIndex >= 0 && currentIndex + 1 < iterations.length ? iterations[currentIndex + 1] : null;
 
               let targetIteration = null;
+              let fallbackToCurrent = false;
               if (plannedIteration.startsWith("Next iteration")) {
                 targetIteration = nextIteration;
+                if (!targetIteration) {
+                  targetIteration = currentIteration;
+                  fallbackToCurrent = true;
+                }
               } else if (plannedIteration.startsWith("Backlog")) {
                 targetIteration = null;
               } else {
@@ -192,6 +197,15 @@ jobs:
                 });
 
                 core.info(`Synced iteration: ${targetIteration.title} (${plannedIteration})`);
+
+                if (fallbackToCurrent) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: `⚠️ Выбрана **Next iteration**, но следующая итерация ещё не создана. Задача временно поставлена в текущую итерацию: **${targetIteration.title}**.`,
+                  });
+                }
               } else {
                 core.info(`Iteration sync skipped for selection: ${plannedIteration}`);
               }
