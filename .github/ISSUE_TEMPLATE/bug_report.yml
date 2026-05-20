@@ -20,6 +20,16 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: desired_completion_date
+    attributes:
+      label: "Желаемая дата выполнения"
+      description: "Укажите дату, к которой должна быть завершена задача"
+      placeholder: "2026-06-30"
+      type: date
+    validations:
+      required: false
+
   - type: textarea
     id: bug_description
     validations: 

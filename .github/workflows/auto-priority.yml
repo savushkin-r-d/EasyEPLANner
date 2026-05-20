@@ -24,6 +24,7 @@ jobs:
           PRIORITY_HIGH_ID: ${{ secrets.PRIORITY_HIGH_ID }}
           PRIORITY_CRITICAL_ID: ${{ secrets.PRIORITY_CRITICAL_ID }}
           PRIORITY_LONG_TERM_PLANS_ID: ${{ secrets.PRIORITY_LONG_TERM_PLANS_ID }}
+          ITERATION_FIELD_ID: ${{ secrets.ITERATION_FIELD_ID }}
         with:
           github-token: ${{ secrets.AUTOMATISATION_PROJECT }}
           script: |
@@ -52,6 +53,10 @@ jobs:
               return;
             }
 
+            // Parse desired completion date
+            const dateMatch = body.match(/### Желаемая дата выполнения\s+([\d\-]+)/);
+            const desiredDate = dateMatch ? dateMatch[1].trim() : null;
+
             const projectId = process.env.PROJECT_ID;
             const fieldId = process.env.PRIORITY_FIELD_ID;
 
@@ -73,6 +78,7 @@ jobs:
 
             const itemId = addResult.addProjectV2ItemById.item.id;
 
+            // Update priority
             await github.graphql(`
               mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
                 updateProjectV2ItemFieldValue(input: {
@@ -96,3 +102,69 @@ jobs:
             });
 
             core.info(`Synced priority: ${priority}`);
+
+            // Sync iteration if date is provided
+            if (desiredDate && process.env.ITERATION_FIELD_ID) {
+              const iterationFieldId = process.env.ITERATION_FIELD_ID;
+              
+              // Get all iterations from project
+              const projectData = await github.graphql(`
+                query($projectId: ID!) {
+                  node(id: $projectId) {
+                    ... on ProjectV2 {
+                      field(name: "Iteration") {
+                        ... on ProjectV2IterationField {
+                          id
+                          configuration {
+                            iterations {
+                              startDate
+                              id
+                              title
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              `, {
+                projectId,
+              });
+
+              const iterations = projectData.node?.field?.configuration?.iterations || [];
+              let matchedIteration = null;
+
+              for (const iteration of iterations) {
+                if (iteration.startDate && desiredDate >= iteration.startDate) {
+                  matchedIteration = iteration;
+                  break;
+                }
+              }
+
+              if (matchedIteration) {
+                await github.graphql(`
+                  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $iterationId: String!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $projectId,
+                      itemId: $itemId,
+                      fieldId: $fieldId,
+                      value: {
+                        iterationId: $iterationId
+                      }
+                    }) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `, {
+                  projectId,
+                  itemId,
+                  fieldId: iterationFieldId,
+                  iterationId: matchedIteration.id,
+                });
+                core.info(`Synced iteration: ${matchedIteration.title}`);
+              } else {
+                core.info(`No suitable iteration found for date: ${desiredDate}`);
+              }
+            }
