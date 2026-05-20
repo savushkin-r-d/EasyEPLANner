@@ -26,9 +26,9 @@ body:
       label: "Планируемая итерация"
       description: "Выберите, в какой итерации должна быть задача"
       options:
-        - Current sprint
-        - Next sprint
-        - Backlog
+        - Current iteration - put into the current sprint
+        - Next iteration - put into the next sprint
+        - Backlog - do not assign to an iteration
       default: 0
     validations:
       required: false

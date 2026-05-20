@@ -54,7 +54,7 @@ jobs:
             }
 
             const plannedIterationMatch = body.match(/### Планируемая итерация\s+([\s\S]*?)(?:\n### |\s*$)/);
-            const plannedIteration = plannedIterationMatch ? plannedIterationMatch[1].trim() : "Current sprint";
+            const plannedIteration = plannedIterationMatch ? plannedIterationMatch[1].trim() : "Current iteration - put into the current sprint";
 
             const projectId = process.env.PROJECT_ID;
             const fieldId = process.env.PRIORITY_FIELD_ID;
@@ -156,12 +156,16 @@ jobs:
               const nextIteration = currentIndex >= 0 && currentIndex + 1 < iterations.length ? iterations[currentIndex + 1] : null;
 
               let targetIteration = null;
-              if (plannedIteration === "Next sprint") {
-                targetIteration = nextIteration || currentIteration;
-              } else if (plannedIteration === "Backlog") {
+              if (plannedIteration.startsWith("Next iteration")) {
+                targetIteration = nextIteration;
+              } else if (plannedIteration.startsWith("Backlog")) {
                 targetIteration = null;
               } else {
                 targetIteration = currentIteration;
+              }
+
+              if (plannedIteration.startsWith("Next iteration") && !targetIteration) {
+                core.info("Next iteration was selected, but no next iteration is available yet");
               }
 
               if (targetIteration) {
