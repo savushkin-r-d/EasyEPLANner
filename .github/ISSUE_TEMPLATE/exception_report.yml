@@ -33,6 +33,16 @@ body:
     validations:
       required: true
 
+  - type: markdown
+    attributes:
+      value: |
+        ### Информация о текущем спринте
+        <!-- AUTO_ITERATION_INFO_START -->
+        Текущая дата: 21 мая 2026 г.
+        Текущий спринт: Iteration 3: 15 мая 2026 г. - 28 мая 2026 г.
+        Следующий спринт: Iteration 4: 29 мая 2026 г. - 11 июня 2026 г.
+        <!-- AUTO_ITERATION_INFO_END -->
+
   - type: textarea
     id: exception_description
     validations: 
