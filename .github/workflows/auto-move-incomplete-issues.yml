@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: '0 18 * * 1'  # Monday 6 PM UTC
     - cron: '0 18 * * 4'  # Thursday 6 PM UTC
-
+timezone: 'Europe/Minsk'
 permissions:
   issues: write
   repository-projects: write
@@ -160,6 +160,48 @@ jobs:
                     issue_number: item.content.number,
                     body: `🔄 **Автоматический перенос**: Задача не была завершена в итерации "${currentIter.title}" и перенесена в итерацию "${nextIteration.title}".`,
                   });
+
+                  // Update or add moved count label: moved:N
+                  try {
+                    // Get current labels on the issue
+                    const labelsResp = await github.rest.issues.listLabelsOnIssue({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: item.content.number,
+                    });
+
+                    const existingLabels = labelsResp.data.map(l => l.name);
+                    const movedLabel = existingLabels.find(n => n.startsWith('moved:'));
+                    let movedCount = 1;
+
+                    if (movedLabel) {
+                      const parts = movedLabel.split(':');
+                      const prev = parseInt(parts[1]) || 0;
+                      movedCount = prev + 1;
+                    }
+
+                    // Build new labels array: keep non-moved labels, add updated moved label
+                    const newLabels = existingLabels.filter(n => !n.startsWith('moved:'));
+                    newLabels.push(`moved:${movedCount}`);
+
+                    // Update issue labels (this replaces labels)
+                    await github.rest.issues.update({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: item.content.number,
+                      labels: newLabels,
+                    });
+
+                    // Add follow-up comment with moved count
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: item.content.number,
+                      body: `ℹ️ Метка переносов обновлена: **moved:${movedCount}**`,
+                    });
+                  } catch (lblErr) {
+                    core.warning(`Failed to update moved label for #${item.content.number}: ${lblErr.message}`);
+                  }
 
                   incompleteCount++;
                   core.info(`Moved #${item.content.number} from "${currentIter.title}" to "${nextIteration.title}"`);
