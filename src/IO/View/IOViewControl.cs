@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using EasyEPlanner;
 using Editor;
+using Eplan.EplApi.DataModel;
 using Eplan.EplApi.Scripting;
 using IO.ViewModel;
 using PInvoke;
@@ -26,6 +27,8 @@ namespace IO.View
         private bool isCellEditing = false;
 
         private ToolStripMenuItem shiftModulesToolStripMenuItem;
+
+        private ToolStripMenuItem deleteUndefinedModuleToolStripMenuItem;
 
         public static IOViewControl Instance { get; private set; }
 
@@ -99,7 +102,16 @@ namespace IO.View
             shiftModulesToolStripMenuItem = new ToolStripMenuItem("Сдвинуть модули");
             shiftModulesToolStripMenuItem.Click += ShiftModules_Click;
 
+            deleteUndefinedModuleToolStripMenuItem =
+                new ToolStripMenuItem("Удалить")
+                {
+                    ShortcutKeys = Keys.Delete
+                };
+            deleteUndefinedModuleToolStripMenuItem.Click +=
+                DeleteUndefinedModule_Click;
+
             contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
+            contextMenuStrip.Items.Add(deleteUndefinedModuleToolStripMenuItem);
             contextMenuStrip.Opening += StructPLCContextMenu_Opening;
 
             StructPLC.ContextMenuStrip = contextMenuStrip;
@@ -114,14 +126,23 @@ namespace IO.View
             }
 
             var item = StructPLC.GetItemAt(e.X, e.Y) as OLVListItem;
-            StructPLC.SelectedObject = item?.RowObject;
+            if (item != null && !item.Selected)
+            {
+                StructPLC.SelectedObject = item.RowObject;
+            }
         }
 
         private void StructPLCContextMenu_Opening(object sender, CancelEventArgs e)
         {
+            var selectedModules = GetSelectedModules().ToList();
+
             shiftModulesToolStripMenuItem.Enabled =
-                StructPLC.SelectedObject is IModule module &&
-                module.IOModule.Function?.IsValid == true;
+                selectedModules.Count == 1 &&
+                selectedModules[0].IOModule.Function?.IsValid == true;
+            deleteUndefinedModuleToolStripMenuItem.Enabled =
+                selectedModules.Any() &&
+                selectedModules.All(module =>
+                    IsUndefinedModule(module.IOModule));
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
@@ -150,6 +171,43 @@ namespace IO.View
             }
         }
 
+        private void DeleteUndefinedModule_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedUndefinedModule();
+        }
+
+        private void DeleteSelectedUndefinedModule()
+        {
+            var modules = GetSelectedModules().ToList();
+            if (!modules.Any())
+            {
+                return;
+            }
+
+            try
+            {
+                DeleteUndefinedModules(modules);
+
+                EProjectManager.GetInstance().SyncAndSave(false);
+
+                Editor.Editor.GetInstance().EditorForm.RefreshTree();
+                DFrm.GetInstance().RefreshTree();
+
+                RebuildTree();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Удаление модуля",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private IEnumerable<IModule> GetSelectedModules()
+        {
+            return StructPLC.SelectedObjects?.OfType<IModule>() ??
+                Enumerable.Empty<IModule>();
+        }
+
         private static bool TryGetShiftValue(out int shiftValue)
         {
             const int DefaultShiftValue = 1;
@@ -166,7 +224,7 @@ namespace IO.View
                 ClientSize = new Size(260, 100)
             };
 
-            var label = new Label
+            var label = new System.Windows.Forms.Label
             {
                 Text = "Сдвинуть на:",
                 AutoSize = true,
@@ -253,29 +311,211 @@ namespace IO.View
             }
         }
 
+        private static void DeleteUndefinedModules(
+            IEnumerable<IModule> selectedModules)
+        {
+            var modulesByNode = selectedModules
+                .GroupBy(module => module.IONode);
+
+            foreach (var modulesGroup in modulesByNode)
+            {
+                DeleteUndefinedModulesFromNode(modulesGroup.Key,
+                    modulesGroup.ToList());
+            }
+        }
+
+        private static void DeleteUndefinedModulesFromNode(IIONode node,
+            List<IModule> selectedModules)
+        {
+            if (selectedModules.Any(module =>
+                !IsUndefinedModule(module.IOModule)))
+            {
+                throw new InvalidOperationException(
+                    "Удалять можно только неопределенные модули.");
+            }
+
+            var modules = node.IOModules;
+            var selectedIndexes = selectedModules
+                .Select(module => modules.IndexOf(module.IOModule))
+                .OrderBy(index => index)
+                .ToList();
+
+            if (selectedIndexes.Any(index => index < 0))
+            {
+                throw new InvalidOperationException(
+                    "Один из выбранных модулей не найден в узле.");
+            }
+
+            int firstDeletedIndex = selectedIndexes.First();
+            var modulesToShift = modules
+                .Skip(firstDeletedIndex + 1)
+                .Where(module => module?.Function?.IsValid == true)
+                .OrderBy(module => module.PhysicalNumber)
+                .ToList();
+
+            if (!modulesToShift.Any())
+            {
+                throw new InvalidOperationException(
+                    "После выбранного модуля нет модулей для сдвига.");
+            }
+
+            foreach (var module in modulesToShift)
+            {
+                int moduleIndex = modules.IndexOf(module);
+                int shiftValue = selectedIndexes.Count(index =>
+                    index < moduleIndex);
+                int newPhysicalNumber = module.PhysicalNumber - shiftValue;
+                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+            }
+
+            foreach (var module in modulesToShift)
+            {
+                int moduleIndex = modules.IndexOf(module);
+                int shiftValue = selectedIndexes.Count(index =>
+                    index < moduleIndex);
+                int newPhysicalNumber = module.PhysicalNumber - shiftValue;
+                RenameModuleWithClamps(module,
+                    $"-A{module.PhysicalNumber}",
+                    $"-A{newPhysicalNumber}");
+            }
+        }
+
+        private static bool IsUndefinedModule(IIOModule module)
+        {
+            return module?.Info?.Name == IOModuleInfo.Stub.Name &&
+                module.Function is null;
+        }
+
         private static void RenameModuleWithClamps(IIOModule module,
             string oldName, string newName)
         {
-            module.Function.Rename(newName);
+            var functionsToRename = GetModuleRenameFunctions(module, oldName);
+            foreach (var function in functionsToRename)
+            {
+                RenameFunctionNamePart(function, oldName, newName);
+            }
+        }
+
+        private static void RenameFunctionNamePart(Function function,
+            string oldName, string newName)
+        {
+            var renamedFunctionName = Regex.Replace(function.Name,
+                $@"{Regex.Escape(oldName)}(?=$|\D)", newName);
+            if (renamedFunctionName != function.Name)
+            {
+                function.Name = renamedFunctionName;
+            }
+        }
+
+        private static List<Function> GetModuleRenameFunctions(
+            IIOModule module, string oldModuleName)
+        {
+            var functions = new List<Function>();
+
+            AddRenameCandidate(functions, module.Function, oldModuleName);
 
             foreach (var clampFunction in module.ClampFunctions.Values
                 .Where(function => function?.IsValid == true)
                 .Distinct())
             {
-                RenameClampFunction(clampFunction, oldName, newName);
+                AddRenameCandidate(functions, clampFunction, oldModuleName);
+            }
+
+            AddProjectRenameCandidates(functions, module, oldModuleName);
+
+            foreach (var function in functions.ToArray())
+            {
+                AddRenameCandidate(functions, function.ParentFunction,
+                    oldModuleName);
+
+                var pageFunctions = function.Page?.Functions ?? [];
+                foreach (var pageFunction in pageFunctions)
+                {
+                    AddRenameCandidate(functions, pageFunction, oldModuleName);
+                }
+            }
+
+            if (!functions.Any())
+            {
+                throw new InvalidOperationException(
+                    $"Не найдены функции для переименования {oldModuleName}.");
+            }
+
+            return functions;
+        }
+
+        private static void AddProjectRenameCandidates(List<Function> functions,
+            IIOModule module, string oldModuleName)
+        {
+            if (module.Function is not StaticHelper.EplanFunction moduleFunction)
+            {
+                return;
+            }
+
+            var project = moduleFunction.Function.Page?.Project;
+            if (project is null)
+            {
+                return;
+            }
+
+            var objectFinder = new DMObjectsFinder(project);
+            AddProjectRenameCandidates(functions, objectFinder, oldModuleName,
+                Function.Enums.Category.PLCBox);
+            AddProjectRenameCandidates(functions, objectFinder, oldModuleName,
+                Function.Enums.Category.PLCTerminal);
+        }
+
+        private static void AddProjectRenameCandidates(List<Function> functions,
+            DMObjectsFinder objectFinder,
+            string oldModuleName, Function.Enums.Category category)
+        {
+            var functionsFilter = new FunctionsFilter
+            {
+                Category = category
+            };
+
+            foreach (var function in objectFinder.GetFunctions(functionsFilter))
+            {
+                AddRenameCandidate(functions, function, oldModuleName);
             }
         }
 
-        private static void RenameClampFunction(
-            StaticHelper.IEplanFunction clampFunction, string oldModuleName,
-            string newModuleName)
+        private static void AddRenameCandidate(List<Function> functions,
+            StaticHelper.IEplanFunction function, string oldModuleName)
         {
-            var newClampName = Regex.Replace(clampFunction.Name,
-                $@"{Regex.Escape(oldModuleName)}(?=$|\D)", newModuleName);
-            if (newClampName != clampFunction.Name)
+            if (function is StaticHelper.EplanFunction eplanFunction)
             {
-                clampFunction.Rename(newClampName);
+                AddRenameCandidate(functions, eplanFunction.Function,
+                    oldModuleName);
             }
+        }
+
+        private static void AddRenameCandidate(List<Function> functions,
+            Function function, string oldModuleName)
+        {
+            if (function is null ||
+                !function.IsValid ||
+                functions.Contains(function) ||
+                !CanRenameModuleFunction(function) ||
+                !ContainsModuleName(function.Name, oldModuleName))
+            {
+                return;
+            }
+
+            functions.Add(function);
+        }
+
+        private static bool CanRenameModuleFunction(Function function)
+        {
+            return function.Category is Function.Enums.Category.PLCBox or
+                Function.Enums.Category.PLCTerminal;
+        }
+
+        private static bool ContainsModuleName(string functionName,
+            string moduleName)
+        {
+            return Regex.IsMatch(functionName,
+                $@"{Regex.Escape(moduleName)}(?=$|\D)");
         }
 
         private static void ValidateModuleNumber(int currentPhysicalNumber,
@@ -550,6 +790,16 @@ namespace IO.View
             switch (e.KeyCode)
             {
                 case Keys.Delete:
+                    var selectedModules = GetSelectedModules().ToList();
+                    if (selectedModules.Any() &&
+                        selectedModules.All(module =>
+                            IsUndefinedModule(module.IOModule)))
+                    {
+                        DeleteSelectedUndefinedModule();
+                        e.Handled = true;
+                        return;
+                    }
+
                     (tlv.SelectedObject as IDeletable)?.Delete();
                     break;
 
