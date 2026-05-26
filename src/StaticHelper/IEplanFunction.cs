@@ -93,5 +93,11 @@ namespace StaticHelper
         /// Заблокировать функцию на ФСА для редактирования
         /// </summary>
         void Lock();
+
+        /// <summary>
+        /// Переименовать функцию на ФСА.
+        /// </summary>
+        /// <param name="name">Новое имя функции.</param>
+        void Rename(string name);
     }
 }

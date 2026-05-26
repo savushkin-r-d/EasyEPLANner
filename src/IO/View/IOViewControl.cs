@@ -13,6 +13,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -23,6 +24,8 @@ namespace IO.View
         private bool cancelChanges = false;
 
         private bool isCellEditing = false;
+
+        private ToolStripMenuItem shiftModulesToolStripMenuItem;
 
         public static IOViewControl Instance { get; private set; }
 
@@ -53,6 +56,7 @@ namespace IO.View
         {
             InitializeComponent();
             InitStructPLC();
+            InitContextMenu();
         }
 
         private void InitStructPLC()
@@ -86,6 +90,206 @@ namespace IO.View
 
             StructPLC.Columns.Add(firstColumn);
             StructPLC.Columns.Add(secondColumn);
+        }
+
+        private void InitContextMenu()
+        {
+            var contextMenuStrip = new ContextMenuStrip(components);
+
+            shiftModulesToolStripMenuItem = new ToolStripMenuItem("Сдвинуть модули");
+            shiftModulesToolStripMenuItem.Click += ShiftModules_Click;
+
+            contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
+            contextMenuStrip.Opening += StructPLCContextMenu_Opening;
+
+            StructPLC.ContextMenuStrip = contextMenuStrip;
+            StructPLC.MouseDown += StructPLC_MouseDown;
+        }
+
+        private void StructPLC_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+
+            var item = StructPLC.GetItemAt(e.X, e.Y) as OLVListItem;
+            StructPLC.SelectedObject = item?.RowObject;
+        }
+
+        private void StructPLCContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            shiftModulesToolStripMenuItem.Enabled =
+                StructPLC.SelectedObject is IModule module &&
+                module.IOModule.Function?.IsValid == true;
+        }
+
+        private void ShiftModules_Click(object sender, EventArgs e)
+        {
+            if (StructPLC.SelectedObject is not IModule module ||
+                !TryGetShiftValue(out int shiftValue))
+            {
+                return;
+            }
+
+            try
+            {
+                ShiftModulesFrom(module, shiftValue);
+
+                EProjectManager.GetInstance().SyncAndSave(false);
+
+                Editor.Editor.GetInstance().EditorForm.RefreshTree();
+                DFrm.GetInstance().RefreshTree();
+
+                RebuildTree();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Сдвиг модулей",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static bool TryGetShiftValue(out int shiftValue)
+        {
+            const int DefaultShiftValue = 1;
+            const int MaxShiftValue = 99;
+
+            using var form = new Form
+            {
+                Text = "Сдвинуть модули",
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                MinimizeBox = false,
+                MaximizeBox = false,
+                ShowInTaskbar = false,
+                ClientSize = new Size(260, 100)
+            };
+
+            var label = new Label
+            {
+                Text = "Сдвинуть на:",
+                AutoSize = true,
+                Location = new Point(12, 15)
+            };
+
+            var countInput = new NumericUpDown
+            {
+                Minimum = 1,
+                Maximum = MaxShiftValue,
+                Value = DefaultShiftValue,
+                Location = new Point(145, 12),
+                Width = 95
+            };
+
+            var okButton = new Button
+            {
+                Text = "OK",
+                DialogResult = DialogResult.OK,
+                Location = new Point(84, 60),
+                Width = 75
+            };
+
+            var cancelButton = new Button
+            {
+                Text = "Отмена",
+                DialogResult = DialogResult.Cancel,
+                Location = new Point(165, 60),
+                Width = 75
+            };
+
+            form.Controls.AddRange(new Control[]
+            {
+                label,
+                countInput,
+                okButton,
+                cancelButton
+            });
+
+            form.AcceptButton = okButton;
+            form.CancelButton = cancelButton;
+
+            bool accepted = form.ShowDialog() == DialogResult.OK;
+            shiftValue = accepted ? (int)countInput.Value : 0;
+
+            return accepted;
+        }
+
+        private static void ShiftModulesFrom(IModule selectedModule,
+            int shiftValue)
+        {
+            var modules = selectedModule.IONode.IOModules;
+            int selectedIndex = modules.IndexOf(selectedModule.IOModule);
+            if (selectedIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    "Выбранный модуль не найден в узле.");
+            }
+
+            var modulesToShift = modules
+                .Skip(selectedIndex)
+                .Where(module => module?.Function?.IsValid == true)
+                .OrderByDescending(module => module.PhysicalNumber)
+                .ToList();
+
+            if (!modulesToShift.Any())
+            {
+                throw new InvalidOperationException(
+                    "Нет модулей для сдвига.");
+            }
+
+            foreach (var module in modulesToShift)
+            {
+                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
+                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+            }
+
+            foreach (var module in modulesToShift)
+            {
+                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
+                RenameModuleWithClamps(module,
+                    $"-A{module.PhysicalNumber}",
+                    $"-A{newPhysicalNumber}");
+            }
+        }
+
+        private static void RenameModuleWithClamps(IIOModule module,
+            string oldName, string newName)
+        {
+            module.Function.Rename(newName);
+
+            foreach (var clampFunction in module.ClampFunctions.Values
+                .Where(function => function?.IsValid == true)
+                .Distinct())
+            {
+                RenameClampFunction(clampFunction, oldName, newName);
+            }
+        }
+
+        private static void RenameClampFunction(
+            StaticHelper.IEplanFunction clampFunction, string oldModuleName,
+            string newModuleName)
+        {
+            var newClampName = Regex.Replace(clampFunction.Name,
+                $@"{Regex.Escape(oldModuleName)}(?=$|\D)", newModuleName);
+            if (newClampName != clampFunction.Name)
+            {
+                clampFunction.Rename(newClampName);
+            }
+        }
+
+        private static void ValidateModuleNumber(int currentPhysicalNumber,
+            int newPhysicalNumber)
+        {
+            bool movedToAnotherNode =
+                currentPhysicalNumber / 100 != newPhysicalNumber / 100;
+            bool becameNodeNumber = newPhysicalNumber % 100 == 0;
+            if (movedToAnotherNode || becameNodeNumber)
+            {
+                throw new InvalidOperationException(
+                    $"Невозможно переименовать модуль -A{currentPhysicalNumber} " +
+                    $"в -A{newPhysicalNumber}: номер выходит за пределы узла.");
+            }
         }
 
         private void InitDataStructPLC()
