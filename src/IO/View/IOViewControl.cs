@@ -109,14 +109,14 @@ namespace IO.View
             shiftModulesToolStripMenuItem =
                 new ToolStripMenuItem("Сдвинуть модули")
                 {
-                    Image = global::EasyEPlanner.Properties.Resources.movedown
+                    Image = global::EasyEPlanner.Properties.Resources.shift_modules
                 };
             shiftModulesToolStripMenuItem.Click += ShiftModules_Click;
 
             goToFsaToolStripMenuItem =
                 new ToolStripMenuItem("Перейти на ФСА")
                 {
-                    Image = global::EasyEPlanner.Properties.Resources.highlight
+                    Image = global::EasyEPlanner.Properties.Resources.go_to_fsa
                 };
             goToFsaToolStripMenuItem.Click += GoToFsa_Click;
 
@@ -287,24 +287,16 @@ namespace IO.View
 
         private static void OpenFunctionPage(Function function)
         {
-            var action = new Eplan.EplApi.ApplicationFramework
-                .ActionManager().FindAction("edit");
-            if (action == null)
+            var project = function.Page?.Project;
+            if (project is null)
             {
                 throw new InvalidOperationException(
-                    "Не найдена команда EPLAN для открытия страницы.");
+                    "Не найден проект страницы выбранного объекта.");
             }
 
-            var context = new Eplan.EplApi.ApplicationFramework
-                .ActionCallingContext();
-            context.AddParameter("PAGENAME", function.Page.Name);
-
-            if (function.Category != Function.Enums.Category.PLCTerminal)
-            {
-                context.AddParameter("DEVICENAME", function.VisibleName);
-            }
-
-            action.Execute(context);
+            var edit = new Eplan.EplApi.HEServices.Edit();
+            edit.OpenPageWithName(project.ProjectLinkFilePath,
+                function.Page.Name);
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
