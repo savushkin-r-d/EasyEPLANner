@@ -106,16 +106,24 @@ namespace IO.View
         {
             var contextMenuStrip = new ContextMenuStrip(components);
 
-            shiftModulesToolStripMenuItem = new ToolStripMenuItem("Сдвинуть модули");
+            shiftModulesToolStripMenuItem =
+                new ToolStripMenuItem("Сдвинуть модули")
+                {
+                    Image = global::EasyEPlanner.Properties.Resources.movedown
+                };
             shiftModulesToolStripMenuItem.Click += ShiftModules_Click;
 
             goToFsaToolStripMenuItem =
-                new ToolStripMenuItem("Перейти на ФСА");
+                new ToolStripMenuItem("Перейти на ФСА")
+                {
+                    Image = global::EasyEPlanner.Properties.Resources.highlight
+                };
             goToFsaToolStripMenuItem.Click += GoToFsa_Click;
 
             deleteUndefinedModuleToolStripMenuItem =
                 new ToolStripMenuItem("Удалить")
                 {
+                    Image = global::EasyEPlanner.Properties.Resources.delete,
                     ShortcutKeys = Keys.Delete
                 };
             deleteUndefinedModuleToolStripMenuItem.Click +=
@@ -579,7 +587,22 @@ namespace IO.View
                     $"Не найдена функция для переименования {oldName}.");
             }
 
-            RenameFunctionNamePart(eplanFunction.Function, oldName, newName);
+            RenameDeletedFunctionNamePart(eplanFunction.Function, newName);
+        }
+
+        private static void RenameDeletedFunctionNamePart(Function function,
+            string newName)
+        {
+            var renamedFunctionName = Regex.Replace(function.Name,
+                @"-(?:DEL|D)\d+(?=$|\D)", newName);
+            if (renamedFunctionName == function.Name)
+            {
+                throw new InvalidOperationException(
+                    $"Не удалось заменить имя исключенного модуля " +
+                    $"\"{function.VisibleName}\".");
+            }
+
+            function.Name = renamedFunctionName;
         }
 
         private static int GetPhysicalNumberByIndex(IIONode node,
