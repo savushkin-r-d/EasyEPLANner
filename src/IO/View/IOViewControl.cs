@@ -587,22 +587,57 @@ namespace IO.View
                     $"Не найдена функция для переименования {oldName}.");
             }
 
-            RenameDeletedFunctionNamePart(eplanFunction.Function, newName);
-        }
+            var actualOldName = GetDeletedFunctionNamePart(
+                eplanFunction.Function);
+            if (actualOldName == string.Empty)
+            {
+                throw new InvalidOperationException(
+                    $"Не удалось найти имя исключенного модуля " +
+                    $"\"{eplanFunction.Function.VisibleName}\".");
+            }
 
-        private static void RenameDeletedFunctionNamePart(Function function,
-            string newName)
-        {
-            var renamedFunctionName = Regex.Replace(function.Name,
-                @"-(?:DEL|D)\d+(?=$|\D)", newName);
-            if (renamedFunctionName == function.Name)
+            var functionsToRename = GetDeletedModuleRenameFunctions(
+                eplanFunction.Function, actualOldName);
+            int renamedFunctionsCount = 0;
+            foreach (var function in functionsToRename)
+            {
+                if (RenameFunctionNamePart(function, actualOldName, newName))
+                {
+                    renamedFunctionsCount++;
+                }
+            }
+
+            if (renamedFunctionsCount == 0)
             {
                 throw new InvalidOperationException(
                     $"Не удалось заменить имя исключенного модуля " +
-                    $"\"{function.VisibleName}\".");
+                    $"\"{eplanFunction.Function.VisibleName}\".");
+            }
+        }
+
+        private static string GetDeletedFunctionNamePart(Function function)
+        {
+            return Regex.Match(function.Name, @"-DEL\d+(?=$|\D)").Value;
+        }
+
+        private static List<Function> GetDeletedModuleRenameFunctions(
+            Function moduleFunction, string oldName)
+        {
+            var functions = new List<Function>();
+
+            AddRenameCandidate(functions, moduleFunction, oldName);
+
+            foreach (var subFunction in moduleFunction.SubFunctions ?? [])
+            {
+                AddRenameCandidate(functions, subFunction, oldName);
             }
 
-            function.Name = renamedFunctionName;
+            foreach (var pageFunction in moduleFunction.Page?.Functions ?? [])
+            {
+                AddRenameCandidate(functions, pageFunction, oldName);
+            }
+
+            return functions;
         }
 
         private static int GetPhysicalNumberByIndex(IIONode node,
@@ -772,7 +807,7 @@ namespace IO.View
             }
         }
 
-        private static void RenameFunctionNamePart(Function function,
+        private static bool RenameFunctionNamePart(Function function,
             string oldName, string newName)
         {
             var renamedFunctionName = Regex.Replace(function.Name,
@@ -780,7 +815,10 @@ namespace IO.View
             if (renamedFunctionName != function.Name)
             {
                 function.Name = renamedFunctionName;
+                return true;
             }
+
+            return false;
         }
 
         private static List<Function> GetModuleRenameFunctions(
