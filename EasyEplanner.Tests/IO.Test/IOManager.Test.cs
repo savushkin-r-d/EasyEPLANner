@@ -31,6 +31,26 @@ namespace IOTests
                 nodes);
         }
 
+        [Test]
+        public void DeletedModules_AddAndClear_UpdatesDeletedModules()
+        {
+            var ioManager = IOManager.GetInstance();
+            ioManager.Clear();
+            var module = new IOModule(0, 0, null);
+
+            ioManager.AddDeletedModule(module);
+
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(new[] { module },
+                    ioManager.DeletedModules);
+
+                ioManager.Clear();
+
+                Assert.IsEmpty(ioManager.DeletedModules);
+            });
+        }
+
         private static IEnumerable<IIONode> GetNodesWithExtensions(IOManager ioManager)
         {
             var method = typeof(IOManager).GetMethod("GetNodesWithExtensions",
