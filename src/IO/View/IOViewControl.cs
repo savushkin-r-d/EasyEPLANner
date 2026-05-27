@@ -140,9 +140,7 @@ namespace IO.View
                 selectedModules.Count == 1 &&
                 selectedModules[0].IOModule.Function?.IsValid == true;
             deleteUndefinedModuleToolStripMenuItem.Enabled =
-                selectedModules.Any() &&
-                selectedModules.All(module =>
-                    IsUndefinedModule(module.IOModule));
+                selectedModules.Any();
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
@@ -186,7 +184,7 @@ namespace IO.View
 
             try
             {
-                DeleteUndefinedModules(modules);
+                DeleteModules(modules);
 
                 EProjectManager.GetInstance().SyncAndSave(false);
 
@@ -311,29 +309,21 @@ namespace IO.View
             }
         }
 
-        private static void DeleteUndefinedModules(
-            IEnumerable<IModule> selectedModules)
+        private static void DeleteModules(IEnumerable<IModule> selectedModules)
         {
             var modulesByNode = selectedModules
                 .GroupBy(module => module.IONode);
 
             foreach (var modulesGroup in modulesByNode)
             {
-                DeleteUndefinedModulesFromNode(modulesGroup.Key,
+                DeleteModulesFromNode(modulesGroup.Key,
                     modulesGroup.ToList());
             }
         }
 
-        private static void DeleteUndefinedModulesFromNode(IIONode node,
+        private static void DeleteModulesFromNode(IIONode node,
             List<IModule> selectedModules)
         {
-            if (selectedModules.Any(module =>
-                !IsUndefinedModule(module.IOModule)))
-            {
-                throw new InvalidOperationException(
-                    "Удалять можно только неопределенные модули.");
-            }
-
             var modules = node.IOModules;
             var selectedIndexes = selectedModules
                 .Select(module => modules.IndexOf(module.IOModule))
@@ -346,14 +336,21 @@ namespace IO.View
                     "Один из выбранных модулей не найден в узле.");
             }
 
+            var selectedDefinedModules = selectedModules
+                .Select(module => module.IOModule)
+                .Where(module => module?.Function?.IsValid == true)
+                .OrderByDescending(module => module.PhysicalNumber)
+                .ToList();
+
             int firstDeletedIndex = selectedIndexes.First();
             var modulesToShift = modules
                 .Skip(firstDeletedIndex + 1)
                 .Where(module => module?.Function?.IsValid == true)
+                .Where(module => !selectedDefinedModules.Contains(module))
                 .OrderBy(module => module.PhysicalNumber)
                 .ToList();
 
-            if (!modulesToShift.Any())
+            if (!selectedDefinedModules.Any() && !modulesToShift.Any())
             {
                 throw new InvalidOperationException(
                     "После выбранного модуля нет модулей для сдвига.");
@@ -366,6 +363,13 @@ namespace IO.View
                     index < moduleIndex);
                 int newPhysicalNumber = module.PhysicalNumber - shiftValue;
                 ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+            }
+
+            foreach (var module in selectedDefinedModules)
+            {
+                RenameModuleWithClamps(module,
+                    $"-A{module.PhysicalNumber}",
+                    GetDeletedModuleName(module));
             }
 
             foreach (var module in modulesToShift)
@@ -384,6 +388,11 @@ namespace IO.View
         {
             return module?.Info?.Name == IOModuleInfo.Stub.Name &&
                 module.Function is null;
+        }
+
+        private static string GetDeletedModuleName(IIOModule module)
+        {
+            return $"-D{module.PhysicalNumber}";
         }
 
         private static void RenameModuleWithClamps(IIOModule module,
@@ -791,9 +800,7 @@ namespace IO.View
             {
                 case Keys.Delete:
                     var selectedModules = GetSelectedModules().ToList();
-                    if (selectedModules.Any() &&
-                        selectedModules.All(module =>
-                            IsUndefinedModule(module.IOModule)))
+                    if (selectedModules.Any())
                     {
                         DeleteSelectedUndefinedModule();
                         e.Handled = true;

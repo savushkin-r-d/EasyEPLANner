@@ -26,7 +26,8 @@ namespace IO
         /// <param name="function">Eplan функция модуля.</param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info, int physicalNumber, string articleName,
-            IEplanFunction function)
+            IEplanFunction function, string namePrefix = "A",
+            string location = "", string locationDescription = "")
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
@@ -34,6 +35,9 @@ namespace IO
             this.physicalNumber = physicalNumber;
             this.function = function;
             this.articleName = articleName;
+            this.namePrefix = namePrefix;
+            this.location = location;
+            this.locationDescription = locationDescription;
 
             devicesChannels = new List<EplanDevice.IODevice.IIOChannel>[80];
             devices = new List<EplanDevice.IIODevice>[80];
@@ -399,7 +403,7 @@ namespace IO
         {
             get
             {
-                return $"A{physicalNumber}";
+                return $"{namePrefix}{physicalNumber}";
             }
         }
 
@@ -410,6 +414,10 @@ namespace IO
                 return articleName;
             }
         }
+
+        public string Location => location;
+
+        public string LocationDescription => locationDescription;
 
         public bool IsIOLink(bool collectOnlyPhoenixContact = false)
         {
@@ -513,6 +521,9 @@ namespace IO
         private int physicalNumber;
         private readonly IEplanFunction function;
         private string articleName;
+        private string namePrefix;
+        private string location;
+        private string locationDescription;
         #endregion
     }
 }

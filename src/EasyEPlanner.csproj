@@ -138,6 +138,8 @@
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\DeletedModule.cs" />
+    <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />
     <Compile Include="IO\ViewModel\IProperty.cs" />
     <Compile Include="IO\ViewModel\IOViewModel.cs" />
     <Compile Include="IO\ViewModel\IClamp.cs" />

@@ -18,6 +18,7 @@ namespace IO
         private IOManager()
         {
             iONodes = new List<IIONode>();
+            deletedModules = new List<IIOModule>();
             InitIoModulesInfo();
             InitIoNodesInfo();
         }
@@ -228,6 +229,12 @@ namespace IO
         public void Clear()
         {
             iONodes.Clear();
+            deletedModules.Clear();
+        }
+
+        public void AddDeletedModule(IIOModule module)
+        {
+            deletedModules.Add(module);
         }
 
         /// <summary>
@@ -520,6 +527,14 @@ namespace IO
             }
         }
 
+        public List<IIOModule> DeletedModules
+        {
+            get
+            {
+                return deletedModules;
+            }
+        }
+
         /// <summary>
         /// Номера IO-Link модулей, которые используются
         /// </summary>
@@ -537,6 +552,7 @@ namespace IO
 
         #region Закрытые поля.
         private List<IIONode> iONodes;     ///Узлы проекта.
+        private List<IIOModule> deletedModules; ///Исключенные модули проекта.
         private static IOManager instance;  ///Экземпляр класса.
         #endregion
     }

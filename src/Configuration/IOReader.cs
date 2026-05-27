@@ -63,6 +63,7 @@ namespace EasyEPlanner
             }
 
             ReadModules();
+            ReadDeletedModules();
         }
 
         /// <summary>
@@ -350,6 +351,37 @@ namespace EasyEPlanner
         }
 
         [ExcludeFromCodeCoverage]
+        private void ReadDeletedModules()
+        {
+            foreach (var function in functionsForSearching)
+            {
+                var match = DeletedIONameRegex.Match(function.VisibleName);
+                if (!match.Success || !FunctionHasArticle(function))
+                {
+                    continue;
+                }
+
+                ReadDeletedModule(function, match);
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void ReadDeletedModule(Function function, Match match)
+        {
+            int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
+            string type = GetModuleTypeFromFunction(function);
+            IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, type);
+
+            IO.IOModule module = new IO.IOModule(0, 0, moduleInfo,
+                moduleNumber, deviceHelper.GetArticleName(function),
+                new EplanFunction(function), "D",
+                function.Properties.DESIGNATION_FULLLOCATION_WITHPREFIX,
+                function.Properties.DESIGNATION_FULLLOCATION_DESCR.GetString());
+
+            IOManager.AddDeletedModule(module);
+        }
+
+        [ExcludeFromCodeCoverage]
         private void ReadModule(Function function)
         {
             var match = IONameRegex.Match(function.VisibleName);
@@ -565,7 +597,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            if (function.Articles.GetLength(0) == 0)
+            if (!FunctionHasArticle(function))
             {
                 Logs.AddMessage($"У модуля \"" +
                     $"{function.VisibleName}\" не задано изделие.");
@@ -574,6 +606,11 @@ namespace EasyEPlanner
             }
 
             return skip;
+        }
+
+        private static bool FunctionHasArticle(Function function)
+        {
+            return function.Articles.GetLength(0) != 0;
         }
 
         /// <summary>
@@ -606,6 +643,8 @@ namespace EasyEPlanner
         /// Обрабатывающий Regex.
         /// </summary>
         Regex IONameRegex;
+
+        Regex DeletedIONameRegex = new Regex(@"=*-D(?<n>\d+)$");
 
         /// <summary>
         /// Номер узла А1, характерного для проектов, где используется 

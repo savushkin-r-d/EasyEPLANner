@@ -9,18 +9,33 @@ namespace IO.ViewModel
     public class Location : ILocation, IExpandable, IHasIcon
     {
         private readonly List<INode> nodes = [];
+        private readonly List<IViewItem> items = [];
 
-        public Location(string name, string description, IEnumerable<IIONode> nodes)
+        public Location(string name, string description,
+            IEnumerable<IIONode> nodes)
+            : this(name, description, nodes, [])
+        {
+        }
+
+        public Location(string name, string description,
+            IEnumerable<IIONode> nodes, IEnumerable<IIOModule> deletedModules)
         {
             Name = name;
             Description = description;
 
             this.nodes.AddRange(nodes.Select(n => new Node(n, this)));
+            items.AddRange(this.nodes);
 
-            Expanded = nodes.Any(n => n.Function?.Expanded ?? false);
+            if (deletedModules.Any())
+            {
+                items.Add(new DeletedModulesGroup(deletedModules));
+            }
+
+            Expanded = nodes.Any(n => n.Function?.Expanded ?? false) ||
+                deletedModules.Any();
         }
 
-        public IEnumerable<IViewItem> Items => nodes;
+        public IEnumerable<IViewItem> Items => items;
 
         public string Name { get; private set; }
 
