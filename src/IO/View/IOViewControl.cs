@@ -30,6 +30,11 @@ namespace IO.View
 
         private ToolStripMenuItem deleteUndefinedModuleToolStripMenuItem;
 
+        private class DraggedModule
+        {
+            public DeletedModule DeletedModule { get; set; }
+        }
+
         public static IOViewControl Instance { get; private set; }
 
         /// <summary>
@@ -116,6 +121,108 @@ namespace IO.View
 
             StructPLC.ContextMenuStrip = contextMenuStrip;
             StructPLC.MouseDown += StructPLC_MouseDown;
+            StructPLC.AllowDrop = true;
+            StructPLC.ItemDrag += StructPLC_ItemDrag;
+            StructPLC.DragOver += StructPLC_DragOver;
+            StructPLC.DragDrop += StructPLC_DragDrop;
+        }
+
+        private void StructPLC_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if ((e.Item as OLVListItem)?.RowObject is DeletedModule
+                deletedModule &&
+                IsOnlySelectedObject(deletedModule) &&
+                deletedModule.IOModule.Function?.IsValid == true)
+            {
+                DoDragDrop(new DataObject(typeof(DraggedModule).FullName,
+                    new DraggedModule { DeletedModule = deletedModule }),
+                    DragDropEffects.Move);
+            }
+        }
+
+        private void StructPLC_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = CanDropModule(e) ?
+                DragDropEffects.Move : DragDropEffects.None;
+        }
+
+        private void StructPLC_DragDrop(object sender, DragEventArgs e)
+        {
+            if (!TryGetDragDropModules(e, out var draggedModule,
+                out var targetModule))
+            {
+                return;
+            }
+
+            try
+            {
+                InsertDeletedModule(draggedModule.DeletedModule.IOModule,
+                    targetModule);
+
+                EProjectManager.GetInstance().SyncAndSave(false);
+
+                Editor.Editor.GetInstance().EditorForm.RefreshTree();
+                DFrm.GetInstance().RefreshTree();
+
+                RebuildTree();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Перемещение модуля",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool CanDropModule(DragEventArgs e)
+        {
+            return TryGetDragDropModules(e, out var draggedModule,
+                out var targetModule) &&
+                CanDropModule(draggedModule, targetModule);
+        }
+
+        private bool TryGetDragDropModules(DragEventArgs e,
+            out DraggedModule draggedModule, out IModule targetModule)
+        {
+            draggedModule = null;
+            targetModule = null;
+
+            if (!e.Data.GetDataPresent(typeof(DraggedModule).FullName))
+            {
+                return false;
+            }
+
+            draggedModule = e.Data.GetData(typeof(DraggedModule).FullName)
+                as DraggedModule;
+            var point = StructPLC.PointToClient(new Point(e.X, e.Y));
+            targetModule = (StructPLC.GetItemAt(point.X, point.Y) as
+                OLVListItem)?.RowObject as IModule;
+
+            return draggedModule != null && targetModule != null;
+        }
+
+        private static bool CanDropModule(DraggedModule draggedModule,
+            IModule targetModule)
+        {
+            return draggedModule.DeletedModule?.IOModule.Function?.IsValid ==
+                true &&
+                targetModule.IOModule.Function?.IsValid != true;
+        }
+
+        private bool IsOnlySelectedObject(object rowObject)
+        {
+            var selectedObjects = StructPLC.SelectedObjects?.Cast<object>()
+                .ToList() ?? new List<object>();
+
+            return selectedObjects.Count == 1 &&
+                ReferenceEquals(selectedObjects[0], rowObject);
+        }
+
+        private static bool CanMoveModule(IModule sourceModule,
+            IModule targetModule)
+        {
+            return sourceModule != targetModule &&
+                sourceModule.IONode == targetModule.IONode &&
+                sourceModule.IOModule.Function?.IsValid == true;
         }
 
         private void StructPLC_MouseDown(object sender, MouseEventArgs e)
@@ -309,6 +416,140 @@ namespace IO.View
             }
         }
 
+        private static void MoveModule(IModule sourceModule,
+            IModule targetModule)
+        {
+            if (!CanMoveModule(sourceModule, targetModule))
+            {
+                throw new InvalidOperationException(
+                    "Модуль можно перемещать только внутри одного узла PLC.");
+            }
+
+            var modules = sourceModule.IONode.IOModules;
+            int sourceIndex = modules.IndexOf(sourceModule.IOModule);
+            int targetIndex = modules.IndexOf(targetModule.IOModule);
+            if (sourceIndex < 0 || targetIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    "Выбранный модуль не найден в узле.");
+            }
+
+            if (sourceIndex == targetIndex)
+            {
+                return;
+            }
+
+            int sourcePhysicalNumber = sourceModule.IOModule.PhysicalNumber;
+            int targetPhysicalNumber = GetPhysicalNumberByIndex(
+                sourceModule.IONode, targetIndex);
+            string tempName = GetTemporaryModuleName(sourceModule.IOModule);
+
+            RenameModuleWithClamps(sourceModule.IOModule,
+                $"-A{sourcePhysicalNumber}", tempName);
+
+            var modulesToShift = GetModulesToShiftForMove(modules,
+                sourceIndex, targetIndex);
+            ValidateMoveModules(modulesToShift, sourceIndex, targetIndex);
+            RenameMoveModules(modulesToShift, sourceIndex, targetIndex);
+
+            RenameModuleWithClamps(sourceModule.IOModule, tempName,
+                $"-A{targetPhysicalNumber}");
+        }
+
+        private static void InsertDeletedModule(IIOModule deletedModule,
+            IModule targetModule)
+        {
+            if (targetModule == null ||
+                deletedModule?.Function?.IsValid != true)
+            {
+                throw new InvalidOperationException(
+                    "Исключенный модуль можно переместить только в узел PLC.");
+            }
+
+            var modules = targetModule.IONode.IOModules;
+            int targetIndex = modules.IndexOf(targetModule.IOModule);
+            if (targetIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    "Целевой модуль не найден в узле.");
+            }
+
+            int targetPhysicalNumber = GetPhysicalNumberByIndex(
+                targetModule.IONode, targetIndex);
+
+            if (targetModule.IOModule.Function?.IsValid == true)
+            {
+                throw new InvalidOperationException(
+                    "Исключенный модуль можно переместить только в " +
+                    "неопределенный модуль.");
+            }
+
+            RenameDeletedModule(deletedModule,
+                $"-D{deletedModule.PhysicalNumber}",
+                $"-A{targetPhysicalNumber}");
+        }
+
+        private static void RenameDeletedModule(IIOModule deletedModule,
+            string oldName, string newName)
+        {
+            if (deletedModule.Function is not StaticHelper.EplanFunction
+                eplanFunction)
+            {
+                throw new InvalidOperationException(
+                    $"Не найдена функция для переименования {oldName}.");
+            }
+
+            RenameFunctionNamePart(eplanFunction.Function, oldName, newName);
+        }
+
+        private static int GetPhysicalNumberByIndex(IIONode node,
+            int moduleIndex)
+        {
+            return node.NodeNumber + moduleIndex + 1;
+        }
+
+        private static List<IIOModule> GetModulesToShiftForMove(
+            List<IIOModule> modules, int sourceIndex, int targetIndex)
+        {
+            int startIndex = Math.Min(sourceIndex, targetIndex);
+            int endIndex = Math.Max(sourceIndex, targetIndex);
+
+            var range = Enumerable.Range(startIndex, endIndex - startIndex + 1)
+                .Where(index => index != sourceIndex)
+                .Select(index => modules[index])
+                .Where(module => module?.Function?.IsValid == true)
+                .ToList();
+
+            return sourceIndex > targetIndex ?
+                range.OrderByDescending(module => module.PhysicalNumber)
+                    .ToList() :
+                range.OrderBy(module => module.PhysicalNumber).ToList();
+        }
+
+        private static void ValidateMoveModules(IEnumerable<IIOModule> modules,
+            int sourceIndex, int targetIndex)
+        {
+            int shiftValue = sourceIndex > targetIndex ? 1 : -1;
+            foreach (var module in modules)
+            {
+                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
+                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+            }
+        }
+
+        private static void RenameMoveModules(IEnumerable<IIOModule> modules,
+            int sourceIndex, int targetIndex)
+        {
+            int shiftValue = sourceIndex > targetIndex ? 1 : -1;
+            foreach (var module in modules)
+            {
+                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
+                RenameModuleWithClamps(module,
+                    $"-A{module.PhysicalNumber}",
+                    $"-A{newPhysicalNumber}");
+            }
+        }
+
         private static void DeleteModules(IEnumerable<IModule> selectedModules)
         {
             var modulesByNode = selectedModules
@@ -411,6 +652,11 @@ namespace IO.View
         private static string GetDeletedModuleName(IIOModule module)
         {
             return $"-D{module.PhysicalNumber}";
+        }
+
+        private static string GetTemporaryModuleName(IIOModule module)
+        {
+            return $"-D{module.PhysicalNumber}TMP";
         }
 
         private static void RenameModuleWithClamps(IIOModule module,

@@ -15,6 +15,8 @@ namespace IO.ViewModel
 
         public string Description => module.Info.Description;
 
+        public IIOModule IOModule => module;
+
         string IToolTip.Name => module.Function?.VisibleName ?? Name;
 
         string IToolTip.Description =>
