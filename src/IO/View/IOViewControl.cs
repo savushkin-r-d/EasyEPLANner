@@ -242,6 +242,14 @@ namespace IO.View
 
         private void StructPLC_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Middle ||
+                e.Button == MouseButtons.Left &&
+                ModifierKeys.HasFlag(Keys.Control))
+            {
+                GoToFsaAt(e.Location);
+                return;
+            }
+
             if (e.Button != MouseButtons.Right)
             {
                 return;
@@ -251,6 +259,26 @@ namespace IO.View
             if (item != null && !item.Selected)
             {
                 StructPLC.SelectedObject = item.RowObject;
+            }
+        }
+
+        private void GoToFsaAt(Point location)
+        {
+            var rowObject = (StructPLC.GetItemAt(location.X, location.Y) as
+                OLVListItem)?.RowObject;
+            if (!TryGetEplanFunction(rowObject, out var function))
+            {
+                return;
+            }
+
+            try
+            {
+                OpenFunctionPage(function);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Переход на ФСА",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -373,7 +401,15 @@ namespace IO.View
                 return false;
             }
 
-            IEplanFunction eplanFunction = selectedObjects[0] switch
+            return TryGetEplanFunction(selectedObjects[0], out function);
+        }
+
+        private static bool TryGetEplanFunction(object viewObject,
+            out Function function)
+        {
+            function = null;
+
+            IEplanFunction eplanFunction = viewObject switch
             {
                 INode node => node.IONode.Function,
                 IModule module => module.IOModule.Function,
