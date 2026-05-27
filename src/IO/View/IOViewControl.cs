@@ -30,6 +30,8 @@ namespace IO.View
 
         private ToolStripMenuItem deleteUndefinedModuleToolStripMenuItem;
 
+        private ToolStripMenuItem goToFsaToolStripMenuItem;
+
         private class DraggedModule
         {
             public DeletedModule DeletedModule { get; set; }
@@ -107,6 +109,10 @@ namespace IO.View
             shiftModulesToolStripMenuItem = new ToolStripMenuItem("Сдвинуть модули");
             shiftModulesToolStripMenuItem.Click += ShiftModules_Click;
 
+            goToFsaToolStripMenuItem =
+                new ToolStripMenuItem("Перейти на ФСА");
+            goToFsaToolStripMenuItem.Click += GoToFsa_Click;
+
             deleteUndefinedModuleToolStripMenuItem =
                 new ToolStripMenuItem("Удалить")
                 {
@@ -116,6 +122,7 @@ namespace IO.View
                 DeleteUndefinedModule_Click;
 
             contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
+            contextMenuStrip.Items.Add(goToFsaToolStripMenuItem);
             contextMenuStrip.Items.Add(deleteUndefinedModuleToolStripMenuItem);
             contextMenuStrip.Opening += StructPLCContextMenu_Opening;
 
@@ -246,8 +253,50 @@ namespace IO.View
             shiftModulesToolStripMenuItem.Enabled =
                 selectedModules.Count == 1 &&
                 selectedModules[0].IOModule.Function?.IsValid == true;
+            goToFsaToolStripMenuItem.Enabled =
+                TryGetSelectedEplanFunction(out _);
             deleteUndefinedModuleToolStripMenuItem.Enabled =
                 selectedModules.Any();
+        }
+
+        private void GoToFsa_Click(object sender, EventArgs e)
+        {
+            if (!TryGetSelectedEplanFunction(out var function))
+            {
+                return;
+            }
+
+            try
+            {
+                OpenFunctionPage(function);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Переход на ФСА",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static void OpenFunctionPage(Function function)
+        {
+            var action = new Eplan.EplApi.ApplicationFramework
+                .ActionManager().FindAction("edit");
+            if (action == null)
+            {
+                throw new InvalidOperationException(
+                    "Не найдена команда EPLAN для открытия страницы.");
+            }
+
+            var context = new Eplan.EplApi.ApplicationFramework
+                .ActionCallingContext();
+            context.AddParameter("PAGENAME", function.Page.Name);
+
+            if (function.Category != Function.Enums.Category.PLCTerminal)
+            {
+                context.AddParameter("DEVICENAME", function.VisibleName);
+            }
+
+            action.Execute(context);
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
@@ -311,6 +360,37 @@ namespace IO.View
         {
             return StructPLC.SelectedObjects?.OfType<IModule>() ??
                 Enumerable.Empty<IModule>();
+        }
+
+        private bool TryGetSelectedEplanFunction(out Function function)
+        {
+            function = null;
+
+            var selectedObjects = StructPLC.SelectedObjects?.Cast<object>()
+                .ToList() ?? new List<object>();
+            if (selectedObjects.Count != 1)
+            {
+                return false;
+            }
+
+            IEplanFunction eplanFunction = selectedObjects[0] switch
+            {
+                INode node => node.IONode.Function,
+                IModule module => module.IOModule.Function,
+                IClamp clamp => clamp.ClampFunction,
+                DeletedModule deletedModule => deletedModule.IOModule.Function,
+                _ => null
+            };
+
+            if (eplanFunction is not StaticHelper.EplanFunction functionWrapper ||
+                functionWrapper.Function?.IsValid != true ||
+                functionWrapper.Function.Page is null)
+            {
+                return false;
+            }
+
+            function = functionWrapper.Function;
+            return true;
         }
 
         private static bool TryGetShiftValue(out int shiftValue)
