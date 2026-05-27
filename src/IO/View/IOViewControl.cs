@@ -565,7 +565,7 @@ namespace IO.View
             }
 
             RenameDeletedModule(deletedModule,
-                $"-D{deletedModule.PhysicalNumber}",
+                GetDeletedModuleName(deletedModule),
                 $"-A{targetPhysicalNumber}");
         }
 
@@ -731,12 +731,12 @@ namespace IO.View
 
         private static string GetDeletedModuleName(IIOModule module)
         {
-            return $"-D{module.PhysicalNumber}";
+            return $"-DEL{module.PhysicalNumber}";
         }
 
         private static string GetTemporaryModuleName(IIOModule module)
         {
-            return $"-D{module.PhysicalNumber}TMP";
+            return $"-DEL{module.PhysicalNumber}TMP";
         }
 
         private static void RenameModuleWithClamps(IIOModule module,

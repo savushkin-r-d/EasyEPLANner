@@ -374,7 +374,7 @@ namespace EasyEPlanner
 
             IO.IOModule module = new IO.IOModule(0, 0, moduleInfo,
                 moduleNumber, deviceHelper.GetArticleName(function),
-                new EplanFunction(function), "D",
+                new EplanFunction(function), "DEL",
                 function.Properties.DESIGNATION_FULLLOCATION_WITHPREFIX,
                 function.Properties.DESIGNATION_FULLLOCATION_DESCR.GetString());
 
@@ -644,7 +644,7 @@ namespace EasyEPlanner
         /// </summary>
         Regex IONameRegex;
 
-        Regex DeletedIONameRegex = new Regex(@"=*-D(?<n>\d+)$");
+        Regex DeletedIONameRegex = new Regex(@"=*-DEL(?<n>\d+)$");
 
         /// <summary>
         /// Номер узла А1, характерного для проектов, где используется 
