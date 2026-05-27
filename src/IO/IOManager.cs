@@ -551,8 +551,8 @@ namespace IO
         public const string IONamePattern = @"=*-A(?<n>\d+)(\.(?<ext>\d+))?$";
 
         #region Закрытые поля.
-        private List<IIONode> iONodes;     ///Узлы проекта.
-        private List<IIOModule> deletedModules; ///Исключенные модули проекта.
+        private readonly List<IIONode> iONodes;     ///Узлы проекта.
+        private readonly List<IIOModule> deletedModules; ///Исключенные модули проекта.
         private static IOManager instance;  ///Экземпляр класса.
         #endregion
     }

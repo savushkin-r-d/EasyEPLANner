@@ -32,7 +32,7 @@ namespace IO.View
 
         private ToolStripMenuItem goToFsaToolStripMenuItem;
 
-        private class DraggedModule
+        private sealed class DraggedModule
         {
             public DeletedModule DeletedModule { get; set; }
         }
@@ -509,10 +509,11 @@ namespace IO.View
                     "Нет модулей для сдвига.");
             }
 
-            foreach (var module in modulesToShift)
+            foreach (var physicalNumber in modulesToShift
+                .Select(module => module.PhysicalNumber))
             {
-                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
-                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+                int newPhysicalNumber = physicalNumber + shiftValue;
+                ValidateModuleNumber(physicalNumber, newPhysicalNumber);
             }
 
             foreach (var module in modulesToShift)
@@ -577,14 +578,8 @@ namespace IO.View
 
             var functionsToRename = GetDeletedModuleRenameFunctions(
                 eplanFunction.Function, actualOldName);
-            int renamedFunctionsCount = 0;
-            foreach (var function in functionsToRename)
-            {
-                if (RenameFunctionNamePart(function, actualOldName, newName))
-                {
-                    renamedFunctionsCount++;
-                }
-            }
+            int renamedFunctionsCount = functionsToRename.Count(function =>
+                RenameFunctionNamePart(function, actualOldName, newName));
 
             if (renamedFunctionsCount == 0)
             {
@@ -596,7 +591,8 @@ namespace IO.View
 
         private static string GetDeletedFunctionNamePart(Function function)
         {
-            return Regex.Match(function.Name, @"-DEL\d+(?=$|\D)").Value;
+            return Regex.Match(function.Name, @"-DEL\d+(?=$|\D)",
+                RegexOptions.None, RegexDefaults.Timeout).Value;
         }
 
         private static List<Function> GetDeletedModuleRenameFunctions(
@@ -611,12 +607,11 @@ namespace IO.View
                 AddRenameCandidate(functions, subFunction, oldName);
             }
 
-            foreach (var pageFunction in moduleFunction.Page?.Functions ?? [])
+            foreach (var pageFunction in (moduleFunction.Page?.Functions ?? [])
+                .Where(function => IsRelatedModuleFunction(moduleFunction,
+                    function)))
             {
-                if (IsRelatedModuleFunction(moduleFunction, pageFunction))
-                {
-                    AddRenameCandidate(functions, pageFunction, oldName);
-                }
+                AddRenameCandidate(functions, pageFunction, oldName);
             }
 
             return functions;
@@ -693,7 +688,7 @@ namespace IO.View
                 return;
             }
 
-            int firstDeletedIndex = selectedUndefinedIndexes.First();
+            int firstDeletedIndex = selectedUndefinedIndexes[0];
             var modulesToShift = modules
                 .Skip(firstDeletedIndex + 1)
                 .Where(module => module?.Function?.IsValid == true)
@@ -730,7 +725,8 @@ namespace IO.View
 
         private static bool IsUndefinedModule(IIOModule module)
         {
-            return module?.Info?.Name == IOModuleInfo.Stub.Name &&
+            return module is not null &&
+                module.Info?.Name == IOModuleInfo.Stub.Name &&
                 module.Function is null;
         }
 
@@ -753,7 +749,8 @@ namespace IO.View
             string oldName, string newName)
         {
             var renamedFunctionName = Regex.Replace(function.Name,
-                $@"{Regex.Escape(oldName)}(?=$|\D)", newName);
+                $@"{Regex.Escape(oldName)}(?=$|\D)", newName,
+                RegexOptions.None, RegexDefaults.Timeout);
             if (renamedFunctionName != function.Name)
             {
                 function.Name = renamedFunctionName;
@@ -871,7 +868,8 @@ namespace IO.View
             string moduleName)
         {
             return Regex.IsMatch(functionName,
-                $@"{Regex.Escape(moduleName)}(?=$|\D)");
+                $@"{Regex.Escape(moduleName)}(?=$|\D)", RegexOptions.None,
+                RegexDefaults.Timeout);
         }
 
         private static void ValidateModuleNumber(int currentPhysicalNumber,

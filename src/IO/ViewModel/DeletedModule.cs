@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace IO.ViewModel
 {
-    public class DeletedModule : IViewItem, IHasIcon, IToolTip
+    public class DeletedModule : IHasIcon, IToolTip
     {
         private readonly IIOModule module;
 

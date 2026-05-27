@@ -21,7 +21,8 @@ namespace EasyEPlanner
             this.IOManager = IO.IOManager.GetInstance();
             this.isContainsNodes = false;
             this.isContainsA1 = false;
-            this.IONameRegex = new Regex(IO.IOManager.IONamePattern);
+            this.IONameRegex = new Regex(IO.IOManager.IONamePattern,
+                RegexOptions.None, RegexDefaults.Timeout);
             this.functionsForSearching = new List<Function>();
             this.projectHelper = projectHelper;
             this.deviceHelper = deviceHelper;
@@ -374,9 +375,15 @@ namespace EasyEPlanner
 
             IO.IOModule module = new IO.IOModule(0, 0, moduleInfo,
                 moduleNumber, deviceHelper.GetArticleName(function),
-                new EplanFunction(function), "DEL",
-                function.Properties.DESIGNATION_FULLLOCATION_WITHPREFIX,
-                function.Properties.DESIGNATION_FULLLOCATION_DESCR.GetString());
+                new IO.IOModule.EplanData
+                {
+                    Function = new EplanFunction(function),
+                    NamePrefix = "DEL",
+                    Location = function.Properties
+                        .DESIGNATION_FULLLOCATION_WITHPREFIX,
+                    LocationDescription = function.Properties
+                        .DESIGNATION_FULLLOCATION_DESCR.GetString()
+                });
 
             IOManager.AddDeletedModule(module);
         }
@@ -642,9 +649,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Обрабатывающий Regex.
         /// </summary>
-        Regex IONameRegex;
+        private readonly Regex IONameRegex;
 
-        Regex DeletedIONameRegex = new Regex(@"=*-DEL(?<n>\d+)$");
+        private readonly Regex DeletedIONameRegex = new Regex(
+            @"=*-DEL(?<n>\d+)$", RegexOptions.None, RegexDefaults.Timeout);
 
         /// <summary>
         /// Номер узла А1, характерного для проектов, где используется 
