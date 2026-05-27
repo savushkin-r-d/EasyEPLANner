@@ -42,11 +42,21 @@ namespace IOTests
                 Assert.IsFalse(node.Expanded);
 
                 CollectionAssert.AreEqual(
-                    new List<string>() { "IP-адрес", "Маска подсети", "Сетевой шлюз" },
+                    new List<string>()
+                    {
+                        "IP-адрес",
+                        "Маска подсети",
+                        "Сетевой шлюз"
+                    },
                     node.Items.Select(i => i.Name));
 
                 CollectionAssert.AreEqual(
-                    new List<string>() { "ip", "mask", "gateway" },
+                    new List<string>()
+                    {
+                        "ip",
+                        "mask",
+                        "gateway"
+                    },
                     node.Items.Select(i => i.Description));
             });
         }
@@ -101,8 +111,51 @@ namespace IOTests
             var node = new Node(ioNode, Mock.Of<ILocation>());
 
             CollectionAssert.AreEqual(
-                new List<string>() { "IP-адрес", "Маска подсети", "Сетевой шлюз", "A100.1" },
+                new List<string>()
+                {
+                    "IP-адрес",
+                    "Маска подсети",
+                    "Сетевой шлюз",
+                    "A100.1"
+                },
                 node.Items.Select(i => i.Name));
+        }
+
+        [Test]
+        public void Items_Node_DoesNotAddAppendModuleTargetByDefault()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == "A100" &&
+                n.TypeStr == "AO" &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>());
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.IsFalse(node.Items.OfType<AppendModuleTarget>().Any());
+        }
+
+        [Test]
+        public void AppendModuleTarget_Getters_ReturnsAddModuleTargetData()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == "A100" &&
+                n.TypeStr == "AO" &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>());
+
+            var appendModuleTarget = new AppendModuleTarget(ioNode);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreSame(ioNode, appendModuleTarget.IONode);
+                Assert.AreEqual("Добавить исключенный модуль в конец",
+                    appendModuleTarget.Name);
+                Assert.AreEqual(Icon.AddModule,
+                    (appendModuleTarget as IHasIcon).Icon);
+            });
         }
     }
 }

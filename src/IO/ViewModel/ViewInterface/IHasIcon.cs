@@ -55,6 +55,9 @@ namespace IO.ViewModel
 
         /// <summary> Кабель (устройства). </summary>
         Cable,
+
+        /// <summary> Добавление модуля. </summary>
+        AddModule,
     }
 
     /// <summary>

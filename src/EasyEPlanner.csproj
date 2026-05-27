@@ -137,6 +137,7 @@
     <Compile Include="FileSavers\XML\XmlExtensions.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="IO\ViewModel\AppendModuleTarget.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
     <Compile Include="IO\ViewModel\DeletedModule.cs" />
     <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />

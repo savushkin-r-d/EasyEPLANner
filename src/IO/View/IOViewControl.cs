@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,8 @@ namespace IO.View
 
         private bool isCellEditing = false;
 
+        private bool isDraggingDeletedModule = false;
+
         private ToolStripMenuItem shiftModulesToolStripMenuItem;
 
         private ToolStripMenuItem deleteUndefinedModuleToolStripMenuItem;
@@ -35,6 +38,16 @@ namespace IO.View
         private sealed class DraggedModule
         {
             public DeletedModule DeletedModule { get; set; }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private sealed class ModuleDropTarget
+        {
+            public IIONode Node { get; set; }
+
+            public IModule Module { get; set; }
+
+            public bool IsNodeEnd => Module == null;
         }
 
         public static IOViewControl Instance { get; private set; }
@@ -72,7 +85,7 @@ namespace IO.View
         private void InitStructPLC()
         {
             StructPLC.CanExpandGetter = obj => obj is IExpandable exp && (exp.Items?.Any() ?? false);
-            StructPLC.ChildrenGetter = obj => (obj as IExpandable)?.Items;
+            StructPLC.ChildrenGetter = GetChildren;
             StructPLC.CellToolTipGetter = (col, obj) => (col.Index) switch
             {
                 0 => (obj as IToolTip)?.Name ?? (obj as IViewItem).Name,
@@ -83,7 +96,7 @@ namespace IO.View
 
             var firstColumn = new OLVColumn("Название", nameof(IViewItem.Name))
             {
-                ImageGetter = obj => (obj is IHasIcon item)? (int)item.Icon : -1,
+                ImageGetter = GetIconIndex,
                 AspectGetter = obj => (obj as IViewItem).Name,
                 IsEditable = true,
                 Sortable = false,
@@ -100,6 +113,68 @@ namespace IO.View
 
             StructPLC.Columns.Add(firstColumn);
             StructPLC.Columns.Add(secondColumn);
+
+            EnsureAddModuleIcon();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private IEnumerable GetChildren(object obj)
+        {
+            if (obj is Node node && isDraggingDeletedModule)
+            {
+                return node.Items.Concat(new IViewItem[]
+                {
+                    new AppendModuleTarget(node.IONode)
+                });
+            }
+
+            return (obj as IExpandable)?.Items;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private object GetIconIndex(object obj)
+        {
+            if (isDraggingDeletedModule &&
+                obj is IModule module &&
+                IsUndefinedModule(module.IOModule))
+            {
+                return (int)IO.ViewModel.Icon.AddModule;
+            }
+
+            return obj is IHasIcon item ? (int)item.Icon : -1;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void EnsureAddModuleIcon()
+        {
+            const string imageKey = "add_module.png";
+            if (ViewItemImageList.Images.ContainsKey(imageKey))
+            {
+                return;
+            }
+
+            ViewItemImageList.Images.Add(imageKey, CreateAddModuleIcon());
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static Bitmap CreateAddModuleIcon()
+        {
+            var bitmap = new Bitmap(16, 16);
+            using (var graphics = Graphics.FromImage(bitmap))
+            using (var fillBrush = new SolidBrush(Color.White))
+            using (var borderPen = new Pen(Color.Black, 1))
+            using (var plusPen = new Pen(Color.Black, 2))
+            {
+                graphics.Clear(Color.Transparent);
+                graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.None;
+                graphics.FillRectangle(fillBrush, 2, 2, 11, 11);
+                graphics.DrawRectangle(borderPen, 2, 2, 11, 11);
+                graphics.DrawLine(plusPen, 8, 5, 8, 11);
+                graphics.DrawLine(plusPen, 5, 8, 11, 8);
+            }
+
+            return bitmap;
         }
 
         private void InitContextMenu()
@@ -142,6 +217,7 @@ namespace IO.View
             StructPLC.DragDrop += StructPLC_DragDrop;
         }
 
+        [ExcludeFromCodeCoverage]
         private void StructPLC_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if ((e.Item as OLVListItem)?.RowObject is DeletedModule
@@ -149,10 +225,30 @@ namespace IO.View
                 IsOnlySelectedObject(deletedModule) &&
                 deletedModule.IOModule.Function?.IsValid == true)
             {
-                DoDragDrop(new DataObject(typeof(DraggedModule).FullName,
-                    new DraggedModule { DeletedModule = deletedModule }),
-                    DragDropEffects.Move);
+                isDraggingDeletedModule = true;
+                RefreshDragDropTargets();
+
+                try
+                {
+                    DoDragDrop(new DataObject(typeof(DraggedModule).FullName,
+                        new DraggedModule { DeletedModule = deletedModule }),
+                        DragDropEffects.Move);
+                }
+                finally
+                {
+                    isDraggingDeletedModule = false;
+                    RefreshDragDropTargets();
+                }
             }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void RefreshDragDropTargets()
+        {
+            StructPLC.BeginUpdate();
+            StructPLC.RebuildAll(true);
+            StructPLC.EndUpdate();
+            AutoResizeColumns(StructPLC);
         }
 
         private void StructPLC_DragOver(object sender, DragEventArgs e)
@@ -164,7 +260,7 @@ namespace IO.View
         private void StructPLC_DragDrop(object sender, DragEventArgs e)
         {
             if (!TryGetDragDropModules(e, out var draggedModule,
-                out var targetModule))
+                out var dropTarget))
             {
                 return;
             }
@@ -172,7 +268,7 @@ namespace IO.View
             try
             {
                 InsertDeletedModule(draggedModule.DeletedModule.IOModule,
-                    targetModule);
+                    dropTarget);
 
                 EProjectManager.GetInstance().SyncAndSave(false);
 
@@ -191,15 +287,15 @@ namespace IO.View
         private bool CanDropModule(DragEventArgs e)
         {
             return TryGetDragDropModules(e, out var draggedModule,
-                out var targetModule) &&
-                CanDropModule(draggedModule, targetModule);
+                out var dropTarget) &&
+                CanDropModule(draggedModule, dropTarget);
         }
 
         private bool TryGetDragDropModules(DragEventArgs e,
-            out DraggedModule draggedModule, out IModule targetModule)
+            out DraggedModule draggedModule, out ModuleDropTarget dropTarget)
         {
             draggedModule = null;
-            targetModule = null;
+            dropTarget = null;
 
             if (!e.Data.GetDataPresent(typeof(DraggedModule).FullName))
             {
@@ -209,18 +305,67 @@ namespace IO.View
             draggedModule = e.Data.GetData(typeof(DraggedModule).FullName)
                 as DraggedModule;
             var point = StructPLC.PointToClient(new Point(e.X, e.Y));
-            targetModule = (StructPLC.GetItemAt(point.X, point.Y) as
-                OLVListItem)?.RowObject as IModule;
+            var rowObject = (StructPLC.GetItemAt(point.X, point.Y) as
+                OLVListItem)?.RowObject;
 
-            return draggedModule != null && targetModule != null;
+            if (rowObject is IModule targetModule)
+            {
+                dropTarget = new ModuleDropTarget
+                {
+                    Node = targetModule.IONode,
+                    Module = targetModule
+                };
+            }
+            else if (rowObject is AppendModuleTarget appendModuleTarget)
+            {
+                dropTarget = new ModuleDropTarget
+                {
+                    Node = appendModuleTarget.IONode
+                };
+            }
+
+            return draggedModule != null && dropTarget != null;
         }
 
         private static bool CanDropModule(DraggedModule draggedModule,
-            IModule targetModule)
+            ModuleDropTarget dropTarget)
         {
             return draggedModule.DeletedModule?.IOModule.Function?.IsValid ==
                 true &&
-                targetModule.IOModule.Function?.IsValid != true;
+                CanDropToTarget(dropTarget);
+        }
+
+        private static bool CanDropToTarget(ModuleDropTarget dropTarget)
+        {
+            if (dropTarget?.Node == null)
+            {
+                return false;
+            }
+
+            if (dropTarget.IsNodeEnd)
+            {
+                return CanAppendToNode(dropTarget.Node);
+            }
+
+            return dropTarget.Module.IOModule.Function?.IsValid != true;
+        }
+
+        private static bool CanAppendToNode(IIONode targetNode)
+        {
+            if (targetNode.Type is IONode.TYPES.T_EMPTY)
+            {
+                return false;
+            }
+
+            try
+            {
+                GetNextPhysicalNumber(targetNode);
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         private bool IsOnlySelectedObject(object rowObject)
@@ -526,15 +671,24 @@ namespace IO.View
         }
 
         private static void InsertDeletedModule(IIOModule deletedModule,
-            IModule targetModule)
+            ModuleDropTarget dropTarget)
         {
-            if (targetModule == null ||
+            if (dropTarget?.Node == null ||
                 deletedModule?.Function?.IsValid != true)
             {
                 throw new InvalidOperationException(
                     "Исключенный модуль можно переместить только в узел PLC.");
             }
 
+            int targetPhysicalNumber = dropTarget.IsNodeEnd
+                ? GetNextPhysicalNumber(dropTarget.Node)
+                : GetTargetPhysicalNumber(dropTarget.Module);
+
+            RenameDeletedModule(deletedModule, $"-A{targetPhysicalNumber}");
+        }
+
+        private static int GetTargetPhysicalNumber(IModule targetModule)
+        {
             var modules = targetModule.IONode.IOModules;
             int targetIndex = modules.IndexOf(targetModule.IOModule);
             if (targetIndex < 0)
@@ -543,9 +697,6 @@ namespace IO.View
                     "Целевой модуль не найден в узле.");
             }
 
-            int targetPhysicalNumber = GetPhysicalNumberByIndex(
-                targetModule.IONode, targetIndex);
-
             if (targetModule.IOModule.Function?.IsValid == true)
             {
                 throw new InvalidOperationException(
@@ -553,7 +704,17 @@ namespace IO.View
                     "неопределенный модуль.");
             }
 
-            RenameDeletedModule(deletedModule, $"-A{targetPhysicalNumber}");
+            return GetPhysicalNumberByIndex(targetModule.IONode, targetIndex);
+        }
+
+        private static int GetNextPhysicalNumber(IIONode targetNode)
+        {
+            int physicalNumber = targetNode.NodeNumber +
+                targetNode.IOModules.Count + 1;
+
+            ValidateModuleNumber(targetNode.NodeNumber + 1, physicalNumber);
+
+            return physicalNumber;
         }
 
         private static void RenameDeletedModule(IIOModule deletedModule,
