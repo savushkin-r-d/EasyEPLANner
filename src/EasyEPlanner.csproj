@@ -148,6 +148,7 @@
     <Compile Include="IO\ViewModel\ILocation.cs" />
     <Compile Include="IO\ViewModel\IModule.cs" />
     <Compile Include="IO\ViewModel\INode.cs" />
+    <Compile Include="IO\ViewModel\ModuleViewItem.cs" />
     <Compile Include="IO\ViewModel\Property.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
