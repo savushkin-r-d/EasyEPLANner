@@ -342,27 +342,17 @@ namespace IO.View
                 .OrderByDescending(module => module.PhysicalNumber)
                 .ToList();
 
-            int firstDeletedIndex = selectedIndexes.First();
-            var modulesToShift = modules
-                .Skip(firstDeletedIndex + 1)
-                .Where(module => module?.Function?.IsValid == true)
-                .Where(module => !selectedDefinedModules.Contains(module))
-                .OrderBy(module => module.PhysicalNumber)
+            var selectedUndefinedIndexes = selectedModules
+                .Where(module => IsUndefinedModule(module.IOModule))
+                .Select(module => modules.IndexOf(module.IOModule))
+                .OrderBy(index => index)
                 .ToList();
 
-            if (!selectedDefinedModules.Any() && !modulesToShift.Any())
+            if (!selectedDefinedModules.Any() &&
+                !selectedUndefinedIndexes.Any())
             {
                 throw new InvalidOperationException(
-                    "После выбранного модуля нет модулей для сдвига.");
-            }
-
-            foreach (var module in modulesToShift)
-            {
-                int moduleIndex = modules.IndexOf(module);
-                int shiftValue = selectedIndexes.Count(index =>
-                    index < moduleIndex);
-                int newPhysicalNumber = module.PhysicalNumber - shiftValue;
-                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+                    "Нет модулей для удаления.");
             }
 
             foreach (var module in selectedDefinedModules)
@@ -372,10 +362,38 @@ namespace IO.View
                     GetDeletedModuleName(module));
             }
 
+            if (!selectedUndefinedIndexes.Any())
+            {
+                return;
+            }
+
+            int firstDeletedIndex = selectedUndefinedIndexes.First();
+            var modulesToShift = modules
+                .Skip(firstDeletedIndex + 1)
+                .Where(module => module?.Function?.IsValid == true)
+                .Where(module => !selectedDefinedModules.Contains(module))
+                .OrderBy(module => module.PhysicalNumber)
+                .ToList();
+
+            if (!modulesToShift.Any())
+            {
+                throw new InvalidOperationException(
+                    "После выбранного модуля нет модулей для сдвига.");
+            }
+
             foreach (var module in modulesToShift)
             {
                 int moduleIndex = modules.IndexOf(module);
-                int shiftValue = selectedIndexes.Count(index =>
+                int shiftValue = selectedUndefinedIndexes.Count(index =>
+                    index < moduleIndex);
+                int newPhysicalNumber = module.PhysicalNumber - shiftValue;
+                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
+            }
+
+            foreach (var module in modulesToShift)
+            {
+                int moduleIndex = modules.IndexOf(module);
+                int shiftValue = selectedUndefinedIndexes.Count(index =>
                     index < moduleIndex);
                 int newPhysicalNumber = module.PhysicalNumber - shiftValue;
                 RenameModuleWithClamps(module,
