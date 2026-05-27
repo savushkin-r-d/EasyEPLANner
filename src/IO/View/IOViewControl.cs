@@ -232,14 +232,6 @@ namespace IO.View
                 ReferenceEquals(selectedObjects[0], rowObject);
         }
 
-        private static bool CanMoveModule(IModule sourceModule,
-            IModule targetModule)
-        {
-            return sourceModule != targetModule &&
-                sourceModule.IONode == targetModule.IONode &&
-                sourceModule.IOModule.Function?.IsValid == true;
-        }
-
         private void StructPLC_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle ||
@@ -532,46 +524,6 @@ namespace IO.View
             }
         }
 
-        private static void MoveModule(IModule sourceModule,
-            IModule targetModule)
-        {
-            if (!CanMoveModule(sourceModule, targetModule))
-            {
-                throw new InvalidOperationException(
-                    "Модуль можно перемещать только внутри одного узла PLC.");
-            }
-
-            var modules = sourceModule.IONode.IOModules;
-            int sourceIndex = modules.IndexOf(sourceModule.IOModule);
-            int targetIndex = modules.IndexOf(targetModule.IOModule);
-            if (sourceIndex < 0 || targetIndex < 0)
-            {
-                throw new InvalidOperationException(
-                    "Выбранный модуль не найден в узле.");
-            }
-
-            if (sourceIndex == targetIndex)
-            {
-                return;
-            }
-
-            int sourcePhysicalNumber = sourceModule.IOModule.PhysicalNumber;
-            int targetPhysicalNumber = GetPhysicalNumberByIndex(
-                sourceModule.IONode, targetIndex);
-            string tempName = GetTemporaryModuleName(sourceModule.IOModule);
-
-            RenameModuleWithClamps(sourceModule.IOModule,
-                $"-A{sourcePhysicalNumber}", tempName);
-
-            var modulesToShift = GetModulesToShiftForMove(modules,
-                sourceIndex, targetIndex);
-            ValidateMoveModules(modulesToShift, sourceIndex, targetIndex);
-            RenameMoveModules(modulesToShift, sourceIndex, targetIndex);
-
-            RenameModuleWithClamps(sourceModule.IOModule, tempName,
-                $"-A{targetPhysicalNumber}");
-        }
-
         private static void InsertDeletedModule(IIOModule deletedModule,
             IModule targetModule)
         {
@@ -600,19 +552,18 @@ namespace IO.View
                     "неопределенный модуль.");
             }
 
-            RenameDeletedModule(deletedModule,
-                GetDeletedModuleName(deletedModule),
-                $"-A{targetPhysicalNumber}");
+            RenameDeletedModule(deletedModule, $"-A{targetPhysicalNumber}");
         }
 
         private static void RenameDeletedModule(IIOModule deletedModule,
-            string oldName, string newName)
+            string newName)
         {
             if (deletedModule.Function is not StaticHelper.EplanFunction
                 eplanFunction)
             {
                 throw new InvalidOperationException(
-                    $"Не найдена функция для переименования {oldName}.");
+                    "Не найдена функция для переименования исключенного " +
+                    "модуля.");
             }
 
             var actualOldName = GetDeletedFunctionNamePart(
@@ -662,58 +613,26 @@ namespace IO.View
 
             foreach (var pageFunction in moduleFunction.Page?.Functions ?? [])
             {
-                AddRenameCandidate(functions, pageFunction, oldName);
+                if (IsRelatedModuleFunction(moduleFunction, pageFunction))
+                {
+                    AddRenameCandidate(functions, pageFunction, oldName);
+                }
             }
 
             return functions;
+        }
+
+        private static bool IsRelatedModuleFunction(Function moduleFunction,
+            Function function)
+        {
+            return function == moduleFunction ||
+                function.ParentFunction == moduleFunction;
         }
 
         private static int GetPhysicalNumberByIndex(IIONode node,
             int moduleIndex)
         {
             return node.NodeNumber + moduleIndex + 1;
-        }
-
-        private static List<IIOModule> GetModulesToShiftForMove(
-            List<IIOModule> modules, int sourceIndex, int targetIndex)
-        {
-            int startIndex = Math.Min(sourceIndex, targetIndex);
-            int endIndex = Math.Max(sourceIndex, targetIndex);
-
-            var range = Enumerable.Range(startIndex, endIndex - startIndex + 1)
-                .Where(index => index != sourceIndex)
-                .Select(index => modules[index])
-                .Where(module => module?.Function?.IsValid == true)
-                .ToList();
-
-            return sourceIndex > targetIndex ?
-                range.OrderByDescending(module => module.PhysicalNumber)
-                    .ToList() :
-                range.OrderBy(module => module.PhysicalNumber).ToList();
-        }
-
-        private static void ValidateMoveModules(IEnumerable<IIOModule> modules,
-            int sourceIndex, int targetIndex)
-        {
-            int shiftValue = sourceIndex > targetIndex ? 1 : -1;
-            foreach (var module in modules)
-            {
-                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
-                ValidateModuleNumber(module.PhysicalNumber, newPhysicalNumber);
-            }
-        }
-
-        private static void RenameMoveModules(IEnumerable<IIOModule> modules,
-            int sourceIndex, int targetIndex)
-        {
-            int shiftValue = sourceIndex > targetIndex ? 1 : -1;
-            foreach (var module in modules)
-            {
-                int newPhysicalNumber = module.PhysicalNumber + shiftValue;
-                RenameModuleWithClamps(module,
-                    $"-A{module.PhysicalNumber}",
-                    $"-A{newPhysicalNumber}");
-            }
         }
 
         private static void DeleteModules(IEnumerable<IModule> selectedModules)
@@ -818,11 +737,6 @@ namespace IO.View
         private static string GetDeletedModuleName(IIOModule module)
         {
             return $"-DEL{module.PhysicalNumber}";
-        }
-
-        private static string GetTemporaryModuleName(IIOModule module)
-        {
-            return $"-DEL{module.PhysicalNumber}TMP";
         }
 
         private static void RenameModuleWithClamps(IIOModule module,
