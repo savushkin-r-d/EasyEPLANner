@@ -29,11 +29,15 @@ namespace IO.View
 
         private bool isDraggingDeletedModule = false;
 
+        private object dragHoverRowObject;
+
         private ToolStripMenuItem shiftModulesToolStripMenuItem;
 
         private ToolStripMenuItem deleteUndefinedModuleToolStripMenuItem;
 
         private ToolStripMenuItem goToFsaToolStripMenuItem;
+
+        private ToolStripMenuItem restoreDeletedModulesToolStripMenuItem;
 
         private sealed class DraggedModule
         {
@@ -201,6 +205,14 @@ namespace IO.View
                 };
             goToFsaToolStripMenuItem.Click += GoToFsa_Click;
 
+            restoreDeletedModulesToolStripMenuItem =
+                new ToolStripMenuItem("Восстановить")
+                {
+                    Image = CreateAddModuleIcon()
+                };
+            restoreDeletedModulesToolStripMenuItem.Click +=
+                RestoreDeletedModules_Click;
+
             deleteUndefinedModuleToolStripMenuItem =
                 new ToolStripMenuItem("Удалить")
                 {
@@ -212,6 +224,7 @@ namespace IO.View
 
             contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(goToFsaToolStripMenuItem);
+            contextMenuStrip.Items.Add(restoreDeletedModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(deleteUndefinedModuleToolStripMenuItem);
             contextMenuStrip.Opening += StructPLCContextMenu_Opening;
 
@@ -221,6 +234,7 @@ namespace IO.View
             StructPLC.ItemDrag += StructPLC_ItemDrag;
             StructPLC.DragOver += StructPLC_DragOver;
             StructPLC.DragDrop += StructPLC_DragDrop;
+            StructPLC.DragLeave += StructPLC_DragLeave;
         }
 
         [ExcludeFromCodeCoverage]
@@ -243,6 +257,7 @@ namespace IO.View
                 finally
                 {
                     isDraggingDeletedModule = false;
+                    SetDragHoverRowObject(null);
                     RefreshDragDropTargets();
                 }
             }
@@ -257,10 +272,40 @@ namespace IO.View
             AutoResizeColumns(StructPLC);
         }
 
+        [ExcludeFromCodeCoverage]
         private void StructPLC_DragOver(object sender, DragEventArgs e)
         {
-            e.Effect = CanDropModule(e) ?
-                DragDropEffects.Move : DragDropEffects.None;
+            bool canDrop = CanDropModule(e);
+
+            SetDragHoverRowObject(canDrop ? GetDragRowObject(e) : null);
+
+            e.Effect = canDrop ? DragDropEffects.Move : DragDropEffects.None;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void StructPLC_DragLeave(object sender, EventArgs e)
+        {
+            SetDragHoverRowObject(null);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private object GetDragRowObject(DragEventArgs e)
+        {
+            var point = StructPLC.PointToClient(new Point(e.X, e.Y));
+            return (StructPLC.GetItemAt(point.X, point.Y) as OLVListItem)
+                ?.RowObject;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void SetDragHoverRowObject(object rowObject)
+        {
+            if (ReferenceEquals(dragHoverRowObject, rowObject))
+            {
+                return;
+            }
+
+            dragHoverRowObject = rowObject;
+            StructPLC.Invalidate();
         }
 
         private void StructPLC_DragDrop(object sender, DragEventArgs e)
@@ -434,6 +479,9 @@ namespace IO.View
                 selectedModules[0].IOModule.Function?.IsValid == true;
             goToFsaToolStripMenuItem.Enabled =
                 TryGetSelectedEplanFunction(out _);
+            restoreDeletedModulesToolStripMenuItem.Enabled =
+                GetRestorableDeletedModules(GetSelectedDeletedIOModules())
+                    .Any();
             deleteUndefinedModuleToolStripMenuItem.Enabled =
                 selectedModules.Any();
         }
@@ -501,6 +549,33 @@ namespace IO.View
             DeleteSelectedUndefinedModule();
         }
 
+        private void RestoreDeletedModules_Click(object sender, EventArgs e)
+        {
+            var restoreTargets = GetRestorableDeletedModules(
+                GetSelectedDeletedIOModules()).ToList();
+            if (!restoreTargets.Any())
+            {
+                return;
+            }
+
+            try
+            {
+                RestoreDeletedModules(restoreTargets);
+
+                EProjectManager.GetInstance().SyncAndSave(false);
+
+                Editor.Editor.GetInstance().EditorForm.RefreshTree();
+                DFrm.GetInstance().RefreshTree();
+
+                RebuildTree();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Восстановление модулей",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void DeleteSelectedUndefinedModule()
         {
             var modules = GetSelectedModules().ToList();
@@ -531,6 +606,34 @@ namespace IO.View
         {
             return StructPLC.SelectedObjects?.OfType<IModule>() ??
                 Enumerable.Empty<IModule>();
+        }
+
+        private IEnumerable<DeletedModule> GetSelectedDeletedModules()
+        {
+            var selectedObjects = StructPLC.SelectedObjects?.Cast<object>() ??
+                Enumerable.Empty<object>();
+
+            foreach (var deletedModule in selectedObjects
+                .OfType<DeletedModule>())
+            {
+                yield return deletedModule;
+            }
+
+            foreach (var deletedModulesGroup in selectedObjects
+                .OfType<DeletedModulesGroup>())
+            {
+                foreach (var deletedModule in deletedModulesGroup.Items
+                    .OfType<DeletedModule>())
+                {
+                    yield return deletedModule;
+                }
+            }
+        }
+
+        private IEnumerable<IIOModule> GetSelectedDeletedIOModules()
+        {
+            return GetSelectedDeletedModules()
+                .Select(module => module.IOModule);
         }
 
         private bool TryGetSelectedEplanFunction(out Function function)
@@ -691,6 +794,23 @@ namespace IO.View
                 : GetTargetPhysicalNumber(dropTarget.Module);
 
             RenameDeletedModule(deletedModule, $"-A{targetPhysicalNumber}");
+        }
+
+        private IEnumerable<DeletedModuleRestoreTarget>
+            GetRestorableDeletedModules(IEnumerable<IIOModule> modules)
+        {
+            return DeletedModuleRestorePlanner.GetRestorableModules(modules,
+                DataContext?.IOManager?.IONodes);
+        }
+
+        private static void RestoreDeletedModules(
+            IEnumerable<DeletedModuleRestoreTarget> restoreTargets)
+        {
+            foreach (var target in restoreTargets)
+            {
+                RenameDeletedModule(target.Module,
+                    $"-A{target.TargetPhysicalNumber}");
+            }
         }
 
         private static int GetTargetPhysicalNumber(IModule targetModule)
@@ -1333,6 +1453,16 @@ namespace IO.View
 
         private void StructPLC_FormatCell(object sender, FormatCellEventArgs e)
         {
+            if (isDraggingDeletedModule &&
+                ReferenceEquals(e.Model, dragHoverRowObject))
+            {
+                foreach (ListViewItem.ListViewSubItem subItem in
+                    e.Item.SubItems)
+                {
+                    subItem.BackColor = Color.LightSkyBlue;
+                }
+            }
+
             if (e.Model is IClamp clamp && !clamp.Bound)
             {
                 e.Item.SubItems[1].ForeColor = Color.LightSlateGray;

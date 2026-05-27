@@ -140,6 +140,7 @@
     <Compile Include="IO\ViewModel\AppendModuleTarget.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
     <Compile Include="IO\ViewModel\DeletedModule.cs" />
+    <Compile Include="IO\ViewModel\DeletedModuleRestorePlanner.cs" />
     <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />
     <Compile Include="IO\ViewModel\IProperty.cs" />
     <Compile Include="IO\ViewModel\IOViewModel.cs" />
