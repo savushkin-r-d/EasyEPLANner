@@ -62,7 +62,11 @@ namespace IO.View
         /// </summary>
         public static void Start()
         {
-            DataContext ??= new IOViewModel(IOManager.GetInstance());
+            if (DataContext?.IOManager == null)
+            {
+                DataContext = new IOViewModel(IOManager.GetInstance());
+            }
+
             Instance ??= new IOViewControl(DataContext);
 
             Instance.InitDataStructPLC();
@@ -71,8 +75,10 @@ namespace IO.View
 
         public void Clear()
         {
-            DataContext = new IOViewModel(null);
-            InitDataStructPLC();
+            DataContext = null;
+            StructPLC.BeginUpdate();
+            StructPLC.ClearObjects();
+            StructPLC.EndUpdate();
         }
 
         private IOViewControl(IIOViewModel viewModel)
