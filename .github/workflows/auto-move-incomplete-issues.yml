@@ -3,9 +3,8 @@ name: Auto-move incomplete issues to next iteration
 # Run twice a week (to catch issues at end of 2-week iteration)
 on:
   schedule:
-    - cron: '0 18 * * 1'  # Monday 6 PM UTC
-    - cron: '0 18 * * 4'  # Thursday 6 PM UTC
-timezone: 'Europe/Minsk'
+    - cron: '0 15 * * 1'  # Monday 6 PM Europe/Minsk (UTC+3)
+    - cron: '0 15 * * 4'  # Thursday 6 PM Europe/Minsk (UTC+3)
 permissions:
   issues: write
   repository-projects: write
