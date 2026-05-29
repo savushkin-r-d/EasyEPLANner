@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Drawing;
@@ -1305,6 +1305,7 @@ namespace Editor
 
             DFrm.GetInstance().RefreshTree();
             IOViewControl.Instance?.RebuildTree();
+            EasyEPlanner.Devices.View.DevicesViewControl.Instance?.RebuildTree();
 
             editorTView.RefreshObjects(treeViewItemsList);
         }

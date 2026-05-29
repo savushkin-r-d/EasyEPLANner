@@ -335,6 +335,7 @@ namespace IO.View
             
             Editor.Editor.GetInstance().EditorForm.RefreshTree();
             DFrm.GetInstance().RefreshTree();
+            EasyEPlanner.Devices.View.DevicesViewControl.Instance?.RebuildTree();
 
             RebuildTree();
         }
