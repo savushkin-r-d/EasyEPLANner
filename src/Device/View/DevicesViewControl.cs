@@ -21,6 +21,7 @@ namespace EasyEPlanner.Devices.View
 {
     public partial class DevicesViewControl : Form
     {
+        private const string SearchPlaceholder = "Поиск...";
         private bool cancelChanges;
         private bool isCellEditing;
         private string searchText = string.Empty;
@@ -189,7 +190,7 @@ namespace EasyEPlanner.Devices.View
                 AspectGetter = obj => (obj as IViewItem)?.Description,
                 IsEditable = true,
                 Sortable = false,
-                MinimumWidth = 200,
+                MinimumWidth = 100,
             };
 
             devicesTree.Columns.Add(nameColumn);
@@ -503,15 +504,7 @@ namespace EasyEPlanner.Devices.View
             if (!TryGetSelectedEplanFunction(out var function))
                 return;
 
-            try
-            {
-                EplanNavigateHelper.OpenFunctionPage(function);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Переход на ФСА",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            OpenFunctionPageWithError(function);
         }
 
         private void GoToFsaAt(Point location)
@@ -521,6 +514,11 @@ namespace EasyEPlanner.Devices.View
             if (!TryGetEplanFunction(rowObject, out var function))
                 return;
 
+            OpenFunctionPageWithError(function);
+        }
+
+        private static void OpenFunctionPageWithError(Function function)
+        {
             try
             {
                 EplanNavigateHelper.OpenFunctionPage(function);
@@ -558,7 +556,7 @@ namespace EasyEPlanner.Devices.View
 
         private void TextBox_search_TextChanged(object sender, EventArgs e)
         {
-            if (textBox_search.Text is "Поиск..." or "")
+            if (textBox_search.Text is SearchPlaceholder or "")
             {
                 if (searchIterator is not null)
                     searchIterator.Maximum = 0;
@@ -584,7 +582,7 @@ namespace EasyEPlanner.Devices.View
 
         private void TextBox_search_Enter(object sender, EventArgs e)
         {
-            if (textBox_search.Text == "Поиск...")
+            if (textBox_search.Text == SearchPlaceholder)
             {
                 textBox_search.ForeColor = Color.Black;
                 textBox_search.Text = string.Empty;
@@ -602,7 +600,7 @@ namespace EasyEPlanner.Devices.View
             if (textBox_search.Text == string.Empty && !updatingModelFilter)
             {
                 textBox_search.ForeColor = Color.Gray;
-                textBox_search.Text = "Поиск...";
+                textBox_search.Text = SearchPlaceholder;
                 searchBoxTLP.Visible = false;
                 searchButtonToolStrip.Visible = true;
             }
