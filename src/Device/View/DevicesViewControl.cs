@@ -22,10 +22,6 @@ namespace EasyEPlanner.Devices.View
     public partial class DevicesViewControl : Form
     {
         private const string SearchPlaceholder = "Поиск...";
-        private const string GoToFasMenuText =
-            "Перейти на ФСА (функциональная схема автоматизации)";
-        private const string GoToFasErrorCaption =
-            "Переход на ФСА (функциональная схема автоматизации)";
         private bool cancelChanges;
         private bool isCellEditing;
         private string searchText = string.Empty;
@@ -224,9 +220,9 @@ namespace EasyEPlanner.Devices.View
         private void InitContextMenu()
         {
             var menu = new ContextMenuStrip(components);
-            goToFasMenuItem = new ToolStripMenuItem(GoToFasMenuText)
+            goToFasMenuItem = new ToolStripMenuItem(FasNavigationTexts.MenuItem)
             {
-                Image = Properties.Resources.devicesTreeGoToFsa,
+                Image = Properties.Resources.go_to_fas,
             };
             goToFasMenuItem.Click += GoToFasMenuItem_Click;
             menu.Items.Add(goToFasMenuItem);
@@ -508,7 +504,7 @@ namespace EasyEPlanner.Devices.View
             if (!TryGetSelectedEplanFunction(out var function))
                 return;
 
-            OpenFunctionPageWithError(function);
+            EplanNavigateHelper.OpenFunctionPageWithError(function);
         }
 
         private void GoToFasAt(Point location)
@@ -518,20 +514,7 @@ namespace EasyEPlanner.Devices.View
             if (!TryGetEplanFunction(rowObject, out var function))
                 return;
 
-            OpenFunctionPageWithError(function);
-        }
-
-        private static void OpenFunctionPageWithError(Function function)
-        {
-            try
-            {
-                EplanNavigateHelper.OpenFunctionPage(function);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, GoToFasErrorCaption,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            EplanNavigateHelper.OpenFunctionPageWithError(function);
         }
 
         private bool TryGetSelectedEplanFunction(out Function function)

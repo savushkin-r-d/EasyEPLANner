@@ -1,6 +1,7 @@
 using Eplan.EplApi.DataModel;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
 
 namespace StaticHelper
 {
@@ -18,6 +19,19 @@ namespace StaticHelper
 
             var edit = new Eplan.EplApi.HEServices.Edit();
             edit.OpenPageWithName(project.ProjectLinkFilePath, function.Page.Name);
+        }
+
+        public static void OpenFunctionPageWithError(Function function)
+        {
+            try
+            {
+                OpenFunctionPage(function);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, FasNavigationTexts.ErrorCaption,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public static bool TryGetFunction(IEplanFunction eplanFunction, out Function function)

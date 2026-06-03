@@ -195,7 +195,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main\ShowDevicesNewAction.cs" />
-    <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
     <None Include="Lua\sys_subtype_channels_count.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -260,6 +259,8 @@
       <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
+    <Compile Include="StaticHelper\FasNavigationTexts.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
       <SubType>Form</SubType>
@@ -723,7 +724,7 @@
     <None Include="Resources\io_plc_clamp.png" />
     <None Include="Resources\devicesGroupingTypeObject.png" />
     <None Include="Resources\devicesGroupingObjectType.png" />
-    <None Include="Resources\devicesTreeGoToFsa.png" />
+    <None Include="Resources\go_to_fas.png" />
     <None Include="Resources\moveup.png" />
     <None Include="Resources\movedown.png" />
     <None Include="Resources\toolSettings.png" />
