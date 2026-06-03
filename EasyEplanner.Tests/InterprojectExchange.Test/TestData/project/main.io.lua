@@ -1,4 +1,4 @@
-﻿PAC_name = ''
+﻿PAC_name = 'project'
 PAC_id = ''
 
 nodes = { }

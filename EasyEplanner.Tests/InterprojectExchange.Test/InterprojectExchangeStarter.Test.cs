@@ -46,7 +46,10 @@ namespace Tests.InterprojectExchangeTest
                 new object[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "InterprojectExchange.Test", "TestData", "mock_script.lua") });
 
             Assert.IsTrue((bool)method.Invoke(ipe,
-                new object[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "InterprojectExchange.Test", "TestData"), "project" }));
+                new object[] {
+                    Path.Combine(TestContext.CurrentContext.TestDirectory,
+                        "InterprojectExchange.Test", "TestData", "project"),
+                    "project" }));
         }
     }
 }

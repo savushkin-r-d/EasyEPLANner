@@ -328,6 +328,8 @@
     <Compile Include="InterprojectExchange\InterprojectExchangeSaver.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
+    <Compile Include="InterprojectExchange\MainIoProjectNameReader.cs" />
+    <Compile Include="InterprojectExchange\InterprojectProjectCatalog.cs" />
     <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.cs">
       <SubType>Form</SubType>
     </Compile>

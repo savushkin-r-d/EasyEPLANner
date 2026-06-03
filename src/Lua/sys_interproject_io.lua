@@ -5,8 +5,7 @@ init_io_file = function(projectName)
     end
 
     if (PAC_name ~= projectName) then
-        WarningProjectNameInIOFile(PAC_name)
-        PAC_name = projectName
+        WarningProjectNameInIOFile(projectName)
     end
 
     local isMainModel = false
