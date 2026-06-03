@@ -22,6 +22,10 @@ namespace EasyEPlanner.Devices.View
     public partial class DevicesViewControl : Form
     {
         private const string SearchPlaceholder = "Поиск...";
+        private const string GoToFasMenuText =
+            "Перейти на ФСА (функциональная схема автоматизации)";
+        private const string GoToFasErrorCaption =
+            "Переход на ФСА (функциональная схема автоматизации)";
         private bool cancelChanges;
         private bool isCellEditing;
         private string searchText = string.Empty;
@@ -29,7 +33,7 @@ namespace EasyEPlanner.Devices.View
         private bool updatingModelFilter;
         private TextBox textBoxCellEditor;
         private ComboBox comboBoxCellEditor;
-        private ToolStripMenuItem goToFsaMenuItem;
+        private ToolStripMenuItem goToFasMenuItem;
         private SearchIterator searchIterator;
         private bool runtimeInitialized;
 
@@ -220,12 +224,12 @@ namespace EasyEPlanner.Devices.View
         private void InitContextMenu()
         {
             var menu = new ContextMenuStrip(components);
-            goToFsaMenuItem = new ToolStripMenuItem("Перейти на ФСА")
+            goToFasMenuItem = new ToolStripMenuItem(GoToFasMenuText)
             {
                 Image = Properties.Resources.devicesTreeGoToFsa,
             };
-            goToFsaMenuItem.Click += GoToFsaMenuItem_Click;
-            menu.Items.Add(goToFsaMenuItem);
+            goToFasMenuItem.Click += GoToFasMenuItem_Click;
+            menu.Items.Add(goToFasMenuItem);
             menu.Opening += ContextMenu_Opening;
             devicesTree.ContextMenuStrip = menu;
         }
@@ -482,7 +486,7 @@ namespace EasyEPlanner.Devices.View
             if (e.Button == MouseButtons.Middle ||
                 (e.Button == MouseButtons.Left && ModifierKeys.HasFlag(Keys.Control)))
             {
-                GoToFsaAt(e.Location);
+                GoToFasAt(e.Location);
                 return;
             }
 
@@ -496,10 +500,10 @@ namespace EasyEPlanner.Devices.View
 
         private void ContextMenu_Opening(object sender, CancelEventArgs e)
         {
-            goToFsaMenuItem.Enabled = TryGetSelectedEplanFunction(out _);
+            goToFasMenuItem.Enabled = TryGetSelectedEplanFunction(out _);
         }
 
-        private void GoToFsaMenuItem_Click(object sender, EventArgs e)
+        private void GoToFasMenuItem_Click(object sender, EventArgs e)
         {
             if (!TryGetSelectedEplanFunction(out var function))
                 return;
@@ -507,7 +511,7 @@ namespace EasyEPlanner.Devices.View
             OpenFunctionPageWithError(function);
         }
 
-        private void GoToFsaAt(Point location)
+        private void GoToFasAt(Point location)
         {
             var rowObject = (devicesTree.GetItemAt(location.X, location.Y) as OLVListItem)
                 ?.RowObject;
@@ -525,7 +529,7 @@ namespace EasyEPlanner.Devices.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Переход на ФСА",
+                MessageBox.Show(ex.Message, GoToFasErrorCaption,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -540,10 +544,10 @@ namespace EasyEPlanner.Devices.View
         private static bool TryGetEplanFunction(object viewObject, out Function function)
         {
             function = null;
-            if (viewObject is not IGoToFsa goToFsa)
+            if (viewObject is not IGoToFas goToFas)
                 return false;
 
-            return EplanNavigateHelper.TryGetFunction(goToFsa.EplanFunction, out function);
+            return EplanNavigateHelper.TryGetFunction(goToFas.EplanFunction, out function);
         }
 
         private void SearchTSButton_Click(object sender, EventArgs e)

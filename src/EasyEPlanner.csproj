@@ -180,7 +180,7 @@
     <Compile Include="Device\ViewModel\IFilterableViewItem.cs" />
     <Compile Include="Device\ViewModel\ViewInterface\IBoldName.cs" />
     <Compile Include="Device\ViewModel\ViewInterface\IComboBoxEditable.cs" />
-    <Compile Include="Device\ViewModel\ViewInterface\IGoToFsa.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IGoToFas.cs" />
     <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesIcon.cs" />
     <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesDescriptionIcon.cs" />
     <Compile Include="Device\View\DevicesIconFactory.cs" />

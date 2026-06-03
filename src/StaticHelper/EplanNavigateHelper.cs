@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace StaticHelper
 {
     /// <summary>
-    /// Переход на страницу ФСА по функции EPLAN.
+    /// Переход на страницу ФСА (функциональная схема автоматизации) по функции EPLAN.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public static class EplanNavigateHelper

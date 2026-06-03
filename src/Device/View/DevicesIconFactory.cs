@@ -21,7 +21,7 @@ namespace EasyEPlanner.Devices.View
                 [DevicesIcon.Channels] = Properties.Resources.io_plc_cable,
                 [DevicesIcon.Channel] = Properties.Resources.io_plc_cable,
                 [DevicesIcon.Clamp] = Properties.Resources.io_plc_clamp,
-                [DevicesIcon.GoToFsa] = Properties.Resources.devicesTreeGoToFsa,
+                [DevicesIcon.GoToFas] = Properties.Resources.devicesTreeGoToFsa,
             };
 
         public static void Populate(ImageList imageList)

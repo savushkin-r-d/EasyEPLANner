@@ -154,7 +154,7 @@ namespace EasyEPlanner.Devices.ViewModel
         public void UpdateHeader() => Name = $"{DisplayName} ({deviceCount})";
     }
 
-    public sealed class DevicesDeviceNode : FilterableViewItemBase, IBoldName, IGoToFsa
+    public sealed class DevicesDeviceNode : FilterableViewItemBase, IBoldName, IGoToFas
     {
         public DevicesDeviceNode(
             IDevicesViewModel context,

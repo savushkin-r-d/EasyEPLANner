@@ -14,7 +14,7 @@
         Channels,
         Channel,
         Clamp,
-        GoToFsa,
+        GoToFas,
     }
 
     public interface IHasDevicesIcon

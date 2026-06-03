@@ -1,8 +1,8 @@
-﻿using StaticHelper;
+using StaticHelper;
 
 namespace EasyEPlanner.Devices.ViewModel.ViewInterface
 {
-    public interface IGoToFsa
+    public interface IGoToFas
     {
         IEplanFunction EplanFunction { get; }
     }
