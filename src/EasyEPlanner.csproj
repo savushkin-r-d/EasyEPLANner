@@ -235,6 +235,8 @@
       <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
+    <Compile Include="StaticHelper\FasNavigationTexts.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
       <SubType>Form</SubType>
@@ -683,7 +685,7 @@
     <None Include="Resources\moveup.png" />
     <None Include="Resources\movedown.png" />
     <None Include="Resources\shift_modules.png" />
-    <None Include="Resources\go_to_fsa.png" />
+    <None Include="Resources\go_to_fas.png" />
     <None Include="Resources\toolSettings.png" />
     <None Include="Resources\import.png" />
     <None Include="Resources\refresh1.png" />

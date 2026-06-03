@@ -35,7 +35,7 @@ namespace IO.View
 
         private ToolStripMenuItem deleteUndefinedModuleToolStripMenuItem;
 
-        private ToolStripMenuItem goToFsaToolStripMenuItem;
+        private ToolStripMenuItem goToFasToolStripMenuItem;
 
         private ToolStripMenuItem restoreDeletedModulesToolStripMenuItem;
 
@@ -198,12 +198,12 @@ namespace IO.View
                 };
             shiftModulesToolStripMenuItem.Click += ShiftModules_Click;
 
-            goToFsaToolStripMenuItem =
-                new ToolStripMenuItem("Перейти на ФСА")
+            goToFasToolStripMenuItem =
+                new ToolStripMenuItem(FasNavigationTexts.MenuItem)
                 {
-                    Image = global::EasyEPlanner.Properties.Resources.go_to_fsa
+                    Image = global::EasyEPlanner.Properties.Resources.go_to_fas
                 };
-            goToFsaToolStripMenuItem.Click += GoToFsa_Click;
+            goToFasToolStripMenuItem.Click += GoToFas_Click;
 
             restoreDeletedModulesToolStripMenuItem =
                 new ToolStripMenuItem("Восстановить")
@@ -223,7 +223,7 @@ namespace IO.View
                 DeleteUndefinedModule_Click;
 
             contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
-            contextMenuStrip.Items.Add(goToFsaToolStripMenuItem);
+            contextMenuStrip.Items.Add(goToFasToolStripMenuItem);
             contextMenuStrip.Items.Add(restoreDeletedModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(deleteUndefinedModuleToolStripMenuItem);
             contextMenuStrip.Opening += StructPLCContextMenu_Opening;
@@ -434,7 +434,7 @@ namespace IO.View
                 e.Button == MouseButtons.Left &&
                 ModifierKeys.HasFlag(Keys.Control))
             {
-                GoToFsaAt(e.Location);
+                GoToFasAt(e.Location);
                 return;
             }
 
@@ -450,7 +450,7 @@ namespace IO.View
             }
         }
 
-        private void GoToFsaAt(Point location)
+        private void GoToFasAt(Point location)
         {
             var rowObject = (StructPLC.GetItemAt(location.X, location.Y) as
                 OLVListItem)?.RowObject;
@@ -459,15 +459,7 @@ namespace IO.View
                 return;
             }
 
-            try
-            {
-                OpenFunctionPage(function);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Переход на ФСА",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            EplanNavigateHelper.OpenFunctionPageWithError(function);
         }
 
         private void StructPLCContextMenu_Opening(object sender, CancelEventArgs e)
@@ -477,7 +469,7 @@ namespace IO.View
             shiftModulesToolStripMenuItem.Enabled =
                 selectedModules.Count == 1 &&
                 selectedModules[0].IOModule.Function?.IsValid == true;
-            goToFsaToolStripMenuItem.Enabled =
+            goToFasToolStripMenuItem.Enabled =
                 TryGetSelectedEplanFunction(out _);
             restoreDeletedModulesToolStripMenuItem.Enabled =
                 GetRestorableDeletedModules(GetSelectedDeletedIOModules())
@@ -486,36 +478,14 @@ namespace IO.View
                 selectedModules.Any();
         }
 
-        private void GoToFsa_Click(object sender, EventArgs e)
+        private void GoToFas_Click(object sender, EventArgs e)
         {
             if (!TryGetSelectedEplanFunction(out var function))
             {
                 return;
             }
 
-            try
-            {
-                OpenFunctionPage(function);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Переход на ФСА",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private static void OpenFunctionPage(Function function)
-        {
-            var project = function.Page?.Project;
-            if (project is null)
-            {
-                throw new InvalidOperationException(
-                    "Не найден проект страницы выбранного объекта.");
-            }
-
-            var edit = new Eplan.EplApi.HEServices.Edit();
-            edit.OpenPageWithName(project.ProjectLinkFilePath,
-                function.Page.Name);
+            EplanNavigateHelper.OpenFunctionPageWithError(function);
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
@@ -664,15 +634,7 @@ namespace IO.View
                 _ => null
             };
 
-            if (eplanFunction is not StaticHelper.EplanFunction functionWrapper ||
-                functionWrapper.Function?.IsValid != true ||
-                functionWrapper.Function.Page is null)
-            {
-                return false;
-            }
-
-            function = functionWrapper.Function;
-            return true;
+            return EplanNavigateHelper.TryGetFunction(eplanFunction, out function);
         }
 
         private static bool TryGetShiftValue(out int shiftValue)
