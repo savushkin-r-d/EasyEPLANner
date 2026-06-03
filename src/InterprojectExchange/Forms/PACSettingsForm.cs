@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -208,6 +210,8 @@ namespace InterprojectExchange
         private void ClearDataFromForm()
         {
             projNameTextBox.Text = string.Empty;
+            derictoryTextBox.Text = string.Empty;
+            directoryBttn.Enabled = false;
             ipAddressTextBox.Text = string.Empty;
             emulatorIPTextBox.Text = string.Empty;
             enableEmulationBtn.Checked = false;
@@ -248,6 +252,11 @@ namespace InterprojectExchange
             stationNumberTextBox.Enabled = pacInfo.ModelLoaded;
 
             projNameTextBox.Text = projectName;
+            IProjectModel model = interprojectExchange.GetModel(projectName);
+            string projectFolder = model?.PathToProject ?? string.Empty;
+            derictoryTextBox.Text = projectFolder;
+            directoryBttn.Enabled = !string.IsNullOrEmpty(projectFolder) &&
+                Directory.Exists(projectFolder);
             ipAddressTextBox.Text = pacInfo.IP;
             emulatorIPTextBox.Text = pacInfo.IPEmulator;
 
@@ -333,6 +342,20 @@ namespace InterprojectExchange
         {
             enableGateBtn.Checked = false;
             disableGateBtn.Checked = true;
+        }
+
+        private void directoryBttn_Click(object sender, EventArgs e)
+        {
+            string projectFolder = derictoryTextBox.Text;
+            if (string.IsNullOrEmpty(projectFolder) ||
+                !Directory.Exists(projectFolder))
+            {
+                MessageBox.Show("Каталог проекта не найден.",
+                    "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Process.Start("explorer.exe", projectFolder);
         }
 
         private void stationNumberTextBox_KeyPress(object sender, 
