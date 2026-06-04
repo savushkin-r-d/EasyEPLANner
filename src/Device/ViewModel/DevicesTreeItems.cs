@@ -1,5 +1,6 @@
 ﻿using EasyEPlanner.Devices.ViewModel.ViewInterface;
 using EplanDevice;
+using IO;
 using IO.ViewModel;
 using StaticHelper;
 using System;
@@ -447,7 +448,8 @@ namespace EasyEPlanner.Devices.ViewModel
         }
     }
 
-    public sealed class DevicesChannelItem : FilterableViewItemBase, IToolTip, IHasDevicesDescriptionIcon
+    public sealed class DevicesChannelItem : FilterableViewItemBase, IToolTip, IHasDevicesDescriptionIcon,
+        IGoToFas
     {
         public DevicesChannelItem(
             IDevicesViewModel context,
@@ -466,6 +468,8 @@ namespace EasyEPlanner.Devices.ViewModel
 
         public IODevice.IOChannel Channel { get; }
 
+        public IEplanFunction EplanFunction => ResolveClampEplanFunction();
+
         public override string Name { get; protected set; }
 
         public override string Description => description;
@@ -476,6 +480,25 @@ namespace EasyEPlanner.Devices.ViewModel
 
         public DevicesIcon DescriptionIcon =>
             Channel.IsEmpty() ? DevicesIcon.None : DevicesIcon.Clamp;
+
+        private IEplanFunction ResolveClampEplanFunction()
+        {
+            if (Channel.IsEmpty())
+                return null;
+
+            try
+            {
+                var module = IOManager.GetInstance()
+                    .GetModuleByPhysicalNumber(Channel.FullModule);
+                return module.ClampFunctions.TryGetValue(Channel.PhysicalClamp, out var clampFunction)
+                    ? clampFunction
+                    : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 
     internal static class DevicesDeviceContentBuilder
