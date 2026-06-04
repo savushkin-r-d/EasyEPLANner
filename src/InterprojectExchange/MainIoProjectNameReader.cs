@@ -1,4 +1,5 @@
 using EasyEPlanner;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -13,7 +14,8 @@ namespace InterprojectExchange
 
         private static readonly Regex PacNameRegex = new Regex(
             @"PAC_name\s*=\s*['""]([^'""]*)['""]",
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant,
+            TimeSpan.FromMilliseconds(100));
 
         public static bool TryReadFromFolder(string projectFolder,
             out string projectName, out string error)

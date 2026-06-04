@@ -347,6 +347,11 @@ namespace InterprojectExchange
         private void directoryBttn_Click(object sender, EventArgs e)
         {
             string projectFolder = derictoryTextBox.Text;
+            if (!string.IsNullOrEmpty(projectFolder))
+            {
+                projectFolder = Path.GetFullPath(projectFolder);
+            }
+
             if (string.IsNullOrEmpty(projectFolder) ||
                 !Directory.Exists(projectFolder))
             {
@@ -355,7 +360,11 @@ namespace InterprojectExchange
                 return;
             }
 
-            Process.Start("explorer.exe", projectFolder);
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = projectFolder,
+                UseShellExecute = true
+            });
         }
 
         private void stationNumberTextBox_KeyPress(object sender, 
