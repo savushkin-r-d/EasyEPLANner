@@ -1,14 +1,12 @@
 namespace StaticHelper
 {
     /// <summary>
-    /// Общие строки UI для перехода на ФСА (функциональная схема автоматизации).
+    /// Общие строки UI для показа объекта на схеме EPLAN.
     /// </summary>
     public static class FasNavigationTexts
     {
-        public const string MenuItem =
-            "Перейти на ФСА (функциональная схема автоматизации)";
+        public const string MenuItem = "Показать на схеме";
 
-        public const string ErrorCaption =
-            "Переход на ФСА (функциональная схема автоматизации)";
+        public const string ErrorCaption = "Показать на схеме";
     }
 }
