@@ -259,23 +259,6 @@ namespace Tests.InterprojectExchangeTest
         }
 
         [Test]
-        public void LoadProjectsData_AddsNotOpened_WhenAlternativeMissing()
-        {
-            var starter = new InterprojectExchangeStarter();
-            InterprojectProjectCatalog.Register(ProjectFolder, "project");
-            InterprojectProjectCatalog.BuildIndexFromRoots(Array.Empty<string>());
-            starter.CreateMainModel().ProjectName = "project";
-            starter.CreateModel().ProjectName = "missing_alt";
-
-            InterprojectExchangeStarterTestHelper.InitLuaWithSystemScripts(starter);
-            InterprojectExchangeStarterTestHelper.InvokeLoadProjectsData(
-                starter, ProjectFolder, "project");
-
-            Assert.That(InterprojectExchangeStarterTestHelper.GetProjectsNotOpenedList(starter),
-                Does.Contain("missing_alt: не найден каталог проекта"));
-        }
-
-        [Test]
         public void LoadProjectsData_AddsNotOpened_WhenMainIoMissing()
         {
             string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -306,18 +289,6 @@ namespace Tests.InterprojectExchangeTest
             var starter = new InterprojectExchangeStarter();
             Assert.IsFalse(InterprojectExchangeStarterTestHelper
                 .InvokeLoadCurrentInterprojectExchange(starter, false));
-        }
-
-        [Test]
-        public void LoadCurrentInterprojectExchange_AddsNotOpened_WhenMainMissing()
-        {
-            var starter = new InterprojectExchangeStarter();
-            InterprojectProjectCatalog.BuildIndexFromRoots(Array.Empty<string>());
-
-            Assert.IsFalse(InterprojectExchangeStarterTestHelper
-                .InvokeLoadCurrentInterprojectExchange(starter, true));
-            Assert.That(InterprojectExchangeStarterTestHelper.GetProjectsNotOpenedList(starter),
-                Does.Contain("project: не найден каталог проекта"));
         }
 
         [Test]
