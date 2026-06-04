@@ -182,6 +182,9 @@ namespace EasyEPlanner.Devices.View
             {
                 ImageGetter = obj => (int)((obj as IHasDevicesIcon)?.Icon ?? DevicesIcon.None),
                 AspectGetter = obj => (obj as IViewItem)?.Name,
+                SearchValueGetter = obj => obj is FilterableViewItemBase item
+                    ? new[] { item.GetSearchableText() }
+                    : null,
                 IsEditable = false,
                 Sortable = false,
             };
@@ -556,11 +559,29 @@ namespace EasyEPlanner.Devices.View
 
         private void DevicesTree_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.F && e.Control)
+            {
+                ShowSearch();
+                e.Handled = true;
+                return;
+            }
+
             if (e.KeyCode == Keys.Escape && isCellEditing)
             {
                 cancelChanges = true;
                 devicesTree.FinishCellEdit();
             }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                ShowSearch();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void DevicesTree_MouseDown(object sender, MouseEventArgs e)
@@ -621,9 +642,13 @@ namespace EasyEPlanner.Devices.View
 
         private void SearchTSButton_Click(object sender, EventArgs e)
         {
+            ShowSearch();
+        }
+
+        private void ShowSearch()
+        {
             searchButtonToolStrip.Visible = false;
             searchBoxTLP.Visible = true;
-
             textBox_search.Focus();
         }
 
@@ -707,6 +732,10 @@ namespace EasyEPlanner.Devices.View
                     FillBrush = new SolidBrush(Color.LightGreen),
                     FramePen = new Pen(Color.DarkGreen),
                 };
+
+            devicesTree.TreeColumnRenderer.Filter = highlightingFilter;
+            devicesTree.TreeColumnRenderer.FillBrush = new SolidBrush(Color.LightGreen);
+            devicesTree.TreeColumnRenderer.FramePen = new Pen(Color.DarkGreen);
 
             if (searchBoxWasFocused)
                 textBox_search.Focus();

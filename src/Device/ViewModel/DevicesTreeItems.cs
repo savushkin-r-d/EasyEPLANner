@@ -91,10 +91,14 @@ namespace EasyEPlanner.Devices.ViewModel
                 item.ResetFilter();
         }
 
-        public virtual bool Contains(string value)
-        {
-            return DevicesSearch.Contains($"{Name} {Description}", value);
-        }
+        public virtual bool Contains(string value) =>
+            DevicesSearch.Contains(GetSearchableText(), value);
+
+        /// <summary>
+        /// Текст для поиска и подсветки (может шире, чем отображаемое имя в ячейке).
+        /// </summary>
+        public virtual string GetSearchableText() =>
+            $"{Name} {Description}".Trim();
     }
 
     public sealed class DevicesTypeGroupNode : FilterableViewItemBase, IBoldName
@@ -153,6 +157,9 @@ namespace EasyEPlanner.Devices.ViewModel
         public void IncrementCount() => deviceCount++;
 
         public void UpdateHeader() => Name = $"{DisplayName} ({deviceCount})";
+
+        public override string GetSearchableText() =>
+            $"{DisplayName} {ObjectKey} {Name} {Description}".Trim();
     }
 
     public sealed class DevicesDeviceNode : FilterableViewItemBase, IBoldName, IGoToFas
@@ -176,6 +183,20 @@ namespace EasyEPlanner.Devices.ViewModel
         public override DevicesIcon Icon => DevicesIcon.Device;
 
         public IEplanFunction EplanFunction => Device.Function;
+
+        public override string GetSearchableText()
+        {
+            var parts = new List<string> { Name, Description, Device.Name, Device.EplanName };
+            if (!string.IsNullOrEmpty(Device.ObjectName))
+            {
+                var objectPrefix = Device.ObjectName + Device.ObjectNumber;
+                parts.Add(objectPrefix);
+                parts.Add(objectPrefix + Device.DeviceDesignation);
+            }
+
+            return string.Join(" ",
+                parts.Where(part => !string.IsNullOrWhiteSpace(part)));
+        }
     }
 
     public sealed class DevicesGroupNode : FilterableViewItemBase
