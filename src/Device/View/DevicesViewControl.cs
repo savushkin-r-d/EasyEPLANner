@@ -29,6 +29,8 @@ namespace EasyEPlanner.Devices.View
         private bool updatingModelFilter;
         private TextBox textBoxCellEditor;
         private ComboBox comboBoxCellEditor;
+        private IEditable cellEditItem;
+        private bool cellEditUsesComboBox;
         private ToolStripMenuItem goToFasMenuItem;
         private SearchIterator searchIterator;
         private bool runtimeInitialized;
@@ -356,7 +358,14 @@ namespace EasyEPlanner.Devices.View
             if (devicesTree.SelectedObject is IComboBoxEditable comboItem)
             {
                 isCellEditing = true;
-                InitComboBoxCellEditor(comboItem.ComboBoxItems, comboItem.Value, e.CellBounds);
+                cellEditUsesComboBox = true;
+                cellEditItem = comboItem;
+                InitComboBoxCellEditor(comboItem.ComboBoxItems);
+                string value = e.Value?.ToString() ?? comboItem.Value;
+                int index = comboBoxCellEditor.FindStringExact(value);
+                if (index >= 0)
+                    comboBoxCellEditor.SelectedIndex = index;
+                comboBoxCellEditor.Bounds = GetCellEditorBounds(devicesTree, e.CellBounds);
                 e.Control = comboBoxCellEditor;
                 comboBoxCellEditor.Focus();
                 devicesTree.Freeze();
@@ -370,7 +379,11 @@ namespace EasyEPlanner.Devices.View
             }
 
             isCellEditing = true;
-            InitTextBoxCellEditor(editable.Value, e.CellBounds);
+            cellEditUsesComboBox = false;
+            cellEditItem = editable;
+            InitTextBoxCellEditor();
+            textBoxCellEditor.Text = editable.Value;
+            textBoxCellEditor.Bounds = GetCellEditorBounds(devicesTree, e.CellBounds);
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
             devicesTree.Freeze();
@@ -379,27 +392,61 @@ namespace EasyEPlanner.Devices.View
         private void CellEditFinishing(object sender, CellEditEventArgs e)
         {
             isCellEditing = false;
+            var editable = cellEditItem;
+            cellEditItem = null;
 
-            if (cancelChanges ||
-                devicesTree.SelectedObject is not IEditable editable)
+            if (cancelChanges || editable is null)
             {
+                RemoveCellEditorControls();
                 e.Cancel = true;
                 cancelChanges = false;
+                cellEditUsesComboBox = false;
                 devicesTree.Unfreeze();
                 return;
             }
 
-            if (comboBoxCellEditor is not null)
-                devicesTree.Controls.Remove(comboBoxCellEditor);
-            if (textBoxCellEditor is not null)
-                devicesTree.Controls.Remove(textBoxCellEditor);
+            bool modified;
+            if (cellEditUsesComboBox)
+            {
+                var combo = comboBoxCellEditor ?? e.Control as ComboBox;
+                // Как в NewEditorControl: OLV для ComboBox не заполняет NewValue.
+                e.NewValue = combo?.Text ?? string.Empty;
+                modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+            }
+            else
+            {
+                modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+            }
 
-            var modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+            RemoveCellEditorControls();
+            cellEditUsesComboBox = false;
+
             if (modified)
                 RefreshTree();
 
             e.Cancel = true;
             devicesTree.Unfreeze();
+        }
+
+        private void RemoveCellEditorControls()
+        {
+            if (comboBoxCellEditor is not null)
+            {
+                comboBoxCellEditor.LostFocus -= ComboBoxCellEditor_LostFocus;
+                comboBoxCellEditor.KeyDown -= CellEditor_KeyDown;
+                if (devicesTree.Controls.Contains(comboBoxCellEditor))
+                    devicesTree.Controls.Remove(comboBoxCellEditor);
+                comboBoxCellEditor = null;
+            }
+
+            if (textBoxCellEditor is not null)
+            {
+                textBoxCellEditor.LostFocus -= CellEditor_LostFocus;
+                textBoxCellEditor.KeyDown -= CellEditor_KeyDown;
+                if (devicesTree.Controls.Contains(textBoxCellEditor))
+                    devicesTree.Controls.Remove(textBoxCellEditor);
+                textBoxCellEditor = null;
+            }
         }
 
         private static Rectangle GetCellEditorBounds(TreeListView tree, Rectangle bounds)
@@ -408,38 +455,37 @@ namespace EasyEPlanner.Devices.View
             return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
         }
 
-        private void InitTextBoxCellEditor(string text, Rectangle bounds)
-        {
-            textBoxCellEditor = new TextBox
-            {
-                Text = text,
-                Bounds = GetCellEditorBounds(devicesTree, bounds),
-                BorderStyle = BorderStyle.FixedSingle,
-                Font = devicesTree.Font,
-            };
-            textBoxCellEditor.LostFocus += CellEditor_LostFocus;
-            textBoxCellEditor.KeyDown += CellEditor_KeyDown;
-            devicesTree.Controls.Add(textBoxCellEditor);
-        }
-
-        private void InitComboBoxCellEditor(
-            IEnumerable<string> items,
-            string text,
-            Rectangle bounds)
+        private void InitComboBoxCellEditor(IEnumerable<string> items)
         {
             comboBoxCellEditor = new ComboBox
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Bounds = GetCellEditorBounds(devicesTree, bounds),
                 Font = devicesTree.Font,
                 IntegralHeight = false,
                 FlatStyle = FlatStyle.Flat,
             };
             comboBoxCellEditor.Items.AddRange(items.Cast<object>().ToArray());
-            comboBoxCellEditor.Text = text;
-            comboBoxCellEditor.LostFocus += CellEditor_LostFocus;
+            comboBoxCellEditor.LostFocus += ComboBoxCellEditor_LostFocus;
             comboBoxCellEditor.KeyDown += CellEditor_KeyDown;
-            devicesTree.Controls.Add(comboBoxCellEditor);
+        }
+
+        private void ComboBoxCellEditor_LostFocus(object sender, EventArgs e)
+        {
+            if (!isCellEditing || sender is not ComboBox combo || combo.DroppedDown)
+                return;
+
+            devicesTree.FinishCellEdit();
+        }
+
+        private void InitTextBoxCellEditor()
+        {
+            textBoxCellEditor = new TextBox
+            {
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = devicesTree.Font,
+            };
+            textBoxCellEditor.LostFocus += CellEditor_LostFocus;
+            textBoxCellEditor.KeyDown += CellEditor_KeyDown;
         }
 
         private void CellEditor_LostFocus(object sender, EventArgs e)
@@ -454,10 +500,12 @@ namespace EasyEPlanner.Devices.View
             {
                 case Keys.Enter:
                     devicesTree.FinishCellEdit();
+                    e.Handled = true;
                     break;
                 case Keys.Escape:
                     cancelChanges = true;
                     devicesTree.FinishCellEdit();
+                    e.Handled = true;
                     break;
             }
         }
