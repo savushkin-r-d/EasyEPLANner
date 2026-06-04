@@ -31,6 +31,7 @@ namespace EasyEPlanner.Devices.View
         private ComboBox comboBoxCellEditor;
         private IEditable cellEditItem;
         private bool cellEditUsesComboBox;
+        private bool cellEditUsesMultiline;
         private ToolStripMenuItem goToFasMenuItem;
         private SearchIterator searchIterator;
         private bool runtimeInitialized;
@@ -380,10 +381,15 @@ namespace EasyEPlanner.Devices.View
 
             isCellEditing = true;
             cellEditUsesComboBox = false;
+            cellEditUsesMultiline = editable is DevicesDescriptionItem;
             cellEditItem = editable;
-            InitTextBoxCellEditor();
-            textBoxCellEditor.Text = editable.Value;
-            textBoxCellEditor.Bounds = GetCellEditorBounds(devicesTree, e.CellBounds);
+            InitTextBoxCellEditor(cellEditUsesMultiline);
+            textBoxCellEditor.Text = cellEditUsesMultiline
+                ? DevicesMultilineText.FormatForEditor(editable.Value)
+                : editable.Value;
+            textBoxCellEditor.Bounds = cellEditUsesMultiline
+                ? GetMultilineEditorBounds(devicesTree, e.CellBounds, textBoxCellEditor.Text)
+                : GetCellEditorBounds(devicesTree, e.CellBounds);
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
             devicesTree.Freeze();
@@ -401,6 +407,7 @@ namespace EasyEPlanner.Devices.View
                 e.Cancel = true;
                 cancelChanges = false;
                 cellEditUsesComboBox = false;
+                cellEditUsesMultiline = false;
                 devicesTree.Unfreeze();
                 return;
             }
@@ -415,14 +422,24 @@ namespace EasyEPlanner.Devices.View
             }
             else
             {
-                modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+                string text = textBoxCellEditor?.Text
+                    ?? e.NewValue?.ToString()
+                    ?? string.Empty;
+                if (cellEditUsesMultiline)
+                    text = DevicesMultilineText.ParseFromEditor(text);
+                modified = editable.SetValue(text);
             }
 
             RemoveCellEditorControls();
             cellEditUsesComboBox = false;
+            cellEditUsesMultiline = false;
 
             if (modified)
+            {
+                if (editable is IViewItem viewItem)
+                    devicesTree.RefreshObject(viewItem);
                 RefreshTree();
+            }
 
             e.Cancel = true;
             devicesTree.Unfreeze();
@@ -455,6 +472,21 @@ namespace EasyEPlanner.Devices.View
             return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
         }
 
+        private static Rectangle GetMultilineEditorBounds(
+            TreeListView tree,
+            Rectangle bounds,
+            string text)
+        {
+            int lineHeight = TextRenderer.MeasureText("Xg", tree.Font).Height;
+            int lineCount = string.IsNullOrEmpty(text)
+                ? 2
+                : text.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None).Length;
+            int height = Math.Max(tree.RowHeight > 0 ? tree.RowHeight : 20,
+                lineCount * lineHeight + 6);
+            height = Math.Min(height, 200);
+            return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
+        }
+
         private void InitComboBoxCellEditor(IEnumerable<string> items)
         {
             comboBoxCellEditor = new ComboBox
@@ -477,12 +509,16 @@ namespace EasyEPlanner.Devices.View
             devicesTree.FinishCellEdit();
         }
 
-        private void InitTextBoxCellEditor()
+        private void InitTextBoxCellEditor(bool multiline = false)
         {
             textBoxCellEditor = new TextBox
             {
                 BorderStyle = BorderStyle.FixedSingle,
                 Font = devicesTree.Font,
+                Multiline = multiline,
+                AcceptsReturn = multiline,
+                ScrollBars = multiline ? ScrollBars.Vertical : ScrollBars.None,
+                WordWrap = multiline,
             };
             textBoxCellEditor.LostFocus += CellEditor_LostFocus;
             textBoxCellEditor.KeyDown += CellEditor_KeyDown;
@@ -499,6 +535,8 @@ namespace EasyEPlanner.Devices.View
             switch (e.KeyCode)
             {
                 case Keys.Enter:
+                    if (cellEditUsesMultiline && !e.Control)
+                        return;
                     devicesTree.FinishCellEdit();
                     e.Handled = true;
                     break;

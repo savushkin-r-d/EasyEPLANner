@@ -257,15 +257,22 @@ namespace EasyEPlanner.Devices.ViewModel
 
         public override string Name { get; protected set; }
 
-        public override string Description => Device.Description ?? string.Empty;
+        private string EplanDescription =>
+            DevicesMultilineText.GetEplanDescription(Device);
+
+        public override string Description =>
+            DevicesMultilineText.FormatForCell(EplanDescription);
 
         string IToolTip.Name => Name;
 
-        public string Value => Description;
+        string IToolTip.Description =>
+            DevicesMultilineText.FormatForTooltip(EplanDescription);
+
+        public string Value => EplanDescription;
 
         public bool SetValue(string value)
         {
-            if (value == Description)
+            if (value == Value)
                 return false;
 
             Device.Function.Description = value;
@@ -697,15 +704,9 @@ namespace EasyEPlanner.Devices.ViewModel
             return new DevicesDeviceNode(context, parent, dev, displayName.Trim());
         }
 
-        private static string GenerateDeviceDescription(IODevice dev)
-        {
-            if (string.IsNullOrEmpty(dev.Description))
-                return string.Empty;
-
-            return dev.Description.Contains('\n')
-                ? string.Join(" ", dev.Description.Split('\n'))
-                : dev.Description;
-        }
+        private static string GenerateDeviceDescription(IODevice dev) =>
+            DevicesMultilineText.FormatForCell(
+                DevicesMultilineText.GetEplanDescription(dev));
 
         private static string GetObjectKey(IODevice dev) =>
             string.IsNullOrEmpty(dev.ObjectName)

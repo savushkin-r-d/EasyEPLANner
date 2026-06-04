@@ -173,6 +173,7 @@
     <Compile Include="Device\ViewModel\DevicesRoot.cs" />
     <Compile Include="Device\ViewModel\DevicesSearch.cs" />
     <Compile Include="Device\ViewModel\DevicesSearchContext.cs" />
+    <Compile Include="Device\ViewModel\DevicesMultilineText.cs" />
     <Compile Include="Device\ViewModel\DevicesTreeItems.cs" />
     <Compile Include="Device\ViewModel\DevicesViewModel.cs" />
     <Compile Include="Device\ViewModel\IDevicesRoot.cs" />
