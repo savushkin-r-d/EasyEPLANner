@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace InterprojectExchange
 {
+    [ExcludeFromCodeCoverage]
     public partial class PACSettingsForm : Form
     {
         public PACSettingsForm(EditMode editMode)
@@ -346,11 +347,9 @@ namespace InterprojectExchange
 
         private void directoryBttn_Click(object sender, EventArgs e)
         {
-            if (!ProjectFolderHelper.TryGetExistingFullPath(
-                derictoryTextBox.Text, out string projectFolder))
+            if (!ProjectFolderHelper.TryGetExistingFullPath(derictoryTextBox.Text,
+                out string projectFolder))
             {
-                MessageBox.Show("Каталог проекта не найден.",
-                    "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

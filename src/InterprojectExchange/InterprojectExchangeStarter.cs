@@ -490,6 +490,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Показать форму для работы с межпроектным обменом.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ShowForm(bool isLoaded)
         {
             if (form == null || form.IsDisposed)

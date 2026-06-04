@@ -71,6 +71,7 @@ namespace InterprojectExchange
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private static void EnsureBuilt()
         {
             if (_isBuilt)
