@@ -77,23 +77,37 @@ namespace InterprojectExchange
                 return;
             }
 
-            if (_projectNameToFolder == null)
-            {
-                _projectNameToFolder = new Dictionary<string, string>(
-                    StringComparer.Ordinal);
-            }
+            BuildIndexFromRoots(GetProjectsRootPaths());
+        }
 
-            foreach (string projectsRoot in GetProjectsRootPaths())
+        /// <summary>
+        /// Построить индекс PAC_name по корневым каталогам с проектами.
+        /// </summary>
+        public static void BuildIndexFromRoots(IEnumerable<string> projectRoots)
+        {
+            lock (Sync)
             {
-                if (!Directory.Exists(projectsRoot))
+                if (_projectNameToFolder == null)
                 {
-                    continue;
+                    _projectNameToFolder = new Dictionary<string, string>(
+                        StringComparer.Ordinal);
                 }
 
-                ScanProjectsRoot(projectsRoot);
-            }
+                if (projectRoots != null)
+                {
+                    foreach (string projectsRoot in projectRoots)
+                    {
+                        if (!Directory.Exists(projectsRoot))
+                        {
+                            continue;
+                        }
 
-            _isBuilt = true;
+                        ScanProjectsRoot(projectsRoot);
+                    }
+                }
+
+                _isBuilt = true;
+            }
         }
 
         private static void ScanProjectsRoot(string projectsRoot)

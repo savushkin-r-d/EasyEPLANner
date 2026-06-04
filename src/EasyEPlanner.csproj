@@ -330,6 +330,7 @@
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\MainIoProjectNameReader.cs" />
     <Compile Include="InterprojectExchange\InterprojectProjectCatalog.cs" />
+    <Compile Include="InterprojectExchange\ProjectFolderHelper.cs" />
     <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.cs">
       <SubType>Form</SubType>
     </Compile>

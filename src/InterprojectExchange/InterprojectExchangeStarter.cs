@@ -186,7 +186,11 @@ namespace InterprojectExchange
 
             GenerateSharedDevices(projName);
             LoadCurrentProjectSharedLuaData(pathToMainProjectFolder, projName);
-            interprojectExchange.MainModel.PathToProject = pathToMainProjectFolder;
+            var mainModel = interprojectExchange.MainModel;
+            if (mainModel != null)
+            {
+                mainModel.PathToProject = pathToMainProjectFolder;
+            }
 
             foreach (var model in interprojectExchange.Models)
             {

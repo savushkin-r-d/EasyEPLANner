@@ -346,14 +346,8 @@ namespace InterprojectExchange
 
         private void directoryBttn_Click(object sender, EventArgs e)
         {
-            string projectFolder = derictoryTextBox.Text;
-            if (!string.IsNullOrEmpty(projectFolder))
-            {
-                projectFolder = Path.GetFullPath(projectFolder);
-            }
-
-            if (string.IsNullOrEmpty(projectFolder) ||
-                !Directory.Exists(projectFolder))
+            if (!ProjectFolderHelper.TryGetExistingFullPath(
+                derictoryTextBox.Text, out string projectFolder))
             {
                 MessageBox.Show("Каталог проекта не найден.",
                     "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);

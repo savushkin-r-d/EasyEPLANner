@@ -1,16 +1,17 @@
 using InterprojectExchange;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Tests.InterprojectExchangeTest
 {
     public class InterprojectExchangeLoadProjectDataTest
     {
-        private static string ProjectFolder => Path.Combine(
+        private static string ProjectFolder => Path.GetFullPath(Path.Combine(
             TestContext.CurrentContext.TestDirectory,
             "InterprojectExchange.Test",
             "TestData",
-            "project");
+            "project"));
 
         [SetUp]
         public void SetUp()
@@ -46,6 +47,21 @@ namespace Tests.InterprojectExchangeTest
             {
                 Directory.Delete(tempDir, true);
             }
+        }
+
+        [Test]
+        public void LoadProjectData_RegistersProjectInCatalog_BeforeOwnerCall()
+        {
+            var exchange = InterprojectExchange.InterprojectExchange.GetInstance();
+            exchange.Clear();
+            InterprojectProjectCatalog.Invalidate();
+
+            Assert.Throws<NullReferenceException>(() =>
+                exchange.LoadProjectData(ProjectFolder, out _));
+
+            Assert.IsTrue(InterprojectProjectCatalog.TryGetProjectFolder(
+                "project", out string folder));
+            Assert.AreEqual(ProjectFolder, folder);
         }
 
         [Test]

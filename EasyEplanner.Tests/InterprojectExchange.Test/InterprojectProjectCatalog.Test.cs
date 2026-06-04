@@ -1,5 +1,6 @@
 using InterprojectExchange;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -93,6 +94,73 @@ namespace Tests.InterprojectExchangeTest
             Assert.IsTrue(InterprojectProjectCatalog.TryGetProjectFolder(
                 "project", out string resolved));
             Assert.AreEqual(otherFolder, resolved);
+        }
+
+        [Test]
+        public void BuildIndexFromRoots_IndexesByPacName_NotFolderName()
+        {
+            string projectsRoot = InterprojectCatalogTestHelper.CreateProjectTree(
+                "PacFromFile", "DifferentFolderName");
+
+            try
+            {
+                InterprojectProjectCatalog.BuildIndexFromRoots(
+                    new[] { projectsRoot });
+
+                Assert.IsTrue(InterprojectProjectCatalog.TryGetProjectFolder(
+                    "PacFromFile", out string folder));
+                Assert.AreEqual(
+                    Path.GetFullPath(Path.Combine(projectsRoot, "DifferentFolderName")),
+                    folder);
+            }
+            finally
+            {
+                InterprojectCatalogTestHelper.DeleteTree(projectsRoot);
+            }
+        }
+
+        [Test]
+        public void BuildIndexFromRoots_SkipsFoldersWithoutMainIo()
+        {
+            string projectsRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(projectsRoot);
+            Directory.CreateDirectory(Path.Combine(projectsRoot, "empty_folder"));
+
+            try
+            {
+                InterprojectProjectCatalog.BuildIndexFromRoots(
+                    new[] { projectsRoot });
+
+                Assert.IsFalse(CatalogContains("empty_folder"));
+            }
+            finally
+            {
+                InterprojectCatalogTestHelper.DeleteTree(projectsRoot);
+            }
+        }
+
+        [Test]
+        public void BuildIndexFromRoots_PreservesManualRegister()
+        {
+            string projectsRoot = InterprojectCatalogTestHelper.CreateProjectTree(
+                "ScannedPac", "scan_folder");
+
+            try
+            {
+                InterprojectProjectCatalog.Register(ProjectFolder, "manual");
+                InterprojectProjectCatalog.BuildIndexFromRoots(
+                    new[] { projectsRoot });
+
+                Assert.IsTrue(InterprojectProjectCatalog.TryGetProjectFolder(
+                    "manual", out string manualPath));
+                Assert.AreEqual(ProjectFolder, manualPath);
+                Assert.IsTrue(InterprojectProjectCatalog.TryGetProjectFolder(
+                    "ScannedPac", out _));
+            }
+            finally
+            {
+                InterprojectCatalogTestHelper.DeleteTree(projectsRoot);
+            }
         }
 
         [Test]
