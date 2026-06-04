@@ -136,8 +136,7 @@ namespace InterprojectExchange
         /// <returns></returns>
         public string GetMainProjectName()
         {
-            return EProjectManager.GetInstance()
-                .GetModifyingCurrentProjectName();
+            return interprojectExchange.MainProjectName;
         }
 
         /// <summary>
@@ -240,9 +239,20 @@ namespace InterprojectExchange
 
         private void ShowProjectsNotOpenedSummary()
         {
-            if (_projectsNotOpenedOnLoad.Count == 0 || form == null)
+            string summary = BuildProjectsNotOpenedSummaryText();
+            if (summary == null || form == null)
             {
                 return;
+            }
+
+            form.ShowWarningMessage(summary, MessageBoxButtons.OK);
+        }
+
+        private string BuildProjectsNotOpenedSummaryText()
+        {
+            if (_projectsNotOpenedOnLoad.Count == 0)
+            {
+                return null;
             }
 
             var summary = new StringBuilder();
@@ -252,8 +262,7 @@ namespace InterprojectExchange
                 summary.AppendLine($"• {line}");
             }
 
-            form.ShowWarningMessage(summary.ToString().TrimEnd(),
-                MessageBoxButtons.OK);
+            return summary.ToString().TrimEnd();
         }
 
         private static bool TryResolveProjectFolder(string projectName,

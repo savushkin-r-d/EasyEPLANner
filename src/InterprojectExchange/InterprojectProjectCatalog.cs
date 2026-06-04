@@ -3,6 +3,7 @@ using PInvoke;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace InterprojectExchange
@@ -124,6 +125,7 @@ namespace InterprojectExchange
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private static IEnumerable<string> GetProjectsRootPaths()
         {
             string configPath = Path.Combine(

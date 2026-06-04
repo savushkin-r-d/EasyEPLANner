@@ -1,6 +1,16 @@
 ﻿PAC_name = 'project'
 PAC_id = ''
 
-nodes = { }
+nodes = {
+    {
+        ntype = 201,
+        IP = '192.168.1.10',
+    },
+}
 
-devices = { }
+devices = {
+    {
+        name = 'DEV1',
+        descr = 'Device 1',
+    },
+}
