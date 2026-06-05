@@ -1,4 +1,4 @@
-﻿using EplanDevice;
+using EplanDevice;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -118,7 +118,7 @@ namespace IO
             Dictionary<string, int> modulesCount, 
             Dictionary<string, Color> modulesColor)
         {
-            string moduleName = Info.Number.ToString();
+            string moduleName = $"{Info.Name}\n{Info.Number})";
             if (modulesCount.ContainsKey(moduleName))
             {
                 modulesCount[moduleName]++;
