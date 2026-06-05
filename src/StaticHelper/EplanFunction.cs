@@ -86,6 +86,12 @@ namespace StaticHelper
             }
         }
 
+        public void Rename(string name)
+        {
+            Lock();
+            function.Name = name;
+        }
+
         public bool IsMainFunction => function.IsMainFunction;
 
         public bool Expanded 

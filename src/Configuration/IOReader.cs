@@ -21,7 +21,8 @@ namespace EasyEPlanner
             this.IOManager = IO.IOManager.GetInstance();
             this.isContainsNodes = false;
             this.isContainsA1 = false;
-            this.IONameRegex = new Regex(IO.IOManager.IONamePattern);
+            this.IONameRegex = new Regex(IO.IOManager.IONamePattern,
+                RegexOptions.None, RegexDefaults.Timeout);
             this.functionsForSearching = new List<Function>();
             this.projectHelper = projectHelper;
             this.deviceHelper = deviceHelper;
@@ -63,6 +64,7 @@ namespace EasyEPlanner
             }
 
             ReadModules();
+            ReadDeletedModules();
         }
 
         /// <summary>
@@ -350,6 +352,43 @@ namespace EasyEPlanner
         }
 
         [ExcludeFromCodeCoverage]
+        private void ReadDeletedModules()
+        {
+            foreach (var function in functionsForSearching)
+            {
+                var match = DeletedIONameRegex.Match(function.VisibleName);
+                if (!match.Success || !FunctionHasArticle(function))
+                {
+                    continue;
+                }
+
+                ReadDeletedModule(function, match);
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void ReadDeletedModule(Function function, Match match)
+        {
+            int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
+            string type = GetModuleTypeFromFunction(function);
+            IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, type);
+
+            IO.IOModule module = new IO.IOModule(0, 0, moduleInfo,
+                moduleNumber, deviceHelper.GetArticleName(function),
+                new IO.IOModule.EplanData
+                {
+                    Function = new EplanFunction(function),
+                    NamePrefix = "DEL",
+                    Location = function.Properties
+                        .DESIGNATION_FULLLOCATION_WITHPREFIX,
+                    LocationDescription = function.Properties
+                        .DESIGNATION_FULLLOCATION_DESCR.GetString()
+                });
+
+            IOManager.AddDeletedModule(module);
+        }
+
+        [ExcludeFromCodeCoverage]
         private void ReadModule(Function function)
         {
             var match = IONameRegex.Match(function.VisibleName);
@@ -565,7 +604,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            if (function.Articles.GetLength(0) == 0)
+            if (!FunctionHasArticle(function))
             {
                 Logs.AddMessage($"У модуля \"" +
                     $"{function.VisibleName}\" не задано изделие.");
@@ -574,6 +613,11 @@ namespace EasyEPlanner
             }
 
             return skip;
+        }
+
+        private static bool FunctionHasArticle(Function function)
+        {
+            return function.Articles.GetLength(0) != 0;
         }
 
         /// <summary>
@@ -605,7 +649,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Обрабатывающий Regex.
         /// </summary>
-        Regex IONameRegex;
+        private readonly Regex IONameRegex;
+
+        private readonly Regex DeletedIONameRegex = new Regex(
+            @"=*-DEL(?<n>\d+)$", RegexOptions.None, RegexDefaults.Timeout);
 
         /// <summary>
         /// Номер узла А1, характерного для проектов, где используется 

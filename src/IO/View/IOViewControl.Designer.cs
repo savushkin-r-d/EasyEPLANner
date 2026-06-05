@@ -78,7 +78,7 @@ namespace IO.View
             this.StructPLC.LargeImageList = this.ViewItemImageList;
             this.StructPLC.Location = new System.Drawing.Point(0, 30);
             this.StructPLC.Margin = new System.Windows.Forms.Padding(0);
-            this.StructPLC.MultiSelect = false;
+            this.StructPLC.MultiSelect = true;
             this.StructPLC.Name = "StructPLC";
             this.StructPLC.OwnerDrawnHeader = true;
             this.StructPLC.PersistentCheckBoxes = false;
