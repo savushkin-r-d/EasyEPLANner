@@ -7,13 +7,42 @@ namespace EasyEPlanner
 {
     public class SelectInteractionWhileEditModes : Interaction
     {
+        public override bool IsAutorestartEnabled =>
+            EProjectManager.GetInstance().ShouldAutorestartInteraction;
+
         public override RequestCode OnStart(InteractionContext pContext)
         {
+            IsFinish = false;
             EProjectManager.GetInstance().SetEditInteraction(this);
 
             return RequestCode.Select |
                    RequestCode.NoPreselect |
                    RequestCode.NoMultiSelect;
+        }
+
+        public override RequestCode OnRestart()
+        {
+            IsFinish = false;
+            EProjectManager.GetInstance().SetEditInteraction(this);
+
+            return RequestCode.Select |
+                   RequestCode.NoPreselect |
+                   RequestCode.NoMultiSelect;
+        }
+
+        public override RequestCode OnPageChange()
+        {
+            if (EProjectManager.GetInstance().IsEditBindingActive())
+            {
+                IsFinish = false;
+                EProjectManager.GetInstance().SetEditInteraction(this);
+
+                return RequestCode.Select |
+                       RequestCode.NoPreselect |
+                       RequestCode.NoMultiSelect;
+            }
+
+            return base.OnPageChange();
         }
 
         // Код для подсветки устройств и занесения в действие
