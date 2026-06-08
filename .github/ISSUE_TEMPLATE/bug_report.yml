@@ -1,12 +1,48 @@
 name: "[🐛]: Bug report"
 description: "Отчет об ошибке. Что-то работает не так, как ожидалось."
 title: "[🐛]: "
-labels: [ "Status: To Do", "Priority: High" ]
 projects: [ "savushkin-r-d/8" ]
-type: "Bug"
 assignees: KirillGutyrchik
 
 body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "Выберите приоритет задачи"
+      options:
+        - Low
+        - Long-term plans
+        - Medium
+        - High
+        - Critical
+      default: 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: planned_iteration
+    attributes:
+      label: "Планируемая итерация"
+      description: "Выберите, в какой итерации должна быть задача"
+      options:
+        - Current iteration - put into the current sprint
+        - Next iteration - put into the next sprint
+        - Backlog - do not assign to an iteration
+      default: 0
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Информация о текущем спринте
+        <!-- AUTO_ITERATION_INFO_START -->
+        Текущая дата: 21 мая 2026 г.
+        Текущий спринт: Iteration 3: 15 мая 2026 г. - 28 мая 2026 г.
+        Следующий спринт: Iteration 4: 29 мая 2026 г. - 11 июня 2026 г.
+        <!-- AUTO_ITERATION_INFO_END -->
+
   - type: textarea
     id: bug_description
     validations: 
@@ -30,7 +66,6 @@ body:
     attributes:
       label: "Шаги для воспроизведения проблемы"
       description: "Шаги для воспроизведения проблемы."
-
 
   - type: textarea
     id: additional_info

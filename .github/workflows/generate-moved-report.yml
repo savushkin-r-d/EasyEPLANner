@@ -1,0 +1,159 @@
+name: Generate moved tasks report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 12 * * 1' # weekly on Monday noon UTC
+
+permissions:
+  contents: write
+  issues: read
+  repository-projects: read
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate moved tasks report
+        uses: actions/github-script@v7
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        with:
+          github-token: ${{ secrets.AUTOMATISATION_PROJECT }}
+          script: |
+            const projectId = process.env.PROJECT_ID;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Fetch project items to map issue number -> iteration title
+            const projectData = await github.graphql(`
+              query($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    items(first: 200) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                          }
+                        }
+                        fieldValues(first: 10) {
+                          nodes {
+                            ... on ProjectV2ItemFieldIterationValue {
+                              iterationId
+                              field {
+                                ... on ProjectV2IterationField { id }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    field(name: "Iteration") {
+                      ... on ProjectV2IterationField {
+                        configuration {
+                          iterations {
+                            id
+                            title
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, { projectId });
+
+            const iterations = projectData.node.field.configuration.iterations || [];
+            const items = projectData.node.items.nodes || [];
+
+            const iterMap = {};
+            for (const it of iterations) iterMap[it.id] = it.title;
+
+            const issueToIter = {};
+            for (const it of items) {
+              const num = it.content?.number;
+              if (!num) continue;
+              const fv = it.fieldValues?.nodes?.find(n => n.iterationId);
+              if (fv && fv.iterationId) issueToIter[num] = iterMap[fv.iterationId] || '';
+            }
+
+            // List all issues in repo and filter by moved: label
+            const allIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'all',
+              per_page: 100,
+            });
+
+            const movedIssues = [];
+            for (const iss of allIssues) {
+              const movedLabel = iss.labels?.find(l => l.name && l.name.startsWith('moved:'));
+              if (movedLabel) {
+                const parts = movedLabel.name.split(':');
+                const count = parseInt(parts[1]) || 1;
+
+                // Find last relevant comment (Автоматический перенос or Метка переносов обновлена)
+                let lastMovedAt = '';
+                try {
+                  const comments = await github.paginate(github.rest.issues.listComments, {
+                    owner, repo, issue_number: iss.number, per_page: 100
+                  });
+                  for (let i = comments.length - 1; i >= 0; i--) {
+                    const c = comments[i];
+                    if (/Автоматический перенос|Метка переносов обновлена|метка переносов/i.test(c.body || '')) {
+                      lastMovedAt = c.created_at;
+                      break;
+                    }
+                  }
+                } catch (e) {
+                  // ignore
+                }
+
+                movedIssues.push({
+                  number: iss.number,
+                  title: iss.title,
+                  state: iss.state,
+                  movedCount: count,
+                  iteration: issueToIter[iss.number] || '',
+                  lastMovedAt,
+                  url: iss.html_url,
+                });
+              }
+            }
+
+            // Build markdown
+            let md = '# Отчёт по перенесённым задачам\n\n';
+            md += `Дата генерации: ${new Date().toISOString()}\n\n`;
+            if (movedIssues.length === 0) {
+              md += 'Перенесённых задач не обнаружено.\n';
+            } else {
+              md += '| № | Заголовок | Статус | Итерация | Количество переносов | Последний перенос |\n';
+              md += '| ---: | --- | --- | --- | ---: | --- |\n';
+              for (const mi of movedIssues) {
+                md += `| ${mi.number} | [${mi.title}](${mi.url}) | ${mi.state} | ${mi.iteration} | ${mi.movedCount} | ${mi.lastMovedAt || '-'} |\n`;
+              }
+            }
+
+            const path = 'docs/project_docs/moved_tasks_report.md';
+
+            // Check if file exists
+            try {
+              const existing = await github.rest.repos.getContent({ owner, repo, path });
+              const sha = existing.data.sha;
+              await github.rest.repos.createOrUpdateFileContents({
+                owner, repo, path,
+                message: 'chore: update moved tasks report',
+                content: Buffer.from(md, 'utf8').toString('base64'),
+                sha,
+              });
+            } catch (e) {
+              // create new
+              await github.rest.repos.createOrUpdateFileContents({
+                owner, repo, path,
+                message: 'chore: create moved tasks report',
+                content: Buffer.from(md, 'utf8').toString('base64'),
+              });
+            }

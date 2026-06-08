@@ -1,0 +1,165 @@
+name: Sync iteration info in issue templates
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  repository-projects: read
+
+jobs:
+  sync-iteration-info:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build sprint info from project
+        id: sprint_info
+        uses: actions/github-script@v7
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        with:
+          github-token: ${{ secrets.AUTOMATISATION_PROJECT }}
+          script: |
+            const projectId = process.env.PROJECT_ID;
+
+            const projectData = await github.graphql(`
+              query($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    field(name: "Iteration") {
+                      ... on ProjectV2IterationField {
+                        configuration {
+                          iterations {
+                            id
+                            title
+                            startDate
+                            duration
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, {
+              projectId,
+            });
+
+            const formatRu = (date) => new Intl.DateTimeFormat("ru-RU", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }).format(date);
+
+            const toDate = (startDateText) => new Date(`${startDateText}T00:00:00Z`);
+            const calcEndDate = (iteration) => {
+              const d = toDate(iteration.startDate);
+              d.setUTCDate(d.getUTCDate() + ((iteration.duration || 14) - 1));
+              return d;
+            };
+
+            const iterations = (projectData.node?.field?.configuration?.iterations || [])
+              .filter((it) => it.startDate)
+              .sort((a, b) => toDate(a.startDate) - toDate(b.startDate));
+
+            const now = new Date();
+            let currentIteration = null;
+
+            for (const iteration of iterations) {
+              const start = toDate(iteration.startDate);
+              const end = calcEndDate(iteration);
+              if (now >= start && now <= end) {
+                currentIteration = iteration;
+                break;
+              }
+            }
+
+            if (!currentIteration && iterations.length > 0) {
+              currentIteration = iterations.filter((it) => toDate(it.startDate) <= now).pop() || iterations[0];
+            }
+
+            const currentIndex = currentIteration
+              ? iterations.findIndex((it) => it.id === currentIteration.id)
+              : -1;
+            const nextIteration = currentIndex >= 0 && currentIndex + 1 < iterations.length
+              ? iterations[currentIndex + 1]
+              : null;
+
+            const lineToday = `Текущая дата: ${formatRu(now)}`;
+
+            const lineCurrent = currentIteration
+              ? `Текущий спринт: ${currentIteration.title}: ${formatRu(toDate(currentIteration.startDate))} - ${formatRu(calcEndDate(currentIteration))}`
+              : "Текущий спринт: не определен";
+
+            const lineNext = nextIteration
+              ? `Следующий спринт: ${nextIteration.title}: ${formatRu(toDate(nextIteration.startDate))} - ${formatRu(calcEndDate(nextIteration))}`
+              : "Следующий спринт: не определен";
+
+            core.setOutput("line_today", lineToday);
+            core.setOutput("line_current", lineCurrent);
+            core.setOutput("line_next", lineNext);
+
+      - name: Update templates block
+        shell: bash
+        env:
+          LINE_TODAY: ${{ steps.sprint_info.outputs.line_today }}
+          LINE_CURRENT: ${{ steps.sprint_info.outputs.line_current }}
+          LINE_NEXT: ${{ steps.sprint_info.outputs.line_next }}
+        run: |
+          set -euo pipefail
+
+          update_file() {
+            local file="$1"
+            python - "$file" <<'PY'
+import os
+import re
+import sys
+
+path = sys.argv[1]
+start = "<!-- AUTO_ITERATION_INFO_START -->"
+end = "<!-- AUTO_ITERATION_INFO_END -->"
+
+with open(path, "r", encoding="utf-8") as f:
+    text = f.read()
+
+pattern = re.compile(re.escape(start) + r"[\s\S]*?" + re.escape(end))
+replacement = "\n".join([
+    start,
+    os.environ["LINE_TODAY"],
+    os.environ["LINE_CURRENT"],
+    os.environ["LINE_NEXT"],
+    end,
+])
+
+new_text, count = pattern.subn(replacement, text, count=1)
+if count != 1:
+    raise RuntimeError(f"Markers not found or duplicated in {path}")
+
+if new_text != text:
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(new_text)
+PY
+          }
+
+          update_file .github/ISSUE_TEMPLATE/bug_report.yml
+          update_file .github/ISSUE_TEMPLATE/feature_request.yml
+          update_file .github/ISSUE_TEMPLATE/exception_report.yml
+
+      - name: Commit if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/feature_request.yml .github/ISSUE_TEMPLATE/exception_report.yml
+            git commit -m "chore: sync iteration info in issue templates"
+            git push
+          else
+            echo "No template changes"
+          fi

@@ -1,0 +1,237 @@
+name: Sync issue priority to project
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+  repository-projects: write
+  contents: read
+
+jobs:
+  sync-priority:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Sync priority field
+        uses: actions/github-script@v7
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          PRIORITY_FIELD_ID: ${{ secrets.PRIORITY_FIELD_ID }}
+          PRIORITY_LOW_ID: ${{ secrets.PRIORITY_LOW_ID }}
+          PRIORITY_MEDIUM_ID: ${{ secrets.PRIORITY_MEDIUM_ID }}
+          PRIORITY_HIGH_ID: ${{ secrets.PRIORITY_HIGH_ID }}
+          PRIORITY_CRITICAL_ID: ${{ secrets.PRIORITY_CRITICAL_ID }}
+          PRIORITY_LONG_TERM_PLANS_ID: ${{ secrets.PRIORITY_LONG_TERM_PLANS_ID }}
+          ITERATION_FIELD_ID: ${{ secrets.ITERATION_FIELD_ID }}
+        with:
+          github-token: ${{ secrets.AUTOMATISATION_PROJECT }}
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || "";
+
+            const match = body.match(/### Priority\s+([\s\S]*?)(?:\n### |\s*$)/);
+            if (!match) {
+              core.info("Priority section not found");
+              return;
+            }
+
+            const priority = match[1].trim();
+
+            const optionByPriority = {
+              Low: process.env.PRIORITY_LOW_ID,
+              "Long-term plans": process.env.PRIORITY_LONG_TERM_PLANS_ID,
+              Medium: process.env.PRIORITY_MEDIUM_ID,
+              High: process.env.PRIORITY_HIGH_ID,
+              Critical: process.env.PRIORITY_CRITICAL_ID,
+            };
+
+            const optionId = optionByPriority[priority];
+            if (!optionId) {
+              core.setFailed(`Unknown priority: ${priority}`);
+              return;
+            }
+
+            const plannedIterationMatch = body.match(/### Планируемая итерация\s+([\s\S]*?)(?:\n### |\s*$)/);
+            const plannedIteration = plannedIterationMatch ? plannedIterationMatch[1].trim() : "Current iteration - put into the current sprint";
+
+            const projectId = process.env.PROJECT_ID;
+            const fieldId = process.env.PRIORITY_FIELD_ID;
+
+            const projectItems = await github.graphql(`
+              query($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            id
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, {
+              projectId,
+            });
+
+            let itemId = projectItems.node?.items?.nodes?.find(node => node.content?.id === issue.node_id)?.id || null;
+
+            if (!itemId) {
+              const addResult = await github.graphql(`
+                mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: {
+                    projectId: $projectId,
+                    contentId: $contentId
+                  }) {
+                    item {
+                      id
+                    }
+                  }
+                }
+              `, {
+                projectId,
+                contentId: issue.node_id,
+              });
+
+              itemId = addResult.addProjectV2ItemById.item.id;
+            }
+
+            // Update priority
+            await github.graphql(`
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId,
+                  itemId: $itemId,
+                  fieldId: $fieldId,
+                  value: {
+                    singleSelectOptionId: $optionId
+                  }
+                }) {
+                  projectV2Item {
+                    id
+                  }
+                }
+              }
+            `, {
+              projectId,
+              itemId,
+              fieldId,
+              optionId,
+            });
+
+            core.info(`Synced priority: ${priority}`);
+
+            // Sync iteration from dropdown selection
+            if (process.env.ITERATION_FIELD_ID) {
+              const iterationFieldId = process.env.ITERATION_FIELD_ID;
+
+              const projectData = await github.graphql(`
+                query($projectId: ID!) {
+                  node(id: $projectId) {
+                    ... on ProjectV2 {
+                      field(name: "Iteration") {
+                        ... on ProjectV2IterationField {
+                          id
+                          configuration {
+                            iterations {
+                              startDate
+                              duration
+                              id
+                              title
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              `, {
+                projectId,
+              });
+
+              const iterations = (projectData.node?.field?.configuration?.iterations || [])
+                .filter(iteration => iteration.startDate)
+                .sort((left, right) => new Date(left.startDate) - new Date(right.startDate));
+
+              const now = new Date();
+
+              let currentIteration = null;
+              for (const iteration of iterations) {
+                const startDate = new Date(iteration.startDate);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + (iteration.duration || 14));
+
+                if (now >= startDate && now < endDate) {
+                  currentIteration = iteration;
+                  break;
+                }
+              }
+
+              if (!currentIteration && iterations.length > 0) {
+                currentIteration = iterations.filter(iteration => new Date(iteration.startDate) <= now).pop() || iterations[0];
+              }
+
+              const currentIndex = currentIteration ? iterations.findIndex(iteration => iteration.id === currentIteration.id) : -1;
+              const nextIteration = currentIndex >= 0 && currentIndex + 1 < iterations.length ? iterations[currentIndex + 1] : null;
+
+              let targetIteration = null;
+              let fallbackToCurrent = false;
+              if (plannedIteration.startsWith("Next iteration")) {
+                targetIteration = nextIteration;
+                if (!targetIteration) {
+                  targetIteration = currentIteration;
+                  fallbackToCurrent = true;
+                }
+              } else if (plannedIteration.startsWith("Backlog")) {
+                targetIteration = null;
+              } else {
+                targetIteration = currentIteration;
+              }
+
+              if (plannedIteration.startsWith("Next iteration") && !targetIteration) {
+                core.info("Next iteration was selected, but no next iteration is available yet");
+              }
+
+              if (targetIteration) {
+                await github.graphql(`
+                  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $iterationId: String!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $projectId,
+                      itemId: $itemId,
+                      fieldId: $fieldId,
+                      value: {
+                        iterationId: $iterationId
+                      }
+                    }) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `, {
+                  projectId,
+                  itemId,
+                  fieldId: iterationFieldId,
+                  iterationId: targetIteration.id,
+                });
+
+                core.info(`Synced iteration: ${targetIteration.title} (${plannedIteration})`);
+
+                if (fallbackToCurrent) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: `⚠️ Выбрана **Next iteration**, но следующая итерация ещё не создана. Задача временно поставлена в текущую итерацию: **${targetIteration.title}**.`,
+                  });
+                }
+              } else {
+                core.info(`Iteration sync skipped for selection: ${plannedIteration}`);
+              }
+            }

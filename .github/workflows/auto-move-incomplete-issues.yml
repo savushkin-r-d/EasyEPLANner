@@ -1,0 +1,213 @@
+name: Auto-move incomplete issues to next iteration
+
+# Run twice a week (to catch issues at end of 2-week iteration)
+on:
+  schedule:
+    - cron: '0 15 * * 1'  # Monday 6 PM Europe/Minsk (UTC+3)
+    - cron: '0 15 * * 4'  # Thursday 6 PM Europe/Minsk (UTC+3)
+permissions:
+  issues: write
+  repository-projects: write
+  contents: read
+
+jobs:
+  move-incomplete-issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Move incomplete issues to next iteration
+        uses: actions/github-script@v7
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          ITERATION_FIELD_ID: ${{ secrets.ITERATION_FIELD_ID }}
+        with:
+          github-token: ${{ secrets.AUTOMATISATION_PROJECT }}
+          script: |
+            const projectId = process.env.PROJECT_ID;
+            const iterationFieldId = process.env.ITERATION_FIELD_ID;
+
+            // Get all iterations from project
+            const projectData = await github.graphql(`
+              query($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    field(name: "Iteration") {
+                      ... on ProjectV2IterationField {
+                        id
+                        configuration {
+                          iterations {
+                            id
+                            title
+                            startDate
+                            duration
+                          }
+                        }
+                      }
+                    }
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                            state
+                          }
+                        }
+                        fieldValues(first: 10) {
+                          nodes {
+                            ... on ProjectV2ItemFieldIterationValue {
+                              field {
+                                ... on ProjectV2IterationField {
+                                  id
+                                }
+                              }
+                              iterationId
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, {
+              projectId,
+            });
+
+            const iterations = projectData.node?.field?.configuration?.iterations || [];
+            const items = projectData.node?.items?.nodes || [];
+
+            // Sort iterations by start date
+            const sortedIterations = [...iterations].sort((a, b) => 
+              new Date(a.startDate) - new Date(b.startDate)
+            );
+
+            const now = new Date();
+            let incompleteCount = 0;
+
+            // Process each item
+            for (const item of items) {
+              if (!item.content || item.content.state !== 'OPEN') {
+                continue;
+              }
+
+              // Get current iteration ID for this item
+              const iterationValue = item.fieldValues?.nodes?.find(fv => 
+                fv.field?.id === iterationFieldId
+              );
+              const currentIterationId = iterationValue?.iterationId;
+
+              if (!currentIterationId) {
+                continue;
+              }
+
+              // Find current and next iteration
+              const currentIter = iterations.find(it => it.id === currentIterationId);
+              if (!currentIter) {
+                continue;
+              }
+
+              const iterEndDate = new Date(currentIter.startDate);
+              iterEndDate.setDate(iterEndDate.getDate() + (currentIter.duration || 14));
+
+              // If iteration has ended and issue is still open, move to next
+              if (now > iterEndDate) {
+                // Find next iteration
+                const currentIndex = sortedIterations.findIndex(it => it.id === currentIterationId);
+                let nextIteration = null;
+
+                for (let i = currentIndex + 1; i < sortedIterations.length; i++) {
+                  nextIteration = sortedIterations[i];
+                  break;
+                }
+
+                if (!nextIteration) {
+                  // Create a reference to future iteration or skip
+                  core.info(`Issue #${item.content.number} has no next iteration to move to`);
+                  continue;
+                }
+
+                try {
+                  // Move to next iteration
+                  await github.graphql(`
+                    mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $iterationId: String!) {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: $projectId,
+                        itemId: $itemId,
+                        fieldId: $fieldId,
+                        value: {
+                          iterationId: $iterationId
+                        }
+                      }) {
+                        projectV2Item {
+                          id
+                        }
+                      }
+                    }
+                  `, {
+                    projectId,
+                    itemId: item.id,
+                    fieldId: iterationFieldId,
+                    iterationId: nextIteration.id,
+                  });
+
+                  // Add comment to issue
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: item.content.number,
+                    body: `🔄 **Автоматический перенос**: Задача не была завершена в итерации "${currentIter.title}" и перенесена в итерацию "${nextIteration.title}".`,
+                  });
+
+                  // Update or add moved count label: moved:N
+                  try {
+                    // Get current labels on the issue
+                    const labelsResp = await github.rest.issues.listLabelsOnIssue({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: item.content.number,
+                    });
+
+                    const existingLabels = labelsResp.data.map(l => l.name);
+                    const movedLabel = existingLabels.find(n => n.startsWith('moved:'));
+                    let movedCount = 1;
+
+                    if (movedLabel) {
+                      const parts = movedLabel.split(':');
+                      const prev = parseInt(parts[1]) || 0;
+                      movedCount = prev + 1;
+                    }
+
+                    // Build new labels array: keep non-moved labels, add updated moved label
+                    const newLabels = existingLabels.filter(n => !n.startsWith('moved:'));
+                    newLabels.push(`moved:${movedCount}`);
+
+                    // Update issue labels (this replaces labels)
+                    await github.rest.issues.update({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: item.content.number,
+                      labels: newLabels,
+                    });
+
+                    // Add follow-up comment with moved count
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: item.content.number,
+                      body: `ℹ️ Метка переносов обновлена: **moved:${movedCount}**`,
+                    });
+                  } catch (lblErr) {
+                    core.warning(`Failed to update moved label for #${item.content.number}: ${lblErr.message}`);
+                  }
+
+                  incompleteCount++;
+                  core.info(`Moved #${item.content.number} from "${currentIter.title}" to "${nextIteration.title}"`);
+                } catch (error) {
+                  core.warning(`Failed to move issue #${item.content.number}: ${error.message}`);
+                }
+              }
+            }
+
+            core.info(`Completed: moved ${incompleteCount} incomplete issues to next iteration`);
