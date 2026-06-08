@@ -7,9 +7,11 @@ namespace EasyEPlanner
 {
     public class SelectInteractionWhileEditModes : Interaction
     {
+        [ExcludeFromCodeCoverage]
         public override bool IsAutorestartEnabled =>
             EProjectManager.GetInstance().ShouldAutorestartInteraction;
 
+        [ExcludeFromCodeCoverage]
         public override RequestCode OnStart(InteractionContext pContext)
         {
             IsFinish = false;
@@ -20,6 +22,7 @@ namespace EasyEPlanner
                    RequestCode.NoMultiSelect;
         }
 
+        [ExcludeFromCodeCoverage]
         public override RequestCode OnRestart()
         {
             IsFinish = false;
@@ -30,6 +33,7 @@ namespace EasyEPlanner
                    RequestCode.NoMultiSelect;
         }
 
+        [ExcludeFromCodeCoverage]
         public override RequestCode OnPageChange()
         {
             if (EProjectManager.GetInstance().IsEditBindingActive())

@@ -118,6 +118,7 @@ namespace EasyEPlanner
                 }
                 catch (InvalidOperationException)
                 {
+                    // do nothing
                 }
             }
         }

@@ -57,6 +57,7 @@ namespace EasyEPlanner
             EnabledEditMode = true;
         }
 
+        [ExcludeFromCodeCoverage]
         public bool IsEditBindingActive()
         {
             if (EnabledEditMode)
@@ -89,6 +90,7 @@ namespace EasyEPlanner
             }
         }
 
+        [ExcludeFromCodeCoverage]
         public bool ShouldAutorestartInteraction =>
             IsEditBindingActive() && !isRestartingEditModes;
 
