@@ -21,6 +21,7 @@ namespace InterprojectExchange
         {
             interprojectExchangeStarter = null;
             interprojectExchangeModels.Clear();
+            InterprojectProjectCatalog.Invalidate();
         }
 
         public void AddModel(IProjectModel model)
@@ -30,14 +31,15 @@ namespace InterprojectExchange
 
         public bool LoadProjectData(string pathToProjectDir, out string errors)
         {
-            // Генерация пути к папке с проектами и его имени из полного пути
-            string[] splittedPath = pathToProjectDir.Split('\\');
-            int lastElem = splittedPath.Length - 1;
-            string projName = splittedPath[lastElem];
-            string pathToProjectsDir = pathToProjectDir.Replace(projName, "");
-            bool loaded = Owner.LoadProjectData(pathToProjectsDir, projName,
-                out errors);
-            return loaded;
+            if (!MainIoProjectNameReader.TryReadFromFolder(pathToProjectDir,
+                out string projName, out string readError))
+            {
+                errors = readError;
+                return false;
+            }
+
+            InterprojectProjectCatalog.Register(pathToProjectDir, projName);
+            return Owner.LoadProjectData(pathToProjectDir, projName, out errors);
         }
 
         public bool CheckPathToProjectFiles(string path)

@@ -1,4 +1,5 @@
 using LuaInterface;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using EasyEPlanner;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System;
 using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InterprojectExchange
 {
@@ -72,10 +74,16 @@ namespace InterprojectExchange
                 return false;
             }
 
+            _projectsNotOpenedOnLoad.Clear();
             string projName = interprojectExchange.MainProjectName;
-            string pathToProjectDir = ProjectManager.GetInstance()
-                .GetPtusaProjectsPath(projName);
-            LoadProjectsData(pathToProjectDir, projName);
+            if (!TryResolveProjectFolder(projName, out string mainProjectFolder))
+            {
+                _projectsNotOpenedOnLoad.Add(
+                    $"{projName}: не найден каталог проекта");
+                return false;
+            }
+
+            LoadProjectsData(mainProjectFolder, projName);
             return true;
         }
 
@@ -129,8 +137,7 @@ namespace InterprojectExchange
         /// <returns></returns>
         public string GetMainProjectName()
         {
-            return EProjectManager.GetInstance()
-                .GetModifyingCurrentProjectName();
+            return interprojectExchange.MainProjectName;
         }
 
         /// <summary>
@@ -140,26 +147,24 @@ namespace InterprojectExchange
         /// <param name="projName">Имя проекта</param>
         /// <param name="errors">Ошибки во время загрузки</param>
         /// <returns>Загружены данные или нет</returns>
-        public bool LoadProjectData(string pathToProjectDir, 
+        public bool LoadProjectData(string pathToProjectFolder,
             string projName, out string errors)
         {
             InitLuaInstance();
             LoadScripts();
-            LoadMainIOData(pathToProjectDir, projName);
-            LoadAdvancedProjectSharedLuaData(pathToProjectDir, projName);
+            LoadMainIOData(pathToProjectFolder, projName);
+            LoadAdvancedProjectSharedLuaData(pathToProjectFolder, projName);
             errors = SetIPFromMainModel(projName);
             if (string.IsNullOrEmpty(errors))
             {
                 var model = interprojectExchange.GetModel(projName);
-                model.PathToProject = pathToProjectDir;
+                model.PathToProject = pathToProjectFolder;
                 model.Loaded = true;
 
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -169,35 +174,119 @@ namespace InterprojectExchange
         /// </param>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        public void LoadProjectsData(string pathToMainProject, 
+        public void LoadProjectsData(string pathToMainProjectFolder,
             string projName = "")
         {
             InitLuaInstance();
             LoadScripts();
-            LoadMainIOData(pathToMainProject, projName);
+            if (!LoadMainIOData(pathToMainProjectFolder, projName))
+            {
+                AddProjectNotOpened(projName, "не удалось загрузить main.io.lua");
+            }
+
             GenerateSharedDevices(projName);
-            LoadCurrentProjectSharedLuaData(pathToMainProject, projName);
-            interprojectExchange.MainModel.PathToProject = pathToMainProject;
+            LoadCurrentProjectSharedLuaData(pathToMainProjectFolder, projName);
+            var mainModel = interprojectExchange.MainModel;
+            if (mainModel != null)
+            {
+                mainModel.PathToProject = pathToMainProjectFolder;
+            }
 
             foreach (var model in interprojectExchange.Models)
             {
-                string alternativeProject = model.ProjectName;
-                if (alternativeProject != projName)
+                if (model == interprojectExchange.MainModel)
                 {
-                    string pathToProject = ProjectManager.GetInstance()
-                        .GetPtusaProjectsPath(alternativeProject);
-                    InitLuaInstance();
-                    LoadScripts();
-                    model.Selected = true;
-                    model.Loaded = LoadMainIOData(pathToProject, alternativeProject);
-                    GenerateSharedDevices(alternativeProject);
-                    LoadAdvancedProjectSharedLuaData(pathToProject,
-                        alternativeProject);
-                    model.Selected = false;
-                    SetIPFromMainModel(alternativeProject);
-                    model.PathToProject = pathToProject;
+                    continue;
                 }
+
+                string alternativeProject = model.ProjectName;
+                if (string.IsNullOrEmpty(alternativeProject) ||
+                    alternativeProject == projName)
+                {
+                    continue;
+                }
+
+                if (!TryResolveProjectFolder(alternativeProject,
+                    out string projectFolder))
+                {
+                    AddProjectNotOpened(alternativeProject,
+                        "не найден каталог проекта");
+                    continue;
+                }
+
+                InitLuaInstance();
+                LoadScripts();
+                model.Selected = true;
+                bool loaded = LoadMainIOData(projectFolder, alternativeProject);
+                model.Loaded = loaded;
+                if (!loaded)
+                {
+                    AddProjectNotOpened(alternativeProject,
+                        "не удалось загрузить main.io.lua");
+                }
+
+                GenerateSharedDevices(alternativeProject);
+                LoadAdvancedProjectSharedLuaData(projectFolder, alternativeProject);
+                model.Selected = false;
+                SetIPFromMainModel(alternativeProject);
+                model.PathToProject = projectFolder;
             }
+        }
+
+        private void AddProjectNotOpened(string projectName, string reason)
+        {
+            _projectsNotOpenedOnLoad.Add($"{projectName}: {reason}");
+        }
+
+        private void ShowProjectsNotOpenedSummary()
+        {
+            string summary = BuildProjectsNotOpenedSummaryText();
+            if (summary == null || form == null)
+            {
+                return;
+            }
+
+            form.ShowWarningMessage(summary, MessageBoxButtons.OK);
+        }
+
+        private string BuildProjectsNotOpenedSummaryText()
+        {
+            if (_projectsNotOpenedOnLoad.Count == 0)
+            {
+                return null;
+            }
+
+            var summary = new StringBuilder();
+            summary.AppendLine("Не удалось открыть следующие проекты:");
+            foreach (string line in _projectsNotOpenedOnLoad)
+            {
+                summary.AppendLine($"• {line}");
+            }
+
+            return summary.ToString().TrimEnd();
+        }
+
+        private static bool TryResolveProjectFolder(string projectName,
+            out string projectFolder)
+        {
+            if (InterprojectProjectCatalog.TryGetProjectFolder(projectName,
+                out projectFolder))
+            {
+                return true;
+            }
+
+            string projectsBasePath = ProjectManager.GetInstance()
+                .GetPtusaProjectsPath(projectName);
+            string legacyFolder = Path.Combine(projectsBasePath, projectName);
+            if (File.Exists(Path.Combine(legacyFolder, devicesAndPLCFile)))
+            {
+                projectFolder = legacyFolder;
+                InterprojectProjectCatalog.Register(legacyFolder, projectName);
+                return true;
+            }
+
+            projectFolder = null;
+            return false;
         }
 
         /// <summary>
@@ -234,13 +323,12 @@ namespace InterprojectExchange
         /// <summary>
         /// Чтение информации о ПЛК из main.io.lua
         /// </summary>
-        /// <param name="pathToProjectsDir">Путь к папке с проектами</param>
-        /// <param name="projName">Имя проекта</param>
-        /// <returns></returns>
-        private bool LoadMainIOData(string pathToProjectsDir, 
+        /// <param name="pathToProjectFolder">Каталог с main.io.lua</param>
+        /// <param name="projName">Имя проекта (PAC_name)</param>
+        private bool LoadMainIOData(string pathToProjectFolder,
             string projName)
         {
-            string pathToIOFile = Path.Combine(pathToProjectsDir, projName,
+            string pathToIOFile = Path.Combine(pathToProjectFolder,
                 devicesAndPLCFile);
             if (File.Exists(pathToIOFile))
             {
@@ -249,8 +337,10 @@ namespace InterprojectExchange
                 string ioInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(ioInfo);
-                // Функция из Lua
-                lua.DoString($"init_io_file('{projName}')");
+                string folderName = Path.GetFileName(
+                    pathToProjectFolder.TrimEnd('\\', '/'))
+                    .Replace("'", "\\'");
+                lua.DoString($"init_io_file('{folderName}')");
                 return true;
             }
             else
@@ -261,13 +351,12 @@ namespace InterprojectExchange
             }
         }
 
-        public void WarningProjectNameInIOFile(string projectName)
+        public void WarningProjectNameInIOFile(string folderName)
         {
-            form.ShowWarningMessage($"Имя проекта PAC_Name = '{projectName}' в" +
-                $" файле main.io.lua не совпадает с именем проекта" +
-                $" '{GetSelectedModel().ProjectName}'. Для создания модели" +
-                $" будет использовано имя проекта. Рекомендуется" +
-                $" обновить связанный проект.", MessageBoxButtons.OK);
+            form.ShowWarningMessage(
+                $"PAC_name в main.io.lua не совпадает с именем каталога \"{folderName}\". " +
+                "Используется PAC_name из файла.",
+                MessageBoxButtons.OK);
         }
 
         /// <summary>
@@ -291,13 +380,12 @@ namespace InterprojectExchange
         /// <summary>
         /// Чтение Shared файла текущего проекта
         /// </summary>
-        /// <param name="pathToProjectsDir">Путь к каталогу с проектами</param>
+        /// <param name="pathToProjectFolder">Каталог с файлами проекта</param>
         /// <param name="projName">Имя проекта</param>
-        /// <returns></returns>
-        private void LoadCurrentProjectSharedLuaData(string pathToProjectsDir,
+        private void LoadCurrentProjectSharedLuaData(string pathToProjectFolder,
             string projName)
         {
-            string pathToSharedFile = Path.Combine(pathToProjectsDir, projName,
+            string pathToSharedFile = Path.Combine(pathToProjectFolder,
                 signalsFile);
             if (File.Exists(pathToSharedFile))
             {
@@ -315,13 +403,12 @@ namespace InterprojectExchange
         /// <summary>
         /// Чтение Shared файла альтернативного проекта
         /// </summary>
-        /// <param name="pathToProjectsDir">Путь к каталогу с проектами</param>
+        /// <param name="pathToProjectFolder">Каталог с файлами проекта</param>
         /// <param name="projName">Имя проекта</param>
-        /// <returns></returns>
-        public void LoadAdvancedProjectSharedLuaData(string pathToProjectsDir,
+        public void LoadAdvancedProjectSharedLuaData(string pathToProjectFolder,
             string projName)
         {
-            string pathToSharedFile = Path.Combine(pathToProjectsDir, projName,
+            string pathToSharedFile = Path.Combine(pathToProjectFolder,
                 signalsFile);
             if (File.Exists(pathToSharedFile))
             {
@@ -404,17 +491,21 @@ namespace InterprojectExchange
         /// <summary>
         /// Показать форму для работы с межпроектным обменом.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ShowForm(bool isLoaded)
         {
-            if (isLoaded == false)
-            {
-                return;
-            }
-
             if (form == null || form.IsDisposed)
             {
                 form = new InterprojectExchangeForm();
             }
+
+            if (isLoaded == false)
+            {
+                ShowProjectsNotOpenedSummary();
+                return;
+            }
+
+            ShowProjectsNotOpenedSummary();
             form.ShowDialog();
         }
 
@@ -442,6 +533,7 @@ namespace InterprojectExchange
         private InterprojectExchangeForm form;
         private readonly IInterprojectExchange interprojectExchange;
         private InterprojectExchangeSaver interprojectExchangeSaver;
+        private readonly List<string> _projectsNotOpenedOnLoad = new List<string>();
 
         Lua lua;
     }
