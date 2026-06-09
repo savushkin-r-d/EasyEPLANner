@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using EplanDevice;
 
 namespace InterprojectExchange
 {
@@ -7,27 +8,41 @@ namespace InterprojectExchange
     /// </summary>
     public class DeviceInfo
     {
-        public DeviceInfo(string name, string description)
+        public DeviceInfo(string name, string description,
+            int deviceType = -1, int subTypeIndex = 0)
         {
             Name = name;
             Description = description;
-            Type = GetType(name);
+            Type = GetType(name, deviceType, subTypeIndex);
         }
 
         /// <summary>
-        /// Получить тип на основе имени устройства;
+        /// Получить тип для фильтрации на основе имени и подтипа устройства.
         /// </summary>
         /// <param name="devName">Имя устройства</param>
-        /// <returns></returns>
-        private string GetType(string devName)
+        /// <param name="deviceType">Тип устройства из main.io.lua</param>
+        /// <param name="subTypeIndex">Индекс подтипа из main.io.lua</param>
+        private static string GetType(string devName, int deviceType,
+            int subTypeIndex)
         {
-            var result = "";
+            if (deviceType >= 0 && subTypeIndex > 0)
+            {
+                var subType = (DeviceSubType)(deviceType * DSTExt.TypeMultiplier
+                    + subTypeIndex);
+                string subTypeName = subType.ToString();
+                if (subTypeName.EndsWith("_VIRT"))
+                {
+                    return subTypeName;
+                }
+            }
+
             var match = Regex.Match(devName, DeviceComparer.RegExpPattern);
             if (match.Success)
             {
-                result = match.Groups["type"].Value.ToUpper();
+                return match.Groups["type"].Value.ToUpper();
             }
-            return result;
+
+            return string.Empty;
         }
 
         /// <summary>
