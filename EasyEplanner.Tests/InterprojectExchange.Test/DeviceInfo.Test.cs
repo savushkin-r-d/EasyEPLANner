@@ -37,5 +37,29 @@ namespace EasyEplannerTests.InterprojectExchangeTest
 
             Assert.AreEqual("DO", deviceInfo.Type);
         }
+
+        [Test]
+        public void Type_VirtualAI_ReturnsAI_VIRT()
+        {
+            int deviceType = (int)DeviceType.AI;
+            int subTypeIndex = DeviceSubType.AI_VIRT.GetIndex();
+
+            var deviceInfo = new DeviceInfo("+TANK1AI1", "Test AI virt",
+                deviceType, subTypeIndex);
+
+            Assert.AreEqual("AI_VIRT", deviceInfo.Type);
+        }
+
+        [Test]
+        public void Type_VirtualDI_ReturnsDI_VIRT()
+        {
+            int deviceType = (int)DeviceType.DI;
+            int subTypeIndex = DeviceSubType.DI_VIRT.GetIndex();
+
+            var deviceInfo = new DeviceInfo("+TANK1DI1", "Test DI virt",
+                deviceType, subTypeIndex);
+
+            Assert.AreEqual("DI_VIRT", deviceInfo.Type);
+        }
     }
 }
