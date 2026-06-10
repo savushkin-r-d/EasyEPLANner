@@ -912,5 +912,33 @@ namespace EasyEplanner.Tests
 
             Assert.AreEqual("error 1\nerror 2\n", error);
         }
+
+        [Test]
+        public void Clone_ActionsOwnerPointsToClonedTechObject()
+        {
+            var baseTechObject = new BaseTechObject();
+            var sourceTechObject = new TechObject.TechObject("Танк", getN => 1, 1, 2,
+                "CREAM_TANK", -1, "", "", baseTechObject);
+            var targetTechObject = new TechObject.TechObject("Танк", getN => 2, 3, 2,
+                "CREAM_TANK", -1, "", "", baseTechObject);
+
+            var sourceMode = new Mode("Операция", getN => 1, sourceTechObject.ModesManager);
+            var targetMode = new Mode("Операция", getN => 1, targetTechObject.ModesManager);
+            var sourceState = new State(State.StateType.RUN, sourceMode, true);
+            var targetState = new State(State.StateType.RUN, targetMode, true);
+
+            var sourceStep = sourceState.Steps[0];
+            var clonedStep = sourceStep.Clone(targetState, getN => 1);
+            var openDevicesAction = clonedStep.GetActions
+                .First(action => action.LuaName == "opened_devices");
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreSame(targetTechObject, openDevicesAction.Owner.TechObject);
+                Assert.AreNotSame(sourceTechObject, openDevicesAction.Owner.TechObject);
+                Assert.AreSame(clonedStep, openDevicesAction.Owner);
+                Assert.AreEqual(3, openDevicesAction.Owner.TechObject.TechNumber);
+            });
+        }
     }
 }
