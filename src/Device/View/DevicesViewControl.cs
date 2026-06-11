@@ -21,19 +21,16 @@ namespace EasyEPlanner.Devices.View
 {
     public partial class DevicesViewControl : Form
     {
-        private const string SearchPlaceholder = "Поиск...";
         private bool cancelChanges;
         private bool isCellEditing;
         private string searchText = string.Empty;
         private System.Windows.Forms.Timer textBoxSearchTypingTimer;
-        private bool updatingModelFilter;
         private TextBox textBoxCellEditor;
         private ComboBox comboBoxCellEditor;
         private IEditable cellEditItem;
         private bool cellEditUsesComboBox;
         private bool cellEditUsesMultiline;
         private ToolStripMenuItem goToFasMenuItem;
-        private SearchIterator searchIterator;
         private bool runtimeInitialized;
 
         public static DevicesViewControl Instance { get; private set; }
@@ -213,12 +210,6 @@ namespace EasyEPlanner.Devices.View
 
         private void InitSearch()
         {
-            searchIterator = new SearchIterator
-            {
-                Dock = DockStyle.Fill,
-            };
-            searchIteratorPanel.Controls.Add(searchIterator);
-
             searchIterator.IndexChanged += SearchIterator_IndexChanged;
             searchIterator.SearchSettingsChanged += UpdateModelFilter;
         }
@@ -559,13 +550,6 @@ namespace EasyEPlanner.Devices.View
 
         private void DevicesTree_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F && e.Control)
-            {
-                ShowSearch();
-                e.Handled = true;
-                return;
-            }
-
             if (e.KeyCode == Keys.Escape && isCellEditing)
             {
                 cancelChanges = true;
@@ -577,7 +561,7 @@ namespace EasyEPlanner.Devices.View
         {
             if (keyData == (Keys.Control | Keys.F))
             {
-                ShowSearch();
+                searchTSButton.PerformClick();
                 return true;
             }
 
@@ -642,30 +626,43 @@ namespace EasyEPlanner.Devices.View
 
         private void SearchTSButton_Click(object sender, EventArgs e)
         {
-            ShowSearch();
+            searchTSButton.Visible = false;
+            searchBoxTLP.Visible = true;
+            textBox_search.Focus();
         }
 
-        private void ShowSearch()
+        private void SearchBoxTLP_Paint(object sender, PaintEventArgs e)
         {
-            searchButtonToolStrip.Visible = false;
-            searchBoxTLP.Visible = true;
+            var rect = e.ClipRectangle;
+            rect.Inflate(-1, -1);
+            e.Graphics.Clear(Color.White);
+            e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.Black)), rect);
+        }
+
+        private void SearchBoxTLP_MouseClick(object sender, MouseEventArgs e)
+        {
             textBox_search.Focus();
         }
 
         private void TextBox_search_TextChanged(object sender, EventArgs e)
         {
-            if (textBox_search.Text is SearchPlaceholder or "")
+            if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
             {
-                if (searchIterator is not null)
-                    searchIterator.Maximum = 0;
+                searchIterator.Maximum = 0;
                 searchText = string.Empty;
                 UpdateModelFilter();
                 return;
             }
 
-            textBoxSearchTypingTimer ??= new System.Windows.Forms.Timer { Interval = 500 };
-            textBoxSearchTypingTimer.Tick -= TextBoxSearchTypingTimer_Tick;
-            textBoxSearchTypingTimer.Tick += TextBoxSearchTypingTimer_Tick;
+            if (textBoxSearchTypingTimer is null)
+            {
+                textBoxSearchTypingTimer = new System.Windows.Forms.Timer
+                {
+                    Interval = 300,
+                };
+                textBoxSearchTypingTimer.Tick += TextBoxSearchTypingTimer_Tick;
+            }
+
             textBoxSearchTypingTimer.Stop();
             textBoxSearchTypingTimer.Tag = textBox_search.Text;
             textBoxSearchTypingTimer.Start();
@@ -673,56 +670,80 @@ namespace EasyEPlanner.Devices.View
 
         private void TextBoxSearchTypingTimer_Tick(object sender, EventArgs e)
         {
-            textBoxSearchTypingTimer?.Stop();
-            searchText = textBoxSearchTypingTimer?.Tag?.ToString() ?? string.Empty;
+            if (textBoxSearchTypingTimer is null)
+                return;
+
+            searchText = textBoxSearchTypingTimer.Tag.ToString();
             UpdateModelFilter();
+            textBoxSearchTypingTimer.Stop();
         }
 
-        private void TextBox_search_Enter(object sender, EventArgs e)
+        private void TextBox_search_GotFocus(object sender, EventArgs e)
         {
-            if (textBox_search.Text == SearchPlaceholder)
+            if (textBox_search.Text == "Поиск...")
             {
                 textBox_search.ForeColor = Color.Black;
                 textBox_search.Text = string.Empty;
             }
+
         }
 
-        private void TextBox_search_Leave(object sender, EventArgs e)
+        private void TextBox_search_LostFocus(object sender, EventArgs e)
         {
-            if (searchIterator?.SettingsButtonsFocused == true)
+            if (searchIterator.SettingsButtonsFocused)
             {
                 textBox_search.Focus();
                 return;
             }
 
-            if (textBox_search.Text == string.Empty && !updatingModelFilter)
+            if (textBox_search.Text == string.Empty && UpdatingModelFilter is false)
             {
                 textBox_search.ForeColor = Color.Gray;
-                textBox_search.Text = SearchPlaceholder;
+                textBox_search.Text = "Поиск...";
                 searchBoxTLP.Visible = false;
-                searchButtonToolStrip.Visible = true;
+                searchTSButton.Visible = true;
             }
         }
 
+        private void TextBox_search_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.V | Keys.Control:
+                    (sender as TextBox).Paste();
+                    break;
+
+                case Keys.C | Keys.Control:
+                    (sender as TextBox).Copy();
+                    break;
+
+                case Keys.X | Keys.Control:
+                    (sender as TextBox).Cut();
+                    break;
+
+                case Keys.Escape:
+                    devicesTree.Focus();
+                    break;
+            }
+        }
+
+        private bool UpdatingModelFilter { get; set; }
+
         private void UpdateModelFilter()
         {
-            updatingModelFilter = true;
-            var searchBoxWasFocused = textBox_search.Focused;
+            UpdatingModelFilter = true;
+            bool searchBoxWasFocused = textBox_search.Focused;
 
             devicesTree.UseFiltering = false;
             DataContext.SearchContext.FoundItems.Clear();
             ResetFilter(DataContext.Roots.Cast<IFilterableViewItem>());
 
             TextMatchFilter highlightingFilter = null;
-            if (!string.IsNullOrEmpty(searchText))
+            if (searchText != string.Empty)
             {
                 devicesTree.UseFiltering = true;
                 searchIterator.Maximum = DataContext.SearchContext.FoundItems.Count;
                 highlightingFilter = TextMatchFilter.Contains(devicesTree, searchText);
-            }
-            else
-            {
-                searchIterator.Maximum = 0;
             }
 
             devicesTree.DefaultRenderer = highlightingFilter is null
@@ -740,7 +761,7 @@ namespace EasyEPlanner.Devices.View
             if (searchBoxWasFocused)
                 textBox_search.Focus();
 
-            updatingModelFilter = false;
+            UpdatingModelFilter = false;
         }
 
         private static void ResetFilter(IEnumerable<IFilterableViewItem> items)

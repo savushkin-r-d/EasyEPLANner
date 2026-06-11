@@ -144,7 +144,7 @@ namespace Editor
             this.reorderObjectsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(555, 29);
+            this.toolStrip.Size = new System.Drawing.Size(586, 29);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -912,7 +912,7 @@ namespace Editor
             this.searchBoxTLP.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.searchBoxTLP.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchBoxTLP.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.searchBoxTLP.Location = new System.Drawing.Point(557, 2);
+            this.searchBoxTLP.Location = new System.Drawing.Point(588, 2);
             this.searchBoxTLP.Margin = new System.Windows.Forms.Padding(2);
             this.searchBoxTLP.Name = "searchBoxTLP";
             this.searchBoxTLP.RowCount = 1;
@@ -979,9 +979,9 @@ namespace Editor
             this.searchTSButton,
             this.toolStripSeparator7});
             this.searchButtonToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.searchButtonToolStrip.Location = new System.Drawing.Point(775, 0);
+            this.searchButtonToolStrip.Location = new System.Drawing.Point(806, 0);
             this.searchButtonToolStrip.Name = "searchButtonToolStrip";
-            this.searchButtonToolStrip.Size = new System.Drawing.Size(63, 29);
+            this.searchButtonToolStrip.Size = new System.Drawing.Size(32, 29);
             this.searchButtonToolStrip.TabIndex = 5;
             this.searchButtonToolStrip.Text = "toolStrip1";
             // 

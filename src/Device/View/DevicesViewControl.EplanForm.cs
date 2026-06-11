@@ -218,6 +218,7 @@ namespace EasyEPlanner.Devices.View
             MainTableLayoutPanel.Location = new Point(0, 0);
             MainTableLayoutPanel.Width = rctDialog.Right - rctDialog.Left;
             MainTableLayoutPanel.Height = rctDialog.Bottom - rctDialog.Top;
+            searchBoxTLP.Invalidate();
         }
 
         private void DevicesTree_MouseEnter(object sender, EventArgs e)
