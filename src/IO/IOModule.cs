@@ -1,4 +1,4 @@
-﻿using EplanDevice;
+using EplanDevice;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,17 @@ namespace IO
     /// </summary>
     public class IOModule : IIOModule
     {
+        public class EplanData
+        {
+            public IEplanFunction Function { get; set; }
+
+            public string NamePrefix { get; set; } = "A";
+
+            public string Location { get; set; } = "";
+
+            public string LocationDescription { get; set; } = "";
+        }
+
         /// <summary>
         /// Конструктор.
         /// </summary>
@@ -23,25 +34,39 @@ namespace IO
         /// <param name="physicalNumber">Физический номер (из ОУ) устройства.
         /// </param>
         /// <param name="articleName">Имя изделия модуля ввода-вывода</param>
-        /// <param name="function">Eplan функция модуля.</param>
+        /// <param name="eplanData">Данные модуля из Eplan.</param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info, int physicalNumber, string articleName,
-            IEplanFunction function)
+            EplanData eplanData)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
             this.info = info;
             this.physicalNumber = physicalNumber;
-            this.function = function;
+            this.function = eplanData?.Function;
             this.articleName = articleName;
+            this.namePrefix = eplanData?.NamePrefix ?? "A";
+            this.location = eplanData?.Location ?? "";
+            this.locationDescription = eplanData?.LocationDescription ?? "";
 
             devicesChannels = new List<EplanDevice.IODevice.IIOChannel>[80];
             devices = new List<EplanDevice.IIODevice>[80];
         }
 
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
+            IOModuleInfo info, int physicalNumber, string articleName,
+            IEplanFunction function)
+            : this(inAddressSpaceOffset, outAddressSpaceOffset, info,
+                  physicalNumber, articleName,
+                  new EplanData { Function = function })
+        {
+            // Делегировано в конструктор с параметрами Eplan.
+        }
+
+        public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info) : this(inAddressSpaceOffset,
-                outAddressSpaceOffset, info, 0, string.Empty, null)
+                outAddressSpaceOffset, info, 0, string.Empty,
+                (IEplanFunction)null)
         {
             // Делегировано в конструктор с 5 параметрами.
         }
@@ -93,7 +118,7 @@ namespace IO
             Dictionary<string, int> modulesCount, 
             Dictionary<string, Color> modulesColor)
         {
-            string moduleName = Info.Number.ToString();
+            string moduleName = $"{Info.Name}\n{Info.Number})";
             if (modulesCount.ContainsKey(moduleName))
             {
                 modulesCount[moduleName]++;
@@ -399,7 +424,7 @@ namespace IO
         {
             get
             {
-                return $"A{physicalNumber}";
+                return $"{namePrefix}{physicalNumber}";
             }
         }
 
@@ -410,6 +435,10 @@ namespace IO
                 return articleName;
             }
         }
+
+        public string Location => location;
+
+        public string LocationDescription => locationDescription;
 
         public bool IsIOLink(bool collectOnlyPhoenixContact = false)
         {
@@ -513,6 +542,9 @@ namespace IO
         private int physicalNumber;
         private readonly IEplanFunction function;
         private string articleName;
+        private readonly string namePrefix;
+        private readonly string location;
+        private readonly string locationDescription;
         #endregion
     }
 }

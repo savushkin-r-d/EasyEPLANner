@@ -26,6 +26,16 @@ namespace IO
         string ArticleName { get; }
 
         /// <summary>
+        /// Расположение модуля.
+        /// </summary>
+        string Location { get; }
+
+        /// <summary>
+        /// Описание расположения модуля.
+        /// </summary>
+        string LocationDescription { get; }
+
+        /// <summary>
         /// Привязанные устройства.
         /// </summary>
         List<EplanDevice.IIODevice>[] Devices { get; }

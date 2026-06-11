@@ -26,5 +26,31 @@ namespace IOTests
                 Assert.IsEmpty(loc.Items);
             });
         }
+
+        [Test]
+        public void Items_DeletedModules_AddsDeletedModulesGroup()
+        {
+            var deletedModule = Mock.Of<IIOModule>(module =>
+                module.Name == "DEL338" &&
+                module.PhysicalNumber == 338);
+
+            var loc = new Location("+CAB1", "Шкаф 1", new List<IIONode>(),
+                new[] { deletedModule });
+
+            var deletedModulesGroup = loc.Items
+                .OfType<DeletedModulesGroup>()
+                .Single();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(loc.Expanded);
+                Assert.AreEqual("Исключенные модули",
+                    deletedModulesGroup.Name);
+                Assert.AreEqual(Icon.EmptyModule,
+                    (deletedModulesGroup as IHasIcon).Icon);
+                Assert.AreEqual("DEL338",
+                    deletedModulesGroup.Items.Single().Name);
+            });
+        }
     }
 }

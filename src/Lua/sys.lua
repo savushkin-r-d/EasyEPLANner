@@ -253,6 +253,7 @@ function proc_wash_data(step, value)
         if (wash_data.DI or
             wash_data.DO or
             wash_data.devices or
+            wash_data.deactivate_devices or
             wash_data.rev_devices or
             wash_data.pump_freq) then
 

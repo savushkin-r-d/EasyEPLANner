@@ -27,5 +27,36 @@ namespace IOTests
                 Assert.AreSame(context, root.Context);
             });
         }
+
+        [Test]
+        public void Items_DeletedModulesWithoutLocation_AddsDeletedModulesGroup()
+        {
+            var deletedModule = Mock.Of<IIOModule>(module =>
+                module.Name == "DEL338" &&
+                module.PhysicalNumber == 338 &&
+                module.Location == string.Empty);
+            var ioManager = Mock.Of<IIOManager>(manager =>
+                manager.IONodes == new List<IIONode>() &&
+                manager.DeletedModules == new List<IIOModule>
+                {
+                    deletedModule
+                });
+            var context = Mock.Of<IIOViewModel>(viewModel =>
+                viewModel.IOManager == ioManager);
+
+            var root = new Root(context);
+
+            var deletedModulesGroup = root.Items
+                .OfType<DeletedModulesGroup>()
+                .Single();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Исключенные модули",
+                    deletedModulesGroup.Name);
+                Assert.AreEqual("DEL338",
+                    deletedModulesGroup.Items.Single().Name);
+            });
+        }
     }
 }

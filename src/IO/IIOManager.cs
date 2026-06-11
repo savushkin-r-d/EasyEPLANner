@@ -14,6 +14,11 @@ namespace IO
         List<IIONode> IONodes { get; }
 
         /// <summary>
+        /// Модули, исключенные из активной структуры PLC.
+        /// </summary>
+        List<IIOModule> DeletedModules { get; }
+
+        /// <summary>
         /// Расчет IO-Link адресов привязанных устройств для всех модулей
         /// ввода-вывода.
         /// </summary>
