@@ -306,7 +306,7 @@ namespace EasyEPlanner.Devices.View
             this.ClientSize = new System.Drawing.Size(800, 600);
             this.Controls.Add(this.MainTableLayoutPanel);
             this.Name = "DevicesViewControl";
-            this.Text = "Устройства (new)";
+            this.Text = "Устройства";
             this.MainTableLayoutPanel.ResumeLayout(false);
             this.toolbarPanel.ResumeLayout(false);
             this.toolbarPanel.PerformLayout();

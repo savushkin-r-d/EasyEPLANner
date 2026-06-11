@@ -50,9 +50,7 @@ namespace EasyEPlanner.Devices.View
 
             Instance.EnsureRuntimeInitialized();
             Instance.InitDataDevicesTree();
-            Instance.Show();
-            Instance.BringToFront();
-            Instance.WindowState = FormWindowState.Normal;
+            Instance.ShowDlg();
         }
 
         public void Clear()
@@ -135,6 +133,8 @@ namespace EasyEPlanner.Devices.View
             InitDevicesTree();
             InitSearch();
             InitContextMenu();
+            devicesTree.MouseEnter += DevicesTree_MouseEnter;
+            devicesTree.MouseLeave += DevicesTree_MouseLeave;
         }
 
         private static string GetToolTipForNameColumn(object obj)
