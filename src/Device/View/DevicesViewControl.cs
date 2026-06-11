@@ -23,6 +23,7 @@ namespace EasyEPlanner.Devices.View
     {
         private bool cancelChanges;
         private bool isCellEditing;
+        private bool isSearchEditing;
         private string searchText = string.Empty;
         private System.Windows.Forms.Timer textBoxSearchTypingTimer;
         private TextBox textBoxCellEditor;
@@ -126,12 +127,15 @@ namespace EasyEPlanner.Devices.View
                 return;
 
             runtimeInitialized = true;
+            InitKeyboardHook();
             DevicesIconFactory.Populate(ViewItemImageList);
             InitDevicesTree();
             InitSearch();
             InitContextMenu();
             devicesTree.MouseEnter += DevicesTree_MouseEnter;
             devicesTree.MouseLeave += DevicesTree_MouseLeave;
+            searchBoxTLP.MouseEnter += SearchInput_MouseEnter;
+            searchBoxTLP.MouseLeave += SearchInput_MouseLeave;
         }
 
         private static string GetToolTipForNameColumn(object obj)
@@ -686,6 +690,7 @@ namespace EasyEPlanner.Devices.View
                 textBox_search.Text = string.Empty;
             }
 
+            isSearchEditing = true;
         }
 
         private void TextBox_search_LostFocus(object sender, EventArgs e)
@@ -703,6 +708,8 @@ namespace EasyEPlanner.Devices.View
                 searchBoxTLP.Visible = false;
                 searchTSButton.Visible = true;
             }
+
+            isSearchEditing = false;
         }
 
         private void TextBox_search_KeyUp(object sender, KeyEventArgs e)

@@ -80,15 +80,17 @@ namespace EasyEPlanner.Devices.View
             ini.WriteString("main", CfgShowWindowKey, wndState.ToString().ToLower());
         }
 
-        private void SetUpHook()
+        private void InitKeyboardHook()
         {
-            dialogCallbackDelegate = DlgWndHookCallbackFunction;
-            mainWndKeyboardCallbackDelegate = GlobalHookKeyboardCallbackFunction;
+            mainWndKeyboardCallbackDelegate ??= GlobalHookKeyboardCallbackFunction;
+        }
 
-            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
-            dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
-                dialogCallbackDelegate, IntPtr.Zero, pid);
+        private void InstallKeyboardHook()
+        {
+            if (globalKeyboardHookPtr != IntPtr.Zero)
+                return;
 
+            InitKeyboardHook();
             globalKeyboardHookPtr = PI.SetWindowsHookEx(
                 PI.HookType.WH_KEYBOARD_LL, mainWndKeyboardCallbackDelegate,
                 IntPtr.Zero, 0);
@@ -98,6 +100,29 @@ namespace EasyEPlanner.Devices.View
                 MessageBox.Show("Ошибка! Не удалось переназначить клавиши!");
             }
         }
+
+        private void ReleaseKeyboardHook()
+        {
+            if (globalKeyboardHookPtr == IntPtr.Zero)
+                return;
+
+            PI.UnhookWindowsHookEx(globalKeyboardHookPtr);
+            globalKeyboardHookPtr = IntPtr.Zero;
+        }
+
+        private void SetUpHook()
+        {
+            dialogCallbackDelegate = DlgWndHookCallbackFunction;
+
+            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
+            dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
+                dialogCallbackDelegate, IntPtr.Zero, pid);
+
+            InstallKeyboardHook();
+        }
+
+        private bool IsKeyboardHookActive =>
+            devicesTree?.Focused == true || isCellEditing || isSearchEditing;
 
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
@@ -112,23 +137,30 @@ namespace EasyEPlanner.Devices.View
                 return (IntPtr)1;
             }
 
-            if (code < 0 || devicesTree is null ||
-                !(devicesTree.Focused || isCellEditing))
+            if (code < 0 || devicesTree is null || !IsKeyboardHookActive)
             {
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
             }
 
-            if (wParam is PI.WM.KEYUP or PI.WM.CHAR &&
-                vkCode is PI.VIRTUAL_KEY.VK_DELETE &&
-                (devicesTree.Focused || isCellEditing))
+            if (wParam is PI.WM.KEYUP or PI.WM.CHAR)
             {
-                return (IntPtr)1;
+                switch ((Keys)vkCode)
+                {
+                    case Keys.Delete:
+                    case Keys.C when ctrl:
+                    case Keys.V when ctrl:
+                    case Keys.X when ctrl:
+                        if (IsKeyboardHookActive)
+                            return (IntPtr)1;
+                        break;
+                }
             }
 
             if (wParam is not PI.WM.KEYDOWN)
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
-            if (KeyCommands.ContainsKey(vkCode) && ctrl && isCellEditing)
+            if (KeyCommands.ContainsKey(vkCode) && ctrl &&
+                (isCellEditing || isSearchEditing))
             {
                 PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
                 return (IntPtr)1;
@@ -136,6 +168,10 @@ namespace EasyEPlanner.Devices.View
 
             switch (vkCode)
             {
+                case (int)Keys.F when ctrl:
+                    searchTSButton.PerformClick();
+                    return (IntPtr)1;
+
                 case PI.VIRTUAL_KEY.VK_ESCAPE:
                 case PI.VIRTUAL_KEY.VK_RETURN:
                 case PI.VIRTUAL_KEY.VK_DELETE:
@@ -192,6 +228,7 @@ namespace EasyEPlanner.Devices.View
                     PI.UnhookWindowsHookEx(dialogHookPtr);
                     dialogHookPtr = IntPtr.Zero;
                     dialogHandle = IntPtr.Zero;
+                    ReleaseKeyboardHook();
 
                     PI.SetParent(MainTableLayoutPanel.Handle, Handle);
                     Controls.Add(MainTableLayoutPanel);
@@ -223,20 +260,22 @@ namespace EasyEPlanner.Devices.View
 
         private void DevicesTree_MouseEnter(object sender, EventArgs e)
         {
-            if (mainWndKeyboardCallbackDelegate is null)
-                return;
-
-            globalKeyboardHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
-                mainWndKeyboardCallbackDelegate, IntPtr.Zero, 0);
+            InstallKeyboardHook();
         }
 
         private void DevicesTree_MouseLeave(object sender, EventArgs e)
         {
-            if (globalKeyboardHookPtr == IntPtr.Zero)
-                return;
+            ReleaseKeyboardHook();
+        }
 
-            PI.UnhookWindowsHookEx(globalKeyboardHookPtr);
-            globalKeyboardHookPtr = IntPtr.Zero;
+        private void SearchInput_MouseEnter(object sender, EventArgs e)
+        {
+            InstallKeyboardHook();
+        }
+
+        private void SearchInput_MouseLeave(object sender, EventArgs e)
+        {
+            ReleaseKeyboardHook();
         }
     }
 }
