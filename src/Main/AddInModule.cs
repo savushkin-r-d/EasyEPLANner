@@ -59,6 +59,10 @@ namespace EasyEPlanner
                 "ShowDevicesAction", "Отображение устройств", menuID,
                 int.MaxValue, false, false);
 
+            menuID = oMenu.AddMenuItem("Устройства (new)",
+                nameof(ShowDevicesNewAction), "Устройства (new)", menuID,
+                1, false, false);
+
             menuID = oMenu.AddMenuItem(
                 "Операции, ограничения и привязка объектов",
                 "ShowOperationsAction","Отображение операций", menuID, 1,
