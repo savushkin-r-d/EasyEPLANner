@@ -546,47 +546,59 @@ namespace EasyEPlanner.Devices.ViewModel
             var context = parent.Context;
             var groups = new List<IViewItem>();
 
-            var dataChildren = new List<IViewItem>
-            {
-                new DevicesSubtypeItem(context, parent, device),
-                new DevicesDescriptionItem(context, parent, device),
-                new DevicesArticleItem(context, parent, device),
-            };
-            groups.Add(new DevicesGroupNode(context, parent, "Данные",
-                DevicesIcon.Data, dataChildren));
+            groups.Add(CreateGroup(context, parent, "Данные", DevicesIcon.Data, group =>
+                new List<IViewItem>
+                {
+                    new DevicesSubtypeItem(context, group, device),
+                    new DevicesDescriptionItem(context, group, device),
+                    new DevicesArticleItem(context, group, device),
+                }));
 
             if (device.Parameters?.Any() == true)
             {
-                groups.Add(new DevicesGroupNode(context, parent, "Параметры",
-                    DevicesIcon.Parameters,
+                groups.Add(CreateGroup(context, parent, "Параметры", DevicesIcon.Parameters, group =>
                     device.Parameters.Select(p => new DevicesParameterItem(
-                        context, parent, device, p.Key, p.Value))));
+                        context, group, device, p.Key, p.Value)).Cast<IViewItem>().ToList()));
             }
 
             if (device.RuntimeParameters?.Any() == true)
             {
-                groups.Add(new DevicesGroupNode(context, parent, "Рабочие параметры",
-                    DevicesIcon.RuntimeParameters,
+                groups.Add(CreateGroup(context, parent, "Рабочие параметры",
+                    DevicesIcon.RuntimeParameters, group =>
                     device.RuntimeParameters.Select(p => new DevicesRuntimeParameterItem(
-                        context, parent, device, p.Key, p.Value?.ToString() ?? ""))));
+                        context, group, device, p.Key, p.Value?.ToString() ?? ""))
+                        .Cast<IViewItem>().ToList()));
             }
 
             if (device.Properties?.Any() == true)
             {
-                groups.Add(new DevicesGroupNode(context, parent, "Свойства",
-                    DevicesIcon.Properties,
+                groups.Add(CreateGroup(context, parent, "Свойства", DevicesIcon.Properties, group =>
                     device.Properties.Select(p => new DevicesPropertyItem(
-                        context, parent, device, p.Key, p.Value?.ToString() ?? ""))));
+                        context, group, device, p.Key, p.Value?.ToString() ?? ""))
+                        .Cast<IViewItem>().ToList()));
             }
 
             if (device.Channels?.Any() == true)
             {
-                groups.Add(new DevicesGroupNode(context, parent, "Каналы",
-                    DevicesIcon.Channels,
-                    device.Channels.Select(ch => new DevicesChannelItem(context, parent, ch))));
+                groups.Add(CreateGroup(context, parent, "Каналы", DevicesIcon.Channels, group =>
+                    device.Channels.Select(ch => new DevicesChannelItem(context, group, ch))
+                        .Cast<IViewItem>().ToList()));
             }
 
             return groups;
+        }
+
+        private static DevicesGroupNode CreateGroup(
+            IDevicesViewModel context,
+            FilterableViewItemBase parent,
+            string name,
+            DevicesIcon icon,
+            Func<FilterableViewItemBase, IList<IViewItem>> childrenFactory)
+        {
+            var group = new DevicesGroupNode(context, parent, name, icon,
+                Array.Empty<IViewItem>());
+            group.AddChildren(childrenFactory(group));
+            return group;
         }
     }
 

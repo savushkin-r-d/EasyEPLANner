@@ -404,7 +404,7 @@ namespace StaticHelper
         /// </summary>
         /// <param name="dialogHandle">Дескриптор нового диалога</param>
         /// <param name="panelPtr">Дескриптор старого диалога</param>
-        public static void ChangeWindowMainPanels(ref IntPtr dialogHandle,
+        public static bool ChangeWindowMainPanels(ref IntPtr dialogHandle,
             ref IntPtr panelPtr)
         {
             var panelList = PI.GetChildWindows(dialogHandle);
@@ -415,8 +415,8 @@ namespace StaticHelper
 
             if (panelPtr == IntPtr.Zero)
             {
-                MessageBox.Show("Не удалось скрыть окно!");
-                return;
+                MessageBox.Show("Не удалось открыть окно!");
+                return false;
             }
 
             // Проверка, скрыт ли элемент управления с редактором.
@@ -427,6 +427,7 @@ namespace StaticHelper
 
             // Скрываем все старые дочерние элементы
             panelList.ForEach(panel => PI.ShowWindow(panel, 0));
+            return true;
         }
 
         /// <summary>

@@ -189,7 +189,10 @@
     <Compile Include="Device\ViewModel\ViewInterface\IGoToFas.cs" />
     <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesIcon.cs" />
     <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesDescriptionIcon.cs" />
+    <Compile Include="Device\DeviceBindingSource.cs" />
+    <Compile Include="Device\IDeviceBindingSource.cs" />
     <Compile Include="Device\View\DevicesIconFactory.cs" />
+    <Compile Include="Device\View\DevicesTreeViewKeys.cs" />
     <Compile Include="Device\View\DevicesViewControl.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +200,10 @@
       <DependentUpon>DevicesViewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Device\View\DevicesViewControl.EplanForm.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.TreeState.cs">
       <DependentUpon>DevicesViewControl.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>

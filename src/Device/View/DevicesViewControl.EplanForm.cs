@@ -49,15 +49,32 @@ namespace EasyEPlanner.Devices.View
                 return;
             }
 
-            GUIHelper.SearchWindowDescriptor(currentProcess, windowName,
-                wndWmCommand, ref dialogHandle, ref wndDevicesVisiblePtr);
-            if (wndDevicesVisiblePtr == IntPtr.Zero)
+            if (TryEmbedInEplanPanel(currentProcess, windowName, wndWmCommand))
                 return;
+
+            ShowFloating();
+            Show();
+        }
+
+        private bool TryEmbedInEplanPanel(Process currentProcess,
+            string windowName, int wndWmCommand)
+        {
+            if (!GUIHelper.SearchWindowDescriptor(currentProcess, windowName,
+                wndWmCommand, ref dialogHandle, ref wndDevicesVisiblePtr))
+            {
+                return false;
+            }
+
+            if (wndDevicesVisiblePtr == IntPtr.Zero)
+                return false;
+
+            System.Threading.Thread.Sleep(200);
 
             GUIHelper.ShowHiddenWindow(currentProcess,
                 wndDevicesVisiblePtr, wndWmCommand);
 
-            GUIHelper.ChangeWindowMainPanels(ref dialogHandle, ref panelPtr);
+            if (!GUIHelper.ChangeWindowMainPanels(ref dialogHandle, ref panelPtr))
+                return false;
 
             Controls.Clear();
             PI.SetParent(MainTableLayoutPanel.Handle, dialogHandle);
@@ -65,6 +82,20 @@ namespace EasyEPlanner.Devices.View
             SetUpHook();
             isLoaded = true;
             ChangeUISize();
+            return true;
+        }
+
+        private void ShowFloating()
+        {
+            if (MainTableLayoutPanel.Parent != this)
+            {
+                PI.SetParent(MainTableLayoutPanel.Handle, Handle);
+                Controls.Add(MainTableLayoutPanel);
+            }
+
+            MainTableLayoutPanel.Dock = DockStyle.Fill;
+            MainTableLayoutPanel.Show();
+            isLoaded = false;
         }
 
         public static void SaveCfg()
@@ -122,7 +153,7 @@ namespace EasyEPlanner.Devices.View
         }
 
         private bool IsKeyboardHookActive =>
-            devicesTree?.Focused == true || isCellEditing || isSearchEditing;
+            devicesTree?.Focused == true || isCellEditing || textBox_search.Focused;
 
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
@@ -160,7 +191,7 @@ namespace EasyEPlanner.Devices.View
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
             if (KeyCommands.ContainsKey(vkCode) && ctrl &&
-                (isCellEditing || isSearchEditing))
+                (isCellEditing || textBox_search.Focused))
             {
                 PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
                 return (IntPtr)1;

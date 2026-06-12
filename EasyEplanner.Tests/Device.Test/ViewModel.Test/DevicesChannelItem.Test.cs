@@ -63,7 +63,21 @@ namespace EasyEPlanner.Devices.Tests
             var context = new DevicesViewModel(null);
             var deviceNode = new DevicesDeviceNode(context,
                 (FilterableViewItemBase)context.Root, device, device.Name);
-            return new DevicesChannelItem(context, deviceNode, channel);
+            var channelsGroup = FindGroup(deviceNode, "Каналы");
+            return new DevicesChannelItem(context, channelsGroup, channel);
+        }
+
+        private static DevicesGroupNode FindGroup(DevicesDeviceNode deviceNode,
+            string groupName)
+        {
+            foreach (var item in deviceNode.Items)
+            {
+                if (item is DevicesGroupNode group && group.Name == groupName)
+                    return group;
+            }
+
+            Assert.Fail($"Group '{groupName}' was not found.");
+            return null;
         }
     }
 }
