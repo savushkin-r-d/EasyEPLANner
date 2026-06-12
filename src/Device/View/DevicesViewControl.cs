@@ -63,41 +63,35 @@ namespace EasyEPlanner.Devices.View
         public void RebuildTree()
         {
             EnsureRuntimeInitialized();
+            var preservedState = devicesTree.GetItemCount() > 0
+                ? SaveTreeViewState()
+                : null;
             DataContext.RebuildTree();
-            InitDataDevicesTree();
+            InitDataDevicesTree(preservedState);
         }
 
         public void RefreshTree()
         {
-            if (devicesTree.Items.Count == 0)
+            if (devicesTree.GetItemCount() == 0)
             {
                 devicesTree.BeginUpdate();
                 devicesTree.ClearObjects();
                 devicesTree.EndUpdate();
+                return;
             }
-            else
-            {
-                devicesTree.FocusedObject = devicesTree.SelectedObject;
-                devicesTree.RefreshObjects(DataContext.Roots.Cast<object>().ToList());
-            }
+
+            ApplyTreeViewStateAfterUpdate(() => devicesTree.RebuildAll(false));
         }
 
         public void RefreshTreeAfterBinding()
         {
-            if (devicesTree.Items.Count == 0)
+            if (devicesTree.GetItemCount() == 0)
             {
                 RefreshTree();
                 return;
             }
 
-            var selected = devicesTree.SelectedObject;
-            devicesTree.BeginUpdate();
-            devicesTree.RebuildAll(true);
-            devicesTree.EndUpdate();
-
-            if (selected is not null)
-                devicesTree.SelectedObject = selected;
-
+            ApplyTreeViewStateAfterUpdate(() => devicesTree.RebuildAll(false));
             AutoResizeColumns(devicesTree);
         }
 
@@ -251,31 +245,173 @@ namespace EasyEPlanner.Devices.View
             devicesTree.ContextMenuStrip = menu;
         }
 
-        private void InitDataDevicesTree()
+        private void InitDataDevicesTree(DevicesTreeViewState preservedState = null)
         {
             devicesTree.BeginUpdate();
             devicesTree.Roots = DataContext.Roots.Cast<object>();
             devicesTree.Columns[0].Width = 220;
             devicesTree.Columns[1].Width = 180;
-            devicesTree.Expand(DataContext.Root);
-            RestoreExpanded(DataContext.Roots.Cast<IExpandable>());
-            devicesTree.SelectObject(DataContext.Root, true);
-            devicesTree.EnsureModelVisible(DataContext.Root);
+
+            if (preservedState is null)
+            {
+                devicesTree.Expand(DataContext.Root);
+                devicesTree.SelectObject(DataContext.Root, true);
+            }
+            else
+            {
+                RestoreTreeViewState(preservedState);
+            }
+
             devicesTree.EndUpdate();
             AutoResizeColumns(devicesTree);
             UpdateGroupingButtonText();
             UpdateModelFilter();
         }
 
-        private static void RestoreExpanded(IEnumerable<IExpandable> items)
+        private sealed class DevicesTreeViewState
+        {
+            public int TopItemIndex { get; set; } = -1;
+
+            public Point ScrollPosition { get; set; }
+
+            public HashSet<string> ExpandedKeys { get; set; }
+
+            public string SelectedKey { get; set; }
+        }
+
+        private void ApplyTreeViewStateAfterUpdate(Action updateAction)
+        {
+            var state = SaveTreeViewState();
+            updateAction();
+            RestoreTreeViewState(state);
+        }
+
+        private DevicesTreeViewState SaveTreeViewState()
+        {
+            var expandedKeys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var expandedObject in devicesTree.ExpandedObjects)
+            {
+                var key = GetViewItemKey(expandedObject);
+                if (key is not null)
+                    expandedKeys.Add(key);
+            }
+
+            return new DevicesTreeViewState
+            {
+                TopItemIndex = devicesTree.TopItemIndex,
+                ScrollPosition = devicesTree.LowLevelScrollPosition,
+                ExpandedKeys = expandedKeys,
+                SelectedKey = GetViewItemKey(devicesTree.SelectedObject),
+            };
+        }
+
+        private void RestoreTreeViewState(DevicesTreeViewState state)
+        {
+            if (state is null)
+                return;
+
+            devicesTree.BeginUpdate();
+            try
+            {
+                RestoreExpandedByKeys(DataContext.Roots.Cast<IExpandable>(), state.ExpandedKeys);
+
+                if (!string.IsNullOrEmpty(state.SelectedKey))
+                {
+                    var selected = FindViewItemByKey(state.SelectedKey);
+                    if (selected is not null)
+                        devicesTree.SelectedObject = selected;
+                }
+            }
+            finally
+            {
+                devicesTree.EndUpdate();
+            }
+
+            if (state.TopItemIndex >= 0 && state.TopItemIndex < devicesTree.GetItemCount())
+                devicesTree.TopItemIndex = state.TopItemIndex;
+            else
+                devicesTree.LowLevelScroll(state.ScrollPosition.X, state.ScrollPosition.Y);
+        }
+
+        private void RestoreExpandedByKeys(
+            IEnumerable<IExpandable> items,
+            HashSet<string> expandedKeys)
         {
             foreach (var item in items)
             {
-                if (item.Expanded)
-                    Instance?.devicesTree.Expand(item);
+                if (item is object obj)
+                {
+                    var key = GetViewItemKey(obj);
+                    if (key is not null && expandedKeys.Contains(key) &&
+                        devicesTree.CanExpand(item))
+                    {
+                        devicesTree.Expand(item);
+                        item.Expanded = true;
+                    }
+                }
+
                 if (item.Items is not null)
-                    RestoreExpanded(item.Items.OfType<IExpandable>());
+                    RestoreExpandedByKeys(item.Items.OfType<IExpandable>(), expandedKeys);
             }
+        }
+
+        private object FindViewItemByKey(string key)
+        {
+            foreach (var root in DataContext.Roots.OfType<IExpandable>())
+            {
+                var found = FindViewItemByKey(root, key);
+                if (found is not null)
+                    return found;
+            }
+
+            return null;
+        }
+
+        private object FindViewItemByKey(IExpandable item, string key)
+        {
+            if (item is object obj && string.Equals(GetViewItemKey(obj), key, StringComparison.Ordinal))
+                return obj;
+
+            if (item.Items is null)
+                return null;
+
+            foreach (var child in item.Items.OfType<IExpandable>())
+            {
+                var found = FindViewItemByKey(child, key);
+                if (found is not null)
+                    return found;
+            }
+
+            return null;
+        }
+
+        private static string GetViewItemKey(object obj) => obj switch
+        {
+            DevicesRoot => "root",
+            DevicesTypeGroupNode typeGroup => $"type:{typeGroup.TypeKey}",
+            DevicesObjectGroupNode objectGroup => $"object:{objectGroup.ObjectKey}",
+            DevicesDeviceNode deviceNode => $"device:{deviceNode.Device.Name}",
+            DevicesGroupNode groupNode => GetGroupNodeKey(groupNode),
+            _ => null,
+        };
+
+        private static string GetGroupNodeKey(DevicesGroupNode groupNode)
+        {
+            var deviceKey = GetAncestorDeviceKey(groupNode);
+            return deviceKey is null ? null : $"group:{deviceKey}:{groupNode.Name}";
+        }
+
+        private static string GetAncestorDeviceKey(FilterableViewItemBase item)
+        {
+            while (item is not null)
+            {
+                if (item is DevicesDeviceNode deviceNode)
+                    return deviceNode.Device.Name;
+
+                item = item.ParentItem;
+            }
+
+            return null;
         }
 
         private void Expand_Click(object sender, EventArgs e)
@@ -452,12 +588,8 @@ namespace EasyEPlanner.Devices.View
             cellEditUsesComboBox = false;
             cellEditUsesMultiline = false;
 
-            if (modified)
-            {
-                if (editable is IViewItem viewItem)
-                    devicesTree.RefreshObject(viewItem);
-                RefreshTree();
-            }
+            if (modified && editable is IViewItem viewItem)
+                devicesTree.RefreshObject(viewItem);
 
             e.Cancel = true;
             devicesTree.Unfreeze();
