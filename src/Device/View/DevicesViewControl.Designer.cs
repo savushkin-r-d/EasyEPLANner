@@ -315,6 +315,7 @@ namespace EasyEPlanner.Devices.View
             this.devicesTree.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.DevicesTree_FormatCell);
             this.devicesTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DevicesTree_KeyDown);
             this.devicesTree.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DevicesTree_MouseDown);
+            this.devicesTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.DevicesTree_MouseDoubleClick);
             // 
             // ViewItemImageList
             // 

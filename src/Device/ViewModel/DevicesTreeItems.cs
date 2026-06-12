@@ -480,20 +480,35 @@ namespace EasyEPlanner.Devices.ViewModel
         {
             Channel = channel;
             Name = channel.Name + " " + channel.Comment;
-            description = channel.IsEmpty()
-                ? string.Empty
-                : $"A{channel.FullModule}:{channel.PhysicalClamp}";
         }
 
-        private readonly string description;
-
         public IODevice.IOChannel Channel { get; }
+
+        public IODevice Device
+        {
+            get
+            {
+                var node = ParentItem;
+                while (node is not null)
+                {
+                    if (node is DevicesDeviceNode deviceNode)
+                        return deviceNode.Device;
+
+                    node = node.ParentItem;
+                }
+
+                return null;
+            }
+        }
 
         public IEplanFunction EplanFunction => ResolveClampEplanFunction();
 
         public override string Name { get; protected set; }
 
-        public override string Description => description;
+        public override string Description =>
+            Channel.IsEmpty()
+                ? string.Empty
+                : $"A{Channel.FullModule}:{Channel.PhysicalClamp}";
 
         string IToolTip.Name => Name;
 

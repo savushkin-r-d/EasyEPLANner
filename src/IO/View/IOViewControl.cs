@@ -1412,6 +1412,7 @@ namespace IO.View
             e.Handled = true;
             RefreshTree();
             DFrm.GetInstance().RefreshTreeAfterBinding();
+            EasyEPlanner.Devices.View.DevicesViewControl.Instance?.RefreshTreeAfterBinding();
         }
 
         private void StructPLC_FormatCell(object sender, FormatCellEventArgs e)

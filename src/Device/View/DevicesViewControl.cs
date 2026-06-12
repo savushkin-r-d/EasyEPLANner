@@ -2,6 +2,7 @@
 using EasyEPlanner.Devices.ViewModel;
 using EasyEPlanner.Devices.ViewModel.ViewInterface;
 using EasyEPlanner;
+using IO;
 using EditorControls;
 using Eplan.EplApi.DataModel;
 using EplanDevice;
@@ -79,6 +80,25 @@ namespace EasyEPlanner.Devices.View
                 devicesTree.FocusedObject = devicesTree.SelectedObject;
                 devicesTree.RefreshObjects(DataContext.Roots.Cast<object>().ToList());
             }
+        }
+
+        public void RefreshTreeAfterBinding()
+        {
+            if (devicesTree.Items.Count == 0)
+            {
+                RefreshTree();
+                return;
+            }
+
+            var selected = devicesTree.SelectedObject;
+            devicesTree.BeginUpdate();
+            devicesTree.RebuildAll(true);
+            devicesTree.EndUpdate();
+
+            if (selected is not null)
+                devicesTree.SelectedObject = selected;
+
+            AutoResizeColumns(devicesTree);
         }
 
         public DevicesViewControl()
@@ -587,6 +607,25 @@ namespace EasyEPlanner.Devices.View
             var item = devicesTree.GetItemAt(e.X, e.Y) as OLVListItem;
             if (item != null && !item.Selected)
                 devicesTree.SelectedObject = item.RowObject;
+        }
+
+        private void DevicesTree_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            if (devicesTree.MouseMoveHitTest.Item?.RowObject is not DevicesChannelItem channelItem)
+                return;
+
+            var device = channelItem.Device;
+            if (device is null)
+                return;
+
+            IApiHelper apiHelper = new ApiHelper();
+            IProjectHelper projectHelper = new ProjectHelper(apiHelper);
+            IIOHelper ioHelper = new IOHelper(projectHelper);
+            var deviceBinder = new DeviceBinder(apiHelper, ioHelper);
+            deviceBinder.Bind(device, channelItem.Channel);
         }
 
         private void ContextMenu_Opening(object sender, CancelEventArgs e)
