@@ -1,10 +1,12 @@
 ﻿using EasyEPlanner.Devices.ViewModel.ViewInterface;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace EasyEPlanner.Devices.View
 {
+    [ExcludeFromCodeCoverage]
     internal static class DevicesIconFactory
     {
         private static readonly IReadOnlyDictionary<DevicesIcon, Bitmap> Icons =

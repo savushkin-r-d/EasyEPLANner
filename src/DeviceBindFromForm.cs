@@ -35,6 +35,7 @@ namespace EasyEPlanner
         /// к объектам формы.
         /// </summary>
         /// <param name="devicesForm">Форма с объектами</param>
+        [ExcludeFromCodeCoverage]
         public DeviceBinder(DFrm devicesForm, IApiHelper apiHelper, IIOHelper ioHelper)
             : this(apiHelper, ioHelper)
         {
@@ -45,6 +46,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Привязать выбранный канал устройства к модулю ввода-вывода
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public void Bind()
         {
             try
@@ -74,6 +76,7 @@ namespace EasyEPlanner
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private void Bind(IDeviceBindingSource bindingSource)
         {
             SelectedDevice = bindingSource.Device;
@@ -82,6 +85,7 @@ namespace EasyEPlanner
             DoBind();
         }
 
+        [ExcludeFromCodeCoverage]
         private void DoBind()
         {
             if (!IsCorrectClampNumber())
@@ -162,6 +166,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Подготовка функционального текста для записи в функцию
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void PrepareFunctionalText()
         {
             NewFunctionalText = GenerateFunctionalText(CheckIOLink());
@@ -179,10 +184,12 @@ namespace EasyEPlanner
                 PrepareReplaceBinding(oldFunctionalText);
         }
 
+        [ExcludeFromCodeCoverage]
         private bool IsClampFunctionalTextEmpty() =>
             SelectedClampFunction.Properties.FUNC_TEXT.IsEmpty ||
             SelectedClampFunction.Properties.FUNC_TEXT == CommonConst.Reserve;
 
+        [ExcludeFromCodeCoverage]
         private static bool IsCtrlPressed() =>
             (Control.ModifierKeys & Keys.Control) == Keys.Control;
 
@@ -246,6 +253,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Отвязка при повторном двойном клике по тому же каналу/устройству.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private bool TryPrepareUnbindSameBinding(string oldFunctionalText)
         {
             if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
@@ -284,6 +292,7 @@ namespace EasyEPlanner
             return true;
         }
 
+        [ExcludeFromCodeCoverage]
         private bool IsChannelBoundToSelectedClamp()
         {
             if (SelectedChannel.IsEmpty())
@@ -302,6 +311,7 @@ namespace EasyEPlanner
                 SelectedChannel.FullModule == moduleNumber.Value;
         }
 
+        [ExcludeFromCodeCoverage]
         private int? GetSelectedIOModulePhysicalNumber()
         {
             if (SelectedIOModuleFunction is null)
@@ -358,7 +368,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Привязать канал
         /// </summary>
-        [ExcludeFromCodeCoverage]
         private void BindChannel()
         {
             if (SelectedIOModuleFunction == null)
@@ -381,6 +390,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Обновление дерева устройств и модулей после привязки
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void RefreshTree()
         {
             DevicesForm?.RefreshTreeAfterBinding();

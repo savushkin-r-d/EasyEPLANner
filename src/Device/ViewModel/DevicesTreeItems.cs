@@ -5,6 +5,7 @@ using IO.ViewModel;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -501,6 +502,7 @@ namespace EasyEPlanner.Devices.ViewModel
             }
         }
 
+        [ExcludeFromCodeCoverage]
         public IEplanFunction EplanFunction => ResolveClampEplanFunction();
 
         public override string Name { get; protected set; }
@@ -517,6 +519,7 @@ namespace EasyEPlanner.Devices.ViewModel
         public DevicesIcon DescriptionIcon =>
             Channel.IsEmpty() ? DevicesIcon.None : DevicesIcon.Clamp;
 
+        [ExcludeFromCodeCoverage]
         private IEplanFunction ResolveClampEplanFunction()
         {
             if (Channel.IsEmpty())

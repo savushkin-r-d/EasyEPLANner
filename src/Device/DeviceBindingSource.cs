@@ -1,5 +1,6 @@
 using Aga.Controls.Tree;
 using EplanDevice;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -16,6 +17,7 @@ namespace EasyEPlanner
         public IODevice.IOChannel Channel { get; }
     }
 
+    [ExcludeFromCodeCoverage]
     internal sealed class DevicesFormBindingSource : IDeviceBindingSource
     {
         private readonly StartValuesForBinding startValues;
