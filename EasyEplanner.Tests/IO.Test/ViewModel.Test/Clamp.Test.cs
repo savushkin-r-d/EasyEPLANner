@@ -123,6 +123,31 @@ namespace IOTests
         }
 
         [Test]
+        public void UndefinedDevice_ShowsErrorIcon()
+        {
+            var capDevice = Mock.Of<IIODevice>(d =>
+                d.Description == CommonConst.Cap);
+            var ioModule = Mock.Of<IIOModule>(m =>
+                m.Devices == new List<IIODevice>[]
+                {
+                    null,
+                    new List<IIODevice> { capDevice },
+                } &&
+                m.ClampFunctions == new Dictionary<int, IEplanFunction>());
+            var module = Mock.Of<IModule>(m =>
+                m.IOModule == ioModule &&
+                m.IONode == Mock.Of<IIONode>());
+
+            var clamp = new Clamp(module, 1);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(clamp.HasBindingError);
+                Assert.AreEqual(Icon.Error, (clamp as IHasDescriptionIcon).Icon);
+            });
+        }
+
+        [Test]
         public void Value()
         {
             var clampFunction = Mock.Of<IEplanFunction>(c => c.FunctionalText == "1234");

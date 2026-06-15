@@ -139,6 +139,7 @@
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
     <Compile Include="IO\ViewModel\AppendModuleTarget.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\ClampBindingErrorChecker.cs" />
     <Compile Include="IO\ViewModel\DeletedModule.cs" />
     <Compile Include="IO\ViewModel\DeletedModuleRestorePlanner.cs" />
     <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasBindingError.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />

@@ -1,7 +1,9 @@
-﻿using IO;
+﻿using EasyEPlanner;
+using IO;
 using IO.ViewModel;
 using Moq;
 using NUnit.Framework;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -71,5 +73,31 @@ namespace IOTests
             new object[] { Color.Yellow, IO.ViewModel.Icon.YellowModule },
             new object[] { Color.Aqua, IO.ViewModel.Icon.None },
         };
+
+        [Test]
+        public void HasBindingError_PropagatesFromClamp()
+        {
+            var capDevice = Mock.Of<EplanDevice.IIODevice>(d =>
+                d.Description == StaticHelper.CommonConst.Cap);
+            var ioModule = Mock.Of<IIOModule>(m =>
+                m.Info.ChannelClamps == new[] { 1 } &&
+                m.Devices == new List<EplanDevice.IIODevice>[]
+                {
+                    null,
+                    new List<EplanDevice.IIODevice> { capDevice },
+                });
+            Mock.Get(ioModule)
+                .Setup(m => m.ClampFunctions)
+                .Returns(new Dictionary<int, IEplanFunction>());
+
+            var module = new Module(ioModule, Mock.Of<INode>());
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(module.HasBindingError);
+                Assert.AreEqual(IO.ViewModel.Icon.Error,
+                    (module as IHasDescriptionIcon).Icon);
+            });
+        }
     }
 }

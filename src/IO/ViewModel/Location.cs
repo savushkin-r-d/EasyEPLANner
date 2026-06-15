@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Location : ILocation, IExpandable, IHasIcon
+    public class Location : ILocation, IExpandable, IHasIcon, IHasBindingError,
+        IHasDescriptionIcon
     {
         private readonly List<INode> nodes = [];
         private readonly List<IViewItem> items = [];
@@ -44,5 +45,10 @@ namespace IO.ViewModel
         public bool Expanded { get; set; }
 
         Icon IHasIcon.Icon => Icon.Cab;
+
+        public bool HasBindingError => nodes.Any(n => n.HasBindingError);
+
+        Icon IHasDescriptionIcon.Icon =>
+            HasBindingError ? Icon.Error : Icon.None;
     }
 }

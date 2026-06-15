@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Node : INode, IExpandable, IHasIcon
+    public class Node : INode, IExpandable, IHasIcon, IHasBindingError,
+        IHasDescriptionIcon
     {
         private readonly List<IModule> modules = [];
 
@@ -72,5 +73,12 @@ namespace IO.ViewModel
         }
 
         Icon IHasIcon.Icon => Icon.Node;
+
+        public bool HasBindingError =>
+            modules.Any(m => m.HasBindingError) ||
+            items.OfType<Node>().Any(n => n.HasBindingError);
+
+        Icon IHasDescriptionIcon.Icon =>
+            HasBindingError ? Icon.Error : Icon.None;
     }
 }

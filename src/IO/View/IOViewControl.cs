@@ -125,6 +125,7 @@ namespace IO.View
             StructPLC.Columns.Add(secondColumn);
 
             EnsureAddModuleIcon();
+            EnsureErrorIcon();
         }
 
         [ExcludeFromCodeCoverage]
@@ -153,6 +154,65 @@ namespace IO.View
 
             return obj is IHasIcon item ? (int)item.Icon : -1;
         }
+
+        [ExcludeFromCodeCoverage]
+        private void EnsureErrorIcon()
+        {
+            const string imageKey = "error.png";
+            if (ViewItemImageList.Images.ContainsKey(imageKey))
+            {
+                return;
+            }
+
+            ViewItemImageList.Images.Add(imageKey, CreateErrorIcon());
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static Bitmap CreateErrorIcon()
+        {
+            const int size = 16;
+            var bitmap = new Bitmap(
+                size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var yellow = Color.FromArgb(255, 255, 204, 0);
+            const float center = 7.5f;
+            const float fillRadius = 4.5f;
+            const float borderRadius = 5.5f;
+
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var dx = x - center;
+                    var dy = y - center;
+                    var distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    Color color;
+                    if (IsErrorIconExclamationPixel(x, y))
+                    {
+                        color = Color.Black;
+                    }
+                    else if (distance <= fillRadius)
+                    {
+                        color = yellow;
+                    }
+                    else if (distance <= borderRadius)
+                    {
+                        color = Color.Black;
+                    }
+                    else
+                    {
+                        color = Color.Transparent;
+                    }
+
+                    bitmap.SetPixel(x, y, color);
+                }
+            }
+
+            return bitmap;
+        }
+
+        private static bool IsErrorIconExclamationPixel(int x, int y) =>
+            (x == 7 || x == 8) && (y >= 5 && y <= 8 || y == 10);
 
         [ExcludeFromCodeCoverage]
         private void EnsureAddModuleIcon()

@@ -13,7 +13,20 @@ namespace IO.ViewModel
     {
         public string Name => clamp.ToString();
 
-        string IToolTip.Description => Description.Replace(" || ", "\n");
+        string IToolTip.Description
+        {
+            get
+            {
+                var description = Description.Replace(" || ", "\n");
+                if (HasBindingError)
+                {
+                    description =
+                        $"{ClampBindingErrorChecker.GetErrorMessage(Module, clamp, ClampFunction)}\n{description}";
+                }
+
+                return description;
+            }
+        }
 
         public string Description => string.Join(" || ",
             Module.GetClampBinding(clamp)?
@@ -48,8 +61,11 @@ namespace IO.ViewModel
             return $"{device.Name}{type}{ioLinkSize}{comment}"; 
         }
 
-        public IEplanFunction ClampFunction 
-            => Module.ClampFunctions.TryGetValue(clamp, out var function)? function : null;
+        public IEplanFunction ClampFunction =>
+            Module.ClampFunctions != null &&
+            Module.ClampFunctions.TryGetValue(clamp, out var function)
+                ? function
+                : null;
 
         public IIOModule Module => owner.IOModule;
 
@@ -57,11 +73,17 @@ namespace IO.ViewModel
 
         Icon IHasIcon.Icon => Icon.Clamp;
 
-        Icon IHasDescriptionIcon.Icon => Bound? Icon.Cable : Icon.None;
+        Icon IHasDescriptionIcon.Icon => HasBindingError
+            ? Icon.Error
+            : Bound ? Icon.Cable : Icon.None;
 
         public string Value => ClampFunction?.FunctionalText;
 
         public bool Bound => Module.Devices[clamp]?.Any() ?? false;
+
+        public bool HasBindingError =>
+            ClampBindingErrorChecker.HasBindingError(
+                Module, clamp, ClampFunction);
 
         public void Reset()
         {
