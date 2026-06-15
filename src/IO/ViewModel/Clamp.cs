@@ -78,7 +78,10 @@ namespace IO.ViewModel
 
         public string Value => ClampFunction?.FunctionalText;
 
-        public bool Bound => Module.Devices[clamp]?.Any() ?? false;
+        public bool Bound =>
+            clamp >= 0 &&
+            clamp < Module.Devices.Length &&
+            (Module.Devices[clamp]?.Any() ?? false);
 
         public bool HasBindingError =>
             !Bound &&
