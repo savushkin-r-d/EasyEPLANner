@@ -318,7 +318,8 @@ namespace EasyEPlanner
                 return null;
 
             var match = Regex.Match(SelectedIOModuleFunction.VisibleName,
-                IOManager.IONamePattern);
+                IOManager.IONamePattern, RegexOptions.None,
+                TimeSpan.FromMilliseconds(100));
             if (!match.Success)
                 return null;
 
