@@ -1,6 +1,7 @@
 using EasyEPlanner.Devices.ViewModel;
 using EasyEPlanner.Devices.ViewModel.ViewInterface;
 using EplanDevice;
+using IO.ViewModel;
 using Moq;
 using NUnit.Framework;
 using StaticHelper;
@@ -214,10 +215,80 @@ namespace EasyEPlanner.Devices.Tests
             Assert.AreEqual("10", item.Description);
         }
 
+        [Test]
+        public void DevicesParameterItem_Constructor_ExposesParameterMetadata()
+        {
+            var device = CreateTankAiDevice();
+            var parameter = IODevice.Parameter.P_MIN_V;
+            var item = CreateParameterItem(device, parameter, "2.5");
+
+            Assert.AreEqual(parameter.Name, item.Name);
+            Assert.AreEqual("2.5", item.Description);
+            Assert.AreEqual("2.5", item.Value);
+            Assert.AreSame(device, item.Device);
+            Assert.AreSame(parameter, item.Parameter);
+            Assert.AreEqual(parameter.Description, (item as IToolTip).Name);
+            Assert.AreEqual(string.Empty, (item as IToolTip).Description);
+        }
+
+        [Test]
+        public void DevicesParameterItem_SetValue_ParsesDoubleAndUpdatesDevice()
+        {
+            var device = CreateTankAiDevice();
+            var function = new Mock<IEplanFunction>();
+            device.Function = function.Object;
+            var parameter = IODevice.Parameter.P_MIN_V;
+            var item = CreateParameterItem(device, parameter, "0");
+
+            Assert.IsFalse(item.SetValue("0"));
+            Assert.IsFalse(item.SetValue("not-a-number"));
+            Assert.IsTrue(item.SetValue("1.5"));
+            Assert.AreEqual("1.5", item.Description);
+            Assert.AreEqual(1.5, device.Parameters[parameter]);
+            function.VerifySet(f => f.Parameters = It.Is<string>(s =>
+                s.Contains("P_MIN_V=")));
+        }
+
+        [Test]
+        public void DeviceNode_BuildGroups_IncludesParametersForAiDevice()
+        {
+            var device = CreateTankAiDevice();
+            var context = new DevicesViewModel(null);
+            var deviceNode = new DevicesDeviceNode(context,
+                (FilterableViewItemBase)context.Root, device, device.Name);
+
+            var parametersGroup = deviceNode.Items.OfType<DevicesGroupNode>()
+                .Single(g => g.Name == "Параметры");
+            var parameterItems = parametersGroup.Items
+                .OfType<DevicesParameterItem>().ToArray();
+
+            Assert.IsTrue(parameterItems.Length >= 3);
+            Assert.IsTrue(parameterItems.Any(i =>
+                i.Parameter == IODevice.Parameter.P_MIN_V));
+            Assert.IsTrue(parameterItems.All(i => i.ParentItem == parametersGroup));
+        }
+
+        private static DevicesParameterItem CreateParameterItem(
+            IODevice device, IODevice.Parameter parameter, string value)
+        {
+            var context = new DevicesViewModel(null);
+            var deviceNode = new DevicesDeviceNode(context,
+                (FilterableViewItemBase)context.Root, device, device.Name);
+            return new DevicesParameterItem(context, deviceNode, device,
+                parameter, value);
+        }
+
         private static DO CreateTankDoDevice()
         {
             var device = new DO("TANK2DO1", "+TANK2-DO1", "desc", 1, "TANK", 2);
             device.SetSubType("DO");
+            return device;
+        }
+
+        private static AI CreateTankAiDevice()
+        {
+            var device = new AI("TANK2AI1", "+TANK2-AI1", "desc", 1, "TANK", 2);
+            device.SetSubType("AI");
             return device;
         }
 

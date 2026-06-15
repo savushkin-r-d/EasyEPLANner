@@ -8,7 +8,7 @@ namespace EasyEPlanner.Devices.ViewModel
     /// <summary>
     /// Отображение многострочного текста EPLAN (FUNC_COMMENT: \n, ¶) в ячейках дерева.
     /// </summary>
-    internal static class DevicesMultilineText
+    public static class DevicesMultilineText
     {
         /// <summary>
         /// Актуальное описание из EPLAN (после правки в форме — из Function).
