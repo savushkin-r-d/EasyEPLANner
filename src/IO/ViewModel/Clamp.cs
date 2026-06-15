@@ -20,8 +20,7 @@ namespace IO.ViewModel
                 var description = Description.Replace(" || ", "\n");
                 if (HasBindingError)
                 {
-                    description =
-                        $"{ClampBindingErrorChecker.GetErrorMessage(Module, clamp, ClampFunction)}\n{description}";
+                    description = $"Ошибка\n{description}";
                 }
 
                 return description;
@@ -82,8 +81,9 @@ namespace IO.ViewModel
         public bool Bound => Module.Devices[clamp]?.Any() ?? false;
 
         public bool HasBindingError =>
-            ClampBindingErrorChecker.HasBindingError(
-                Module, clamp, ClampFunction);
+            !Bound &&
+            !string.IsNullOrEmpty(Value) &&
+            !Value.Contains(CommonConst.Reserve);
 
         public void Reset()
         {

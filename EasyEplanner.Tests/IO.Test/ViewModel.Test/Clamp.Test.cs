@@ -123,17 +123,16 @@ namespace IOTests
         }
 
         [Test]
-        public void UndefinedDevice_ShowsErrorIcon()
+        public void InvalidText_ShowsErrorIcon()
         {
-            var capDevice = Mock.Of<IIODevice>(d =>
-                d.Description == CommonConst.Cap);
+            var clampFunction = Mock.Of<IEplanFunction>(f =>
+                f.FunctionalText == "+OBJ1-V1");
             var ioModule = Mock.Of<IIOModule>(m =>
-                m.Devices == new List<IIODevice>[]
+                m.Devices == new List<IIODevice>[] { null, null } &&
+                m.ClampFunctions == new Dictionary<int, IEplanFunction>()
                 {
-                    null,
-                    new List<IIODevice> { capDevice },
-                } &&
-                m.ClampFunctions == new Dictionary<int, IEplanFunction>());
+                    { 1, clampFunction },
+                });
             var module = Mock.Of<IModule>(m =>
                 m.IOModule == ioModule &&
                 m.IONode == Mock.Of<IIONode>());
@@ -144,6 +143,30 @@ namespace IOTests
             {
                 Assert.IsTrue(clamp.HasBindingError);
                 Assert.AreEqual(Icon.Error, (clamp as IHasDescriptionIcon).Icon);
+            });
+        }
+
+        [Test]
+        public void Reserve_DoesNotShowErrorIcon()
+        {
+            var clampFunction = Mock.Of<IEplanFunction>(f =>
+                f.FunctionalText == CommonConst.Reserve);
+            var ioModule = Mock.Of<IIOModule>(m =>
+                m.Devices == new List<IIODevice>[] { null, null } &&
+                m.ClampFunctions == new Dictionary<int, IEplanFunction>()
+                {
+                    { 1, clampFunction },
+                });
+            var module = Mock.Of<IModule>(m =>
+                m.IOModule == ioModule &&
+                m.IONode == Mock.Of<IIONode>());
+
+            var clamp = new Clamp(module, 1);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsFalse(clamp.HasBindingError);
+                Assert.AreEqual(Icon.None, (clamp as IHasDescriptionIcon).Icon);
             });
         }
 

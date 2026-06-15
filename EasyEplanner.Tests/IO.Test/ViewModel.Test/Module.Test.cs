@@ -77,18 +77,17 @@ namespace IOTests
         [Test]
         public void HasBindingError_PropagatesFromClamp()
         {
-            var capDevice = Mock.Of<EplanDevice.IIODevice>(d =>
-                d.Description == StaticHelper.CommonConst.Cap);
+            var clampFunction = Mock.Of<IEplanFunction>(f =>
+                f.FunctionalText == "+OBJ1-V1");
             var ioModule = Mock.Of<IIOModule>(m =>
                 m.Info.ChannelClamps == new[] { 1 } &&
-                m.Devices == new List<EplanDevice.IIODevice>[]
-                {
-                    null,
-                    new List<EplanDevice.IIODevice> { capDevice },
-                });
+                m.Devices == new List<EplanDevice.IIODevice>[] { null, null });
             Mock.Get(ioModule)
                 .Setup(m => m.ClampFunctions)
-                .Returns(new Dictionary<int, IEplanFunction>());
+                .Returns(new Dictionary<int, IEplanFunction>()
+                {
+                    { 1, clampFunction },
+                });
 
             var module = new Module(ioModule, Mock.Of<INode>());
 
