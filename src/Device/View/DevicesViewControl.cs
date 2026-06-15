@@ -450,8 +450,8 @@ namespace EasyEPlanner.Devices.View
             cellEditUsesComboBox = false;
             cellEditUsesMultiline = false;
 
-            if (modified && editable is IViewItem viewItem)
-                devicesTree.RefreshObject(viewItem);
+            if (modified)
+                devicesTree.RefreshObject(editable);
 
             e.Cancel = true;
             devicesTree.Unfreeze();
@@ -729,7 +729,7 @@ namespace EasyEPlanner.Devices.View
                 return;
             }
 
-            if (textBox_search.Text == string.Empty && UpdatingModelFilter is false)
+            if (textBox_search.Text == string.Empty && !UpdatingModelFilter)
             {
                 textBox_search.ForeColor = Color.Gray;
                 textBox_search.Text = "Поиск...";

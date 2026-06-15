@@ -162,46 +162,77 @@ namespace EasyEPlanner.Devices.View
             bool ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & shifted) > 0;
             uint vkCode = lParam.vkCode;
 
-            if (wParam == PI.WM.KEYDOWN && ctrl &&
-                (vkCode is PI.VIRTUAL_KEY.VK_PRIOR or PI.VIRTUAL_KEY.VK_NEXT))
-            {
-                return (IntPtr)1;
-            }
+            if (TryBlockCtrlPageNavigation(wParam, ctrl, vkCode, out var handled))
+                return handled;
 
             if (code < 0 || devicesTree is null || !IsKeyboardHookActive)
-            {
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
-            }
 
-            if (wParam is PI.WM.KEYUP or PI.WM.CHAR)
-            {
-                switch ((Keys)vkCode)
-                {
-                    case Keys.Delete:
-                    case Keys.C when ctrl:
-                    case Keys.V when ctrl:
-                    case Keys.X when ctrl:
-                        if (IsKeyboardHookActive)
-                            return (IntPtr)1;
-                        break;
-                }
-            }
+            if (TryBlockClipboardKeys(wParam, vkCode, ctrl, out handled))
+                return handled;
 
             if (wParam is not PI.WM.KEYDOWN)
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
+            if (TryHandleKeyDown(vkCode, ctrl, out handled))
+                return handled;
+
+            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+        }
+
+        private static bool TryBlockCtrlPageNavigation(PI.WM wParam, bool ctrl,
+            uint vkCode, out IntPtr result)
+        {
+            if (wParam == PI.WM.KEYDOWN && ctrl &&
+                (vkCode is PI.VIRTUAL_KEY.VK_PRIOR or PI.VIRTUAL_KEY.VK_NEXT))
+            {
+                result = (IntPtr)1;
+                return true;
+            }
+
+            result = IntPtr.Zero;
+            return false;
+        }
+
+        private static bool TryBlockClipboardKeys(PI.WM wParam, uint vkCode,
+            bool ctrl, out IntPtr result)
+        {
+            if (wParam is not (PI.WM.KEYUP or PI.WM.CHAR))
+            {
+                result = IntPtr.Zero;
+                return false;
+            }
+
+            switch ((Keys)vkCode)
+            {
+                case Keys.Delete:
+                case Keys.C when ctrl:
+                case Keys.V when ctrl:
+                case Keys.X when ctrl:
+                    result = (IntPtr)1;
+                    return true;
+                default:
+                    result = IntPtr.Zero;
+                    return false;
+            }
+        }
+
+        private bool TryHandleKeyDown(uint vkCode, bool ctrl, out IntPtr result)
+        {
             if (KeyCommands.ContainsKey(vkCode) && ctrl &&
                 (isCellEditing || textBox_search.Focused))
             {
                 PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
-                return (IntPtr)1;
+                result = (IntPtr)1;
+                return true;
             }
 
             switch (vkCode)
             {
                 case (int)Keys.F when ctrl:
                     searchTSButton.PerformClick();
-                    return (IntPtr)1;
+                    result = (IntPtr)1;
+                    return true;
 
                 case PI.VIRTUAL_KEY.VK_ESCAPE:
                 case PI.VIRTUAL_KEY.VK_RETURN:
@@ -211,10 +242,12 @@ namespace EasyEPlanner.Devices.View
                 case PI.VIRTUAL_KEY.VK_LEFT:
                 case PI.VIRTUAL_KEY.VK_RIGHT:
                     PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
-                    return (IntPtr)1;
+                    result = (IntPtr)1;
+                    return true;
             }
 
-            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+            result = IntPtr.Zero;
+            return false;
         }
 
         private static readonly Dictionary<uint, uint> KeyCommands =

@@ -59,22 +59,26 @@ namespace EasyEPlanner.Devices.ViewModel
                 return string.Empty;
 
             var sb = new StringBuilder(text.Length);
-            for (int i = 0; i < text.Length; i++)
+            int index = 0;
+            while (index < text.Length)
             {
-                char c = text[i];
+                char c = text[index];
                 if (c == '\r')
                 {
-                    if (i + 1 < text.Length && text[i + 1] == '\n')
-                        i++;
+                    index++;
+                    if (index < text.Length && text[index] == '\n')
+                        index++;
                     sb.AppendLine();
                 }
                 else if (IsLineSeparator(c))
                 {
+                    index++;
                     sb.AppendLine();
                 }
                 else
                 {
                     sb.Append(c);
+                    index++;
                 }
             }
 

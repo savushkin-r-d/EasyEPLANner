@@ -8,13 +8,13 @@ namespace EasyEPlanner.Devices.ViewModel
     {
         public static bool Contains(string valueForSearch, string searchedValue)
         {
-            if (UseRegex is false && SearchWholeWord is false)
+            if (!UseRegex && !SearchWholeWord)
             {
                 return valueForSearch.IndexOf(searchedValue,
                     StringComparison.OrdinalIgnoreCase) >= 0;
             }
 
-            if (UseRegex is false)
+            if (!UseRegex)
             {
                 try
                 {

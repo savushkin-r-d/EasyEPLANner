@@ -21,13 +21,6 @@ namespace EasyEPlanner.Devices.View
             public string SelectedKey { get; set; }
         }
 
-        private void ApplyTreeViewStateAfterUpdate(Action updateAction)
-        {
-            var state = SaveTreeViewState();
-            updateAction();
-            RestoreTreeViewState(state);
-        }
-
         private DevicesTreeViewState SaveTreeViewState()
         {
             var expandedKeys = new HashSet<string>(StringComparer.Ordinal);

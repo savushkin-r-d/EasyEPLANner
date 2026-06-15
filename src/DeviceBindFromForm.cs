@@ -55,8 +55,7 @@ namespace EasyEPlanner
             }
             catch
             {
-                // TODO: Errors handler
-                return;
+                // Ignore binding errors (invalid selection, cancelled operation).
             }
         }
 
@@ -71,8 +70,7 @@ namespace EasyEPlanner
             }
             catch
             {
-                // TODO: Errors handler
-                return;
+                // Ignore binding errors (invalid selection, cancelled operation).
             }
         }
 
@@ -319,7 +317,7 @@ namespace EasyEPlanner
 
             var match = Regex.Match(SelectedIOModuleFunction.VisibleName,
                 IOManager.IONamePattern, RegexOptions.None,
-                TimeSpan.FromMilliseconds(100));
+                RegexDefaults.Timeout);
             if (!match.Success)
                 return null;
 
@@ -376,7 +374,8 @@ namespace EasyEPlanner
                 return;
             }
 
-            var regex = new Regex(IOManager.IONamePattern);
+            var regex = new Regex(IOManager.IONamePattern, RegexOptions.None,
+                RegexDefaults.Timeout);
             var match = regex.Match(SelectedIOModuleFunction.VisibleName);
             if (match.Success == false)
             {
@@ -449,7 +448,7 @@ namespace EasyEPlanner
             string IOModuleFunctionName = SelectedClampFunction
                 .ParentFunction.VisibleName;
             var IOModuleMatch = Regex.Match(IOModuleFunctionName,
-                IOManager.IONamePattern);
+                IOManager.IONamePattern, RegexOptions.None, RegexDefaults.Timeout);
 
             if (IOModuleMatch.Success == false)
             {
@@ -500,7 +499,8 @@ namespace EasyEPlanner
         {
             var isContains = false;
             var matches = Regex.Matches(functionalText,
-                            DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN,
+                RegexOptions.None, RegexDefaults.Timeout);
 
             foreach (Match match in matches)
             {

@@ -71,8 +71,7 @@ namespace EasyEPlanner.Devices.ViewModel
                 Filtered = true;
             }
 
-            ThisOrParentsContains |= (Parent as FilterableViewItemBase)?.ThisOrParentsContains
-                ?? false;
+            ThisOrParentsContains |= Parent?.ThisOrParentsContains ?? false;
 
             var childsPassedFilter = false;
             foreach (var item in items.OfType<IFilterableViewItem>())
@@ -771,7 +770,10 @@ namespace EasyEPlanner.Devices.ViewModel
             var description = GenerateDeviceDescription(dev);
             string displayName;
             if (!string.IsNullOrEmpty(dev.ObjectName))
-                displayName = $"{dev.EplanName.Split('-').Last()}\t {description}";
+            {
+                var eplanNameParts = dev.EplanName.Split('-');
+                displayName = $"{eplanNameParts[eplanNameParts.Length - 1]}\t {description}";
+            }
             else
                 displayName = $"{dev.Name}\t  {description}";
 
