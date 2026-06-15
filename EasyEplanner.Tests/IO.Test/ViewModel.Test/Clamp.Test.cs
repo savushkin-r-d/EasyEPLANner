@@ -71,6 +71,58 @@ namespace IOTests
 
 
         [Test]
+        public void DeleteWithoutBinding()
+        {
+            var clampFunction = Mock.Of<IEplanFunction>();
+            var ioModule = Mock.Of<IIOModule>(m =>
+                m.ClampFunctions == new Dictionary<int, IEplanFunction>()
+                {
+                    { 1, clampFunction }
+                } &&
+                m.GetClampBinding(1) == null);
+
+            var module = Mock.Of<IModule>(m => m.IOModule == ioModule);
+
+            var clamp = new Clamp(module, 1);
+
+            Assert.DoesNotThrow(() => clamp.Delete());
+
+            Mock.Get(clampFunction).VerifySet(f => f.FunctionalText = "Резерв");
+            Mock.Get(ioModule).Verify(m => m.ClearBind(1));
+        }
+
+        [Test]
+        public void DeleteWithUndefinedChannel()
+        {
+            var device = Mock.Of<IIODevice>();
+            var clampFunction = Mock.Of<IEplanFunction>();
+            var ioModule = Mock.Of<IIOModule>(m =>
+                m.ClampFunctions == new Dictionary<int, IEplanFunction>()
+                {
+                    { 1, clampFunction }
+                } &&
+                m.GetClampBinding(1) == new List<(IIODevice, IIOChannel)>()
+                {
+                    new Tuple<IIODevice, IIOChannel>(device, null).ToValueTuple()
+                } &&
+                m.Info == Mock.Of<IIOModuleInfo>(
+                    i => i.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI));
+
+            var module = Mock.Of<IModule>(m => m.IOModule == ioModule);
+
+            var clamp = new Clamp(module, 1);
+
+            Assert.DoesNotThrow(() => clamp.Delete());
+
+            Mock.Get(device).Verify(
+                d => d.ClearChannel(It.IsAny<IOModuleInfo.ADDRESS_SPACE_TYPE>(),
+                    It.IsAny<string>(), It.IsAny<string>()),
+                Times.Never);
+            Mock.Get(clampFunction).VerifySet(f => f.FunctionalText = "Резерв");
+            Mock.Get(ioModule).Verify(m => m.ClearBind(1));
+        }
+
+        [Test]
         public void Value()
         {
             var clampFunction = Mock.Of<IEplanFunction>(c => c.FunctionalText == "1234");

@@ -70,8 +70,11 @@ namespace IO.ViewModel
 
         public void Delete()
         {
-            foreach (var (dev, channel) in Module.GetClampBinding(clamp))
+            foreach (var (dev, channel) in Module.GetClampBinding(clamp) ?? [])
             {
+                if (dev is null || channel is null)
+                    continue;
+
                 dev.ClearChannel(Module.Info.AddressSpaceType, channel.Comment, channel.Name);
             }
             ClampFunction?.FunctionalText = "Резерв";
