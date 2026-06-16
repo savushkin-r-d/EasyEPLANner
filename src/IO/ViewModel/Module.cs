@@ -3,8 +3,7 @@ using System.Linq;
 
 namespace IO.ViewModel
 {
-    public class Module : ModuleViewItem, IModule, IExpandable,
-        IHasBindingError, IHasDescriptionIcon
+    public class Module : ModuleViewItem, IModule, IExpandable, IHasDescriptionIcon
     {
         private readonly INode owner;
 

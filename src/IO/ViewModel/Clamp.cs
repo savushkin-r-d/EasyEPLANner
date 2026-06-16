@@ -72,9 +72,17 @@ namespace IO.ViewModel
 
         Icon IHasIcon.Icon => Icon.Clamp;
 
-        Icon IHasDescriptionIcon.Icon => HasBindingError
-            ? Icon.Error
-            : Bound ? Icon.Cable : Icon.None;
+        Icon IHasDescriptionIcon.Icon
+        {
+            get
+            {
+                if (HasBindingError)
+                    return Icon.Error;
+                if (Bound)
+                    return Icon.Cable;
+                return Icon.None;
+            }
+        }
 
         public string Value => ClampFunction?.FunctionalText;
 

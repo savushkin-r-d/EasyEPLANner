@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Location : ILocation, IExpandable, IHasIcon, IHasBindingError,
-        IHasDescriptionIcon
+    public class Location : ILocation, IExpandable, IHasIcon, IHasDescriptionIcon
     {
         private readonly List<INode> nodes = [];
         private readonly List<IViewItem> items = [];
