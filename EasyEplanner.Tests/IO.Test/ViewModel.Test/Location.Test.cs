@@ -52,5 +52,65 @@ namespace IOTests
                     deletedModulesGroup.Items.Single().Name);
             });
         }
+
+        [Test]
+        public void HasBindingError_WithInvalidClamp_ReturnsTrue()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithInvalidClamp(),
+                });
+            var location = new Location(
+                "+CAB1", "Шкаф 1", new List<IIONode> { ioNode });
+
+            Assert.IsTrue(location.HasBindingError);
+        }
+
+        [Test]
+        public void HasBindingError_WhenTreeValid_ReturnsFalse()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithValidClamp(),
+                });
+            var location = new Location(
+                "+CAB1", "Шкаф 1", new List<IIONode> { ioNode });
+
+            Assert.IsFalse(location.HasBindingError);
+        }
+
+        [Test]
+        public void Icon_WithInvalidClamp_ReturnsError()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithInvalidClamp(),
+                });
+            var location = new Location(
+                "+CAB1", "Шкаф 1", new List<IIONode> { ioNode });
+
+            Assert.AreEqual(Icon.Error, (location as IHasDescriptionIcon).Icon);
+        }
+
+        [Test]
+        public void Icon_WhenTreeValid_ReturnsNone()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithValidClamp(),
+                });
+            var location = new Location(
+                "+CAB1", "Шкаф 1", new List<IIONode> { ioNode });
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(Icon.Cab, (location as IHasIcon).Icon);
+                Assert.AreEqual(Icon.None, (location as IHasDescriptionIcon).Icon);
+            });
+        }
     }
 }
