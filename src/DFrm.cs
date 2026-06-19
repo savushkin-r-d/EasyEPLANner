@@ -1,4 +1,4 @@
-using Aga.Controls.Tree;
+﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using EplanDevice;
 using IO.View;
@@ -1595,6 +1595,7 @@ namespace EasyEPlanner
 
             Editor.Editor.GetInstance().EditorForm.RefreshTree();
             IOViewControl.Instance?.RebuildTree();
+            EasyEPlanner.Devices.View.DevicesViewControl.Instance?.RebuildTree();
 
             RefreshTree();
         }

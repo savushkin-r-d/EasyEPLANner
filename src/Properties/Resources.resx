@@ -643,6 +643,54 @@ return io_nodes</value>
   <data name="mpkDefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mpkDefaultIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="devicesTreeRoot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeRoot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeDevice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeDevice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeData" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeData.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeRuntimeParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeRuntimeParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeChannels" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeChannels.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeParameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeParameter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeChannel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeChannel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="io_plc_cable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\io_plc_cable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="io_plc_clamp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\io_plc_clamp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesGroupingTypeObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesGroupingTypeObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesGroupingObjectType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesGroupingObjectType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="go_to_fas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\go_to_fas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
