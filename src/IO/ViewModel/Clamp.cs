@@ -13,7 +13,19 @@ namespace IO.ViewModel
     {
         public string Name => clamp.ToString();
 
-        string IToolTip.Description => Description.Replace(" || ", "\n");
+        string IToolTip.Description
+        {
+            get
+            {
+                var description = Description.Replace(" || ", "\n");
+                if (HasBindingError)
+                {
+                    description = $"Ошибка\n{description}";
+                }
+
+                return description;
+            }
+        }
 
         public string Description => string.Join(" || ",
             Module.GetClampBinding(clamp)?
@@ -48,8 +60,11 @@ namespace IO.ViewModel
             return $"{device.Name}{type}{ioLinkSize}{comment}"; 
         }
 
-        public IEplanFunction ClampFunction 
-            => Module.ClampFunctions.TryGetValue(clamp, out var function)? function : null;
+        public IEplanFunction ClampFunction =>
+            Module.ClampFunctions != null &&
+            Module.ClampFunctions.TryGetValue(clamp, out var function)
+                ? function
+                : null;
 
         public IIOModule Module => owner.IOModule;
 
@@ -57,11 +72,29 @@ namespace IO.ViewModel
 
         Icon IHasIcon.Icon => Icon.Clamp;
 
-        Icon IHasDescriptionIcon.Icon => Bound? Icon.Cable : Icon.None;
+        Icon IHasDescriptionIcon.Icon
+        {
+            get
+            {
+                if (HasBindingError)
+                    return Icon.Error;
+                if (Bound)
+                    return Icon.Cable;
+                return Icon.None;
+            }
+        }
 
         public string Value => ClampFunction?.FunctionalText;
 
-        public bool Bound => Module.Devices[clamp]?.Any() ?? false;
+        public bool Bound =>
+            clamp >= 0 &&
+            clamp < Module.Devices.Length &&
+            (Module.Devices[clamp]?.Any() ?? false);
+
+        public bool HasBindingError =>
+            !Bound &&
+            !string.IsNullOrEmpty(Value) &&
+            !Value.Contains(CommonConst.Reserve);
 
         public void Reset()
         {
@@ -70,8 +103,11 @@ namespace IO.ViewModel
 
         public void Delete()
         {
-            foreach (var (dev, channel) in Module.GetClampBinding(clamp))
+            foreach (var (dev, channel) in Module.GetClampBinding(clamp) ?? [])
             {
+                if (dev is null || channel is null)
+                    continue;
+
                 dev.ClearChannel(Module.Info.AddressSpaceType, channel.Comment, channel.Name);
             }
             ClampFunction?.FunctionalText = "Резерв";

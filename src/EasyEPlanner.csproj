@@ -154,6 +154,7 @@
     <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasBindingError.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />

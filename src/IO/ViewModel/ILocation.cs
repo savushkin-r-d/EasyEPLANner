@@ -9,6 +9,6 @@ namespace IO.ViewModel
     /// <summary>
     /// Расположение (шкаф).
     /// </summary>
-    public interface ILocation : IViewItem
+    public interface ILocation : IViewItem, IHasBindingError
     { }
 }
