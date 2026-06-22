@@ -39,6 +39,8 @@ namespace IO.View
 
         private ToolStripMenuItem restoreDeletedModulesToolStripMenuItem;
 
+        private ToolStripMenuItem reserveErrorClampsToolStripMenuItem;
+
         private sealed class DraggedModule
         {
             public DeletedModule DeletedModule { get; set; }
@@ -247,6 +249,27 @@ namespace IO.View
             return bitmap;
         }
 
+        [ExcludeFromCodeCoverage]
+        private static Bitmap CreateReserveErrorClampsIcon()
+        {
+            const int size = 16;
+            var bitmap = new Bitmap(
+                size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            using (var graphics = Graphics.FromImage(bitmap))
+            using (var errorIcon = CreateErrorIcon())
+            using (var basketIcon = new Bitmap(
+                global::EasyEPlanner.Properties.Resources.delete,
+                new Size(10, 10)))
+            {
+                graphics.Clear(Color.Transparent);
+                graphics.DrawImage(errorIcon, 0, 0, 11, 11);
+                graphics.DrawImage(basketIcon, 6, 6, 10, 10);
+            }
+
+            return bitmap;
+        }
+
         private void InitContextMenu()
         {
             var contextMenuStrip = new ContextMenuStrip(components);
@@ -264,6 +287,14 @@ namespace IO.View
                     Image = global::EasyEPlanner.Properties.Resources.go_to_fas
                 };
             goToFasToolStripMenuItem.Click += GoToFas_Click;
+
+            reserveErrorClampsToolStripMenuItem =
+                new ToolStripMenuItem("Очистить клеммы с ошибкой")
+                {
+                    Image = CreateReserveErrorClampsIcon()
+                };
+            reserveErrorClampsToolStripMenuItem.Click +=
+                ReserveErrorClamps_Click;
 
             restoreDeletedModulesToolStripMenuItem =
                 new ToolStripMenuItem("Восстановить")
@@ -284,6 +315,7 @@ namespace IO.View
 
             contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(goToFasToolStripMenuItem);
+            contextMenuStrip.Items.Add(reserveErrorClampsToolStripMenuItem);
             contextMenuStrip.Items.Add(restoreDeletedModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(deleteUndefinedModuleToolStripMenuItem);
             contextMenuStrip.Opening += StructPLCContextMenu_Opening;
@@ -531,6 +563,9 @@ namespace IO.View
                 selectedModules[0].IOModule.Function?.IsValid == true;
             goToFasToolStripMenuItem.Enabled =
                 TryGetSelectedEplanFunction(out _);
+            reserveErrorClampsToolStripMenuItem.Enabled =
+                BindingErrorClampCollector.Collect(GetSelectedViewObjects())
+                    .Any();
             restoreDeletedModulesToolStripMenuItem.Enabled =
                 GetRestorableDeletedModules(GetSelectedDeletedIOModules())
                     .Any();
@@ -546,6 +581,25 @@ namespace IO.View
             }
 
             EplanNavigateHelper.OpenFunctionPageWithError(function);
+        }
+
+        private void ReserveErrorClamps_Click(object sender, EventArgs e)
+        {
+            var errorClamps = BindingErrorClampCollector
+                .Collect(GetSelectedViewObjects())
+                .ToList();
+            if (!errorClamps.Any())
+            {
+                return;
+            }
+
+            foreach (var clamp in errorClamps)
+            {
+                clamp.Delete();
+            }
+
+            RefreshTree();
+            DFrm.GetInstance().RefreshTreeAfterBinding();
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
@@ -636,6 +690,20 @@ namespace IO.View
         {
             return StructPLC.SelectedObjects?.OfType<IModule>() ??
                 Enumerable.Empty<IModule>();
+        }
+
+        private IEnumerable<object> GetSelectedViewObjects()
+        {
+            var selectedObjects = StructPLC.SelectedObjects?.Cast<object>()
+                .ToList();
+            if (selectedObjects != null && selectedObjects.Count > 0)
+            {
+                return selectedObjects;
+            }
+
+            return StructPLC.SelectedObject != null
+                ? new[] { StructPLC.SelectedObject }
+                : Enumerable.Empty<object>();
         }
 
         private IEnumerable<DeletedModule> GetSelectedDeletedModules()

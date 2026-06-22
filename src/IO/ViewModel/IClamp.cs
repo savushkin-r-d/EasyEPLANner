@@ -10,7 +10,7 @@ namespace IO.ViewModel
     /// <summary>
     /// Клемма.
     /// </summary>
-    public interface IClamp : IViewItem, IHasBindingError
+    public interface IClamp : IViewItem, IHasBindingError, IDeletable
     {
         /// <summary>
         /// Функция клеммы на ФСА.
