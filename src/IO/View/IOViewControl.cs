@@ -27,6 +27,10 @@ namespace IO.View
 
         private bool isCellEditing = false;
 
+        private bool cellEditUsesMultiline = false;
+
+        private IEditable cellEditItem;
+
         private bool isDraggingDeletedModule = false;
 
         private object dragHoverRowObject;
@@ -1355,8 +1359,16 @@ namespace IO.View
             }
 
             isCellEditing = true;
+            cellEditItem = item;
+            cellEditUsesMultiline = item is IClamp;
 
-            InitTextBoxCellEditor(item.Value, e.CellBounds);
+            InitTextBoxCellEditor(cellEditUsesMultiline);
+            textBoxCellEditor.Text = cellEditUsesMultiline
+                ? EplanMultilineText.FormatForEditor(item.Value)
+                : item.Value;
+            textBoxCellEditor.Bounds = cellEditUsesMultiline
+                ? GetMultilineEditorBounds(StructPLC, e.CellBounds, textBoxCellEditor.Text)
+                : GetCellEditorBounds(StructPLC, e.CellBounds);
 
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
@@ -1367,11 +1379,14 @@ namespace IO.View
         private void CellEditFinishing(object sender, CellEditEventArgs e)
         {
             isCellEditing = false;
+            var editable = cellEditItem;
+            cellEditItem = null;
 
-            if (cancelChanges || StructPLC.SelectedObject is not IEditable item)
+            if (cancelChanges || editable is null)
             {
                 e.Cancel = true;
                 cancelChanges = false;
+                cellEditUsesMultiline = false;
 
                 StructPLC.Unfreeze();
 
@@ -1380,7 +1395,14 @@ namespace IO.View
 
             StructPLC.Controls.Remove(textBoxCellEditor);
 
-            var modified = item.SetValue(e.NewValue.ToString());
+            string text = textBoxCellEditor?.Text
+                ?? e.NewValue?.ToString()
+                ?? string.Empty;
+            if (cellEditUsesMultiline)
+                text = EplanMultilineText.ParseFromEditor(text);
+
+            var modified = editable.SetValue(text);
+            cellEditUsesMultiline = false;
 
             if (modified)
             {
@@ -1392,20 +1414,42 @@ namespace IO.View
             StructPLC.Unfreeze();
         }
 
-        private void InitTextBoxCellEditor(string text, Rectangle bounds)
+        private static Rectangle GetCellEditorBounds(TreeListView tree, Rectangle bounds)
+        {
+            int height = tree.RowHeight > 0 ? tree.RowHeight : 20;
+            return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
+        }
+
+        private static Rectangle GetMultilineEditorBounds(
+            TreeListView tree,
+            Rectangle bounds,
+            string text)
+        {
+            int lineHeight = TextRenderer.MeasureText("Xg", tree.Font).Height;
+            int lineCount = string.IsNullOrEmpty(text)
+                ? 2
+                : text.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None).Length;
+            int height = Math.Max(tree.RowHeight > 0 ? tree.RowHeight : 20,
+                lineCount * lineHeight + 6);
+            height = Math.Min(height, 200);
+            return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
+        }
+
+        private void InitTextBoxCellEditor(bool multiline = false)
         {
             textBoxCellEditor = new TextBox
             {
-                Enabled = true,
-                Visible = true,
-                Text = text,
-                Bounds = bounds,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = StructPLC.Font,
+                Multiline = multiline,
+                AcceptsReturn = multiline,
+                ScrollBars = multiline ? ScrollBars.Vertical : ScrollBars.None,
+                WordWrap = multiline,
             };
-
 
             textBoxCellEditor.LostFocus += CellEditor_LostFocus;
             textBoxCellEditor.KeyDown += CellEditor_KeyDown;
-            
+
             StructPLC.Controls.Add(textBoxCellEditor);
         }
 
@@ -1422,19 +1466,22 @@ namespace IO.View
             switch (e.KeyCode)
             {
                 case Keys.Enter:
+                    if (cellEditUsesMultiline && !e.Control)
+                        return;
+
                     StructPLC.FinishCellEdit();
+                    e.Handled = true;
                     break;
 
                 case Keys.Escape:
                     cancelChanges = true;
                     StructPLC.FinishCellEdit();
+                    e.Handled = true;
                     break;
 
                 default:
-                    return; // exit without e.Handled
+                    return;
             }
-
-            e.Handled = true;
         }
 
 

@@ -219,9 +219,29 @@ namespace IOTests
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual("DEV1:AO(16) || DEV2:AI(32)", clamp.Description);
-                Assert.AreEqual("DEV1:AO(16)\nDEV2:AI(32)", (clamp as IToolTip).Description);
+                Assert.AreEqual("DEV1:AO(16) · DEV2:AI(32)", clamp.Description);
+                Assert.AreEqual("DEV1:AO(16)\r\nDEV2:AI(32)", (clamp as IToolTip).Description);
             });
+        }
+
+        [Test]
+        public void Description_WithMultilineFunctionalText_FormatsForCell()
+        {
+            var clampFunction = Mock.Of<IEplanFunction>(f =>
+                f.FunctionalText == "line1\u00B6line2");
+            var ioModule = Mock.Of<IIOModule>(m =>
+                m.Devices == new List<IIODevice>[] { null, null } &&
+                m.ClampFunctions == new Dictionary<int, IEplanFunction>()
+                {
+                    { 1, clampFunction },
+                });
+            var module = Mock.Of<IModule>(m =>
+                m.IOModule == ioModule &&
+                m.IONode == Mock.Of<IIONode>());
+
+            var clamp = new Clamp(module, 1);
+
+            Assert.AreEqual("line1 · line2", clamp.Description);
         }
     }
 }

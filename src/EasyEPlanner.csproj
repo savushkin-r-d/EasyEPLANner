@@ -140,6 +140,7 @@
     <Compile Include="IO\ViewModel\AppendModuleTarget.cs" />
     <Compile Include="IO\ViewModel\BindingErrorClampCollector.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\ClampBindingText.cs" />
     <Compile Include="IO\ViewModel\DeletedModule.cs" />
     <Compile Include="IO\ViewModel\DeletedModuleRestorePlanner.cs" />
     <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />
@@ -237,6 +238,7 @@
       <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\EplanMultilineText.cs" />
     <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
     <Compile Include="StaticHelper\FasNavigationTexts.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
