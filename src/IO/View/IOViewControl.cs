@@ -1399,9 +1399,12 @@ namespace IO.View
                 ?? e.NewValue?.ToString()
                 ?? string.Empty;
             if (cellEditUsesMultiline)
-                text = EplanMultilineText.ParseFromEditor(text);
+                text = EplanMultilineText.ParseFromEditor(text,
+                    CommonConst.NewLineWithCarriageReturn);
 
-            var modified = editable.SetValue(text);
+            bool modified = editable is IClamp clamp
+                ? ClampFunctionalTextBinder.TryApply(clamp, text)
+                : editable.SetValue(text);
             cellEditUsesMultiline = false;
 
             if (modified)

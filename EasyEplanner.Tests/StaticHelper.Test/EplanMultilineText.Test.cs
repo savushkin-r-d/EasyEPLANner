@@ -51,5 +51,28 @@ namespace IOTests
             Assert.AreEqual(expected,
                 EplanMultilineText.ParseFromEditor(input));
         }
+
+        [Test]
+        public void ParseFromEditor_WithCustomSeparator_ConvertsLineBreaksToSeparator()
+        {
+            Assert.AreEqual("first\r\nsecond",
+                EplanMultilineText.ParseFromEditor("first\nsecond", "\r\n"));
+        }
+
+        [Test]
+        public void IsSameFunctionalText_TreatsParagraphSignAndCrLfAsEqual()
+        {
+            Assert.IsTrue(EplanMultilineText.IsSameFunctionalText(
+                "line1\u00B6line2",
+                "line1\r\nline2"));
+        }
+
+        [Test]
+        public void IsSameFunctionalText_ReturnsTrueForIdenticalText()
+        {
+            Assert.IsTrue(EplanMultilineText.IsSameFunctionalText(
+                "same",
+                "same"));
+        }
     }
 }
