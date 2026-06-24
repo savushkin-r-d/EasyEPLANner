@@ -56,7 +56,7 @@ namespace EasyEPlanner
         /// Получить привязку для сброса канала устройства
         /// </summary>
         /// <returns></returns>
-        public virtual Dictionary<string, string> GetBindingForResettingChannel(
+        public Dictionary<string, string> GetBindingForResettingChannel(
             Function deviceClampFunction, IO.IOModuleInfo moduleInfo,
             string devicesDescription = "")
         {
