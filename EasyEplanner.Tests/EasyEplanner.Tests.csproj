@@ -30,6 +30,7 @@
     <Reference Include="Aga.Controls">
       <HintPath>..\src\libs\Aga.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="Eplan.EplApi.DataModelu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
