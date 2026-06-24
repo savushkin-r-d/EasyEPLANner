@@ -4,12 +4,14 @@ using IO;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
     /// <summary>
     /// Общие операции сброса и пересчёта привязки клеммы по FUNC_TEXT.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class ClampBindingUpdater
     {
         /// <summary>
