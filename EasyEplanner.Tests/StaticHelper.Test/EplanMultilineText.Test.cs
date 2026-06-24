@@ -1,40 +1,10 @@
-using EasyEPlanner.Devices.ViewModel;
-using EplanDevice;
-using Moq;
 using NUnit.Framework;
 using StaticHelper;
 
-namespace EasyEPlanner.Devices.Tests
+namespace EasyEplannerTests.StaticHelperTest
 {
-    public class DevicesMultilineTextTest
+    public class EplanMultilineTextTest
     {
-        [Test]
-        public void GetEplanDescription_ReturnsFunctionDescriptionWhenPresent()
-        {
-            var device = CreateDevice();
-            device.Function = Mock.Of<IEplanFunction>(f =>
-                f.Description == "from eplan");
-
-            Assert.AreEqual("from eplan",
-                DevicesMultilineText.GetEplanDescription(device));
-        }
-
-        [Test]
-        public void GetEplanDescription_FallsBackToDeviceDescriptionWithoutFunction()
-        {
-            var device = CreateDevice();
-
-            Assert.AreEqual("device desc",
-                DevicesMultilineText.GetEplanDescription(device));
-        }
-
-        [Test]
-        public void GetEplanDescription_ReturnsEmptyForNullDevice()
-        {
-            Assert.AreEqual(string.Empty,
-                DevicesMultilineText.GetEplanDescription(null));
-        }
-
         [TestCase(null, "")]
         [TestCase("", "")]
         [TestCase("single", "single")]
@@ -45,7 +15,7 @@ namespace EasyEPlanner.Devices.Tests
         public void FormatForCell_JoinsLinesWithMiddleDot(string input,
             string expected)
         {
-            Assert.AreEqual(expected, DevicesMultilineText.FormatForCell(input));
+            Assert.AreEqual(expected, EplanMultilineText.FormatForCell(input));
         }
 
         [TestCase(null, "")]
@@ -57,7 +27,7 @@ namespace EasyEPlanner.Devices.Tests
             string expected)
         {
             Assert.AreEqual(expected,
-                DevicesMultilineText.FormatForTooltip(input));
+                EplanMultilineText.FormatForTooltip(input));
         }
 
         [TestCase(null, "")]
@@ -70,7 +40,7 @@ namespace EasyEPlanner.Devices.Tests
             string expected)
         {
             Assert.AreEqual(expected,
-                DevicesMultilineText.FormatForEditor(input));
+                EplanMultilineText.FormatForEditor(input));
         }
 
         [TestCase(null, "")]
@@ -79,29 +49,44 @@ namespace EasyEPlanner.Devices.Tests
         [TestCase("first\r\nsecond", "first\u00B6second")]
         [TestCase("first\nsecond", "first\u00B6second")]
         [TestCase("first\rsecond", "first\u00B6second")]
-        public void ParseFromEditor_ConvertsLineBreaksToParagraphSign(string input,
-            string expected)
+        public void ParseFromEditor_ConvertsLineBreaksToParagraphSign(
+            string input, string expected)
         {
             Assert.AreEqual(expected,
-                DevicesMultilineText.ParseFromEditor(input));
+                EplanMultilineText.ParseFromEditor(input));
+        }
+
+        [Test]
+        public void ParseFromEditor_WithCustomSeparator_ConvertsLineBreaksToSeparator()
+        {
+            Assert.AreEqual("first\r\nsecond",
+                EplanMultilineText.ParseFromEditor("first\nsecond", "\r\n"));
         }
 
         [Test]
         public void ParseFromEditor_ThenFormatForEditor_RoundTripsEplanText()
         {
             const string eplanText = "line1\u00B6line2\u00B6line3";
-            var editorText = DevicesMultilineText.FormatForEditor(eplanText);
-            var restored = DevicesMultilineText.ParseFromEditor(editorText);
+            var editorText = EplanMultilineText.FormatForEditor(eplanText);
+            var restored = EplanMultilineText.ParseFromEditor(editorText);
 
             Assert.AreEqual(eplanText, restored);
         }
 
-        private static DO CreateDevice()
+        [Test]
+        public void IsSameFunctionalText_TreatsParagraphSignAndCrLfAsEqual()
         {
-            var device = new DO("TANK2DO1", "+TANK2-DO1", "device desc",
-                1, "TANK", 2);
-            device.SetSubType("DO");
-            return device;
+            Assert.IsTrue(EplanMultilineText.IsSameFunctionalText(
+                "line1\u00B6line2",
+                "line1\r\nline2"));
+        }
+
+        [Test]
+        public void IsSameFunctionalText_ReturnsTrueForIdenticalText()
+        {
+            Assert.IsTrue(EplanMultilineText.IsSameFunctionalText(
+                "same",
+                "same"));
         }
     }
 }

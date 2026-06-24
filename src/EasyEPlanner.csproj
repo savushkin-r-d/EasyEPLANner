@@ -178,7 +178,6 @@
     <Compile Include="Device\ViewModel\DevicesRoot.cs" />
     <Compile Include="Device\ViewModel\DevicesSearch.cs" />
     <Compile Include="Device\ViewModel\DevicesSearchContext.cs" />
-    <Compile Include="Device\ViewModel\DevicesMultilineText.cs" />
     <Compile Include="Device\ViewModel\DevicesTreeItems.cs" />
     <Compile Include="Device\ViewModel\DevicesViewModel.cs" />
     <Compile Include="Device\ViewModel\IDevicesRoot.cs" />
@@ -272,6 +271,7 @@
       <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\EplanMultilineText.cs" />
     <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
     <Compile Include="StaticHelper\FasNavigationTexts.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
@@ -441,6 +441,7 @@
     </Compile>
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
     <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
+    <Compile Include="ClampBindingUpdater.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
     <Compile Include="Configuration\IOReader.cs" />

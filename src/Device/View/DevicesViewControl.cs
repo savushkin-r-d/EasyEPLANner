@@ -401,7 +401,7 @@ namespace EasyEPlanner.Devices.View
             cellEditItem = editable;
             InitTextBoxCellEditor(cellEditUsesMultiline);
             textBoxCellEditor.Text = cellEditUsesMultiline
-                ? DevicesMultilineText.FormatForEditor(editable.Value)
+                ? EplanMultilineText.FormatForEditor(editable.Value)
                 : editable.Value;
             textBoxCellEditor.Bounds = cellEditUsesMultiline
                 ? GetMultilineEditorBounds(devicesTree, e.CellBounds, textBoxCellEditor.Text)
@@ -442,7 +442,7 @@ namespace EasyEPlanner.Devices.View
                     ?? e.NewValue?.ToString()
                     ?? string.Empty;
                 if (cellEditUsesMultiline)
-                    text = DevicesMultilineText.ParseFromEditor(text);
+                    text = EplanMultilineText.ParseFromEditor(text);
                 modified = editable.SetValue(text);
             }
 

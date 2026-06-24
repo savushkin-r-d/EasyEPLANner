@@ -1,33 +1,21 @@
-using EplanDevice;
 using System;
 using System.Linq;
 using System.Text;
 
-namespace EasyEPlanner.Devices.ViewModel
+namespace StaticHelper
 {
     /// <summary>
-    /// Отображение многострочного текста EPLAN (FUNC_COMMENT: \n, ¶) в ячейках дерева.
+    /// Отображение многострочного текста EPLAN (FUNC_TEXT / FUNC_COMMENT: \n, ¶) в ячейках дерева.
     /// </summary>
-    public static class DevicesMultilineText
+    public static class EplanMultilineText
     {
-        /// <summary>
-        /// Актуальное описание из EPLAN (после правки в форме — из Function).
-        /// </summary>
-        public static string GetEplanDescription(IODevice device)
-        {
-            if (device?.Function != null)
-                return device.Function.Description ?? string.Empty;
-
-            return device?.Description ?? string.Empty;
-        }
-
         private static readonly char[] LineSeparators =
         {
             '\r', '\n', '\u00B6', '\u2028', '\u2029',
         };
 
         /// <summary>
-        /// Текст для колонки «Значение» (одна строка, разделитель виден в UI).
+        /// Текст для колонки дерева (одна строка, переносы видны как « · »).
         /// </summary>
         public static string FormatForCell(string text)
         {
@@ -51,7 +39,7 @@ namespace EasyEPlanner.Devices.ViewModel
         }
 
         /// <summary>
-        /// Текст для многострочного редактора (¶ и \n → перенос строки).
+        /// Текст для многострочного редактора (¶ и \n -> перенос строки).
         /// </summary>
         public static string FormatForEditor(string text)
         {
@@ -86,16 +74,65 @@ namespace EasyEPlanner.Devices.ViewModel
         }
 
         /// <summary>
-        /// Текст из редактора → формат EPLAN (переносы как ¶).
+        /// Текст из редактора -> формат EPLAN (переносы как ¶).
         /// </summary>
         public static string ParseFromEditor(string text)
+        {
+            return ParseFromEditor(text, "\u00B6");
+        }
+
+        /// <summary>
+        /// Текст из редактора -> указанный формат переноса строк.
+        /// </summary>
+        public static string ParseFromEditor(string text, string lineSeparator)
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
 
-            return text.Replace("\r\n", "\u00B6")
-                .Replace("\n", "\u00B6")
-                .Replace("\r", "\u00B6");
+            var sb = new StringBuilder(text.Length);
+            int index = 0;
+            while (index < text.Length)
+            {
+                char c = text[index];
+                if (c == '\r')
+                {
+                    index++;
+                    if (index < text.Length && text[index] == '\n')
+                        index++;
+                    sb.Append(lineSeparator);
+                }
+                else if (IsLineSeparator(c))
+                {
+                    index++;
+                    sb.Append(lineSeparator);
+                }
+                else
+                {
+                    sb.Append(c);
+                    index++;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Сравнивает FUNC_TEXT с учетом эквивалентных переносов строк.
+        /// </summary>
+        public static bool IsSameFunctionalText(string stored, string edited)
+        {
+            if (stored == edited)
+                return true;
+
+            return NormalizeFunctionalText(stored) ==
+                NormalizeFunctionalText(edited);
+        }
+
+        private static string NormalizeFunctionalText(string text)
+        {
+            return ParseFromEditor(
+                FormatForEditor(text ?? string.Empty),
+                CommonConst.NewLineWithCarriageReturn);
         }
 
         private static bool IsLineSeparator(char c) =>
