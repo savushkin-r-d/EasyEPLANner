@@ -202,7 +202,7 @@ namespace EasyEPlanner.Devices.Tests
                 (FilterableViewItemBase)context.Root, device, device.Name);
             var item = new DevicesDescriptionItem(context, deviceNode, device);
 
-            Assert.AreEqual("device desc", item.Value);
+            Assert.AreEqual("desc", item.Value);
         }
 
         [Test]
