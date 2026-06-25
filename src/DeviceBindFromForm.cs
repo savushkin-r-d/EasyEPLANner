@@ -141,10 +141,7 @@ namespace EasyEPlanner
         private void InitSelectedClamp()
         {
             SelectedClamp = IOViewControl.DataContext?.SelectedClamp;
-            NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
-            SelectedChannel = startValues.GetChannel(NodeFromSelectedNode);
-            SelectedDevice = startValues.GetDevice(NodeFromSelectedNode);
-            
+
             try
             {
                 // Пробуем получить выбранную клемму на ФСА
