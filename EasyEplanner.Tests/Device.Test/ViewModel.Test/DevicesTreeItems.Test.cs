@@ -178,6 +178,49 @@ namespace EasyEPlanner.Devices.Tests
         }
 
         [Test]
+        public void DevicesDescriptionItem_UsesFunctionDescriptionWhenPresent()
+        {
+            var device = CreateTankDoDevice();
+            device.Function = Mock.Of<IEplanFunction>(f =>
+                f.Description == "from eplan");
+
+            var context = new DevicesViewModel(null);
+            var deviceNode = new DevicesDeviceNode(context,
+                (FilterableViewItemBase)context.Root, device, device.Name);
+            var item = new DevicesDescriptionItem(context, deviceNode, device);
+
+            Assert.AreEqual("from eplan", item.Value);
+            Assert.AreEqual("from eplan", item.Description);
+        }
+
+        [Test]
+        public void DevicesDescriptionItem_FallsBackToDeviceDescriptionWithoutFunction()
+        {
+            var device = CreateTankDoDevice();
+            var context = new DevicesViewModel(null);
+            var deviceNode = new DevicesDeviceNode(context,
+                (FilterableViewItemBase)context.Root, device, device.Name);
+            var item = new DevicesDescriptionItem(context, deviceNode, device);
+
+            Assert.AreEqual("desc", item.Value);
+        }
+
+        [Test]
+        public void DevicesDescriptionItem_FormatsMultilineDescriptionForCell()
+        {
+            var device = CreateTankDoDevice();
+            device.Function = Mock.Of<IEplanFunction>(f =>
+                f.Description == "first\u00B6second");
+
+            var context = new DevicesViewModel(null);
+            var deviceNode = new DevicesDeviceNode(context,
+                (FilterableViewItemBase)context.Root, device, device.Name);
+            var item = new DevicesDescriptionItem(context, deviceNode, device);
+
+            Assert.AreEqual("first · second", item.Description);
+        }
+
+        [Test]
         public void DevicesPropertyItem_SetValue_UpdatesDescriptionAndEplanFunction()
         {
             var device = CreateTankDoDevice();
