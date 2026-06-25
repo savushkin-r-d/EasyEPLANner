@@ -32,6 +32,7 @@ namespace EasyEPlanner.Devices.View
         private IEditable cellEditItem;
         private bool cellEditUsesComboBox;
         private bool cellEditUsesMultiline;
+        private readonly DevicesCellEditKeyEngine cellEditKeyEngine = new();
         private ToolStripMenuItem goToFasMenuItem;
         private bool runtimeInitialized;
 
@@ -220,6 +221,7 @@ namespace EasyEPlanner.Devices.View
             devicesTree.ModelFilter = new ModelFilter(obj =>
                 obj is not IFilterableViewItem item ||
                 item.Filter(searchText, hideEmptyItems: false));
+            devicesTree.CellEditKeyEngine = cellEditKeyEngine;
         }
 
         private void InitSearch()
@@ -385,6 +387,8 @@ namespace EasyEPlanner.Devices.View
                 comboBoxCellEditor.Bounds = GetCellEditorBounds(devicesTree, e.CellBounds);
                 e.Control = comboBoxCellEditor;
                 comboBoxCellEditor.Focus();
+                cellEditKeyEngine.MultilineEditActive = false;
+                InstallKeyboardHook();
                 devicesTree.Freeze();
                 return;
             }
@@ -408,53 +412,63 @@ namespace EasyEPlanner.Devices.View
                 : GetCellEditorBounds(devicesTree, e.CellBounds);
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
+            cellEditKeyEngine.MultilineEditActive = cellEditUsesMultiline;
+            InstallKeyboardHook();
             devicesTree.Freeze();
         }
 
         private void CellEditFinishing(object sender, CellEditEventArgs e)
         {
-            isCellEditing = false;
-            var editable = cellEditItem;
-            cellEditItem = null;
-
-            if (cancelChanges || editable is null)
+            try
             {
+                isCellEditing = false;
+                cellEditKeyEngine.MultilineEditActive = false;
+                var editable = cellEditItem;
+                cellEditItem = null;
+
+                if (cancelChanges || editable is null)
+                {
+                    RemoveCellEditorControls();
+                    e.Cancel = true;
+                    cancelChanges = false;
+                    cellEditUsesComboBox = false;
+                    cellEditUsesMultiline = false;
+                    devicesTree.Unfreeze();
+                    return;
+                }
+
+                bool modified;
+                if (cellEditUsesComboBox)
+                {
+                    var combo = comboBoxCellEditor ?? e.Control as ComboBox;
+                    // Как в NewEditorControl: OLV для ComboBox не заполняет NewValue.
+                    e.NewValue = combo?.Text ?? string.Empty;
+                    modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+                }
+                else
+                {
+                    string text = textBoxCellEditor?.Text
+                        ?? e.NewValue?.ToString()
+                        ?? string.Empty;
+                    if (cellEditUsesMultiline)
+                        text = EplanMultilineText.ParseFromEditor(text);
+                    modified = editable.SetValue(text);
+                }
+
                 RemoveCellEditorControls();
-                e.Cancel = true;
-                cancelChanges = false;
                 cellEditUsesComboBox = false;
                 cellEditUsesMultiline = false;
+
+                if (modified)
+                    devicesTree.RefreshObject(editable);
+
+                e.Cancel = true;
                 devicesTree.Unfreeze();
-                return;
             }
-
-            bool modified;
-            if (cellEditUsesComboBox)
+            finally
             {
-                var combo = comboBoxCellEditor ?? e.Control as ComboBox;
-                // Как в NewEditorControl: OLV для ComboBox не заполняет NewValue.
-                e.NewValue = combo?.Text ?? string.Empty;
-                modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+                MaybeReleaseKeyboardHook();
             }
-            else
-            {
-                string text = textBoxCellEditor?.Text
-                    ?? e.NewValue?.ToString()
-                    ?? string.Empty;
-                if (cellEditUsesMultiline)
-                    text = EplanMultilineText.ParseFromEditor(text);
-                modified = editable.SetValue(text);
-            }
-
-            RemoveCellEditorControls();
-            cellEditUsesComboBox = false;
-            cellEditUsesMultiline = false;
-
-            if (modified)
-                devicesTree.RefreshObject(editable);
-
-            e.Cancel = true;
-            devicesTree.Unfreeze();
         }
 
         private void RemoveCellEditorControls()
@@ -548,7 +562,12 @@ namespace EasyEPlanner.Devices.View
             {
                 case Keys.Enter:
                     if (cellEditUsesMultiline && !e.Control)
+                    {
+                        InsertNewLineInCellEditor();
+                        e.Handled = true;
+                        e.SuppressKeyPress = true;
                         return;
+                    }
                     devicesTree.FinishCellEdit();
                     e.Handled = true;
                     break;
@@ -558,6 +577,22 @@ namespace EasyEPlanner.Devices.View
                     e.Handled = true;
                     break;
             }
+        }
+
+        private void InsertNewLineInCellEditor()
+        {
+            if (textBoxCellEditor is null)
+                return;
+
+            int selectionStart = textBoxCellEditor.SelectionStart;
+            int selectionLength = textBoxCellEditor.SelectionLength;
+            string text = textBoxCellEditor.Text ?? string.Empty;
+            string newLine = Environment.NewLine;
+
+            textBoxCellEditor.Text = text
+                .Remove(selectionStart, selectionLength)
+                .Insert(selectionStart, newLine);
+            textBoxCellEditor.SelectionStart = selectionStart + newLine.Length;
         }
 
         private void DevicesTree_FormatCell(object sender, FormatCellEventArgs e)
@@ -840,6 +875,25 @@ namespace EasyEPlanner.Devices.View
         {
             SaveCfg();
             base.OnFormClosing(e);
+        }
+
+        /// <summary>
+        /// Пропускает Enter в TextBox при многострочном редактировании.
+        /// </summary>
+        private sealed class DevicesCellEditKeyEngine : CellEditKeyEngine
+        {
+            internal bool MultilineEditActive { get; set; }
+
+            public override bool HandleKey(ObjectListView olv, Keys keyData)
+            {
+                if (MultilineEditActive &&
+                    (keyData == Keys.Enter || keyData == Keys.Return))
+                {
+                    return false;
+                }
+
+                return base.HandleKey(olv, keyData);
+            }
         }
     }
 }

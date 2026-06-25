@@ -141,6 +141,17 @@ namespace EasyEPlanner.Devices.View
             globalKeyboardHookPtr = IntPtr.Zero;
         }
 
+        private bool ShouldKeepKeyboardHook() =>
+            devicesTree?.Focused == true
+            || isCellEditing
+            || textBox_search.Focused;
+
+        private void MaybeReleaseKeyboardHook()
+        {
+            if (!ShouldKeepKeyboardHook())
+                ReleaseKeyboardHook();
+        }
+
         private void SetUpHook()
         {
             dialogCallbackDelegate = DlgWndHookCallbackFunction;
@@ -152,9 +163,6 @@ namespace EasyEPlanner.Devices.View
             InstallKeyboardHook();
         }
 
-        private bool IsKeyboardHookActive =>
-            devicesTree?.Focused == true || isCellEditing || textBox_search.Focused;
-
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
@@ -165,7 +173,7 @@ namespace EasyEPlanner.Devices.View
             if (TryBlockCtrlPageNavigation(wParam, ctrl, vkCode, out var handled))
                 return handled;
 
-            if (code < 0 || devicesTree is null || !IsKeyboardHookActive)
+            if (code < 0 || devicesTree is null || !ShouldKeepKeyboardHook())
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
             if (TryBlockClipboardKeys(wParam, vkCode, ctrl, out handled))
@@ -329,7 +337,7 @@ namespace EasyEPlanner.Devices.View
 
         private void DevicesTree_MouseLeave(object sender, EventArgs e)
         {
-            ReleaseKeyboardHook();
+            MaybeReleaseKeyboardHook();
         }
 
         private void SearchInput_MouseEnter(object sender, EventArgs e)
@@ -339,7 +347,7 @@ namespace EasyEPlanner.Devices.View
 
         private void SearchInput_MouseLeave(object sender, EventArgs e)
         {
-            ReleaseKeyboardHook();
+            MaybeReleaseKeyboardHook();
         }
     }
 }
