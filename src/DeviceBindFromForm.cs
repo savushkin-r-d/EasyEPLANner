@@ -141,7 +141,10 @@ namespace EasyEPlanner
         private void InitSelectedClamp()
         {
             SelectedClamp = IOViewControl.DataContext?.SelectedClamp;
-
+            NodeFromSelectedNode = startValues.GetNodeFromSelectedNode(SelectedNode);
+            SelectedChannel = startValues.GetChannel(NodeFromSelectedNode);
+            SelectedDevice = startValues.GetDevice(NodeFromSelectedNode);
+            
             try
             {
                 // Пробуем получить выбранную клемму на ФСА
@@ -153,10 +156,10 @@ namespace EasyEPlanner
             {
                 // Если нет, то пытаемся получить выбранную клемму в окне узлов и модулей
                 // (если таковой нет, то генерируем исключение)
-                SelectedClampFunction =
+                SelectedClampFunction = 
                     (IOViewControl.DataContext?.SelectedClampFunction as EplanFunction)
                         ?.Function ?? throw new ArgumentNullException();
-
+                    
                 SelectedIOModuleFunction = ioHelper.GetIOModuleFunction(SelectedClampFunction);
             }
         }
@@ -332,28 +335,10 @@ namespace EasyEPlanner
         /// </summary>
         private void ResetChannel()
         {
-            int propertyNumber = (int) Eplan.EplApi.DataModel.Properties
-                .Article.ARTICLE_TYPENR;
-            string name = GetSelectedIOModuleArticleProperty(propertyNumber);
-            var moduleInfo = IOModuleInfo.GetModuleInfo(name, out _);
-
-            Dictionary<string, string> devicesComments = ProjectConfiguration
-                .GetInstance().GetBindingForResettingChannel(
-                SelectedClampFunction, moduleInfo, ResetDevicesChannel);
-
-            foreach (KeyValuePair<string, string> pair in devicesComments)
-            {
-                var deviceName = pair.Key;
-                var deviceComment = pair.Value;
-
-                var device = DeviceManager.GetInstance().GetDevice(deviceName);
-
-                string channelName = DeviceBindingHelper
-                    .GetChannelNameForIOLinkModuleFromString(deviceComment);
-
-                device.ClearChannel(moduleInfo.AddressSpaceType,
-                    deviceComment, channelName);
-            }
+            ClampBindingUpdater.ResetDeviceChannels(
+                SelectedClampFunction,
+                GetSelectedIOModuleInfo(),
+                ResetDevicesChannel);
         }
 
         /// <summary>
@@ -382,9 +367,17 @@ namespace EasyEPlanner
                 return;
             }
 
-            var reader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
+            ClampBindingUpdater.ReadClampBinding(
+                new EplanFunction(SelectedClampFunction),
+                apiHelper);
+        }
 
-            reader.ReadModuleClampBinding(new EplanFunction(SelectedClampFunction));
+        private IOModuleInfo GetSelectedIOModuleInfo()
+        {
+            int propertyNumber = (int)Eplan.EplApi.DataModel.Properties
+                .Article.ARTICLE_TYPENR;
+            string name = GetSelectedIOModuleArticleProperty(propertyNumber);
+            return IOModuleInfo.GetModuleInfo(name, out _);
         }
 
         /// <summary>

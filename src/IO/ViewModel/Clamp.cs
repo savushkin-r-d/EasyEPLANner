@@ -17,19 +17,36 @@ namespace IO.ViewModel
         {
             get
             {
-                var description = Description.Replace(" || ", "\n");
+                var description = ClampBindingText.FormatForTooltip(
+                    RawDescription);
                 if (HasBindingError)
                 {
-                    description = $"Ошибка\n{description}";
+                    description = $"Ошибка{Environment.NewLine}{description}";
                 }
 
                 return description;
             }
         }
 
-        public string Description => string.Join(" || ",
-            Module.GetClampBinding(clamp)?
-                .Select(g => ChannelBinding(g.Item1, g.Item2)) ?? [ Value ]);
+        public string Description =>
+            ClampBindingText.FormatForCell(RawDescription);
+
+        private string RawDescription
+        {
+            get
+            {
+                var bindings = Module.GetClampBinding(clamp)?
+                    .Select(g => ChannelBinding(g.Item1, g.Item2))
+                    .Where(binding => !string.IsNullOrEmpty(binding))
+                    .ToList();
+                if (bindings is { Count: > 0 })
+                {
+                    return string.Join(ClampBindingText.Separator, bindings);
+                }
+
+                return Value ?? string.Empty;
+            }
+        }
 
         /// <summary>
         /// Генерация текста привязки канала устройства к клемме
