@@ -29,6 +29,8 @@ namespace IO.View
 
         private bool cellEditUsesMultiline = false;
 
+        private readonly PlcCellEditKeyEngine cellEditKeyEngine = new();
+
         private IEditable cellEditItem;
 
         private bool isDraggingDeletedModule = false;
@@ -129,6 +131,7 @@ namespace IO.View
 
             StructPLC.Columns.Add(firstColumn);
             StructPLC.Columns.Add(secondColumn);
+            StructPLC.CellEditKeyEngine = cellEditKeyEngine;
 
             EnsureAddModuleIcon();
             EnsureErrorIcon();
@@ -1372,49 +1375,59 @@ namespace IO.View
 
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
+            cellEditKeyEngine.MultilineEditActive = cellEditUsesMultiline;
+            InstallKeyboardHook();
 
             StructPLC.Freeze();
         }
 
         private void CellEditFinishing(object sender, CellEditEventArgs e)
         {
-            isCellEditing = false;
-            var editable = cellEditItem;
-            cellEditItem = null;
-
-            if (cancelChanges || editable is null)
+            try
             {
-                e.Cancel = true;
-                cancelChanges = false;
+                isCellEditing = false;
+                cellEditKeyEngine.MultilineEditActive = false;
+                var editable = cellEditItem;
+                cellEditItem = null;
+
+                if (cancelChanges || editable is null)
+                {
+                    e.Cancel = true;
+                    cancelChanges = false;
+                    cellEditUsesMultiline = false;
+
+                    StructPLC.Unfreeze();
+
+                    return;
+                }
+
+                StructPLC.Controls.Remove(textBoxCellEditor);
+
+                string text = textBoxCellEditor?.Text
+                    ?? e.NewValue?.ToString()
+                    ?? string.Empty;
+                if (cellEditUsesMultiline)
+                    text = EplanMultilineText.ParseFromEditor(text,
+                        CommonConst.NewLineWithCarriageReturn);
+
+                bool modified = editable is IClamp clamp
+                    ? ClampFunctionalTextBinder.TryApply(clamp, text)
+                    : editable.SetValue(text);
                 cellEditUsesMultiline = false;
 
+                if (modified)
+                {
+                    RefreshTree();
+                    DFrm.GetInstance().RefreshTreeAfterBinding();
+                }
+
+                e.Cancel = true;
                 StructPLC.Unfreeze();
-
-                return;
             }
-
-            StructPLC.Controls.Remove(textBoxCellEditor);
-
-            string text = textBoxCellEditor?.Text
-                ?? e.NewValue?.ToString()
-                ?? string.Empty;
-            if (cellEditUsesMultiline)
-                text = EplanMultilineText.ParseFromEditor(text,
-                    CommonConst.NewLineWithCarriageReturn);
-
-            bool modified = editable is IClamp clamp
-                ? ClampFunctionalTextBinder.TryApply(clamp, text)
-                : editable.SetValue(text);
-            cellEditUsesMultiline = false;
-
-            if (modified)
+            finally
             {
-                RefreshTree();
-                DFrm.GetInstance().RefreshTreeAfterBinding();
+                MaybeReleaseKeyboardHook();
             }
-
-            e.Cancel = true;
-            StructPLC.Unfreeze();
         }
 
         private static Rectangle GetCellEditorBounds(TreeListView tree, Rectangle bounds)
@@ -1470,7 +1483,12 @@ namespace IO.View
             {
                 case Keys.Enter:
                     if (cellEditUsesMultiline && !e.Control)
+                    {
+                        InsertNewLineInCellEditor();
+                        e.Handled = true;
+                        e.SuppressKeyPress = true;
                         return;
+                    }
 
                     StructPLC.FinishCellEdit();
                     e.Handled = true;
@@ -1485,6 +1503,22 @@ namespace IO.View
                 default:
                     return;
             }
+        }
+
+        private void InsertNewLineInCellEditor()
+        {
+            if (textBoxCellEditor is null)
+                return;
+
+            int selectionStart = textBoxCellEditor.SelectionStart;
+            int selectionLength = textBoxCellEditor.SelectionLength;
+            string text = textBoxCellEditor.Text ?? string.Empty;
+            string newLine = Environment.NewLine;
+
+            textBoxCellEditor.Text = text
+                .Remove(selectionStart, selectionLength)
+                .Insert(selectionStart, newLine);
+            textBoxCellEditor.SelectionStart = selectionStart + newLine.Length;
         }
 
 
@@ -1606,6 +1640,25 @@ namespace IO.View
             if (e.Model is IClamp clamp && !clamp.Bound)
             {
                 e.Item.SubItems[1].ForeColor = Color.LightSlateGray;
+            }
+        }
+
+        /// <summary>
+        /// Пропускает Enter в TextBox при многострочном редактировании.
+        /// </summary>
+        private sealed class PlcCellEditKeyEngine : CellEditKeyEngine
+        {
+            internal bool MultilineEditActive { get; set; }
+
+            public override bool HandleKey(ObjectListView olv, Keys keyData)
+            {
+                if (MultilineEditActive &&
+                    (keyData == Keys.Enter || keyData == Keys.Return))
+                {
+                    return false;
+                }
+
+                return base.HandleKey(olv, keyData);
             }
         }
     }
