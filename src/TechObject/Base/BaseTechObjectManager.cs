@@ -21,7 +21,8 @@ namespace TechObject
         BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
             string luaModuleName, string monitorName, bool deprecated,
-            bool denyBindingToUnit);
+            bool denyBindingToUnit, int techType = 2,
+            string defaultNameEplan = "TANK");
 
         BaseTechObject GetTechObjectCopy(string name);
 
@@ -78,7 +79,8 @@ namespace TechObject
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
             string luaModuleName, string monitorName, bool deprecated,
-            bool denyBindingToUnit)
+            bool denyBindingToUnit, int techType = 2,
+            string defaultNameEplan = "TANK")
         {
             var obj = new BaseTechObject
             {
@@ -90,6 +92,8 @@ namespace TechObject
                 IsPID = isPID,
                 LuaModuleName = luaModuleName,
                 MonitorName = monitorName,
+                TechType = techType,
+                DefaultNameEplan = defaultNameEplan,
                 Deprecated = deprecated,
                 DenyBindingToUnit = denyBindingToUnit
             };

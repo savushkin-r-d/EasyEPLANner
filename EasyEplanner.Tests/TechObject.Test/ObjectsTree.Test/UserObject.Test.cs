@@ -23,6 +23,7 @@ namespace TechObjectTests
             {
                 Name = "Пользовательский объект",
                 EplanName = "user_object",
+                DefaultNameEplan = "USER",
             };
             
             var userObject = new UserObject(techObjectManagerMock.Object);
@@ -37,7 +38,7 @@ namespace TechObjectTests
             Assert.Multiple(() =>
             {
                 Assert.AreSame(techobjects[0], resultTO);
-                Assert.AreSame("USER", resultTO.NameEplan);
+                Assert.AreEqual("USER", resultTO.NameEplan);
             });
         }
     }
