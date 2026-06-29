@@ -636,7 +636,7 @@ namespace EasyEPlanner
         public void AutomaticExportNewChannelBaseCombineTags(
             string projectDirPath, string projectName)
         {
-            string path = Path.Combine(projectDirPath, "chbase");
+            string path = Path.Combine(projectDirPath, "DOC");
             Directory.CreateDirectory(path);
             path = Path.Combine(path, $"{projectName}.cdbx");
             SaveAsXML(path, true, true);
