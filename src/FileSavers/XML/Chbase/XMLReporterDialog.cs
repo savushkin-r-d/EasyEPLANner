@@ -12,8 +12,8 @@ namespace EasyEPlanner
         {
             InitializeComponent();
 
-            path = pathTextBox.Text;
-            projectName = "";
+            path = string.Empty;
+            projectName = string.Empty;
         }
 
         /// <summary>
@@ -22,7 +22,40 @@ namespace EasyEPlanner
         /// <param name="name"></param>
         public void SetProjectName(string name)
         {
-            this.projectName = name;
+            projectName = name;
+            UpdatePathFromMode();
+        }
+
+        /// <summary>
+        /// Установить каталог DOC проекта как путь по умолчанию.
+        /// </summary>
+        /// <param name="docDirectoryPath">Путь к папке DOC проекта</param>
+        public void SetDefaultPath(string docDirectoryPath)
+        {
+            docDirectoryPath = docDirectoryPath ?? string.Empty;
+            this.docDirectoryPath = docDirectoryPath;
+            UpdatePathFromMode();
+        }
+
+        private void UpdatePathFromMode()
+        {
+            if (string.IsNullOrEmpty(docDirectoryPath))
+            {
+                return;
+            }
+
+            if (oldChBaseBut.Checked)
+            {
+                path = string.IsNullOrEmpty(projectName)
+                    ? docDirectoryPath
+                    : Path.Combine(docDirectoryPath, $"{projectName}{chBaseFormat}");
+            }
+            else
+            {
+                path = docDirectoryPath;
+            }
+
+            pathTextBox.Text = path;
         }
 
         /// <summary>
@@ -85,6 +118,7 @@ namespace EasyEPlanner
             {
                 pathTextBoxLabel.Text = "Укажите каталог для сохранения:";
                 oldChBaseBut.Checked = false;
+                UpdatePathFromMode();
             }
         }
 
@@ -94,6 +128,7 @@ namespace EasyEPlanner
             {
                 pathTextBoxLabel.Text = "Укажите путь к базе каналов:";
                 newChBaseBut.Checked = false;
+                UpdatePathFromMode();
             }
         }
 
@@ -186,6 +221,7 @@ namespace EasyEPlanner
 
         private string path;
         private string projectName;
+        private string docDirectoryPath = string.Empty;
         private string chBaseFormat = ".cdbx";
     }
 }

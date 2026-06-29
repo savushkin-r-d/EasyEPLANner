@@ -1,6 +1,7 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace EasyEPlanner.Main
@@ -31,6 +32,8 @@ namespace EasyEPlanner.Main
 
                 var exportForm = new XMLReporterDialog();
                 exportForm.SetProjectName(currentProject.ProjectName);
+                exportForm.SetDefaultPath(Path.Combine(
+                    currentProject.ProjectDirectoryPath, "DOC"));
                 exportForm.ShowDialog();
             }
             catch (Exception ex)
