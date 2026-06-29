@@ -35,7 +35,7 @@ namespace EasyEPlanner.Main
                 var exportForm = new XMLReporterDialog();
                 exportForm.SetProjectName(currentProject.ProjectName);
                 exportForm.SetDefaultPath(Path.Combine(
-                    currentProject.ProjectDirectoryPath, "DOC"));
+                    currentProject.ProjectDirectoryPath, "chbase"));
                 exportForm.ShowDialog();
             }
             catch (Exception ex)

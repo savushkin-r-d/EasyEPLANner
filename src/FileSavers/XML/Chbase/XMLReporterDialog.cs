@@ -27,19 +27,19 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Установить каталог DOC проекта как путь по умолчанию.
+        /// Установить каталог chbase проекта как путь по умолчанию.
         /// </summary>
-        /// <param name="docDirectoryPath">Путь к папке DOC проекта</param>
-        public void SetDefaultPath(string docDirectoryPath)
+        /// <param name="chBaseDirectoryPath">Путь к папке chbase проекта</param>
+        public void SetDefaultPath(string chBaseDirectoryPath)
         {
-            docDirectoryPath = docDirectoryPath ?? string.Empty;
-            this.docDirectoryPath = docDirectoryPath;
+            chBaseDirectoryPath = chBaseDirectoryPath ?? string.Empty;
+            this.chBaseDirectoryPath = chBaseDirectoryPath;
             UpdatePathFromMode();
         }
 
         private void UpdatePathFromMode()
         {
-            if (string.IsNullOrEmpty(docDirectoryPath))
+            if (string.IsNullOrEmpty(chBaseDirectoryPath))
             {
                 return;
             }
@@ -47,12 +47,12 @@ namespace EasyEPlanner
             if (oldChBaseBut.Checked)
             {
                 path = string.IsNullOrEmpty(projectName)
-                    ? docDirectoryPath
-                    : Path.Combine(docDirectoryPath, $"{projectName}{chBaseFormat}");
+                    ? chBaseDirectoryPath
+                    : Path.Combine(chBaseDirectoryPath, $"{projectName}{chBaseFormat}");
             }
             else
             {
-                path = docDirectoryPath;
+                path = chBaseDirectoryPath;
             }
 
             pathTextBox.Text = path;
@@ -221,7 +221,7 @@ namespace EasyEPlanner
 
         private string path;
         private string projectName;
-        private string docDirectoryPath = string.Empty;
+        private string chBaseDirectoryPath = string.Empty;
         private string chBaseFormat = ".cdbx";
     }
 }
