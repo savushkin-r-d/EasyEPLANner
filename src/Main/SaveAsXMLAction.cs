@@ -1,6 +1,7 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.DataModel;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 
@@ -9,6 +10,7 @@ namespace EasyEPlanner.Main
     /// <summary>
     /// Действие "Экспорт XML для EasyServer"
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class SaveAsXMLAction : IEplAction
     {
         ~SaveAsXMLAction() { }
