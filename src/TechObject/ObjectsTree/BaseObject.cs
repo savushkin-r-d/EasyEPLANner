@@ -516,8 +516,8 @@ namespace TechObject
             if (objectsNotNull && sameBaseObjectName)
             {
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjNum = copiedObject.GetLocalNum;
-                int newObjNum = techObject.GetLocalNum;
+                int oldObjNum = globalObjectsList.IndexOf(copiedObject) + 1;
+                int newObjNum = globalObjectsList.IndexOf(techObject) + 1;
 
                 var newObject = CloneObject(copyObject, oldObjNum,
                     newObjNum, techObject.IdentifyData);
