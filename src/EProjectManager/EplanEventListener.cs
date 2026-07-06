@@ -1,11 +1,15 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
 using System;
+using System.Collections.Generic;
 using IdleTimeModule;
 using IdleTimeModule.EplanAPIHelper;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using IO.View;
 using System.Diagnostics.CodeAnalysis;
 using EasyEPlanner.Main;
+using PInvoke;
 
 namespace EasyEPlanner
 {
@@ -24,6 +28,13 @@ namespace EasyEPlanner
 
         Eplan.EplApi.ApplicationFramework.EventHandler onNotifyPageChanged =
             new Eplan.EplApi.ApplicationFramework.EventHandler();
+
+        private const string OnChangeActiveTabMessageName =
+            "AFX_WM_ONCHANGE_ACTIVE_TAB";
+
+        private readonly List<ActiveTabHook> activeTabHooks =
+            new List<ActiveTabHook>();
+        private static int restartEditModesGeneration;
 
         public EplanEventListener()
         {
@@ -59,11 +70,111 @@ namespace EasyEPlanner
 
         private void OnNotifyPageChanged(IEventParameter eventParameter)
         {
-            SelectInteractionWhileEditModes interaction = EProjectManager
-                .GetInstance().GetEditInteraction();
-            if (interaction != null && interaction.IsFinish == false)
+            ScheduleRestartEditModesAfterGedChange();
+        }
+
+        /// <summary>
+        /// Перезапуск interaction привязки на UI-потоке EPLAN
+        /// (после смены вкладки или страницы GED).
+        /// </summary>
+        private static void ScheduleRestartEditModesAfterGedChange(
+            int delayMs = 100)
+        {
+            if (!EProjectManager.GetInstance().IsEditBindingActive())
+                return;
+
+            int generation = Interlocked.Increment(ref restartEditModesGeneration);
+            Thread.Sleep(delayMs);
+            if (generation != restartEditModesGeneration)
+                return;
+            if (!EProjectManager.GetInstance().IsEditBindingActive())
+                return;
+
+            EProjectManager.GetInstance().RestartEditModes();
+        }
+
+        private void InstallOnChangeActiveTabHooks()
+        {
+            UninstallOnChangeActiveTabHooks();
+
+            uint messageId = PI.RegisterWindowMessage(
+                OnChangeActiveTabMessageName);
+            if (messageId == 0)
+                return;
+
+            var hookedThreads = new HashSet<uint>();
+            foreach (ProcessThread thread in Process.GetCurrentProcess().Threads)
             {
-                EProjectManager.GetInstance().StartEditModesWithDelay();
+                try
+                {
+                    uint threadId = (uint)thread.Id;
+                    if (!hookedThreads.Add(threadId))
+                        continue;
+
+                    var hook = new ActiveTabHook(messageId,
+                        () => ScheduleRestartEditModesAfterGedChange());
+                    if (hook.Install(threadId))
+                        activeTabHooks.Add(hook);
+                }
+                catch (InvalidOperationException)
+                {
+                    // do nothing
+                }
+            }
+        }
+
+        private void UninstallOnChangeActiveTabHooks()
+        {
+            foreach (ActiveTabHook hook in activeTabHooks)
+                hook.Uninstall();
+
+            activeTabHooks.Clear();
+        }
+
+        private sealed class ActiveTabHook
+        {
+            private readonly uint messageId;
+            private readonly System.Action scheduleRestart;
+            private readonly PI.HookProc hookProc;
+            private IntPtr hookHandle = IntPtr.Zero;
+
+            public ActiveTabHook(uint messageId, System.Action scheduleRestart)
+            {
+                this.messageId = messageId;
+                this.scheduleRestart = scheduleRestart;
+                hookProc = HookCallback;
+            }
+
+            public bool Install(uint threadId)
+            {
+                hookHandle = PI.SetWindowsHookEx(
+                    PI.HookType.WH_CALLWNDPROC,
+                    hookProc,
+                    IntPtr.Zero,
+                    threadId);
+                return hookHandle != IntPtr.Zero;
+            }
+
+            public void Uninstall()
+            {
+                if (hookHandle == IntPtr.Zero)
+                    return;
+
+                PI.UnhookWindowsHookEx(hookHandle);
+                hookHandle = IntPtr.Zero;
+            }
+
+            private IntPtr HookCallback(int code, IntPtr wParam, IntPtr lParam)
+            {
+                if (code >= 0 && messageId != 0)
+                {
+                    var msg = (PI.CWPSTRUCT)Marshal.PtrToStructure(
+                        lParam, typeof(PI.CWPSTRUCT));
+                    if (msg.message == messageId)
+                        scheduleRestart();
+                }
+
+                return PI.CallNextHookEx(hookHandle, code, wParam, lParam);
             }
         }
 
@@ -129,6 +240,8 @@ namespace EasyEPlanner
                 // Проект открыт, ставим флаг в изначальное состояние.
                 EProjectManager.isPreCloseProjectComplete = false;
             }
+
+            InstallOnChangeActiveTabHooks();
         }
 
         /// <summary>
@@ -148,7 +261,7 @@ namespace EasyEPlanner
 
             string res = iniFile.ReadString("main", cfgWindowKey, "false")
                 .Trim().ToLower();
-            
+
             if (res is "true")
             {
                 action.Execute(ctx);
@@ -157,6 +270,9 @@ namespace EasyEPlanner
 
         private void OnMainEnd(IEventParameter iEventParameter)
         {
+            UninstallOnChangeActiveTabHooks();
+            Interlocked.Increment(ref restartEditModesGeneration);
+
             if (EProjectManager.GetInstance().GetCurrentPrj() != null)
             {
                 EProjectManager.GetInstance().SaveAndClose();
@@ -179,9 +295,10 @@ namespace EasyEPlanner
 
         private void OnMainStart(IEventParameter iEventParameter)
         {
-            idleTimeModule.BeforeClosingProject += 
+            idleTimeModule.BeforeClosingProject +=
                 EProjectManager.GetInstance().SyncAndSave;
             idleTimeModule.Start(AddInModule.OriginalAssemblyPath);
+            InstallOnChangeActiveTabHooks();
         }
 
         private IIdleTimeModule idleTimeModule;

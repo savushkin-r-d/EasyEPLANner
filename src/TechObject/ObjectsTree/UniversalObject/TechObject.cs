@@ -302,6 +302,9 @@ namespace TechObject
             }
 
             nameBC.SetNewValue(BaseTechObject.MonitorName);
+            nameEplan.SetNewValue(BaseTechObject.DefaultNameEplan);
+            techType.SetNewValue(BaseTechObject.TechType.ToString());
+
             systemParams.SetUpFromBaseTechObject(BaseTechObject.SystemParams);
             ModesManager.SetUpFromBaseTechObject(BaseTechObject);
             paramsManager.SetUpFromBaseTechObject(BaseTechObject.ParamsManager);

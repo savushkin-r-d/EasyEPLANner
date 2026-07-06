@@ -65,8 +65,19 @@ namespace TechObject.Tests
         [Test]
         public void SetNewValueAtTheSameObjects_Test()
         {
-            var baseTechObject = new BaseTechObject();
-            baseTechObject.EplanName = "BaseTechObjectName";
+            var baseTechObject = new BaseTechObject
+            {
+                EplanName = "BaseTechObjectName",
+                DefaultNameEplan = "TANK",
+                TechType = 2,
+            };
+
+            var baseTechObjectOtherType = new BaseTechObject
+            {
+                EplanName = "BaseTechObjectName",
+                DefaultNameEplan = "TANK",
+                TechType = 3,
+            };
 
             var techObjects = new List<TechObject>();
 
@@ -80,7 +91,7 @@ namespace TechObject.Tests
 
             var techObject1 = new TechObject("", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, baseTechObject);
             var techObject2_SameTechType = new TechObject("", GetN => 2, 1, 2, "TANK", -1, "", string.Empty, baseTechObject);
-            var techObject3_OtherTechType = new TechObject("", GetN => 3, 1, 3, "TANK", -1, "", string.Empty, baseTechObject);
+            var techObject3_OtherTechType = new TechObject("", GetN => 3, 1, 3, "TANK", -1, "", string.Empty, baseTechObjectOtherType);
 
             techObjects.Add(processCellTechObject);
             techObjects.Add(techObject1);
