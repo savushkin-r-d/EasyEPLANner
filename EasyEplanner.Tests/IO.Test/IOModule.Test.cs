@@ -59,5 +59,28 @@ namespace IOTests
 
             CollectionAssert.AreEqual(new List<(IIODevice, IODevice.IIOChannel)>() { (dev, channel) }, module.GetClampBinding(1));
         }
+
+        [Test]
+        public void EplanData_NewModule_SetsEplanProperties()
+        {
+            var function = Mock.Of<IEplanFunction>();
+            var module = new IOModule(1, 2, null, 338, "article",
+                new IOModule.EplanData
+                {
+                    Function = function,
+                    NamePrefix = "DEL",
+                    Location = "+CAB1",
+                    LocationDescription = "Шкаф 1"
+                });
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("DEL338", module.Name);
+                Assert.AreEqual("article", module.ArticleName);
+                Assert.AreSame(function, module.Function);
+                Assert.AreEqual("+CAB1", module.Location);
+                Assert.AreEqual("Шкаф 1", module.LocationDescription);
+            });
+        }
     }
 }

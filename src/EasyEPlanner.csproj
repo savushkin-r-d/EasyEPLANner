@@ -137,7 +137,14 @@
     <Compile Include="FileSavers\XML\XmlExtensions.cs" />
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
+    <Compile Include="IO\ViewModel\AppendModuleTarget.cs" />
+    <Compile Include="IO\ClampFunctionalTextBinder.cs" />
+    <Compile Include="IO\ViewModel\BindingErrorClampCollector.cs" />
     <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\ClampBindingText.cs" />
+    <Compile Include="IO\ViewModel\DeletedModule.cs" />
+    <Compile Include="IO\ViewModel\DeletedModuleRestorePlanner.cs" />
+    <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />
     <Compile Include="IO\ViewModel\IProperty.cs" />
     <Compile Include="IO\ViewModel\IOViewModel.cs" />
     <Compile Include="IO\ViewModel\IClamp.cs" />
@@ -145,10 +152,12 @@
     <Compile Include="IO\ViewModel\ILocation.cs" />
     <Compile Include="IO\ViewModel\IModule.cs" />
     <Compile Include="IO\ViewModel\INode.cs" />
+    <Compile Include="IO\ViewModel\ModuleViewItem.cs" />
     <Compile Include="IO\ViewModel\Property.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasBindingError.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />
@@ -230,6 +239,9 @@
       <DependentUpon>MpkSaverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\EplanMultilineText.cs" />
+    <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
+    <Compile Include="StaticHelper\FasNavigationTexts.cs" />
     <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
     <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
       <SubType>Form</SubType>
@@ -400,6 +412,7 @@
     </Compile>
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
     <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
+    <Compile Include="ClampBindingUpdater.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
     <Compile Include="Configuration\IOReader.cs" />
@@ -479,6 +492,7 @@
     <Compile Include="StaticHelper\IOHelper.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
+    <Compile Include="StaticHelper\RegexDefaults.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />
     <Compile Include="FileSavers\XML\Chbase\XmlReporter.cs" />
     <Compile Include="StaticHelper\ProjectHelper.cs" />
@@ -679,6 +693,8 @@
     <None Include="Resources\search.png" />
     <None Include="Resources\moveup.png" />
     <None Include="Resources\movedown.png" />
+    <None Include="Resources\shift_modules.png" />
+    <None Include="Resources\go_to_fas.png" />
     <None Include="Resources\toolSettings.png" />
     <None Include="Resources\import.png" />
     <None Include="Resources\refresh1.png" />

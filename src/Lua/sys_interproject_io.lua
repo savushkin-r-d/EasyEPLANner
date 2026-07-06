@@ -47,7 +47,9 @@ add_devices = function(model)
     for key, value in pairs(devices) do
         local name = value.name or ""
         local descr = value.descr or ""
-        model:AddDeviceData(name, descr)
+        local dtype = value.dtype or -1
+        local subtype = value.subtype or 0
+        model:AddDeviceData(name, descr, dtype, subtype)
     end
     model:SortDeviceData()
 end 
