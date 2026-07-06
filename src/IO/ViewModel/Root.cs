@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Root : IRoot, IExpandable
+    public class Root : IRoot, IExpandable, IHasDescriptionIcon
     {
         private readonly List<IViewItem> items = [];
 
@@ -49,5 +49,11 @@ namespace IO.ViewModel
         public IEnumerable<IViewItem> Items => items;
 
         public bool Expanded { get; set; } = true;
+
+        public bool HasBindingError =>
+            items.OfType<IHasBindingError>().Any(item => item.HasBindingError);
+
+        Icon IHasDescriptionIcon.Icon =>
+            HasBindingError ? Icon.Error : Icon.None;
     }
 }

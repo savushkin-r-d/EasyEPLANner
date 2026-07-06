@@ -27,6 +27,12 @@ namespace IO.View
 
         private bool isCellEditing = false;
 
+        private bool cellEditUsesMultiline = false;
+
+        private readonly PlcCellEditKeyEngine cellEditKeyEngine = new();
+
+        private IEditable cellEditItem;
+
         private bool isDraggingDeletedModule = false;
 
         private object dragHoverRowObject;
@@ -38,6 +44,8 @@ namespace IO.View
         private ToolStripMenuItem goToFasToolStripMenuItem;
 
         private ToolStripMenuItem restoreDeletedModulesToolStripMenuItem;
+
+        private ToolStripMenuItem reserveErrorClampsToolStripMenuItem;
 
         private sealed class DraggedModule
         {
@@ -123,8 +131,10 @@ namespace IO.View
 
             StructPLC.Columns.Add(firstColumn);
             StructPLC.Columns.Add(secondColumn);
+            StructPLC.CellEditKeyEngine = cellEditKeyEngine;
 
             EnsureAddModuleIcon();
+            EnsureErrorIcon();
         }
 
         [ExcludeFromCodeCoverage]
@@ -153,6 +163,65 @@ namespace IO.View
 
             return obj is IHasIcon item ? (int)item.Icon : -1;
         }
+
+        [ExcludeFromCodeCoverage]
+        private void EnsureErrorIcon()
+        {
+            const string imageKey = "error.png";
+            if (ViewItemImageList.Images.ContainsKey(imageKey))
+            {
+                return;
+            }
+
+            ViewItemImageList.Images.Add(imageKey, CreateErrorIcon());
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static Bitmap CreateErrorIcon()
+        {
+            const int size = 16;
+            var bitmap = new Bitmap(
+                size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var yellow = Color.FromArgb(255, 255, 204, 0);
+            const float center = 7.5f;
+            const float fillRadius = 4.5f;
+            const float borderRadius = 5.5f;
+
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var dx = x - center;
+                    var dy = y - center;
+                    var distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    Color color;
+                    if (IsErrorIconExclamationPixel(x, y))
+                    {
+                        color = Color.Black;
+                    }
+                    else if (distance <= fillRadius)
+                    {
+                        color = yellow;
+                    }
+                    else if (distance <= borderRadius)
+                    {
+                        color = Color.Black;
+                    }
+                    else
+                    {
+                        color = Color.Transparent;
+                    }
+
+                    bitmap.SetPixel(x, y, color);
+                }
+            }
+
+            return bitmap;
+        }
+
+        private static bool IsErrorIconExclamationPixel(int x, int y) =>
+            (x == 7 || x == 8) && (y >= 5 && y <= 8 || y == 10);
 
         [ExcludeFromCodeCoverage]
         private void EnsureAddModuleIcon()
@@ -187,6 +256,27 @@ namespace IO.View
             return bitmap;
         }
 
+        [ExcludeFromCodeCoverage]
+        private static Bitmap CreateReserveErrorClampsIcon()
+        {
+            const int size = 16;
+            var bitmap = new Bitmap(
+                size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            using (var graphics = Graphics.FromImage(bitmap))
+            using (var errorIcon = CreateErrorIcon())
+            using (var basketIcon = new Bitmap(
+                global::EasyEPlanner.Properties.Resources.delete,
+                new Size(10, 10)))
+            {
+                graphics.Clear(Color.Transparent);
+                graphics.DrawImage(errorIcon, 0, 0, 11, 11);
+                graphics.DrawImage(basketIcon, 6, 6, 10, 10);
+            }
+
+            return bitmap;
+        }
+
         private void InitContextMenu()
         {
             var contextMenuStrip = new ContextMenuStrip(components);
@@ -204,6 +294,14 @@ namespace IO.View
                     Image = global::EasyEPlanner.Properties.Resources.go_to_fas
                 };
             goToFasToolStripMenuItem.Click += GoToFas_Click;
+
+            reserveErrorClampsToolStripMenuItem =
+                new ToolStripMenuItem("Очистить клеммы с ошибкой")
+                {
+                    Image = CreateReserveErrorClampsIcon()
+                };
+            reserveErrorClampsToolStripMenuItem.Click +=
+                ReserveErrorClamps_Click;
 
             restoreDeletedModulesToolStripMenuItem =
                 new ToolStripMenuItem("Восстановить")
@@ -224,6 +322,7 @@ namespace IO.View
 
             contextMenuStrip.Items.Add(shiftModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(goToFasToolStripMenuItem);
+            contextMenuStrip.Items.Add(reserveErrorClampsToolStripMenuItem);
             contextMenuStrip.Items.Add(restoreDeletedModulesToolStripMenuItem);
             contextMenuStrip.Items.Add(deleteUndefinedModuleToolStripMenuItem);
             contextMenuStrip.Opening += StructPLCContextMenu_Opening;
@@ -471,6 +570,9 @@ namespace IO.View
                 selectedModules[0].IOModule.Function?.IsValid == true;
             goToFasToolStripMenuItem.Enabled =
                 TryGetSelectedEplanFunction(out _);
+            reserveErrorClampsToolStripMenuItem.Enabled =
+                BindingErrorClampCollector.Collect(GetSelectedViewObjects())
+                    .Any();
             restoreDeletedModulesToolStripMenuItem.Enabled =
                 GetRestorableDeletedModules(GetSelectedDeletedIOModules())
                     .Any();
@@ -486,6 +588,25 @@ namespace IO.View
             }
 
             EplanNavigateHelper.OpenFunctionPageWithError(function);
+        }
+
+        private void ReserveErrorClamps_Click(object sender, EventArgs e)
+        {
+            var errorClamps = BindingErrorClampCollector
+                .Collect(GetSelectedViewObjects())
+                .ToList();
+            if (!errorClamps.Any())
+            {
+                return;
+            }
+
+            foreach (var clamp in errorClamps)
+            {
+                clamp.Delete();
+            }
+
+            RefreshTree();
+            DFrm.GetInstance().RefreshTreeAfterBinding();
         }
 
         private void ShiftModules_Click(object sender, EventArgs e)
@@ -576,6 +697,20 @@ namespace IO.View
         {
             return StructPLC.SelectedObjects?.OfType<IModule>() ??
                 Enumerable.Empty<IModule>();
+        }
+
+        private IEnumerable<object> GetSelectedViewObjects()
+        {
+            var selectedObjects = StructPLC.SelectedObjects?.Cast<object>()
+                .ToList();
+            if (selectedObjects != null && selectedObjects.Count > 0)
+            {
+                return selectedObjects;
+            }
+
+            return StructPLC.SelectedObject != null
+                ? new[] { StructPLC.SelectedObject }
+                : Enumerable.Empty<object>();
         }
 
         private IEnumerable<DeletedModule> GetSelectedDeletedModules()
@@ -1227,57 +1362,110 @@ namespace IO.View
             }
 
             isCellEditing = true;
+            cellEditItem = item;
+            cellEditUsesMultiline = item is IClamp;
 
-            InitTextBoxCellEditor(item.Value, e.CellBounds);
+            InitTextBoxCellEditor(cellEditUsesMultiline);
+            textBoxCellEditor.Text = cellEditUsesMultiline
+                ? EplanMultilineText.FormatForEditor(item.Value)
+                : item.Value;
+            textBoxCellEditor.Bounds = cellEditUsesMultiline
+                ? GetMultilineEditorBounds(StructPLC, e.CellBounds, textBoxCellEditor.Text)
+                : GetCellEditorBounds(StructPLC, e.CellBounds);
 
             e.Control = textBoxCellEditor;
             textBoxCellEditor.Focus();
+            cellEditKeyEngine.MultilineEditActive = cellEditUsesMultiline;
+            InstallKeyboardHook();
 
             StructPLC.Freeze();
         }
 
         private void CellEditFinishing(object sender, CellEditEventArgs e)
         {
-            isCellEditing = false;
-
-            if (cancelChanges || StructPLC.SelectedObject is not IEditable item)
+            try
             {
+                isCellEditing = false;
+                cellEditKeyEngine.MultilineEditActive = false;
+                var editable = cellEditItem;
+                cellEditItem = null;
+
+                if (cancelChanges || editable is null)
+                {
+                    e.Cancel = true;
+                    cancelChanges = false;
+                    cellEditUsesMultiline = false;
+
+                    StructPLC.Unfreeze();
+
+                    return;
+                }
+
+                StructPLC.Controls.Remove(textBoxCellEditor);
+
+                string text = textBoxCellEditor?.Text
+                    ?? e.NewValue?.ToString()
+                    ?? string.Empty;
+                if (cellEditUsesMultiline)
+                    text = EplanMultilineText.ParseFromEditor(text,
+                        CommonConst.NewLineWithCarriageReturn);
+
+                bool modified = editable is IClamp clamp
+                    ? ClampFunctionalTextBinder.TryApply(clamp, text)
+                    : editable.SetValue(text);
+                cellEditUsesMultiline = false;
+
+                if (modified)
+                {
+                    RefreshTree();
+                    DFrm.GetInstance().RefreshTreeAfterBinding();
+                }
+
                 e.Cancel = true;
-                cancelChanges = false;
-
                 StructPLC.Unfreeze();
-
-                return;
             }
-
-            StructPLC.Controls.Remove(textBoxCellEditor);
-
-            var modified = item.SetValue(e.NewValue.ToString());
-
-            if (modified)
+            finally
             {
-                RefreshTree();
-                DFrm.GetInstance().RefreshTreeAfterBinding();
+                MaybeReleaseKeyboardHook();
             }
-
-            e.Cancel = true;
-            StructPLC.Unfreeze();
         }
 
-        private void InitTextBoxCellEditor(string text, Rectangle bounds)
+        private static Rectangle GetCellEditorBounds(TreeListView tree, Rectangle bounds)
+        {
+            int height = tree.RowHeight > 0 ? tree.RowHeight : 20;
+            return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
+        }
+
+        private static Rectangle GetMultilineEditorBounds(
+            TreeListView tree,
+            Rectangle bounds,
+            string text)
+        {
+            int lineHeight = TextRenderer.MeasureText("Xg", tree.Font).Height;
+            int lineCount = string.IsNullOrEmpty(text)
+                ? 2
+                : text.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None).Length;
+            int height = Math.Max(tree.RowHeight > 0 ? tree.RowHeight : 20,
+                lineCount * lineHeight + 6);
+            height = Math.Min(height, 200);
+            return new Rectangle(bounds.X, bounds.Y, bounds.Width, height);
+        }
+
+        private void InitTextBoxCellEditor(bool multiline = false)
         {
             textBoxCellEditor = new TextBox
             {
-                Enabled = true,
-                Visible = true,
-                Text = text,
-                Bounds = bounds,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = StructPLC.Font,
+                Multiline = multiline,
+                AcceptsReturn = multiline,
+                ScrollBars = multiline ? ScrollBars.Vertical : ScrollBars.None,
+                WordWrap = multiline,
             };
-
 
             textBoxCellEditor.LostFocus += CellEditor_LostFocus;
             textBoxCellEditor.KeyDown += CellEditor_KeyDown;
-            
+
             StructPLC.Controls.Add(textBoxCellEditor);
         }
 
@@ -1294,19 +1482,43 @@ namespace IO.View
             switch (e.KeyCode)
             {
                 case Keys.Enter:
+                    if (cellEditUsesMultiline && !e.Control)
+                    {
+                        InsertNewLineInCellEditor();
+                        e.Handled = true;
+                        e.SuppressKeyPress = true;
+                        return;
+                    }
+
                     StructPLC.FinishCellEdit();
+                    e.Handled = true;
                     break;
 
                 case Keys.Escape:
                     cancelChanges = true;
                     StructPLC.FinishCellEdit();
+                    e.Handled = true;
                     break;
 
                 default:
-                    return; // exit without e.Handled
+                    return;
             }
+        }
 
-            e.Handled = true;
+        private void InsertNewLineInCellEditor()
+        {
+            if (textBoxCellEditor is null)
+                return;
+
+            int selectionStart = textBoxCellEditor.SelectionStart;
+            int selectionLength = textBoxCellEditor.SelectionLength;
+            string text = textBoxCellEditor.Text ?? string.Empty;
+            string newLine = Environment.NewLine;
+
+            textBoxCellEditor.Text = text
+                .Remove(selectionStart, selectionLength)
+                .Insert(selectionStart, newLine);
+            textBoxCellEditor.SelectionStart = selectionStart + newLine.Length;
         }
 
 
@@ -1430,6 +1642,25 @@ namespace IO.View
             if (e.Model is IClamp clamp && !clamp.Bound)
             {
                 e.Item.SubItems[1].ForeColor = Color.LightSlateGray;
+            }
+        }
+
+        /// <summary>
+        /// Пропускает Enter в TextBox при многострочном редактировании.
+        /// </summary>
+        private sealed class PlcCellEditKeyEngine : CellEditKeyEngine
+        {
+            internal bool MultilineEditActive { get; set; }
+
+            public override bool HandleKey(ObjectListView olv, Keys keyData)
+            {
+                if (MultilineEditActive &&
+                    (keyData == Keys.Enter || keyData == Keys.Return))
+                {
+                    return false;
+                }
+
+                return base.HandleKey(olv, keyData);
             }
         }
     }

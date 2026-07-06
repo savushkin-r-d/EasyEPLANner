@@ -9,7 +9,7 @@ namespace IO.ViewModel
     /// <summary>
     /// Узел (элемент дерева).
     /// </summary>
-    public interface INode : IViewItem
+    public interface INode : IViewItem, IHasBindingError
     {
         /// <summary>
         /// Узел.

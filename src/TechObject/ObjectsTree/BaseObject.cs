@@ -118,8 +118,8 @@ namespace TechObject
             ObjectsAdder.Reset();
 
             var newObject = new TechObject(baseTechObject.Name, 
-            GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
-            DefaultEplanName, cooperParamNum, "", "", baseTechObject);
+            GetTechObjectLocalNum, localObjects.Count + 1, GetDefaultTechType(), 
+            GetDefaultNameEplan(), cooperParamNum, GetDefaultMonitorName(), "", baseTechObject);
 
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
@@ -144,7 +144,8 @@ namespace TechObject
             ObjectsAdder.Reset();
 
             var newGenericObject = new GenericTechObject(baseTechObject.Name,
-                techTypeNum, DefaultEplanName, cooperParamNum, "", "", baseTechObject);
+                GetDefaultTechType(), GetDefaultNameEplan(), cooperParamNum,
+                GetDefaultMonitorName(), "", baseTechObject);
             newGenericObject.SetUpFromBaseTechObject();
             
             var newGenericGroup = new GenericGroup(newGenericObject, this, techObjectManager);
@@ -516,8 +517,8 @@ namespace TechObject
             if (objectsNotNull && sameBaseObjectName)
             {
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjNum = copiedObject.GetLocalNum;
-                int newObjNum = techObject.GetLocalNum;
+                int oldObjNum = globalObjectsList.IndexOf(copiedObject) + 1;
+                int newObjNum = globalObjectsList.IndexOf(techObject) + 1;
 
                 var newObject = CloneObject(copyObject, oldObjNum,
                     newObjNum, techObject.IdentifyData);
@@ -684,7 +685,14 @@ namespace TechObject
 
         private Editor.IEditor editor { get; set; } = Editor.Editor.GetInstance();
 
-        public virtual string DefaultEplanName => "TANK";
+        protected int GetDefaultTechType() =>
+            baseTechObject?.TechType ?? techTypeNum;
+
+        protected string GetDefaultNameEplan() =>
+            baseTechObject?.DefaultNameEplan ?? string.Empty;
+
+        protected string GetDefaultMonitorName() =>
+            baseTechObject?.MonitorName ?? string.Empty;
 
         protected const int techTypeNum = 2;
         protected const int cooperParamNum = -1;

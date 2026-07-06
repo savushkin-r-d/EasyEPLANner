@@ -15,19 +15,21 @@ init_base_objects = function()
     for eplanName, value in pairs(objects) do
         -- Данные для минимальной инициализации
         local name = value.name or ""
+        local defaultNameEplan = value.defaultNameEplan ~= "" and value.defaultNameEplan or "TANK"
         local s88Level = value.s88Level or 0
         local basicName = value.basicName or ""
         local bindingName = value.bindingName or ""
         local isPid = value.isPID or false
         local luaModuleName = value.luaModuleName or ""
-        local monitorName = value.monitorName or "TankObj"
+        local monitorName = value.monitorName ~= "" and value.monitorName or "TankObj"
+        local defaultTechType = value.defaultTechType or 2
         local deprecated = value.deprecated or false
         local denyBindingToUnit = value.denyBindingToUnit or false
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
             basicName, bindingName, isPid, luaModuleName, monitorName,
-            deprecated, denyBindingToUnit)
+            deprecated, denyBindingToUnit, defaultTechType, defaultNameEplan)
 
         -- Добавить группы танков
         local objectGroups = value.objectGroups or { }
