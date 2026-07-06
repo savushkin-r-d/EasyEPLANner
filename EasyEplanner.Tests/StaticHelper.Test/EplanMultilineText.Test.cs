@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using StaticHelper;
 
-namespace IOTests
+namespace EasyEplannerTests.StaticHelperTest
 {
     public class EplanMultilineTextTest
     {
@@ -11,6 +11,7 @@ namespace IOTests
         [TestCase("first\nsecond", "first · second")]
         [TestCase("first\r\nsecond", "first · second")]
         [TestCase("first\u00B6second", "first · second")]
+        [TestCase("  first  \n  second  ", "first · second")]
         public void FormatForCell_JoinsLinesWithMiddleDot(string input,
             string expected)
         {
@@ -33,6 +34,8 @@ namespace IOTests
         [TestCase("", "")]
         [TestCase("single", "single")]
         [TestCase("first\u00B6second", "first\r\nsecond")]
+        [TestCase("first\r\nsecond", "first\r\nsecond")]
+        [TestCase("first\nsecond", "first\r\nsecond")]
         public void FormatForEditor_ConvertsSeparatorsToLineBreaks(string input,
             string expected)
         {
@@ -45,6 +48,7 @@ namespace IOTests
         [TestCase("single", "single")]
         [TestCase("first\r\nsecond", "first\u00B6second")]
         [TestCase("first\nsecond", "first\u00B6second")]
+        [TestCase("first\rsecond", "first\u00B6second")]
         public void ParseFromEditor_ConvertsLineBreaksToParagraphSign(
             string input, string expected)
         {
@@ -57,6 +61,16 @@ namespace IOTests
         {
             Assert.AreEqual("first\r\nsecond",
                 EplanMultilineText.ParseFromEditor("first\nsecond", "\r\n"));
+        }
+
+        [Test]
+        public void ParseFromEditor_ThenFormatForEditor_RoundTripsEplanText()
+        {
+            const string eplanText = "line1\u00B6line2\u00B6line3";
+            var editorText = EplanMultilineText.FormatForEditor(eplanText);
+            var restored = EplanMultilineText.ParseFromEditor(editorText);
+
+            Assert.AreEqual(eplanText, restored);
         }
 
         [Test]

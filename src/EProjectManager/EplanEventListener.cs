@@ -198,6 +198,7 @@ namespace EasyEPlanner
 
                 DFrm.GetInstance().ShowNoDevices();
                 IOViewControl.Instance?.Clear();
+                EasyEPlanner.Devices.View.DevicesViewControl.Instance?.Clear();
 
                 EProjectManager.GetInstance().ResetCurrentPrj();
                 EProjectManager.isPreCloseProjectComplete = true;
@@ -230,6 +231,9 @@ namespace EasyEPlanner
 
                 AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowDevicesAction)),
                     ctx, "show_dev_window");
+
+                AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowDevicesNewAction)),
+                    ctx, EasyEPlanner.Devices.View.DevicesViewControl.CfgShowWindowKey);
 
                 AttemptRestoreWindow(oAMnr.FindAction(nameof(ShowOperationsAction)),
                     ctx, "show_oper_window");
@@ -287,6 +291,7 @@ namespace EasyEPlanner
                     ModeFrm.SaveCfg(false);
                     Editor.NewEditorControl.SaveCfg(false);
                     IOViewControl.SaveCfg(false);
+                    EasyEPlanner.Devices.View.DevicesViewControl.SaveCfg(false);
                 }
             }
 

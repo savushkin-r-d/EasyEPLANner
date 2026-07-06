@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
@@ -226,6 +226,7 @@ namespace EasyEPlanner
             Editor.NewEditorControl.CheckShown();
             Editor.NewEditorControl.SaveCfg();
             IOViewControl.SaveCfg();
+            EasyEPlanner.Devices.View.DevicesViewControl.SaveCfg();
 
             if (Editor.Editor.GetInstance().IsShown())
             {

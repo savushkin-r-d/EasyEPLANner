@@ -18,6 +18,9 @@
     <SccProvider>SubversionScc</SccProvider>
     <TargetFrameworkProfile />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(DesignTimeBuild)' == 'true'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -175,6 +178,39 @@
     <Compile Include="IO\View\IOViewControl.Designer.cs">
       <DependentUpon>IOViewControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Device\ViewModel\DevicesGroupingMode.cs" />
+    <Compile Include="Device\ViewModel\DevicesRoot.cs" />
+    <Compile Include="Device\ViewModel\DevicesSearch.cs" />
+    <Compile Include="Device\ViewModel\DevicesSearchContext.cs" />
+    <Compile Include="Device\ViewModel\DevicesTreeItems.cs" />
+    <Compile Include="Device\ViewModel\DevicesViewModel.cs" />
+    <Compile Include="Device\ViewModel\IDevicesRoot.cs" />
+    <Compile Include="Device\ViewModel\IDevicesViewModel.cs" />
+    <Compile Include="Device\ViewModel\IFilterableViewItem.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IBoldName.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IComboBoxEditable.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IGoToFas.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesIcon.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesDescriptionIcon.cs" />
+    <Compile Include="Device\DeviceBindingSource.cs" />
+    <Compile Include="Device\IDeviceBindingSource.cs" />
+    <Compile Include="Device\View\DevicesIconFactory.cs" />
+    <Compile Include="Device\View\DevicesTreeViewKeys.cs" />
+    <Compile Include="Device\View\DevicesViewControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.Designer.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.EplanForm.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.TreeState.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\ShowDevicesNewAction.cs" />
     <None Include="Lua\sys_subtype_channels_count.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -596,6 +632,9 @@
     <EmbeddedResource Include="IO\View\IOViewControl.resx">
       <DependentUpon>IOViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Device\View\DevicesViewControl.resx">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -691,6 +730,23 @@
     <None Include="Resources\wholeword.png" />
     <None Include="Resources\regex.png" />
     <None Include="Resources\search.png" />
+    <None Include="Resources\devicesTreeRoot.png" />
+    <None Include="Resources\devicesTreeType.png" />
+    <None Include="Resources\devicesTreeObject.png" />
+    <None Include="Resources\devicesTreeDevice.png" />
+    <None Include="Resources\devicesTreeData.png" />
+    <None Include="Resources\devicesTreeParameters.png" />
+    <None Include="Resources\devicesTreeRuntimeParameters.png" />
+    <None Include="Resources\devicesTreeProperties.png" />
+    <None Include="Resources\devicesTreeChannels.png" />
+    <None Include="Resources\devicesTreeParameter.png" />
+    <None Include="Resources\devicesTreeProperty.png" />
+    <None Include="Resources\devicesTreeChannel.png" />
+    <None Include="Resources\io_plc_cable.png" />
+    <None Include="Resources\io_plc_clamp.png" />
+    <None Include="Resources\devicesGroupingTypeObject.png" />
+    <None Include="Resources\devicesGroupingObjectType.png" />
+    <None Include="Resources\go_to_fas.png" />
     <None Include="Resources\moveup.png" />
     <None Include="Resources\movedown.png" />
     <None Include="Resources\shift_modules.png" />
