@@ -18,9 +18,13 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="name"></param>
         /// <param name="description"></param>
-        public void AddDeviceData(string name, string description)
+        /// <param name="deviceType">Тип устройства из main.io.lua</param>
+        /// <param name="subTypeIndex">Индекс подтипа из main.io.lua</param>
+        public void AddDeviceData(string name, string description,
+            int deviceType = -1, int subTypeIndex = 0)
         {
-            var deviceDTO = new DeviceInfo(name, description);
+            var deviceDTO = new DeviceInfo(name, description, deviceType,
+                subTypeIndex);
             Devices.Add(deviceDTO);
         }
 
