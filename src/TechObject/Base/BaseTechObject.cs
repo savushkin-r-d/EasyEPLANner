@@ -23,6 +23,8 @@ namespace TechObject
             ParamsManager = new ParamsManager();
             LuaModuleName = string.Empty;
             MonitorName = string.Empty;
+            TechType = 2;
+            DefaultNameEplan = string.Empty;
             BaseProperties = new BaseProperties();
             Deprecated = false;
             DenyBindingToUnit = false;
@@ -266,7 +268,7 @@ namespace TechObject
         public string Name { get; set; }
 
         /// <summary>
-        /// ОУ базового объекта
+        /// Lua-имя (ключ) базового объекта в файле описания.
         /// </summary>
         public string EplanName { get; set; }
 
@@ -377,6 +379,7 @@ namespace TechObject
 
             cloned.BasicName = BasicName;
             cloned.EplanName = EplanName;
+            cloned.DefaultNameEplan = DefaultNameEplan;
 
             var equipment = new List<BaseParameter>();
             foreach (var equip in Equipment)
@@ -408,6 +411,7 @@ namespace TechObject
             cloned.ParamsManager = ParamsManager.Clone();
             cloned.LuaModuleName = LuaModuleName;
             cloned.MonitorName = MonitorName;
+            cloned.TechType = TechType;
             cloned.BaseProperties = BaseProperties.Clone();
 
             cloned.DenyBindingToUnit = DenyBindingToUnit;
@@ -505,6 +509,16 @@ namespace TechObject
         /// Имя объекта Monitor (SCADA)
         /// </summary>
         public string MonitorName { get; set; }
+
+        /// <summary>
+        /// ОУ по умолчанию при добавлении технологического объекта.
+        /// </summary>
+        public string DefaultNameEplan { get; set; }
+
+        /// <summary>
+        /// Технологический тип объекта по умолчанию
+        /// </summary>
+        public int TechType { get; set; }
 
         /// <summary>
         /// Базовые свойства объекта

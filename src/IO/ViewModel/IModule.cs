@@ -9,7 +9,7 @@ namespace IO.ViewModel
     /// <summary>
     /// Модуль (элемент дерева).
     /// </summary>
-    public interface IModule : IViewItem
+    public interface IModule : IViewItem, IHasBindingError
     {
         /// <summary>
         /// Модуль.

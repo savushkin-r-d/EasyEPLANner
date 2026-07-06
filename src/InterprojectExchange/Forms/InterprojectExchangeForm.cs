@@ -338,11 +338,15 @@ namespace InterprojectExchange
         {
             bool ignoreEqualSignalGroups = filterConfiguration
                 .DisableCheckSignalsPairs;
+            string currentChannelType = NormalizeChannelType(
+                currentProjectDeviceType);
+            string advancedChannelType = NormalizeChannelType(
+                advancedProjectDeviceType);
             // Если сигналы равны и содержатся в списке сигналов (AI, AO, DI,DO)
             bool devicesInvalid = 
-                (currentProjectDeviceType == advancedProjectDeviceType &&
+                (currentChannelType == advancedChannelType &&
                 interprojectExchange.DeviceChannelsNames
-                .Contains(currentProjectDeviceType) &&
+                .Contains(currentChannelType) &&
                 ignoreEqualSignalGroups == false);
             if (devicesInvalid)
             {
@@ -401,6 +405,9 @@ namespace InterprojectExchange
             string advProjDevType)
         {
             string itemGroup;
+
+            currProjDevType = NormalizeChannelType(currProjDevType);
+            advProjDevType = NormalizeChannelType(advProjDevType);
 
             // Если разные сигналы (цифровой-аналоговый, наоборот)
             char currDevSignalType = currProjDevType[0];
@@ -482,6 +489,21 @@ namespace InterprojectExchange
             form.Close();
 
             return itemGroup;
+        }
+
+        /// <summary>
+        /// Привести тип устройства к базовому каналу (DO_VIRT -> DO).
+        /// </summary>
+        private static string NormalizeChannelType(string deviceType)
+        {
+            const string virtSuffix = "_VIRT";
+            if (deviceType.EndsWith(virtSuffix))
+            {
+                return deviceType.Substring(0,
+                    deviceType.Length - virtSuffix.Length);
+            }
+
+            return deviceType;
         }
 
         /// <summary>
