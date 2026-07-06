@@ -54,6 +54,9 @@
             this.cancelBtn = new System.Windows.Forms.Button();
             this.acceptBtn = new System.Windows.Forms.Button();
             this.projLabel = new System.Windows.Forms.Label();
+            this.directoryLabel = new System.Windows.Forms.Label();
+            this.derictoryTextBox = new System.Windows.Forms.TextBox();
+            this.directoryBttn = new System.Windows.Forms.Button();
             this.dataGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,7 +72,7 @@
             this.projectsListView.Name = "projectsListView";
             this.projectsListView.ShowGroups = false;
             this.projectsListView.ShowItemToolTips = true;
-            this.projectsListView.Size = new System.Drawing.Size(121, 235);
+            this.projectsListView.Size = new System.Drawing.Size(121, 264);
             this.projectsListView.TabIndex = 0;
             this.projectsListView.UseCompatibleStateImageBehavior = false;
             this.projectsListView.View = System.Windows.Forms.View.Details;
@@ -81,6 +84,9 @@
             // 
             // dataGroupBox
             // 
+            this.dataGroupBox.Controls.Add(this.directoryBttn);
+            this.dataGroupBox.Controls.Add(this.derictoryTextBox);
+            this.dataGroupBox.Controls.Add(this.directoryLabel);
             this.dataGroupBox.Controls.Add(this.disableGateBtn);
             this.dataGroupBox.Controls.Add(this.enableGateBtn);
             this.dataGroupBox.Controls.Add(this.disableEmulationBtn);
@@ -103,7 +109,7 @@
             this.dataGroupBox.Controls.Add(this.projectLabel);
             this.dataGroupBox.Location = new System.Drawing.Point(139, 12);
             this.dataGroupBox.Name = "dataGroupBox";
-            this.dataGroupBox.Size = new System.Drawing.Size(350, 259);
+            this.dataGroupBox.Size = new System.Drawing.Size(350, 288);
             this.dataGroupBox.TabIndex = 1;
             this.dataGroupBox.TabStop = false;
             this.dataGroupBox.Text = "Параметры";
@@ -112,7 +118,7 @@
             // 
             this.disableGateBtn.AutoCheck = false;
             this.disableGateBtn.AutoSize = true;
-            this.disableGateBtn.Location = new System.Drawing.Point(171, 207);
+            this.disableGateBtn.Location = new System.Drawing.Point(171, 236);
             this.disableGateBtn.Name = "disableGateBtn";
             this.disableGateBtn.Size = new System.Drawing.Size(44, 17);
             this.disableGateBtn.TabIndex = 21;
@@ -125,7 +131,7 @@
             // 
             this.enableGateBtn.AutoCheck = false;
             this.enableGateBtn.AutoSize = true;
-            this.enableGateBtn.Location = new System.Drawing.Point(125, 207);
+            this.enableGateBtn.Location = new System.Drawing.Point(125, 236);
             this.enableGateBtn.Name = "enableGateBtn";
             this.enableGateBtn.Size = new System.Drawing.Size(40, 17);
             this.enableGateBtn.TabIndex = 20;
@@ -138,7 +144,7 @@
             // 
             this.disableEmulationBtn.AutoCheck = false;
             this.disableEmulationBtn.AutoSize = true;
-            this.disableEmulationBtn.Location = new System.Drawing.Point(171, 103);
+            this.disableEmulationBtn.Location = new System.Drawing.Point(171, 132);
             this.disableEmulationBtn.Name = "disableEmulationBtn";
             this.disableEmulationBtn.Size = new System.Drawing.Size(44, 17);
             this.disableEmulationBtn.TabIndex = 19;
@@ -151,7 +157,7 @@
             // 
             this.enableEmulationBtn.AutoCheck = false;
             this.enableEmulationBtn.AutoSize = true;
-            this.enableEmulationBtn.Location = new System.Drawing.Point(125, 103);
+            this.enableEmulationBtn.Location = new System.Drawing.Point(125, 132);
             this.enableEmulationBtn.Name = "enableEmulationBtn";
             this.enableEmulationBtn.Size = new System.Drawing.Size(40, 17);
             this.enableEmulationBtn.TabIndex = 18;
@@ -162,7 +168,7 @@
             // 
             // stationNumberTextBox
             // 
-            this.stationNumberTextBox.Location = new System.Drawing.Point(116, 232);
+            this.stationNumberTextBox.Location = new System.Drawing.Point(116, 261);
             this.stationNumberTextBox.MaxLength = 3;
             this.stationNumberTextBox.Name = "stationNumberTextBox";
             this.stationNumberTextBox.Size = new System.Drawing.Size(225, 20);
@@ -172,7 +178,7 @@
             // stationNumberLabel
             // 
             this.stationNumberLabel.AutoSize = true;
-            this.stationNumberLabel.Location = new System.Drawing.Point(6, 235);
+            this.stationNumberLabel.Location = new System.Drawing.Point(6, 264);
             this.stationNumberLabel.Name = "stationNumberLabel";
             this.stationNumberLabel.Size = new System.Drawing.Size(88, 13);
             this.stationNumberLabel.TabIndex = 16;
@@ -181,7 +187,7 @@
             // enableGateLabel
             // 
             this.enableGateLabel.AutoSize = true;
-            this.enableGateLabel.Location = new System.Drawing.Point(6, 209);
+            this.enableGateLabel.Location = new System.Drawing.Point(6, 238);
             this.enableGateLabel.Name = "enableGateLabel";
             this.enableGateLabel.Size = new System.Drawing.Size(90, 13);
             this.enableGateLabel.TabIndex = 14;
@@ -189,7 +195,7 @@
             // 
             // portTextBox
             // 
-            this.portTextBox.Location = new System.Drawing.Point(116, 180);
+            this.portTextBox.Location = new System.Drawing.Point(116, 209);
             this.portTextBox.MaxLength = 5;
             this.portTextBox.Name = "portTextBox";
             this.portTextBox.Size = new System.Drawing.Size(225, 20);
@@ -199,7 +205,7 @@
             // portLabel
             // 
             this.portLabel.AutoSize = true;
-            this.portLabel.Location = new System.Drawing.Point(6, 183);
+            this.portLabel.Location = new System.Drawing.Point(6, 212);
             this.portLabel.Name = "portLabel";
             this.portLabel.Size = new System.Drawing.Size(35, 13);
             this.portLabel.TabIndex = 12;
@@ -207,7 +213,7 @@
             // 
             // timeoutTextBox
             // 
-            this.timeoutTextBox.Location = new System.Drawing.Point(116, 154);
+            this.timeoutTextBox.Location = new System.Drawing.Point(116, 183);
             this.timeoutTextBox.MaxLength = 6;
             this.timeoutTextBox.Name = "timeoutTextBox";
             this.timeoutTextBox.Size = new System.Drawing.Size(225, 20);
@@ -217,7 +223,7 @@
             // timeoutLabel
             // 
             this.timeoutLabel.AutoSize = true;
-            this.timeoutLabel.Location = new System.Drawing.Point(6, 157);
+            this.timeoutLabel.Location = new System.Drawing.Point(6, 186);
             this.timeoutLabel.Name = "timeoutLabel";
             this.timeoutLabel.Size = new System.Drawing.Size(73, 13);
             this.timeoutLabel.TabIndex = 10;
@@ -225,7 +231,7 @@
             // 
             // cycletimeTextBox
             // 
-            this.cycletimeTextBox.Location = new System.Drawing.Point(116, 128);
+            this.cycletimeTextBox.Location = new System.Drawing.Point(116, 157);
             this.cycletimeTextBox.MaxLength = 6;
             this.cycletimeTextBox.Name = "cycletimeTextBox";
             this.cycletimeTextBox.Size = new System.Drawing.Size(225, 20);
@@ -235,7 +241,7 @@
             // cycleTimeLabel
             // 
             this.cycleTimeLabel.AutoSize = true;
-            this.cycleTimeLabel.Location = new System.Drawing.Point(6, 131);
+            this.cycleTimeLabel.Location = new System.Drawing.Point(6, 160);
             this.cycleTimeLabel.Name = "cycleTimeLabel";
             this.cycleTimeLabel.Size = new System.Drawing.Size(96, 13);
             this.cycleTimeLabel.TabIndex = 8;
@@ -244,7 +250,7 @@
             // emulationEnabledLabel
             // 
             this.emulationEnabledLabel.AutoSize = true;
-            this.emulationEnabledLabel.Location = new System.Drawing.Point(6, 105);
+            this.emulationEnabledLabel.Location = new System.Drawing.Point(6, 134);
             this.emulationEnabledLabel.Name = "emulationEnabledLabel";
             this.emulationEnabledLabel.Size = new System.Drawing.Size(113, 13);
             this.emulationEnabledLabel.TabIndex = 6;
@@ -252,7 +258,7 @@
             // 
             // emulatorIPTextBox
             // 
-            this.emulatorIPTextBox.Location = new System.Drawing.Point(116, 76);
+            this.emulatorIPTextBox.Location = new System.Drawing.Point(116, 105);
             this.emulatorIPTextBox.Name = "emulatorIPTextBox";
             this.emulatorIPTextBox.Size = new System.Drawing.Size(225, 20);
             this.emulatorIPTextBox.TabIndex = 5;
@@ -261,7 +267,7 @@
             // ipEmulatorLabel
             // 
             this.ipEmulatorLabel.AutoSize = true;
-            this.ipEmulatorLabel.Location = new System.Drawing.Point(6, 79);
+            this.ipEmulatorLabel.Location = new System.Drawing.Point(6, 108);
             this.ipEmulatorLabel.Name = "ipEmulatorLabel";
             this.ipEmulatorLabel.Size = new System.Drawing.Size(111, 13);
             this.ipEmulatorLabel.TabIndex = 4;
@@ -269,7 +275,7 @@
             // 
             // ipAddressTextBox
             // 
-            this.ipAddressTextBox.Location = new System.Drawing.Point(116, 50);
+            this.ipAddressTextBox.Location = new System.Drawing.Point(116, 79);
             this.ipAddressTextBox.Name = "ipAddressTextBox";
             this.ipAddressTextBox.ReadOnly = true;
             this.ipAddressTextBox.Size = new System.Drawing.Size(225, 20);
@@ -278,7 +284,7 @@
             // ipAddrLabel
             // 
             this.ipAddrLabel.AutoSize = true;
-            this.ipAddrLabel.Location = new System.Drawing.Point(6, 53);
+            this.ipAddrLabel.Location = new System.Drawing.Point(6, 82);
             this.ipAddrLabel.Name = "ipAddrLabel";
             this.ipAddrLabel.Size = new System.Drawing.Size(54, 13);
             this.ipAddrLabel.TabIndex = 2;
@@ -304,7 +310,7 @@
             // cancelBtn
             // 
             this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelBtn.Location = new System.Drawing.Point(414, 277);
+            this.cancelBtn.Location = new System.Drawing.Point(414, 306);
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(75, 23);
             this.cancelBtn.TabIndex = 2;
@@ -314,7 +320,7 @@
             // 
             // acceptBtn
             // 
-            this.acceptBtn.Location = new System.Drawing.Point(333, 277);
+            this.acceptBtn.Location = new System.Drawing.Point(333, 306);
             this.acceptBtn.Name = "acceptBtn";
             this.acceptBtn.Size = new System.Drawing.Size(75, 23);
             this.acceptBtn.TabIndex = 3;
@@ -331,13 +337,40 @@
             this.projLabel.TabIndex = 6;
             this.projLabel.Text = "Проекты:";
             // 
+            // directoryLabel
+            // 
+            this.directoryLabel.AutoSize = true;
+            this.directoryLabel.Location = new System.Drawing.Point(6, 53);
+            this.directoryLabel.Name = "directoryLabel";
+            this.directoryLabel.Size = new System.Drawing.Size(86, 13);
+            this.directoryLabel.TabIndex = 22;
+            this.directoryLabel.Text = "Папка проекта:";
+            // 
+            // derictoryTextBox
+            // 
+            this.derictoryTextBox.Location = new System.Drawing.Point(116, 50);
+            this.derictoryTextBox.Name = "derictoryTextBox";
+            this.derictoryTextBox.ReadOnly = true;
+            this.derictoryTextBox.Size = new System.Drawing.Size(153, 20);
+            this.derictoryTextBox.TabIndex = 23;
+            // 
+            // directoryBttn
+            // 
+            this.directoryBttn.Location = new System.Drawing.Point(276, 48);
+            this.directoryBttn.Name = "directoryBttn";
+            this.directoryBttn.Size = new System.Drawing.Size(65, 23);
+            this.directoryBttn.TabIndex = 24;
+            this.directoryBttn.Text = "Показать";
+            this.directoryBttn.UseVisualStyleBackColor = true;
+            this.directoryBttn.Click += new System.EventHandler(this.directoryBttn_Click);
+            // 
             // PACSettingsForm
             // 
             this.AcceptButton = this.acceptBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelBtn;
-            this.ClientSize = new System.Drawing.Size(503, 305);
+            this.ClientSize = new System.Drawing.Size(503, 341);
             this.ControlBox = false;
             this.Controls.Add(this.projLabel);
             this.Controls.Add(this.acceptBtn);
@@ -346,7 +379,7 @@
             this.Controls.Add(this.projectsListView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(519, 344);
+            this.MaximumSize = new System.Drawing.Size(519, 380);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(519, 344);
             this.Name = "PACSettingsForm";
@@ -390,5 +423,8 @@
         private System.Windows.Forms.RadioButton enableEmulationBtn;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.Label projLabel;
+        private System.Windows.Forms.Button directoryBttn;
+        private System.Windows.Forms.TextBox derictoryTextBox;
+        private System.Windows.Forms.Label directoryLabel;
     }
 }
