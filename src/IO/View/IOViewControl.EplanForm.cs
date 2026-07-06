@@ -100,16 +100,26 @@ namespace IO.View
 
         private void SetUpHook()
         {
-            dialogCallbackDelegate = new PI.HookProc(DlgWndHookCallbackFunction);
-
-            mainWndKeyboardCallbackDelegate = new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
+            dialogCallbackDelegate = DlgWndHookCallbackFunction;
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
                 dialogCallbackDelegate, IntPtr.Zero, pid);
 
+            InstallKeyboardHook();
+        }
 
+        private void InitKeyboardHook()
+        {
+            mainWndKeyboardCallbackDelegate ??= GlobalHookKeyboardCallbackFunction;
+        }
 
+        private void InstallKeyboardHook()
+        {
+            if (globalKeyboardHookPtr != IntPtr.Zero)
+                return;
+
+            InitKeyboardHook();
             globalKeyboardHookPtr = PI.SetWindowsHookEx(
                 PI.HookType.WH_KEYBOARD_LL, mainWndKeyboardCallbackDelegate,
                 IntPtr.Zero, 0);
@@ -118,6 +128,24 @@ namespace IO.View
             {
                 MessageBox.Show("Ошибка! Не удалось переназначить клавиши!");
             }
+        }
+
+        private void ReleaseKeyboardHook()
+        {
+            if (globalKeyboardHookPtr == IntPtr.Zero)
+                return;
+
+            PI.UnhookWindowsHookEx(globalKeyboardHookPtr);
+            globalKeyboardHookPtr = IntPtr.Zero;
+        }
+
+        private bool ShouldKeepKeyboardHook() =>
+            StructPLC?.Focused == true || isCellEditing;
+
+        private void MaybeReleaseKeyboardHook()
+        {
+            if (!ShouldKeepKeyboardHook())
+                ReleaseKeyboardHook();
         }
 
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
@@ -137,13 +165,13 @@ namespace IO.View
             }
 
 
-            if (code < 0 || StructPLC is null || !(StructPLC.Focused || isCellEditing))
+            if (code < 0 || StructPLC is null || !ShouldKeepKeyboardHook())
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
             //Отпускание клавиш - если активно окно редактора, то не пускаем дальше.
             if (wParam is PI.WM.KEYUP or PI.WM.CHAR &&
                 vkCode is PI.VIRTUAL_KEY.VK_DELETE &&
-                (StructPLC.Focused || isCellEditing))
+                ShouldKeepKeyboardHook())
             {
                 return (IntPtr)1;
             }
@@ -221,6 +249,7 @@ namespace IO.View
                         PI.UnhookWindowsHookEx(dialogHookPtr);
                         dialogHookPtr = IntPtr.Zero;
                         dialogHandle = IntPtr.Zero;
+                        ReleaseKeyboardHook();
 
                         PI.SetParent(MainTableLayoutPanel.Handle, this.Handle);
                         this.Controls.Add(MainTableLayoutPanel);
@@ -258,17 +287,12 @@ namespace IO.View
 
         private void StructPLC_MouseEnter(object sender, EventArgs e)
         {
-            globalKeyboardHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
-                mainWndKeyboardCallbackDelegate, IntPtr.Zero, 0);
+            InstallKeyboardHook();
         }
 
         private void StructPLC_MouseLeave(object sender, EventArgs e)
         {
-            if (globalKeyboardHookPtr != IntPtr.Zero)
-            {
-                PI.UnhookWindowsHookEx(globalKeyboardHookPtr);
-                globalKeyboardHookPtr = IntPtr.Zero;
-            }
+            MaybeReleaseKeyboardHook();
         }
     }
 }

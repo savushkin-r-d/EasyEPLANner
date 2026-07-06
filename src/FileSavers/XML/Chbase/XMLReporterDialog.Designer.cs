@@ -111,7 +111,6 @@
             this.pathTextBox.ReadOnly = true;
             this.pathTextBox.Size = new System.Drawing.Size(187, 20);
             this.pathTextBox.TabIndex = 6;
-            this.pathTextBox.Text = "P:\\Monitor\\chbase";
             // 
             // ChBaseFormatGroup
             // 

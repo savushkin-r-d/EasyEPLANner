@@ -58,6 +58,9 @@ namespace IO.ViewModel
 
         /// <summary> Добавление модуля. </summary>
         AddModule,
+
+        /// <summary> Ошибка привязки. </summary>
+        Error,
     }
 
     /// <summary>

@@ -157,5 +157,83 @@ namespace IOTests
                     (appendModuleTarget as IHasIcon).Icon);
             });
         }
+
+        [Test]
+        public void HasBindingError_WithInvalidClamp_ReturnsTrue()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithInvalidClamp(),
+                });
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.IsTrue(node.HasBindingError);
+        }
+
+        [Test]
+        public void HasBindingError_PropagatesFromExtensionNode()
+        {
+            var extensionNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithInvalidClamp(),
+                },
+                location: "",
+                locationDescription: "");
+            var parentNode = BindingErrorTestHelper.CreateIoNode(
+                extensions: new List<IIONode> { extensionNode });
+
+            var node = new Node(parentNode, Mock.Of<ILocation>());
+
+            Assert.IsTrue(node.HasBindingError);
+        }
+
+        [Test]
+        public void HasBindingError_WhenTreeValid_ReturnsFalse()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithValidClamp(),
+                });
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.IsFalse(node.HasBindingError);
+        }
+
+        [Test]
+        public void Icon_WithInvalidClamp_ReturnsError()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithInvalidClamp(),
+                });
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.AreEqual(Icon.Error, (node as IHasDescriptionIcon).Icon);
+        }
+
+        [Test]
+        public void Icon_WhenTreeValid_ReturnsNone()
+        {
+            var ioNode = BindingErrorTestHelper.CreateIoNode(
+                modules: new List<IIOModule>
+                {
+                    BindingErrorTestHelper.CreateIoModuleWithValidClamp(),
+                });
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(Icon.Node, (node as IHasIcon).Icon);
+                Assert.AreEqual(Icon.None, (node as IHasDescriptionIcon).Icon);
+            });
+        }
     }
 }

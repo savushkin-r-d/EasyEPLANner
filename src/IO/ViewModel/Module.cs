@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace IO.ViewModel
 {
-    public class Module : ModuleViewItem, IModule, IExpandable
+    public class Module : ModuleViewItem, IModule, IExpandable, IHasDescriptionIcon
     {
         private readonly INode owner;
 
@@ -29,5 +29,10 @@ namespace IO.ViewModel
             get => IOModule.Function?.Expanded ?? false;
             set => IOModule.Function?.Expanded = value;
         }
+
+        public bool HasBindingError => binds.Any(c => c.HasBindingError);
+
+        Icon IHasDescriptionIcon.Icon =>
+            HasBindingError ? Icon.Error : Icon.None;
     }
 }
