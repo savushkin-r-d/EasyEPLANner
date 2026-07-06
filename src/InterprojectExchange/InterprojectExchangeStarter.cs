@@ -368,14 +368,24 @@ namespace InterprojectExchange
         {
             var devices = interprojectExchange.
                 GetModel(projectName).Devices;
-            string devicesLua = string.Empty;
+            if (devices.Count == 0)
+            {
+                return;
+            }
+
+            var devicesLua = new StringBuilder();
             foreach (var device in devices)
             {
-                devicesLua += $"{device.Name} = \"{device.Name}\"\n" +
-                    $"__{device.Name} = \"{device.Name}\"\n"; 
+                string name = ToLuaStringLiteral(device.Name);
+                devicesLua.AppendLine($"_G[\"{name}\"] = \"{name}\"");
+                devicesLua.AppendLine($"_G[\"__{name}\"] = \"{name}\"");
             }
-            lua.DoString(devicesLua);
+
+            lua.DoString(devicesLua.ToString());
         }
+
+        private static string ToLuaStringLiteral(string value) =>
+            value.Replace("\\", "\\\\").Replace("\"", "\\\"");
 
         /// <summary>
         /// Чтение Shared файла текущего проекта

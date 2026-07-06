@@ -160,7 +160,7 @@ namespace Tests.InterprojectExchangeTest
             var starter = new InterprojectExchangeStarter();
             var model = (AdvancedProjectModel)starter.CreateModel();
             model.ProjectName = "project";
-            model.AddDeviceData("DEV1", "descr");
+            model.AddDeviceData("+TANK1DO1", "descr");
 
             InterprojectExchangeStarterTestHelper.InitLuaWithSystemScripts(starter);
             typeof(InterprojectExchangeStarter).GetMethod("GenerateSharedDevices",
@@ -398,26 +398,16 @@ namespace Tests.InterprojectExchangeTest
         [Test]
         public void LoadMainIOData_LoadsVirtualDeviceSubTypes()
         {
-            var ipe = new InterprojectExchangeStarter();
-            var exchange = InterprojectExchange.InterprojectExchange.GetInstance();
+            var starter = new InterprojectExchangeStarter();
+            InterprojectExchangeStarterTestHelper.InitLuaWithSystemScripts(starter);
 
-            var initLua = typeof(InterprojectExchangeStarter).GetMethod("InitLuaInstance",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            var loadScript = typeof(InterprojectExchangeStarter).GetMethod("LoadScript",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             var loadMainIOData = typeof(InterprojectExchangeStarter).GetMethod("LoadMainIOData",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                BindingFlags.Instance | BindingFlags.NonPublic);
 
-            initLua.Invoke(ipe, null);
-            loadScript.Invoke(ipe,
-                new object[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "InterprojectExchange.Test", "TestData", "mock_script.lua") });
+            Assert.IsTrue((bool)loadMainIOData.Invoke(starter,
+                new object[] { ProjectFolder, "project" }));
 
-            string testDataPath = Path.Combine(TestContext.CurrentContext.TestDirectory,
-                "InterprojectExchange.Test", "TestData");
-            Assert.IsTrue((bool)loadMainIOData.Invoke(ipe,
-                new object[] { testDataPath, "project" }));
-
-            var model = exchange.GetModel("project");
+            var model = starter.GetModel("project");
             Assert.Multiple(() =>
             {
                 Assert.IsNotNull(model);

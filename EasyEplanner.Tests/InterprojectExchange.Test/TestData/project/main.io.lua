@@ -28,8 +28,4 @@ devices =
             dtype   = 13,
             subtype = 2,
         },
-    {
-        name = 'DEV1',
-        descr = 'Device 1',
-    },
-}
+    }
