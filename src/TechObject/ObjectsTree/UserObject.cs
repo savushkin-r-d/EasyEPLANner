@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Editor;
+﻿using Editor;
 
 namespace TechObject
 {
@@ -9,6 +8,5 @@ namespace TechObject
             : base(Name, techObjectManager) { }
 
         public const string Name = "Пользовательский объект";
-        public override string DefaultEplanName => "USER";
     }
 }

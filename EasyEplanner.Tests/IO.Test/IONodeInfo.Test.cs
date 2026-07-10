@@ -20,7 +20,7 @@ namespace IOTests
                 new { Name = "750-362", Type = IONode.TYPES.T_ETHERNET, IsCoupler = true },
                 new { Name = "AXC F BK ETH", Type = IONode.TYPES.T_PHOENIX_CONTACT, IsCoupler = false },
                 new { Name = "750-352", Type = IONode.TYPES.T_ETHERNET, IsCoupler = true },
-                new { Name = "AXC F 1552", Type = IONode.TYPES.T_PHOENIX_CONTACT_MAIN, IsCoupler = false },
+                new { Name = "AXC F 1552", Type = IONode.TYPES.T_PHOENIX_CONTACT_1152, IsCoupler = false },
             };
 
             foreach(var node in nodes)

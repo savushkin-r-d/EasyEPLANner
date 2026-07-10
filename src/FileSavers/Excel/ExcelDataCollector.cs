@@ -486,7 +486,10 @@ namespace EasyEPlanner
             foreach (var ioNode in ioManager.IONodes)
             {
                 MAX_ROW += ioNode.IOModules.Count;
-                if (ioNode.Type == IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
+                if (ioNode.Type is 
+                    IONode.TYPES.T_PHOENIX_CONTACT_1152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_2152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_3152)
                 {
                     IndexPCMain = ioNode.N - 1;
                 }
@@ -515,7 +518,10 @@ namespace EasyEPlanner
                     $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
 
                 string nodeName = "";
-                if (currentNode.Type != IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
+                if (currentNode.Type is not (
+                    IONode.TYPES.T_PHOENIX_CONTACT_1152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_2152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_3152))
                 {
                     nodeName = $"Узел №{currentNode.N - offsetA1}. {currentNode.Location}-{currentNode.Name}." +
                         $" Адрес: {currentNode.IP}";

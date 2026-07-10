@@ -338,11 +338,15 @@ namespace InterprojectExchange
         {
             bool ignoreEqualSignalGroups = filterConfiguration
                 .DisableCheckSignalsPairs;
+            string currentChannelType = NormalizeChannelType(
+                currentProjectDeviceType);
+            string advancedChannelType = NormalizeChannelType(
+                advancedProjectDeviceType);
             // Если сигналы равны и содержатся в списке сигналов (AI, AO, DI,DO)
             bool devicesInvalid = 
-                (currentProjectDeviceType == advancedProjectDeviceType &&
+                (currentChannelType == advancedChannelType &&
                 interprojectExchange.DeviceChannelsNames
-                .Contains(currentProjectDeviceType) &&
+                .Contains(currentChannelType) &&
                 ignoreEqualSignalGroups == false);
             if (devicesInvalid)
             {
@@ -401,6 +405,9 @@ namespace InterprojectExchange
             string advProjDevType)
         {
             string itemGroup;
+
+            currProjDevType = NormalizeChannelType(currProjDevType);
+            advProjDevType = NormalizeChannelType(advProjDevType);
 
             // Если разные сигналы (цифровой-аналоговый, наоборот)
             char currDevSignalType = currProjDevType[0];
@@ -482,6 +489,21 @@ namespace InterprojectExchange
             form.Close();
 
             return itemGroup;
+        }
+
+        /// <summary>
+        /// Привести тип устройства к базовому каналу (DO_VIRT -> DO).
+        /// </summary>
+        private static string NormalizeChannelType(string deviceType)
+        {
+            const string virtSuffix = "_VIRT";
+            if (deviceType.EndsWith(virtSuffix))
+            {
+                return deviceType.Substring(0,
+                    deviceType.Length - virtSuffix.Length);
+            }
+
+            return deviceType;
         }
 
         /// <summary>
@@ -892,45 +914,49 @@ namespace InterprojectExchange
                 .CheckPathToProjectFiles(selectedPath);
             if (correctedPath)
             {
-                var dirInfo = new DirectoryInfo(selectedPath);
+                if (!MainIoProjectNameReader.TryReadFromFolder(selectedPath,
+                    out string projName, out string readError))
+                {
+                    ShowWarningMessage(readError, MessageBoxButtons.OK);
+                    return;
+                }
+
                 bool alreadyExchanging =
-                    advProjNameComboBox.Items.Contains(dirInfo.Name) ||
-                    currProjNameTextBox.Text.Contains(dirInfo.Name);
+                    advProjNameComboBox.Items.Contains(projName) ||
+                    currProjNameTextBox.Text == projName;
                 if (alreadyExchanging)
                 {
-                    string message = $"Проект \"{dirInfo.Name}\" уже " +
+                    string message = $"Проект \"{projName}\" уже " +
                         $"обменивается с этим проектом сигналами";
                     ShowInfoMessage(message);
                 }
                 else
                 {
                     bool canRestore = interprojectExchange
-                        .RestoreModel(dirInfo.Name);
+                        .RestoreModel(projName);
                     if (canRestore)
                     {
-                        AddAndSelectModelToList(dirInfo);
+                        AddAndSelectModelToList(projName);
                         return;
+                    }
+
+                    bool loaded = interprojectExchange.LoadProjectData(
+                        selectedPath, out string errors);
+                    if (loaded)
+                    {
+                        AddAndSelectModelToList(projName);
                     }
                     else
                     {
-                        bool loaded = interprojectExchange.LoadProjectData(
-                        selectedPath, out string errors);
-                        if (loaded)
+                        string message = $"Данные по проекту " +
+                            $"\"{projName}\" не загружены.\n";
+                        if (!string.IsNullOrEmpty(errors))
                         {
-                            AddAndSelectModelToList(dirInfo);
+                            message += "Дополнительные ошибки:\n" + errors;
                         }
-                        else
-                        {
-                            string message = $"Данные по проекту " +
-                                $"\"{dirInfo.Name}\" не загружены.\n";
-                            if (!string.IsNullOrEmpty(errors))
-                            {
-                                message += "Дополнительные ошибки:\n" + errors;
-                            }
 
-                            ShowErrorMessage(message);
-                        }
-                    }        
+                        ShowErrorMessage(message);
+                    }
                 }
             }
             else
@@ -944,11 +970,11 @@ namespace InterprojectExchange
         /// <summary>
         /// Добавить модель в список и выбрать её
         /// </summary>
-        /// <param name="dirInfo">Информация о каталоге с проектом</param>
-        private void AddAndSelectModelToList(DirectoryInfo dirInfo)
+        /// <param name="projectName">Имя проекта (PAC_name)</param>
+        private void AddAndSelectModelToList(string projectName)
         {
-            advProjNameComboBox.Items.Add(dirInfo.Name);
-            int selectItem = advProjNameComboBox.Items.IndexOf(dirInfo.Name);
+            advProjNameComboBox.Items.Add(projectName);
+            int selectItem = advProjNameComboBox.Items.IndexOf(projectName);
             advProjPrevSelectedIndex = 0;
             advProjNameComboBox.SelectedIndex = selectItem;
         }

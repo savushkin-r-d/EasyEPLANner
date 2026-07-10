@@ -200,11 +200,13 @@ namespace TechObject
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
             string luaModuleName, string monitorName, bool deprecated,
-            bool denyBindingToUnit)
+            bool denyBindingToUnit, int techType = 2,
+            string defaultNameEplan = "TANK")
         {
             return baseTechObjectManager.AddBaseObject(name, eplanName,
                 s88Level, basicName, bindingName, isPID, luaModuleName,
-                monitorName, deprecated, denyBindingToUnit);
+                monitorName, deprecated, denyBindingToUnit, techType,
+                defaultNameEplan);
         }
 
         public void AddPackage(string package)

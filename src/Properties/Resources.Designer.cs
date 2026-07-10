@@ -143,6 +143,166 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap devicesTreeRoot {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeRoot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeType {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeType", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeObject {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeObject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeDevice {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeDevice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeData {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeData", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeParameters {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeParameters", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeRuntimeParameters {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeRuntimeParameters", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeProperties {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeProperties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeChannels {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeChannels", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeParameter {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeParameter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeProperty {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeProperty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesTreeChannel {
+            get {
+                object obj = ResourceManager.GetObject("devicesTreeChannel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap io_plc_cable {
+            get {
+                object obj = ResourceManager.GetObject("io_plc_cable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap io_plc_clamp {
+            get {
+                object obj = ResourceManager.GetObject("io_plc_clamp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesGroupingTypeObject {
+            get {
+                object obj = ResourceManager.GetObject("devicesGroupingTypeObject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap devicesGroupingObjectType {
+            get {
+                object obj = ResourceManager.GetObject("devicesGroupingObjectType", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap edit {
             get {
                 object obj = ResourceManager.GetObject("edit", resourceCulture);
@@ -279,7 +439,7 @@ namespace EasyEPlanner.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
@@ -357,6 +517,16 @@ namespace EasyEPlanner.Properties {
         public static System.Drawing.Bitmap movedown {
             get {
                 object obj = ResourceManager.GetObject("movedown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap shift_modules {
+            get {
+                object obj = ResourceManager.GetObject("shift_modules", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -747,6 +917,16 @@ namespace EasyEPlanner.Properties {
         public static System.Drawing.Bitmap wholeword {
             get {
                 object obj = ResourceManager.GetObject("wholeword", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap go_to_fas {
+            get {
+                object obj = ResourceManager.GetObject("go_to_fas", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

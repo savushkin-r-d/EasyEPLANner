@@ -97,6 +97,7 @@ function init_objects_data(objects, initialized_objects)
             proc_params(value.par_uint, "par_uint", obj)
             proc_params(value.rt_par_float, "rt_par_float", obj)
             proc_params(value.rt_par_uint, "rt_par_uint", obj)
+            obj:GetParamsManager():CompleteInit()
 
             -- Системные параметры
             proc_system_params(value.system_parameters, obj)
@@ -252,6 +253,7 @@ function proc_wash_data(step, value)
         if (wash_data.DI or
             wash_data.DO or
             wash_data.devices or
+            wash_data.deactivate_devices or
             wash_data.rev_devices or
             wash_data.pump_freq) then
 

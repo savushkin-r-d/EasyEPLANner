@@ -128,9 +128,10 @@
     <value>-- Шаблон файла, описывающего базовую функциональность.
 -- В этом файле описан один пустой базовый объект, для примера.
 
--- Базовый объект (название таблицы - eplanName т.е LUA-имя объекта, пишется в любых регистрах):
+-- Базовый объект (ключ таблицы — eplanName, Lua-имя объекта):
 -- 1. s88Level - уровень объекта по ISA-88 (1 - для юнитов, аппаратов. 2 - для агрегатов).
 -- 2. name - русскоязычное название объекта.
+-- 3. defaultNameEplan - ОУ по умолчанию при добавлении объекта. Если не задано — TANK.
 -- 3. baseOperations - описание базовых операций объекта.
 -- 4. basicName - англоязычное имя объекта, которое фигурирует в функциональности (add_functionality).
 -- Это имя должно содержать имя без приписки "basic_"
@@ -153,7 +154,8 @@
 -- Пустое или отсутствующее значение - модуль не будет подключен.
 -- 13. monitorName - имя объекта Monitor, которое будет задаваться при автоматической настройке объекта
 -- при его добавлении в дерево. Если не задано - будет задаваться стандартное значение - TankObj.
--- 14. baseProperties - базовые (дополнительные) свойства объекта. Добавляются также, как и параметры
+-- 14. defaultTechType - технологический тип объекта по умолчанию. Если не задан — 2.
+-- 15. baseProperties - базовые (дополнительные) свойства объекта. Добавляются также, как и параметры
 -- базовой операции. За исключением того, что доступны только bool и active параметры.
 -- 15. deprecated - устарел объект или нет. Если устарел - не будет показан в списке базовых объектов,
 -- но его можно использовать в уже существующих проектах, где такие объекты используются. Для этого
@@ -232,8 +234,9 @@ return
     {
     local object_float_parameters = get_objects_float_parameters()
     local object_float_runtime_parameters = get_runtime_float_parameters()
-        uniqueEplanName = { -- Уникальное Lua-имя объекта
+        uniqueEplanName = { -- Ключ таблицы = eplanName (Lua-имя объекта)
             name = "",
+            defaultNameEplan = "",
             s88Level = 0,
             baseOperations =
             {
@@ -292,6 +295,7 @@ return
             },
             luaModuleName = "name",
             monitorName = "TankObj",
+            defaultTechType = 2,
             baseProperties =
             {
                 active = -- Активные параметры
@@ -610,7 +614,10 @@ shared_devices =
 -- 2 - Модули в контроллере PFC200.
 -- 100 - Удаленный Ethernet узел.
 -- 200 - Модули в контроллере Phoenix Contact.
--- 201 - Контроллер Phoenix Contact
+-- 201 - Контроллер Phoenix Contact AXC F 1152
+-- 202 - Контроллер Phoenix Contact AXC F 2152
+-- 203 - Контроллер Phoenix Contact AXC F 3152
+-- 300 - Модуль расширения Phoenix Contact
 
 local io_nodes =
 {
@@ -631,10 +638,64 @@ return io_nodes</value>
   <data name="movedown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\movedown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="shift_modules" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shift_modules.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="autocomplete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\autocomplete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="mpkDefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mpkDefaultIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeRoot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeRoot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeDevice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeDevice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeData" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeData.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeRuntimeParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeRuntimeParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeChannels" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeChannels.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeParameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeParameter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeChannel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeChannel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="io_plc_cable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\io_plc_cable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="io_plc_clamp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\io_plc_clamp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesGroupingTypeObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesGroupingTypeObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesGroupingObjectType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesGroupingObjectType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="go_to_fas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\go_to_fas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

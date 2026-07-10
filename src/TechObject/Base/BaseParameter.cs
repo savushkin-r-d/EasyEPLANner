@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using static IO.IONode;
 
 namespace TechObject
 {
@@ -224,20 +225,14 @@ namespace TechObject
 
         override public string[] EditText => [LuaName, Value];
 
-        override public string[] DisplayText
+        override public string[] DisplayText => CurrentValueType switch
         {
-            get
-            {
-                if (OnlyDevicesInParameter)
-                {
-                    return new string[] { Name, GetDevicesString() };
-                }
-                else
-                {
-                    return new string[] { Name, Value };
-                }
-            }
-        }
+            ValueType.Device or ValueType.ManyDevices => [Name, GetDevicesString()],
+            ValueType.Number when 
+                DisplayObjects.Contains(DisplayObject.Operation) && 
+                TryGetOperationByNumber(Value, out var operation) => [Name, operation.DisplayText[0]],
+            _ => [Name, Value],
+        };
         
         /// <summary>
         /// Отображение: true - параметер; false - устройства
@@ -301,11 +296,14 @@ namespace TechObject
         /// <returns></returns>
         private ValueType GetParameterValueType(string value)
         {
-            var result = ValueType.Other;
-
             if (string.IsNullOrEmpty(value))
             {
                 return ValueType.None;
+            }
+
+            if (IsStubValue(value))
+            {
+                return ValueType.Stub;
             }
 
             if (IsBoolParameter)
@@ -318,15 +316,7 @@ namespace TechObject
                 return ValueType.Number;
             }
 
-            bool isParameter = GetCurrentTechObject()?.GetParamsManager()
-                .Float.GetParam(value) != null;
-            if (isParameter)
-            {
-                return ValueType.Parameter;
-            }
-
-            bool isDevice = deviceManager.GetDeviceByEplanName(value)
-                .Description != StaticHelper.CommonConst.Cap;
+            bool isDevice = deviceManager.IsExistingDeviceByEplanName(value);
             if (isDevice)
             {
                 return ValueType.Device;
@@ -339,8 +329,7 @@ namespace TechObject
                 var validDevices = new List<bool>();
                 foreach (var device in devices)
                 {
-                    isDevice = deviceManager.GetDeviceByEplanName(device)
-                        .Description != StaticHelper.CommonConst.Cap;
+                    isDevice = deviceManager.IsExistingDeviceByEplanName(device);
                     if (isDevice == false)
                     {
                         haveBadDevices = true;
@@ -355,14 +344,21 @@ namespace TechObject
                 }
             }
 
-            bool stub = value.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
-            if (stub)
+            bool isParameter = GetCurrentTechObject()?.GetParamsManager() is { } pm &&
+                (pm.Float.GetParam(value) != null || !pm.Initialized);
+            if (isParameter)
             {
-                return ValueType.Stub;
+                return ValueType.Parameter;
             }
 
-            return result;
+            return ValueType.Other;
+        }
+
+        protected static bool IsStubValue(string value)
+        {
+            return string.Equals(value?.Trim(),
+                StaticHelper.CommonConst.StubForCells,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         #region сохранение prg.lua
@@ -491,7 +487,7 @@ namespace TechObject
         {
             if (Owner is BaseTechObject)
             {
-                return BaseOperation.Owner.Owner.Owner;
+                return BaseOperation?.Owner?.Owner?.Owner;
             }
             else if (Owner is BaseOperation operation)
             {
@@ -514,34 +510,177 @@ namespace TechObject
 
             SetParameterValueType(Value);
 
-            if (Owner is not BaseOperation baseOperation)
+            if (CurrentValueType is ValueType.Stub)
             {
                 return;
             }
 
-            var operation = baseOperation.Owner;
-            var techObject = operation?.Owner?.Owner;
-
-            switch (CurrentValueType)
+            if (!TryGetCheckContext(out var operation, out var techObject))
             {
-                case ValueType.Other:
-                    // Сброс поля параметра в доп. свойствах операции,
-                    // если указан несуществующий параметр.
-                    SetNewValue(string.Empty);
-                    Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" имеет неопределенное значение: {Value};\n");
-                    break;
-
-                case ValueType.Device:
-                case ValueType.ManyDevices:
-                    if (!DisplayObjects.Contains(DisplayObject.Signals) &&
-                        Value.Split(' ').Select(deviceManager.GetDevice)
-                            .Any(d => !deviceTypes.Contains(d.DeviceType)))
-                    {
-                        var types = string.Join(", ", [.. deviceTypes.Select(d => d.ToString())]);
-                        Logs.AddMessage($"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\" заполнено сигналами неверного типа; ({types})\n");
-                    }
-                    break;
+                return;
             }
+
+            var hasSignal = HasSignalDisplayObject();
+            var hasParameter = DisplayObjects.Contains(DisplayObject.Parameters);
+            var hasOperation = DisplayObjects.Contains(DisplayObject.Operation);
+            var errContext = $"{techObject?.DisplayText[0]}: {operation?.DisplayText[0]}: доп. свойство \"{Name}\": поле заполнено неверно: '{Value}'";
+            var devTypesContext = $"(допустимые типы: {string.Join(", ", deviceTypes.Select(d => d.ToString()))})";
+
+            if (hasOperation)
+            {
+                CheckOperations(errContext);
+                return;
+            }
+
+            if (hasSignal)
+            {
+                var devices = GetDevicesFromValue();
+                var correctSignalNames = GetCorrectSignalNames(devices);
+                var hasCorrectSignals = devices.Count == correctSignalNames.Count;
+
+                if (hasParameter)
+                {
+                    CheckSignalsOrParameters(errContext, devTypesContext,
+                        correctSignalNames, hasCorrectSignals);
+                    return;
+                }
+
+                CheckSignals(errContext, devTypesContext, correctSignalNames,
+                    hasCorrectSignals);
+                return;
+            }
+
+            CheckParameters(errContext);
+        }
+
+        private bool TryGetCheckContext(out Mode operation, out TechObject techObject)
+        {
+            operation = null;
+            techObject = null;
+
+            if (Owner is BaseOperation baseOperation)
+            {
+                operation = baseOperation.Owner;
+                techObject = operation?.Owner?.Owner;
+                return true;
+            }
+
+            return TryGetCheckContextCore(out operation, out techObject);
+        }
+
+        protected virtual bool TryGetCheckContextCore(out Mode operation,
+            out TechObject techObject)
+        {
+            operation = null;
+            techObject = null;
+            return false;
+        }
+
+        private bool HasSignalDisplayObject()
+        {
+            var signalDisplayObjects = new[]
+            {
+                DisplayObject.Signals,
+                DisplayObject.DI,
+                DisplayObject.DO,
+                DisplayObject.AI,
+                DisplayObject.AO,
+            };
+
+            return DisplayObjects.Any(signalDisplayObjects.Contains);
+        }
+
+        private List<IODevice> GetDevicesFromValue()
+        {
+            return [.. Value.Split([' '], StringSplitOptions.RemoveEmptyEntries)
+                .Select(deviceManager.GetDevice)];
+        }
+
+        private List<string> GetCorrectSignalNames(List<IODevice> devices)
+        {
+            return devices
+                .Where(d => d != null && deviceTypes.Contains(d.DeviceType))
+                .Select(d => d.Name)
+                .ToList();
+        }
+
+        private void CheckSignalsOrParameters(string errContext,
+            string devTypesContext, List<string> correctSignalNames,
+            bool hasCorrectSignals)
+        {
+            if (CurrentValueType is ValueType.Parameter)
+                return;
+
+            if (CurrentValueType is ValueType.Device or ValueType.ManyDevices)
+            {
+                if (hasCorrectSignals)
+                    return;
+
+                SetNewValue(string.Join(" ", correctSignalNames));
+            }
+            else
+            {
+                SetNewValue(string.Empty);
+            }
+
+            Logs.AddMessage($"{errContext} - Могут быть установлены только параметры или сигналы {devTypesContext};\n");
+        }
+
+        private void CheckSignals(string errContext, string devTypesContext,
+            List<string> correctSignalNames, bool hasCorrectSignals)
+        {
+            if (CurrentValueType is ValueType.Device or ValueType.ManyDevices &&
+                hasCorrectSignals)
+                return;
+
+            SetNewValue(string.Join(" ", correctSignalNames));
+            Logs.AddMessage($"{errContext} - могут быть установлены только сигналы {devTypesContext};\n");
+        }
+
+        private void CheckParameters(string errContext)
+        {
+            if (!DisplayObjects.Contains(DisplayObject.Parameters) ||
+                CurrentValueType is ValueType.Parameter)
+                return;
+
+            SetNewValue(string.Empty);
+            Logs.AddMessage($"{errContext} - могут быть установлены только параметры;\n");
+        }
+
+        private void CheckOperations(string errContext)
+        {
+            if (CurrentValueType is ValueType.Number &&
+                TryGetOperationByNumber(Value, out _))
+                return;
+
+            Logs.AddMessage($"{errContext} - может быть установлен только номер существующей операции;\n");
+        }
+
+        private bool TryGetOperationByNumber(string value, out Mode operation)
+        {
+            operation = null;
+
+            if (!int.TryParse(value, out int operationNumber))
+                return false;
+
+            return TryGetOperationByNumber(operationNumber, out operation);
+        }
+
+        private bool TryGetOperationByNumber(int operationNumber,
+            out Mode operation)
+        {
+            operation = GetOperationReferenceTechObject()?.ModesManager.Modes
+                .FirstOrDefault(mode => mode.GetModeNumber() == operationNumber);
+
+            return operation != null;
+        }
+
+        private TechObject GetOperationReferenceTechObject()
+        {
+            if (Owner is BaseTechObject baseTechObject)
+                return baseTechObject.Owner;
+
+            return GetCurrentTechObject();
         }
 
         public virtual void ModifyDevNames(IDevModifyOptions options)
@@ -594,6 +733,7 @@ namespace TechObject
             AO,
             DI,
             DO,
+            Operation,
         }
 
         /// <summary>

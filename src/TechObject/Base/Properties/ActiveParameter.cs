@@ -35,9 +35,7 @@ namespace TechObject
             if (DisplayParameters && Owner is BaseOperation) 
                 OneValueOnly = true;
 
-            bool notStub = !newValue.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
-            if (notStub)
+            if (!IsStubValue(newValue))
             {
                 if (OneValueOnly)
                 {

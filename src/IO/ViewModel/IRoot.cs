@@ -9,7 +9,7 @@ namespace IO.ViewModel
     /// <summary>
     /// Корневой элемент представления "узлы и модули ввода-вывода"
     /// </summary>
-    public interface IRoot : IViewItem
+    public interface IRoot : IViewItem, IHasBindingError
     {
         /// <summary>
         /// Модель представления

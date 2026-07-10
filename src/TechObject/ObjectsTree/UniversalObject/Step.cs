@@ -301,7 +301,10 @@ namespace TechObject
                             EplanDevice.DeviceType.PDS,
                         }));
                     return enableStepBySignalAction;
-                });
+                })
+            {
+                ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+            };
             enableStepBySignal.CreateParameter(new ActiveBoolParameter("",
                 "Выключать шаг по пропаданию сигнала", "true"));
 
@@ -326,7 +329,9 @@ namespace TechObject
                     toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
                        "Шаг"));
                     return toStepByCondition;
-                });
+                }){
+                    ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+                };
                 actions.Add(toStepByConditionAction);
                 items.Add(toStepByConditionAction);
 
@@ -384,7 +389,9 @@ namespace TechObject
                 CBParameterValues
                 ));
                 return toStateByCondition;
-            });
+            }) {
+                ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+            };
             actions.Add(toStateByConditionAction);
             items.Add(toStateByConditionAction);
         }
@@ -403,7 +410,9 @@ namespace TechObject
             clone.actions = new List<IAction>();
             foreach (IAction action in actions)
             {
-                clone.actions.Add(action.Clone());
+                var clonedAction = action.Clone();
+                AssignOwnerToAction(clonedAction, clone);
+                clone.actions.Add(clonedAction);
             }
 
             clone.items = new List<ITreeViewItem>();
@@ -421,13 +430,22 @@ namespace TechObject
             }
 
             clone.baseStep = baseStep.Clone();
-            clone.baseStep.Owner = this;
+            clone.baseStep.Owner = clone;
 
             clone.actions.ForEach(
                 action => (action as ITreeViewItem).ValueChanged +=
                 sender => clone.OnValueChanged(sender));
 
             return clone;
+        }
+
+        private static void AssignOwnerToAction(IAction action, Step owner)
+        {
+            action.Owner = owner;
+            if (action.HasSubActions)
+            {
+                action.SubActions?.ForEach(subAction => AssignOwnerToAction(subAction, owner));
+            }
         }
 
         public void ModifyDevNames(IDevModifyOptions options)

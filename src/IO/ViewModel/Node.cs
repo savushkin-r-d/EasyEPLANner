@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IO.ViewModel
 {
-    public class Node : INode, IExpandable, IHasIcon
+    public class Node : INode, IExpandable, IHasIcon, IHasDescriptionIcon
     {
         private readonly List<IModule> modules = [];
 
@@ -37,6 +37,7 @@ namespace IO.ViewModel
             items.Add(ip);
             items.Add(SubnetMask);
             items.Add(Gateway);
+            items.AddRange(node.ExtensionModules.Select(m => new Node(m, owner)));
             items.AddRange(modules);
         }
 
@@ -44,7 +45,23 @@ namespace IO.ViewModel
 
         public IEnumerable<IViewItem> Items => items;
 
-        public string Name => IONode.Type is IO.IONode.TYPES.T_EMPTY ? $"{IONode.N}. Заглушка" : $"{IONode.N}. {IONode.Name}";
+        public string Name
+        {
+            get
+            {
+                if (IONode.Type is IO.IONode.TYPES.T_EMPTY)
+                {
+                    return $"{IONode.N}. Заглушка";
+                }
+
+                if (IONode.Name?.Contains('.') ?? false)
+                {
+                    return IONode.Name;
+                }
+
+                return $"{IONode.N}. {IONode.Name}";
+            }
+        }
 
         public string Description => IONode.TypeStr;
 
@@ -55,5 +72,12 @@ namespace IO.ViewModel
         }
 
         Icon IHasIcon.Icon => Icon.Node;
+
+        public bool HasBindingError =>
+            modules.Any(m => m.HasBindingError) ||
+            items.OfType<Node>().Any(n => n.HasBindingError);
+
+        Icon IHasDescriptionIcon.Icon =>
+            HasBindingError ? Icon.Error : Icon.None;
     }
 }

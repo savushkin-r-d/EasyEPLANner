@@ -118,8 +118,8 @@ namespace TechObject
             ObjectsAdder.Reset();
 
             var newObject = new TechObject(baseTechObject.Name, 
-            GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
-            DefaultEplanName, cooperParamNum, "", "", baseTechObject);
+            GetTechObjectLocalNum, localObjects.Count + 1, GetDefaultTechType(), 
+            GetDefaultNameEplan(), cooperParamNum, GetDefaultMonitorName(), "", baseTechObject);
 
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
@@ -144,7 +144,8 @@ namespace TechObject
             ObjectsAdder.Reset();
 
             var newGenericObject = new GenericTechObject(baseTechObject.Name,
-                techTypeNum, DefaultEplanName, cooperParamNum, "", "", baseTechObject);
+                GetDefaultTechType(), GetDefaultNameEplan(), cooperParamNum,
+                GetDefaultMonitorName(), "", baseTechObject);
             newGenericObject.SetUpFromBaseTechObject();
             
             var newGenericGroup = new GenericGroup(newGenericObject, this, techObjectManager);
@@ -435,7 +436,7 @@ namespace TechObject
                 int oldObjN = globalObjectsList.IndexOf(techObj) + 1;
                 int newObjN = globalObjectsList.Count + 1;
 
-                var newObject = CloneObject(techObj, newN, oldObjN, newObjN);
+                var newObject = CloneObject(techObj, oldObjN, newObjN, techObj.IdentifyData.WithTechNumber(newN));
 
                 // Работа со списком в дереве и общим списком объектов.
                 techObjects.Add(newObject);
@@ -515,15 +516,12 @@ namespace TechObject
                 copiedObject?.BaseTechObject.Name == baseTechObject.Name;
             if (objectsNotNull && sameBaseObjectName)
             {
-                int newN = techObject.TechNumber;
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjNum = globalObjectsList
-                    .IndexOf(copiedObject) + 1;
-                int newObjNum = globalObjectsList
-                    .IndexOf(techObject) + 1;
+                int oldObjNum = globalObjectsList.IndexOf(copiedObject) + 1;
+                int newObjNum = globalObjectsList.IndexOf(techObject) + 1;
 
-                var newObject = CloneObject(copyObject, newN, oldObjNum,
-                    newObjNum);
+                var newObject = CloneObject(copyObject, oldObjNum,
+                    newObjNum, techObject.IdentifyData);
 
                 // Список тех. объектов вне групп
                 int toindex = techObjects.IndexOf(techObject);
@@ -561,23 +559,22 @@ namespace TechObject
         /// <param name="oldObjNum">Старый глобальный номер</param>
         /// <param name="newObjNum">Новый глобальный номер</param>
         /// <returns></returns>
-        private TechObject CloneObject(object obj, int newN, int oldObjNum,
-            int newObjNum)
+        private TechObject CloneObject(object obj, int oldObjNum,
+            int newObjNum, ITechObjectIdentifyData techObjectIdentifyData)
         {
             var techObject = obj as TechObject;
-            var stubObject = techObject.Clone(GetTechObjectLocalNum, newN,
-                    oldObjNum, newObjNum);
+            var stubObject = techObject.Clone(GetTechObjectLocalNum,
+                techObjectIdentifyData.TechNumber, oldObjNum, newObjNum);
 
-            bool isInsertCopy = newObjNum > globalObjectsList.Count;
-            if (isInsertCopy)
+            if (newObjNum > globalObjectsList.Count)
             {
-                return CloneForInsert(techObject, stubObject, newN, oldObjNum,
-                    newObjNum);
+                return CloneForInsert(techObject, stubObject, oldObjNum,
+                    newObjNum, techObjectIdentifyData);
             }
             else
             {
-                return CloneForReplace(techObject, stubObject, newN, oldObjNum,
-                    newObjNum);
+                return CloneForReplace(techObject, stubObject, oldObjNum,
+                    newObjNum, techObjectIdentifyData);
             }
         }
 
@@ -591,11 +588,12 @@ namespace TechObject
         /// <param name="newObjNum">Новый глобальный номер</param>
         /// <returns></returns>
         private TechObject CloneForInsert(TechObject cloningObject,
-            TechObject stubObject, int newN, int oldObjNum, int newObjNum)
+            TechObject stubObject, int oldObjNum, int newObjNum,
+            ITechObjectIdentifyData techObjectIdentifyData)
         {
             globalObjectsList.Add(stubObject);
-            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum, newN,
-                oldObjNum, newObjNum);
+            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum,
+                oldObjNum, newObjNum, techObjectIdentifyData);
             globalObjectsList.Remove(stubObject);
             return clonedObject;
         }
@@ -610,12 +608,13 @@ namespace TechObject
         /// <param name="newObjNum">Новый глобальный номер</param>
         /// <returns></returns>
         private TechObject CloneForReplace(TechObject cloningObject,
-            TechObject stubObject, int newN, int oldObjNum, int newObjNum)
+            TechObject stubObject, int oldObjNum, int newObjNum,
+            ITechObjectIdentifyData techObjectIdentifyData)
         {
             var objectFromGlobalList = globalObjectsList[newObjNum - 1];
             globalObjectsList[newObjNum - 1] = stubObject;
-            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum, newN,
-                oldObjNum, newObjNum);
+            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum,
+                oldObjNum, newObjNum, techObjectIdentifyData);
             globalObjectsList[newObjNum - 1] = objectFromGlobalList;
             return clonedObject;
         }
@@ -686,7 +685,14 @@ namespace TechObject
 
         private Editor.IEditor editor { get; set; } = Editor.Editor.GetInstance();
 
-        public virtual string DefaultEplanName => "TANK";
+        protected int GetDefaultTechType() =>
+            baseTechObject?.TechType ?? techTypeNum;
+
+        protected string GetDefaultNameEplan() =>
+            baseTechObject?.DefaultNameEplan ?? string.Empty;
+
+        protected string GetDefaultMonitorName() =>
+            baseTechObject?.MonitorName ?? string.Empty;
 
         protected const int techTypeNum = 2;
         protected const int cooperParamNum = -1;

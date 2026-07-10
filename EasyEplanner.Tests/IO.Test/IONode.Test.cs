@@ -51,10 +51,14 @@ namespace IOTests
             testData.Add(new object[] { "AXL F BK ETH", pxcCoupler });
             testData.Add(new object[] { "AXL F BK ETH NET2", pxcCoupler });
 
-            IONode.TYPES pxcController = IONode.TYPES.T_PHOENIX_CONTACT_MAIN;
-            testData.Add(new object[] { "AXC F 1152", pxcController });
-            testData.Add(new object[] { "AXC F 2152", pxcController });
-            testData.Add(new object[] { "AXC F 3152", pxcController });
+            IONode.TYPES pxcController_1152 = IONode.TYPES.T_PHOENIX_CONTACT_1152;
+            testData.Add(new object[] { "AXC F 1152", pxcController_1152 });
+
+            IONode.TYPES pxcController_2152 = IONode.TYPES.T_PHOENIX_CONTACT_2152;
+            testData.Add(new object[] { "AXC F 2152", pxcController_2152 });
+
+            IONode.TYPES pxcController_3152 = IONode.TYPES.T_PHOENIX_CONTACT_3152;
+            testData.Add(new object[] { "AXC F 3152", pxcController_3152 });
 
             IONode.TYPES emptyType = IONode.TYPES.T_EMPTY;
             testData.Add(new object[] { "", emptyType });
@@ -198,6 +202,37 @@ namespace IOTests
         {
             var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, actual, StrStub);
             Assert.AreEqual(expected, testNode.Location);
+        }
+
+        [Test]
+        public void ExtensionModules_NewNode_ReturnsEmptyCollection()
+        {
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
+
+            CollectionAssert.IsEmpty(testNode.ExtensionModules);
+        }
+
+        [Test]
+        public void AddExtensionModule_NewExtension_AddsModule()
+        {
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, "A100", StrStub, StrStub);
+            var extensionNode = new IONode(StrStub, 1, 100, StrStub, "A100.1", StrStub, StrStub);
+
+            testNode.AddExtensionModule(extensionNode);
+
+            CollectionAssert.AreEqual(new[] { extensionNode }, testNode.ExtensionModules);
+        }
+
+        [Test]
+        public void AddExtensionModule_DuplicateName_ThrowsInvalidOperationException()
+        {
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, "A100", StrStub, StrStub);
+            var firstExtension = new IONode(StrStub, 1, 100, StrStub, "A100.1", StrStub, StrStub);
+            var duplicateExtension = new IONode(StrStub, 1, 100, StrStub, "A100.1", StrStub, StrStub);
+
+            testNode.AddExtensionModule(firstExtension);
+
+            Assert.Throws<InvalidOperationException>(() => testNode.AddExtensionModule(duplicateExtension));
         }
 
         [Test]

@@ -331,6 +331,91 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             });
         }
 
+        [Test]
+        public void WriteSharedFile_OnlyVersionChanged_DoesNotRewriteFile()
+        {
+            string projectName = "NO_CHANGE_PROJECT";
+            string projectsDir = Path.Combine(TestContext.CurrentContext.TestDirectory,
+                "InterprojectExchange.Test", Guid.NewGuid().ToString());
+            string projectDir = Path.Combine(projectsDir, projectName);
+            Directory.CreateDirectory(projectDir);
+
+            string pathToSharedFile = Path.Combine(projectDir, "shared.lua");
+            var previousFileData = new List<string>
+            {
+                "--EasyEPLANner version 1",
+                "shared_devices =",
+                "{",
+                "}",
+            };
+            File.WriteAllLines(pathToSharedFile, previousFileData, Encoding.UTF8);
+
+            var currentFileData = new List<string>
+            {
+                "--EasyEPLANner version 2",
+                "shared_devices =",
+                "{",
+                "}",
+            };
+
+            InvokeWriteSharedFile(projectName, projectsDir, currentFileData);
+
+            CollectionAssert.AreEqual(previousFileData,
+                File.ReadAllLines(pathToSharedFile));
+        }
+
+        [Test]
+        public void WriteSharedFile_ContentChanged_RewritesFile()
+        {
+            string projectName = "CHANGED_PROJECT";
+            string projectsDir = Path.Combine(TestContext.CurrentContext.TestDirectory,
+                "InterprojectExchange.Test", Guid.NewGuid().ToString());
+            string projectDir = Path.Combine(projectsDir, projectName);
+            Directory.CreateDirectory(projectDir);
+
+            string pathToSharedFile = Path.Combine(projectDir, "shared.lua");
+            File.WriteAllLines(pathToSharedFile, new[]
+            {
+                "--EasyEPLANner version 1",
+                "shared_devices =",
+                "{",
+                "}",
+            }, Encoding.UTF8);
+
+            var currentFileData = new List<string>
+            {
+                "--EasyEPLANner version 2",
+                "shared_devices =",
+                "{",
+                "    [1] =",
+                "    {",
+                "    },",
+                "}",
+            };
+
+            InvokeWriteSharedFile(projectName, projectsDir, currentFileData);
+
+            CollectionAssert.AreEqual(currentFileData,
+                File.ReadAllLines(pathToSharedFile));
+        }
+
+        private static void InvokeWriteSharedFile(string projectName,
+            string projectsDir, List<string> sharedFileData)
+        {
+            var projectModel = Mock.Of<IProjectModel>(m =>
+                m.ProjectName == projectName &&
+                m.PathToProject == projectsDir);
+            var interprojectExchange = Mock.Of<IInterprojectExchange>(m =>
+                m.GetModel(projectName) == projectModel);
+
+            var saver = new InterprojectExchangeSaver(interprojectExchange,
+                "shared.lua");
+            var method = typeof(InterprojectExchangeSaver).GetMethod(
+                "WriteSharedFile", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            method.Invoke(saver, new object[] { projectName, sharedFileData });
+        }
+
 
 
 

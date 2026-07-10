@@ -324,11 +324,8 @@ namespace TechObject
         public string SaveEquipment(TechObject obj, string objName)
         {
             var res = "";
-            Equipment equipment = obj.Equipment;
-            foreach (var item in equipment.Items)
+            foreach (var property in obj.Equipment.GetDescendantsParameters())
             {
-                var property = item as BaseParameter;
-
                 string equipmentCode = property.SaveToPrgLua(string.Empty);
                 if (string.IsNullOrEmpty(equipmentCode))
                 {

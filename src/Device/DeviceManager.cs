@@ -35,6 +35,13 @@ namespace EplanDevice
         IDevice GetDeviceByEplanName(string devName);
 
         /// <summary>
+        /// Существует ли устройство с указанным именем в Eplan.
+        /// </summary>
+        /// <param name="devName">Имя устройств в Eplan</param>
+        /// <returns></returns>
+        bool IsExistingDeviceByEplanName(string devName);
+
+        /// <summary>
         /// Получить устройство по индексу
         /// </summary>
         /// <param name="index">Индекс устройства</param>
@@ -276,6 +283,11 @@ namespace EplanDevice
                 out objectNumber, out deviceType, out deviceNumber);
             return new IODevice(name, eplanName, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
+        }
+
+        public bool IsExistingDeviceByEplanName(string devName)
+        {
+            return GetDeviceByEplanName(devName)?.Description != CommonConst.Cap;
         }
 
         public IODevice GetDevice(string devName)
@@ -1198,13 +1210,13 @@ namespace EplanDevice
                     // Изменяем номер объекта в устройстве в соответствии с изменениями объекта или для типовых объектов:
                     // ( 1 -> 2 )          :  OBJ[1]V1 -> OBJ[2]V1
                     // ( -1 -> 1, 2,... )  :  OBJ[x]V1 -> OBJ[1]V1, OBJ[2]V1, ... - для типовых объектов 
-                    return GetDeviceByEplanName($"{device.ObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
+                    return GetDeviceByEplanName($"{options.NewTechObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
                 } 
                 else if (device.ObjectNumber == options.NewTechObjectNumber)
                 {
                     // Инверсионное изменение номера объекта: когда устройство имеет номер объекта равный новому номеру объекта
                     // ( 1 -> 2 )  :  OBJ[2]V1 -> OBJ[1]V1
-                    return GetDeviceByEplanName($"{device.ObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
+                    return GetDeviceByEplanName($"{options.NewTechObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
                 }
             }
             else if (options.NameModified && device.ObjectName == options.OldTechObjectName)

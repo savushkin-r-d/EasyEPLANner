@@ -88,8 +88,7 @@ namespace Editor
                 if (needExporting)
                 {
                     TechObject.TechObject exportingObject = obj.Clone(
-                        techObjectManager.GetTechObjectN, obj.TechNumber,
-                        globalNum, globalNum);
+                        techObjectManager.GetTechObjectN, globalNum, globalNum);
 
                     // Убираем привязку при экспорте.
                     exportingObject.AttachedObjects.SetValue("");

@@ -139,7 +139,7 @@ namespace TechObject
     /// <summary>
     /// Действие над устройствами (включение, выключение и т.д.).
     /// </summary>
-    public class Action : TreeViewItem, IAction
+    public class Action : TreeViewItem, IAction, IToolTip
     {
         /// <summary>
         /// Создание нового действия.
@@ -748,6 +748,8 @@ namespace TechObject
         public override bool IsMoveable => true;
 
         public override string SystemIdentifier => "process_action";
+
+        public (string Name, string Value) ToolTipText { get; set; }
 
         protected string luaName;
         protected string name;

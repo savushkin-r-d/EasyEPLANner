@@ -232,16 +232,16 @@ namespace TechObject
         {
             if (LuaName != skippedRestrictionName)
             {
-                SortedDictionary<int, List<int>>.KeyCollection keyColl =
-                    restrictList.Keys;
+                var restrictionEntries = CreateCopyOfRestrictList(restrictList);
 
-                foreach (int key in keyColl)
+                foreach (var entry in restrictionEntries)
                 {
+                    int key = entry.Key;
                     TechObject to = TechObjectManager.GetInstance()
                         .TechObjects.ElementAtOrDefault(key - 1);
                     if (to is null)
                         to = (Parent.Parent as Mode).Owner.Owner;
-                    foreach (int val in restrictList[key])
+                    foreach (int val in entry.Value)
                     {
                         Mode mode = to.GetMode(val - 1);
                         if (mode != null)
@@ -268,16 +268,16 @@ namespace TechObject
             // не должны проставляться симметричные ограничения.
             if (LuaName != skippedRestrictionName && diffDict.Count != 0)
             {
-                SortedDictionary<int, List<int>>.KeyCollection keyColl =
-                    diffDict.Keys;
+                var diffEntries = CreateCopyOfRestrictList(diffDict);
 
-                foreach (int key in keyColl)
+                foreach (var entry in diffEntries)
                 {
+                    int key = entry.Key;
                     TechObject to = TechObjectManager.GetInstance()
                         .TechObjects.ElementAtOrDefault(key - 1);
                     if (to is null)
                         to = (Parent.Parent as Mode).Owner.Owner;
-                    foreach (int val in diffDict[key])
+                    foreach (int val in entry.Value)
                     {
                         Mode mode = to.GetMode(val - 1);
                         if (mode != null)

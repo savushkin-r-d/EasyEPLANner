@@ -610,12 +610,25 @@ namespace InterprojectExchange
             if(!File.Exists(path))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
-                var openedFileStream = File.Create(path);
-                openedFileStream.Close();
+                WriteSharedFileData(path, sharedFileData,
+                    EasyEPlanner.EncodingDetector.DetectFileEncoding(path));
+                return;
             }
 
             System.Text.Encoding encoding = EasyEPlanner.EncodingDetector
                     .DetectFileEncoding(path);
+            if (!ShouldWriteSharedFile(path, sharedFileData))
+            {
+                return;
+            }
+
+            WriteSharedFileData(path, sharedFileData, encoding);
+        }
+
+        private static void WriteSharedFileData(string path,
+            List<string> sharedFileData, Encoding encoding)
+        {
+            encoding ??= EasyEPlanner.EncodingDetector.UTF8;
             using (var writer = new StreamWriter(path, false, encoding))
             {
                 foreach (string line in sharedFileData)
@@ -623,6 +636,36 @@ namespace InterprojectExchange
                     writer.WriteLine(line);
                 }
             }
+        }
+
+        private static bool ShouldWriteSharedFile(string path,
+            List<string> sharedFileData)
+        {
+            const string splitPattern = "\r\n|\n\r|\r|\n";
+            const int eplannerVersionId = 0;
+
+            string previousFileData = File.ReadAllText(path);
+            string[] previousVersion = Regex.Split(previousFileData,
+                splitPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+            var currentFileData = new StringBuilder();
+            foreach (string line in sharedFileData)
+            {
+                currentFileData.AppendLine(line);
+            }
+
+            string[] currentVersion = Regex.Split(currentFileData.ToString(),
+                splitPattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+            bool cantCheckVersion =
+                previousVersion.Length <= eplannerVersionId ||
+                currentVersion.Length <= eplannerVersionId;
+            if (cantCheckVersion) return true;
+
+            previousVersion[eplannerVersionId] = string.Empty;
+            currentVersion[eplannerVersionId] = string.Empty;
+
+            return !currentVersion.SequenceEqual(previousVersion);
         }
 
         /// <summary>

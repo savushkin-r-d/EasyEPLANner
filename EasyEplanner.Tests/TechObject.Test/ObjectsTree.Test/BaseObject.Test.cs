@@ -319,8 +319,8 @@ namespace TechObjectTests
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(techObject2.TechType, baseObject.TechObjects[0].TechType);
-                Assert.AreEqual(techObject2.NameEplan, baseObject.TechObjects[0].NameEplan);
+                Assert.AreEqual(techObject1.TechType, baseObject.TechObjects[0].TechType);
+                Assert.AreEqual(techObject1.NameEplan, baseObject.TechObjects[0].NameEplan);
             });
         }
 

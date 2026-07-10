@@ -5,6 +5,7 @@ using System.Linq;
 using PInvoke;
 using System.Windows.Forms;
 using EasyEPlanner;
+using EplanDevice;
 
 namespace InterprojectExchange
 {
@@ -185,17 +186,27 @@ namespace InterprojectExchange
         public List<string> GetDevicesList()
         {
             var devices = new List<string>();
-            var types = Enum.GetValues(typeof(EplanDevice.DeviceType));
-            const string noneType = "NONE";
+            var virtualDevices = new List<string>();
 
-            foreach (var type in types)
+            foreach (var type in EplanDevice.DeviceTypeExtensions.DeviceTypes)
             {
-                if (type.ToString() != noneType)
+                if (type == EplanDevice.DeviceType.NONE)
                 {
-                    devices.Add(type.ToString());
+                    continue;
+                }
+
+                devices.Add(type.ToString());
+
+                foreach (var subTypeName in type.SubTypeNames())
+                {
+                    if (subTypeName.EndsWith("_VIRT"))
+                    {
+                        virtualDevices.Add(subTypeName);
+                    }
                 }
             }
 
+            devices.AddRange(virtualDevices);
             return devices;
         }
 
