@@ -1,10 +1,13 @@
-﻿using Spire.Xls;
-using System.Windows.Forms;
+﻿using EplanDevice;
+using Spire.Xls;
+using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
@@ -62,7 +65,7 @@ namespace EasyEPlanner
             CreateInformDevicePage(ref workBook);
             Logs.SetProgress(20);
 
-            CreateTotalDevicePage(ref workBook);
+            CreateTotalDevicePage(prjName, ref workBook);
             Logs.SetProgress(35);
 
             CreateDeviceConnectionPage(ref workBook);
@@ -174,13 +177,13 @@ namespace EasyEPlanner
                             rangeCurrent.Row - 1, rangeCurrent.Column + 1]
                             .Merge();
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 5]
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 6]
                             .BorderAround(LineStyleType.Thick);
                     }
                     else
                     {
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 5]
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 6]
                             .Borders.LineStyle = LineStyleType.None;
                     }
                     rangeStart = rangeCurrent;
@@ -462,15 +465,73 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
-        private static void CreateTotalDevicePage(ref Workbook workBook)
+        [ExcludeFromCodeCoverage]
+        private static void CreateTotalDevicePage(string projectName, ref Workbook workBook)
         {
             string sheetName = "Сводная таблица устройств";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
-            object[,] res = ExcelDataCollector.SaveDevicesSummaryAsArray();
-            string endPos = "Q" + res.GetLength(0);
-            workSheet.InsertArray(res, 1, 1);
+
+            var rowIndex = 1;
+            workSheet[rowIndex, 1].Value = projectName;
+            var prjNameRange = workSheet.Range[rowIndex, 1, rowIndex, 8];
+            prjNameRange.Merge();
+            prjNameRange.Style.HorizontalAlignment = HorizontalAlignType.Center;
+            prjNameRange.Style.Font.IsBold = true;
+
+            ++rowIndex;
+            workSheet.Range[rowIndex, 1, rowIndex, 8].Style.Font.IsBold = true;
+            workSheet.InsertArray(
+                ["Тип", "Подтип", "Количество", "DI", "DO", "AI", "AO", "Всего каналов"],
+                rowIndex, 1, false);
+            workSheet.FreezePanes(rowIndex, 1);
+            workSheet.Range[rowIndex, 1, rowIndex, 8].Style.Font.IsBold = true;
+            workSheet.Range[rowIndex, 1, rowIndex, 8].Style.HorizontalAlignment = HorizontalAlignType.Center;
+
+            ++rowIndex;
+            var devices = ExcelDataCollector.GetTypesCount();
+            foreach (var typeIdx in Enumerable.Range(0, devices.Count))
+            {
+                var type = devices.ElementAt(typeIdx).Key;
+                var subtypes = devices.ElementAt(typeIdx).Value;
+
+                workSheet[rowIndex, 1].Value = type;
+                var typeRange = workSheet.Range[rowIndex, 1, rowIndex + subtypes.Count - 1, 1];
+                typeRange.Merge();
+                typeRange.Style.VerticalAlignment = VerticalAlignType.Center;
+                typeRange.Style.Font.IsBold = true;
+
+
+                foreach (var subtypeIdx in Enumerable.Range(0, subtypes.Count))
+                {
+                    var subtype = subtypes.ElementAt(subtypeIdx).Key;
+                    var count = subtypes.ElementAt(subtypeIdx).Value;
+
+                    workSheet.InsertArray([subtype, count, ..ExcelDataCollector.GetChannelsCount(subtype)], rowIndex + subtypeIdx, 2, false);
+                    workSheet[rowIndex + subtypeIdx, 8].Formula = $"=SUM(D{rowIndex + subtypeIdx}:G{rowIndex + subtypeIdx})*C{rowIndex + subtypeIdx}";
+                }
+
+                rowIndex += subtypes.Count;
+            }
+
+            workSheet[rowIndex, 1].Value = "Всего:";
+            workSheet[rowIndex, 1].Style.HorizontalAlignment = HorizontalAlignType.Right;
+            workSheet[rowIndex, 1].Style.Font.IsBold = true;
+            
+            workSheet[rowIndex, 2].Formula = $"=COUNTA(B2:B{rowIndex - 1})";
+            workSheet[rowIndex, 3].Formula = $"=SUM(C2:C{rowIndex - 1})";
+            for (int colIdx = 4, letterOffset = 0 ; colIdx <= 7; ++colIdx, ++letterOffset)
+            {
+                var letterIndex = (char)('D' + letterOffset);
+                workSheet[rowIndex, colIdx].Formula = $"=SUMPRODUCT(C2:C{rowIndex - 1},{letterIndex}2:{letterIndex}{rowIndex - 1})";
+            }
+            workSheet[rowIndex, 8].Formula = $"=SUM(H2:H{rowIndex - 1})";;
+
+            workSheet[rowIndex, 1, rowIndex, 8].Style.Borders[BordersLineType.EdgeTop].LineStyle = LineStyleType.Thin;
+
+            workBook.CalculateAllValue();
+
             workSheet.Range.Style.Font.FontName = "Calibri";
-            workSheet.Range.Style.Font.Size = 11;
+            workSheet.Range.Style.Font.Size = 11;           
             workSheet.Range.EntireColumn.AutoFitColumns();
 
             workSheet.Range.EntireRow.AutoFitRows();

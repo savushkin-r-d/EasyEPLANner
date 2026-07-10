@@ -1,5 +1,8 @@
 name: Auto-update version
 
+permissions:
+  contents: write
+
 on:
   schedule:
   - cron: '43 4 1 * *'
@@ -13,7 +16,7 @@ jobs:
     name: Auto-update version
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           token: ${{ secrets.BOT_ACCESS_TO_EPLAN }}
       - id: date

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,35 @@ namespace TechObject
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : TreeViewItem
+    public interface IMode : ITreeViewItem
+    {
+        /// <summary>
+        /// Операции тех.объекта
+        /// </summary>
+        ModesManager Owner { get; }
+
+        /// <summary>
+        /// Тех.объект, которому принадлежит операция
+        /// </summary>
+        TechObject TechObject { get; }
+
+        /// <summary>
+        /// Базовая операция
+        /// </summary>
+        BaseOperation BaseOperation { get; }
+        
+        /// <summary>
+        /// Название операции
+        /// </summary>
+        string Name { get; }
+    }
+
+
+    /// <summary>
+    /// Операция технологического объекта. Состоит из последовательно 
+    /// (или в ином порядке) выполняемых шагов.
+    /// </summary>
+    public class Mode : TreeViewItem, IMode, IAutocompletable
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
@@ -348,7 +376,7 @@ namespace TechObject
                     objectAlreadyContainsThisOperation = true;
                 }
             }
-
+            
             return objectAlreadyContainsThisOperation;
         }
 
@@ -361,13 +389,7 @@ namespace TechObject
         /// <summary>
         /// Получить базовую операцию для этой операции
         /// </summary>
-        public BaseOperation BaseOperation
-        {
-            get
-            {
-                return baseOperation as BaseOperation;
-            }
-        }
+        public BaseOperation BaseOperation => baseOperation as BaseOperation;
 
         // Получение номера операции
         public int GetModeNumber()
@@ -375,13 +397,9 @@ namespace TechObject
             return getN(this);
         }
 
-        public ModesManager Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public ModesManager Owner => owner;
+
+        public TechObject TechObject => Owner.TechObject;
 
         public string Name
         {
@@ -603,40 +621,7 @@ namespace TechObject
         }
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            var devToDraw = new List<DrawInfo>();
-            foreach (State stpMngr in stepsMngr)
-            {
-                List<DrawInfo> devToDrawTmp = stpMngr
-                    .GetObjectToDrawOnEplanPage();
-                foreach (DrawInfo dinfo in devToDrawTmp)
-                {
-                    bool isSetFlag = false;
-                    for (int i = 0; i < devToDraw.Count; i++)
-                    {
-                        if (devToDraw[i].DrawingDevice.Name == 
-                            dinfo.DrawingDevice.Name)
-                        {
-                            isSetFlag = true;
-                            if (devToDraw[i].DrawingStyle != dinfo.DrawingStyle)
-                            {
-                                devToDraw.Add(new DrawInfo(
-                                    DrawInfo.Style.GREEN_RED_BOX,
-                                    devToDraw[i].DrawingDevice));
-                                devToDraw.RemoveAt(i);
-                            }
-                        }
-                    }
-
-                    if (isSetFlag == false)
-                    {
-                        devToDraw.Add(dinfo);
-                    }
-                }
-            }
-
-            return devToDraw;
-        }
+        => DrawInfo.Filter([.. States.SelectMany(a => a.GetObjectToDrawOnEplanPage())]);
 
         public override IEnumerable<string> BaseObjectsList
         {
@@ -753,7 +738,21 @@ namespace TechObject
             States.ForEach(state => state.UpdateOnDeleteGeneric());
         }
 
-        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            var paramsManager = Owner.Owner.GetParamsManager();
+
+            paramsManager.Float.FillWithStubs();
+
+            paramsManager.AutocompleteByOperation(this);
+            (baseOperation as IAutocompletable)?.Autocomplete();
+
+            paramsManager.Float.FillWithStubs();
+        }
+
+        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance();
 
         private GetN getN;
 

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Windows.Forms;
 using Editor;
 using Eplan.EplApi.HEServices;
 
 namespace TechObject
 {
-    public class ParamsManager : TreeViewItem
+    public class ParamsManager : TreeViewItem, IAutocompletable
     {
         /// <summary>
         /// Все параметры технологического объекта.
@@ -404,6 +406,56 @@ namespace TechObject
             if (parUintRuntimeList.All(par => par != null))
                 parUintRuntime.CreateGenericByTechObjects(parUintRuntimeList);
         }
+
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            Float.FillWithStubs();
+            TechObject.ModesManager.Modes.ForEach(m => m.Autocomplete());
+        }
+
+        /// <summary>
+        /// Заполнение параметров по операции
+        /// </summary>
+        /// <param name="operation"></param>
+        public void AutocompleteByOperation(Mode operation)
+        {
+            if (operation.Owner.Owner != TechObject) return;
+
+            var parameters = operation.BaseOperation.Parameters;
+
+            // Если такой параметр уже добавлен, пробуем добавить в него операцию
+            parameters.ForEach(p => Float.GetParam(p.LuaName)?.UseInOperation(operation.GetModeNumber()));
+
+            // Если все параметры базовой операции уже добавлены, пропускаем
+            if (parameters.Count(p => Float.HaveSameLuaName(p.LuaName)) == parameters.Count)
+                return;
+
+            foreach (var param in parameters)
+            {
+                if (Float.HaveSameLuaName(param.LuaName))
+                    continue;
+
+                var parameter = AddFloatParam(
+                    param.Name, param.DefaultValue,
+                    param.Meter, param.LuaName);
+                parameter.UseInOperation(operation.GetModeNumber());
+            }
+        }
+
+        /// <summary>
+        /// Отметить все параметры инициализированными
+        /// </summary>
+        public void CompleteInit()
+        {
+            Initialized = true;
+        }
+
+        /// <summary>
+        /// Отметка о том, что параметры уже инициализированны
+        /// </summary>
+        public bool Initialized { get; private set; } = false;
 
         public TechObject TechObject => Parent as TechObject;
 

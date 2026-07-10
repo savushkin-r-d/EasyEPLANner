@@ -5,7 +5,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство - аналоговый выход.
     /// </summary>
-    sealed public class AO : IODevice
+    sealed public class AO : IODevice, ISetupTerminal
     {
         public AO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,
@@ -27,9 +27,19 @@ namespace EplanDevice
                 case "AO_VIRT":
                     break;
 
-                case "AO":
-                case "":
-                    dSubType = DeviceSubType.AO;
+                case "": return SetSubType(nameof(DeviceSubType.AO));
+
+                case nameof(DeviceSubType.AO):
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
+
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    break;
+
+                case nameof(DeviceSubType.AO_EY):
+                    RuntimeParameters.Add(RuntimeParameter.R_EY_NUMBER.Name, null);
+                    properties.Add(Property.TERMINAL, null);
+
                     parameters.Add(Parameter.P_MIN_V, null);
                     parameters.Add(Parameter.P_MAX_V, null);
 
@@ -47,17 +57,7 @@ namespace EplanDevice
         }
 
         public override string GetRange()
-        {
-            string range = string.Empty;
-            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
-                parameters.ContainsKey(Parameter.P_MAX_V))
-            {
-                range = "_" + parameters[Parameter.P_MIN_V].ToString() +
-                    ".." + parameters[Parameter.P_MAX_V].ToString();
-            }
-
-            return range;
-        }
+            => GetRange(Parameter.P_MIN_V, Parameter.P_MAX_V);
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
             DeviceSubType dst)
@@ -71,6 +71,8 @@ namespace EplanDevice
                             return "AO";
                         case DeviceSubType.AO_VIRT:
                             return "AO_VIRT";
+                        case DeviceSubType.AO_EY:
+                            return nameof(DeviceSubType.AO_EY);
                     }
                     break;
             }
@@ -78,7 +80,7 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        public override Dictionary<string,int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -87,7 +89,16 @@ namespace EplanDevice
                     switch (dst)
                     {
                         case DeviceSubType.AO:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                            };
+
+                        case DeviceSubType.AO_EY:
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.V, 1},
@@ -96,7 +107,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.AO_VIRT:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.V, 1},
@@ -106,6 +117,15 @@ namespace EplanDevice
             }
 
             return null;
+        }
+
+        public void SetupTerminal(string terminal, string action, int clamp)
+        {
+            if (DeviceSubType is not DeviceSubType.AO_EY)
+                return;
+
+            SetProperty(Property.TERMINAL, terminal);
+            SetRuntimeParameter(RuntimeParameter.R_EY_NUMBER, clamp);
         }
     }
 }

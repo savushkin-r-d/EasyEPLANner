@@ -5,6 +5,7 @@ using Moq;
 using Editor;
 using System;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 
 namespace EasyEplanner.Tests
 {
@@ -17,7 +18,7 @@ namespace EasyEplanner.Tests
         {
             var state = new State(State.StateType.STOP, null, needMainStep);
 
-            foreach(var stepName in stepNames)
+            foreach (var stepName in stepNames)
             {
                 state.AddStep(stepName, string.Empty);
             }
@@ -27,7 +28,7 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual(expectedStepsCount, state.Steps.Count);
                 Assert.IsTrue(state.Steps.First().GetStepName()
                     .Equals(Step.MainStepName));
-                foreach(var stepName in stepNames)
+                foreach (var stepName in stepNames)
                 {
                     Assert.IsTrue(state.Steps
                         .Any(x => x.GetStepName() == stepName));
@@ -49,7 +50,7 @@ namespace EasyEplanner.Tests
                 {
                     { "IDLE", new List<BaseStep>() { new BaseStep(baseStep, baseStep) } },
                 }));
-           
+
 
             var state = new State(State.StateType.IDLE, mode);
             var genericState = new State(State.StateType.IDLE, mode);
@@ -129,16 +130,20 @@ namespace EasyEplanner.Tests
         [Test]
         public void InsertCopyAndReplace()
         {
-            var operation = new Mode("Операция", getN => 1, null,
-                new BaseOperation(
+            var techObject = new TechObject.TechObject("", getN => 1, 1, 2, "TANK", -1, "", "", null);
+            var baseOperation = new BaseOperation(
                     "операция", "operation",
                     new List<BaseParameter>() { },
-                    new Dictionary<string, List<BaseStep>>() 
+                    new Dictionary<string, List<BaseStep>>()
                     {
                         { "RUN", new List<BaseStep>() { new BaseStep("", ""), new BaseStep("шаг_1", "step_1"), new BaseStep("шаг_2", "step_2") } },
                     }
-                )
-            );
+                );
+
+            var operation = Mock.Of<IMode>(m =>
+                m.TechObject == techObject &&
+                m.BaseOperation == baseOperation);
+
 
             var state = new State(State.StateType.RUN, operation, true);
 
@@ -187,6 +192,67 @@ namespace EasyEplanner.Tests
                 // no step
                 var replacedStep_null = state.Replace(null, null) as Step;
                 Assert.IsNull(replacedStep_null);
+            });
+        }
+
+
+        [TestCase(State.StateType.IDLE, State.StateType.RUN)]
+        [TestCase(State.StateType.RUN, State.StateType.PAUSE, State.StateType.STOP)]
+        [TestCase(State.StateType.PAUSE, State.StateType.RUN, State.StateType.STOP)]
+        [TestCase(State.StateType.STOP, State.StateType.IDLE)]
+        [TestCase(State.StateType.STARTING, State.StateType.RUN)]
+        [TestCase(State.StateType.PAUSING, State.StateType.PAUSE)]
+        [TestCase(State.StateType.UNPAUSING, State.StateType.RUN)]
+        [TestCase(State.StateType.STOPPING, State.StateType.STOP)]
+        public void TransitionsTest(State.StateType state, params State.StateType[] expectedMap)
+        {
+            CollectionAssert.AreEqual(expectedMap, state.StateTransition());
+        }
+
+        [Test]
+        public void SetNewValue()
+        {
+            var modesManager = new ModesManager(null);
+            var mode = Mock.Of<IMode>(m => m.Owner == modesManager);
+            var RUN = new State(State.StateType.RUN, mode, true);
+            var IDLE = new State(State.StateType.IDLE, mode, true);
+
+            Assert.Multiple(() =>
+            {
+                RUN.SetNewValue(State.RUNPOINT, true);
+                Assert.AreSame(RUN, modesManager.RunPointState);
+
+                IDLE.SetNewValue(State.RUNPOINT, true);
+                Assert.AreSame(IDLE, modesManager.RunPointState);
+                Assert.IsFalse(RUN.IsRunPoint);
+
+                IDLE.SetNewValue("", true);
+                Assert.IsNull(modesManager.RunPointState);
+                Assert.IsFalse(IDLE.IsRunPoint);
+            });
+        }
+
+        [Test]
+        public void TestProperties()
+        {
+            var modesManager = new ModesManager(null);
+            var mode = Mock.Of<IMode>(m => m.Owner == modesManager);
+            var RUN = new State(State.StateType.RUN, mode, true);
+
+            RUN.SetNewValue(State.RUNPOINT, true);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(RUN.IsEditable);
+                Assert.IsTrue(RUN.IsBoolParameter);
+
+                CollectionAssert.AreEqual(new string[] { State.RUNPOINT, "" }, RUN.BaseObjectsList);
+                CollectionAssert.AreEqual(new int[] { -1, 1 }, RUN.EditablePart);
+                CollectionAssert.AreEqual(new string[] { $"{RUN.Name}", State.RUNPOINT}, RUN.DisplayText);
+
+                Assert.AreEqual(ImageIndexEnum.Run, RUN.DescriptionImageIndex);
+                Assert.AreEqual(ImageIndexEnum.ModesManager, modesManager.ImageIndex);
+                Assert.AreEqual(ImageIndexEnum.Run, modesManager.DescriptionImageIndex);
             });
         }
     }

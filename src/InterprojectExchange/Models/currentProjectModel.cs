@@ -218,7 +218,7 @@ namespace InterprojectExchange
             }
         }
 
-        public bool Loaded { get; set; }
+        public bool Loaded { get; set; } = true;
 
         private Dictionary<string, DeviceSignalsInfo> sourceSignals;
         private Dictionary<string, DeviceSignalsInfo> receiverSignals;

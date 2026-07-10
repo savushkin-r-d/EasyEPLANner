@@ -81,7 +81,7 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        public override Dictionary<string, int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -90,7 +90,7 @@ namespace EplanDevice
                     switch (dst)
                     {
                         case DeviceSubType.CAM_DO1_DI1:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -99,7 +99,7 @@ namespace EplanDevice
 
                         case DeviceSubType.CAM_DO1_DI2:
                         case DeviceSubType.CAM_DO1_DI3:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},

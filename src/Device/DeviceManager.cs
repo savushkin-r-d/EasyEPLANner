@@ -9,7 +9,7 @@ using System.Text;
 using System.Security.Cryptography;
 using TechObject;
 using StaticHelper;
-using static System.Windows.Forms.Design.AxImporter;
+using EasyEPlanner.FileSavers.XML;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -35,6 +35,13 @@ namespace EplanDevice
         IDevice GetDeviceByEplanName(string devName);
 
         /// <summary>
+        /// Существует ли устройство с указанным именем в Eplan.
+        /// </summary>
+        /// <param name="devName">Имя устройств в Eplan</param>
+        /// <returns></returns>
+        bool IsExistingDeviceByEplanName(string devName);
+
+        /// <summary>
         /// Получить устройство по индексу
         /// </summary>
         /// <param name="index">Индекс устройства</param>
@@ -45,12 +52,22 @@ namespace EplanDevice
         /// Устройства проекта
         /// </summary>
         List<IODevice> Devices { get; }
+        
+        /// <summary>
+        /// Каналы устройств
+        /// </summary>
+        ControlChannelsCounter ConterChannelsCounter { get; }
+        
+        /// <summary>
+        /// Сводка и статистика по устройствам
+        /// </summary>
+        SummaryDevices Summary { get; }
 
         /// <summary>
         /// Генерация тегов устройств для экспорта в базу каналов.
         /// </summary>
-        /// <param name="rootNode">Корневой узел</param>
-        void GetObjectForXML(TreeNode rootNode);
+        /// <param name="root">Корневой узел</param>
+        void GetObjectForXML(IDriver root);
 
         /// <summary>
         /// Является ли привязка множественной
@@ -95,14 +112,11 @@ namespace EplanDevice
     /// </summary>
     public class DeviceManager : IDeviceManager
     {
-        public void GetObjectForXML(TreeNode rootNode)
+        public void GetObjectForXML(IDriver root)
         {
             foreach (IODevice dev in devices)
             {
-                if (dev != null)
-                {
-                    dev.GenerateDeviceTags(rootNode);
-                }
+                dev?.GenerateDeviceTags(root);
             }
         }
 
@@ -269,6 +283,11 @@ namespace EplanDevice
                 out objectNumber, out deviceType, out deviceNumber);
             return new IODevice(name, eplanName, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
+        }
+
+        public bool IsExistingDeviceByEplanName(string devName)
+        {
+            return GetDeviceByEplanName(devName)?.Description != CommonConst.Cap;
         }
 
         public IODevice GetDevice(string devName)
@@ -461,6 +480,8 @@ namespace EplanDevice
             "PDS",
             "TS",
             "G",
+            nameof(WATCHDOG),
+            nameof(EY),
         };
 
         public IODevice AddDeviceAndEFunction(string devName, string description,
@@ -472,10 +493,8 @@ namespace EplanDevice
                 rtParamStr, propStr, dLocation, out errStr, articleName,
                 iolConfProperties);
 
-            if (dev != null)
-            {
-                dev.EplanObjectFunction = oF;
-            }
+            if (dev is not null)
+                dev.Function = new EplanFunction(oF);
 
             return dev;
         }
@@ -662,6 +681,16 @@ namespace EplanDevice
 
                 case "G":
                     dev = new G(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case nameof(WATCHDOG):
+                    dev = new WATCHDOG(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, this);
+                    break;
+
+                case nameof(EY):
+                    dev = new EY(name, eplanName, description, deviceNumber, 
                         objectName, objectNumber, articleName);
                     break;
 
@@ -885,7 +914,10 @@ namespace EplanDevice
         private DeviceManager()
         {
             devices = new List<IODevice>();
+            Summary = new SummaryDevices(this);
+            ConterChannelsCounter = new(Summary);
             InitIOLinkSizesForDevices();
+            InitDeviceChannelsCount();
         }
 
         /// <summary>
@@ -941,6 +973,16 @@ namespace EplanDevice
                     .ResourceManager.GetString("IOLinkDevicesFilePattern");
                 File.WriteAllText(fullPath, template);
             }
+        }
+
+        private void InitDeviceChannelsCount()
+        {
+            var lua = new LuaInterface.Lua();
+            const string devicesFile = "sys_subtype_channels_count.lua";
+            var fullPath = Path.Combine(ProjectManager.GetInstance().SystemFilesPath, devicesFile);
+
+            lua.RegisterFunction("ADD_CHANNELS_COUNT", ConterChannelsCounter, ConterChannelsCounter.GetType().GetMethod(nameof(ConterChannelsCounter.AddChannelsCount)));
+            lua.DoFile(fullPath);
         }
 
         /// <summary>
@@ -1101,38 +1143,20 @@ namespace EplanDevice
         /// <summary>
         /// Тип устройства является ПИД-ом или нет
         /// </summary>
-        /// <param name="devices">Тип устройства</param>
-        /// <returns></returns>
+        /// <param name="type">Тип устройства</param>
         private bool IsPIDControl(string type)
         {
-            bool isPID = false;
-            const int maxTypeLength = 4;
+            /// Максимальная длина типа для ПИД-регулятора
+            const int maxTypePIDLength = 4;
 
-            if (type.Length <= 1)
-            {
-                return isPID;
-            }
+            if (type.Length is <= 1 or > maxTypePIDLength)
+                return false;
 
-            const int firstChar = 0;
-            bool noPID =
-                (type[firstChar] == Convert.ToChar($"{DeviceType.V}") ||
-                type[firstChar] == Convert.ToChar($"{DeviceType.C}") ||
-                type.Contains($"{DeviceType.C}") == false);
-            if (noPID)
-            {
-                return isPID;
-            }
+            if (DeviceTypeExtensions.DeviceTypes.Select(t => $"{t}").Contains(type) ||
+                type.Contains($"{DeviceType.C}") == false)
+                return false;
 
-            for (int i = 1; i < maxTypeLength; i++)
-            {
-                if (type[i] == Convert.ToChar(DeviceType.C.ToString()))
-                {
-                    isPID = true;
-                    break;
-                }
-            }
-
-            return isPID;
+            return true;
         }
 
         private IDevice ModifyMixproof(IDevice device, IDevModifyOptions options)
@@ -1186,13 +1210,13 @@ namespace EplanDevice
                     // Изменяем номер объекта в устройстве в соответствии с изменениями объекта или для типовых объектов:
                     // ( 1 -> 2 )          :  OBJ[1]V1 -> OBJ[2]V1
                     // ( -1 -> 1, 2,... )  :  OBJ[x]V1 -> OBJ[1]V1, OBJ[2]V1, ... - для типовых объектов 
-                    return GetDeviceByEplanName($"{device.ObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
+                    return GetDeviceByEplanName($"{options.NewTechObjectName}{options.NewTechObjectNumber}{device.DeviceDesignation}");
                 } 
                 else if (device.ObjectNumber == options.NewTechObjectNumber)
                 {
                     // Инверсионное изменение номера объекта: когда устройство имеет номер объекта равный новому номеру объекта
                     // ( 1 -> 2 )  :  OBJ[2]V1 -> OBJ[1]V1
-                    return GetDeviceByEplanName($"{device.ObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
+                    return GetDeviceByEplanName($"{options.NewTechObjectName}{options.OldTechObjectNumber}{device.DeviceDesignation}");
                 }
             }
             else if (options.NameModified && device.ObjectName == options.OldTechObjectName)
@@ -1202,6 +1226,11 @@ namespace EplanDevice
 
             return device;
         }
+
+
+        public SummaryDevices Summary { get; private set; }
+
+        public ControlChannelsCounter ConterChannelsCounter { get; private set; }
 
         /// <summary>
         /// Шаблон для получение ОУ устройства.
@@ -1216,7 +1245,7 @@ namespace EplanDevice
         /// <summary>
         /// Шаблон для разбора ОУ пневмоострова
         /// </summary>
-        public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
+        public const string valveTerminalPattern = @"([A-Z0-9]+\-E?[Y0-9]+)";
 
         private static IODevice cap =
             new IODevice(StaticHelper.CommonConst.Cap, string.Empty,

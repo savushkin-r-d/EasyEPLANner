@@ -5,8 +5,7 @@ init_io_file = function(projectName)
     end
 
     if (PAC_name ~= projectName) then
-        WarningProjectNameInIOFile(PAC_name)
-        PAC_name = projectName
+        WarningProjectNameInIOFile(projectName)
     end
 
     local isMainModel = false
@@ -29,7 +28,7 @@ end
 add_nodes = function(model, isMainModel)
     for key, value in pairs(nodes) do
         -- Контроллер PXC и WAGO
-        if (value.ntype == 201 or value.ntype == 2) then
+        if (value.ntype == 201 or value.ntype == 202 or value.ntype == 203 or value.ntype == 2) then
             local IP = value.IP or ""
 
             if(isMainModel == true) then
@@ -48,6 +47,9 @@ add_devices = function(model)
     for key, value in pairs(devices) do
         local name = value.name or ""
         local descr = value.descr or ""
-        model:AddDeviceData(name, descr)
+        local dtype = value.dtype or -1
+        local subtype = value.subtype or 0
+        model:AddDeviceData(name, descr, dtype, subtype)
     end
+    model:SortDeviceData()
 end 

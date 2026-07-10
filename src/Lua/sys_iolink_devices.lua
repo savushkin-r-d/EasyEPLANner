@@ -16,6 +16,8 @@ local iolink_devices =
     { articleName = "GEA.TA15L8IAJ", sizeIn = 2, sizeOut = 0.5 },
     -- FQT
     { articleName = "SMR12GGXFRKG/US-100", sizeIn = 4, sizeOut = 0 },
+    { articleName = "IFM.SM6100", sizeIn = 4, sizeOut = 0 },
+    { articleName = "IFM.SM4000", sizeIn = 4, sizeOut = 0 },
     -- QT
     { articleName = "IFM.LDL100", sizeIn = 6, sizeOut = 0 },
     { articleName = "IFM.LDL200", sizeIn = 6, sizeOut = 0 },
@@ -31,6 +33,9 @@ local iolink_devices =
     { articleName = "IFM.PM1715", sizeIn = 2, sizeOut = 0 },
     { articleName = "FES.8001446", sizeIn = 1, sizeOut = 0 },
     { articleName = "IFM.PM1706", sizeIn = 2, sizeOut = 0 }, -- PT&LT
+    { articleName = "IFM.PM1717", sizeIn = 2, sizeOut = 0 }, -- PT&LT
+    { articleName = "E&H.PMP23-CA7N2KB3CJ", sizeIn = 2, sizeOut = 0 },
+    { articleName = "E&H.PMP23-CA7N1KB3CJ", sizeIn = 2, sizeOut = 0 },
     -- LT
     { articleName = "IFM.LR2750", sizeIn = 1, sizeOut = 0 },
     -- TE
@@ -44,7 +49,11 @@ local iolink_devices =
     { articleName = "IFM.LMT102", sizeIn = 1, sizeOut = 0 },
     { articleName = "IFM.LMT104", sizeIn = 1, sizeOut = 0 },
     { articleName = "IFM.LMT105", sizeIn = 1, sizeOut = 0 },
+    { articleName = "IFM.LMT121", sizeIn = 1, sizeOut = 0 },
+    { articleName = "IFM.LMT202", sizeIn = 1, sizeOut = 0 },
     { articleName = "E&H.FTL33-GR7N2ABW5J", sizeIn = 1, sizeOut = 0 },
+    { articleName = "E&H.FTW33-GR7NWVJ", sizeIn = 1, sizeOut = 0 },
+    { articleName = "E&H.FTW33-GR7NW5J", sizeIn = 1, sizeOut = 0 },
     -- DEV_VTUG
     { articleName = "FES.VTUG-10-MSDR-B1Y-25V20-G18FD-DTFD-M7SFD-12K+M1SCVA", sizeIn = 0, sizeOut = 2 },
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-12K+SCVA", sizeIn = 0, sizeOut = 2 },
@@ -62,6 +71,8 @@ local iolink_devices =
     { articleName = "PXC.1252697", sizeIn = 9, sizeOut = 3.5 },
     { articleName = "PXC.1362791", sizeIn = 9, sizeOut = 3.5 },
     { articleName = "PXC.1362792", sizeIn = 9, sizeOut = 3.5 },
+    -- EY
+    { articleName = "IFM.DP1213", sizeIn = 0.5, sizeOut = 2 },
 }
 
 return iolink_devices

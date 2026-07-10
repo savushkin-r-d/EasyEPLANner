@@ -1,4 +1,5 @@
 ﻿using EasyEPlanner;
+using EasyEPlanner.FileSavers.XML;
 using IO;
 using StaticHelper;
 using System;
@@ -14,6 +15,11 @@ namespace EplanDevice
     /// </summary>
     public partial class IODevice : Device, IIODevice
     {
+        /// <summary>
+        /// Лимит названия устройства в символах
+        /// </summary>
+        public const int DeviceNameLimit = 30;
+
         /// <summary>
         /// Получение строкового представления подтипа устройства.
         /// </summary>
@@ -35,7 +41,7 @@ namespace EplanDevice
         /// </summary>
         /// <param name="dst">Подтип устройства</param>
         /// <param name="dt">Тип устройства</param>
-        public virtual Dictionary<string, int> GetDeviceProperties(
+        public virtual Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -46,50 +52,37 @@ namespace EplanDevice
             return null;
         }
 
+        public virtual string GetRange(Parameter p_min, Parameter p_max)
+        {
+            if (parameters.TryGetValue(p_min, out var min_value) &&
+                parameters.TryGetValue(p_max, out var max_value) &&
+                min_value is not null &&
+                max_value is not null)
+            {
+                return $"_{min_value}..{max_value}";
+
+            }
+
+            return string.Empty;
+        }
+
         /// <summary>
         /// Генерация тэгов устройства.
         /// </summary>
         /// <param name="rootNode">Корневой узел</param>
-        public virtual void GenerateDeviceTags(TreeNode rootNode)
+        public virtual void GenerateDeviceTags(IDriver root)
         {
-            Dictionary<string, int> propertiesList = GetDeviceProperties(
-                DeviceType, DeviceSubType);
-            if (propertiesList == null)
-            {
+            if (GetDeviceProperties(DeviceType, DeviceSubType) is not { } propertiesList)
                 return;
-            }
 
             foreach (var tagPair in propertiesList)
             {
-                string propName = tagPair.Key;
+                string propName = tagPair.Key.Name;
+                string propDescription = tagPair.Key.Description;
                 int theSameTagsCount = tagPair.Value;
 
-                TreeNode newNode;
-                string nodeName = $"{DeviceType}_{propName}";
-                for (int i = 1; i <= theSameTagsCount; i++)
-                {
-                    if (!rootNode.Nodes.ContainsKey(nodeName))
-                    {
-                        newNode = rootNode.Nodes.Add(nodeName, nodeName);
-                    }
-                    else
-                    {
-                        bool searchChildren = false;
-                        newNode = rootNode.Nodes.Find(nodeName, searchChildren)
-                            .First();
-                    }
-
-                    if (theSameTagsCount > 1)
-                    {
-                        newNode.Nodes.Add($"{Name}.{propName}[ {i} ]",
-                            $"{Name}.{propName}[ {i} ]");
-                    }
-                    else
-                    {
-                        newNode.Nodes.Add($"{Name}.{propName}",
-                            $"{Name}.{propName}");
-                    }
-                }
+                root.AddChannel($"{DeviceType}_{propName}",
+                    $"{Name}.{propName}", $"{propDescription}", theSameTagsCount);
             }
         }
 
@@ -208,15 +201,7 @@ namespace EplanDevice
                     parametersList.Add($"{parameter.Key.Name}={parameter.Value}");
             }
 
-            UpdateParametersInAPI(parametersList);
-        }
-
-        [ExcludeFromCodeCoverage]
-        private void UpdateParametersInAPI(List<string> parametersList)
-        {
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetParameters(EplanObjectFunction,
-                string.Join(", ", parametersList));
+            Function.Parameters = string.Join(", ", parametersList);
         }
 
         /// <summary>
@@ -231,9 +216,7 @@ namespace EplanDevice
                 propertiesList.Add($"{property.Key}='{property.Value}'");
             }
 
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetProperties(EplanObjectFunction,
-                string.Join(",", propertiesList));
+            Function.Properties = string.Join(",", propertiesList);
         }
 
         /// <summary>
@@ -248,9 +231,7 @@ namespace EplanDevice
                 runtimeParametersList.Add($"{rtPar.Key}={rtPar.Value}");
             }
 
-            var helper = new DeviceHelper(new ApiHelper());
-            helper.SetRuntimeParameters(EplanObjectFunction,
-                string.Join(",", runtimeParametersList));
+            Function.RuntimeParameters = string.Join(",", runtimeParametersList);
         }
 
         /// <summary>
@@ -292,14 +273,7 @@ namespace EplanDevice
             }
         }
 
-        /// <summary>
-        /// Сброс канала ввода\вывода.
-        /// </summary>
-        /// <param name="addressSpace">Тип адресного пространства канала.
-        /// </param>   
-        /// <param name="comment">Комментарий к каналу.</param>
-        /// <param name="error">Строка с описанием ошибки при возникновении 
-        /// таковой.</param>
+
         public bool ClearChannel(
             IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
             string comment, string channelName)
@@ -490,34 +464,30 @@ namespace EplanDevice
         /// <returns>Строка с описанием ошибки.</returns>
         public virtual string Check()
         {
+            var err = new List<string>();
+            if (Name.Length > DeviceNameLimit)
+                err.Add($"{Name} : превышена длина названия устройства ({DeviceNameLimit} символов).\n");
+
             // Каналы ввода-вывода
-            var channelsErr = Channels.Where(c => c.IsEmpty())
-                .Select(c => $"{name} : не привязанный канал {c.Name} \"{c.Comment}\".\n");
+            err.AddRange(Channels.Where(c => c.IsEmpty())
+                .Select(c => $"{name} : не привязанный канал {c.Name} \"{c.Comment}\".\n"));
 
             // Параметры
-            var parametersErr = Parameters.Where(par => par.Value is null)
-                .Select(par => $"{name} : не задан параметр (доп. поле 3) \"{par.Key.Name}\".\n");
-
-            // Рабочие параметры
-            var rtParametersErr = RuntimeParameters.Where(par => par.Value is null && !((RuntimeParameter)par.Key).AutoGenerated)
-                .Select(par => $"{name} : не задан рабочий параметр (доп. поле 5) \"{par.Key}\".\n");
+            err.AddRange(Parameters.Where(par => par.Value is null)
+                .Select(par => $"{name} : не задан параметр (доп. поле 3) \"{par.Key.Name}\".\n"));
 
             // Свойства
-            var propertiesErr = Properties.Where(prop => prop.Value is null)
-                .Select(prop => $"{name} : не задан параметр (доп. поле 4) \"{prop.Key}\".\n");
+            err.AddRange(Properties.Where(prop => prop.Value is null)
+                .Select(prop => $"{name} : не задано свойство (доп. поле 4) \"{prop.Key}\".\n"));
 
+            // Рабочие параметры
+            err.AddRange(RuntimeParameters.Where(par => par.Value is null && !((RuntimeParameter)par.Key).AutoGenerated)
+                .Select(par => $"{name} : не задан рабочий параметр (доп. поле 5) \"{par.Key}\".\n"));
 
-            return string.Join("", channelsErr.Concat(parametersErr).Concat(rtParametersErr).Concat(propertiesErr));
+            return string.Join("", err);
         }
 
-        /// <summary>
-        /// Связанная функция.        
-        /// </summary>
-        public Eplan.EplApi.DataModel.Function EplanObjectFunction
-        {
-            get;
-            set;
-        }
+        public IEplanFunction Function { get; set; }
 
         /// <summary>
         /// Сохранение в виде массива данных (для экспорта в таблицу).
@@ -585,7 +555,7 @@ namespace EplanDevice
             res += prefix + "descr   = \'" + Description.Replace("\n", ". ") +
                 "\',\n";
             res += prefix + "dtype   = " + (int)dType + ",\n";
-            res += prefix + "subtype = " + (int)dSubType + ", -- " +
+            res += prefix + "subtype = " + dSubType.GetIndex() + ", -- " +
                 GetDeviceSubTypeStr(dType, dSubType) + "\n";
             res += prefix + $"article = \'{ArticleName}\',\n";
 
@@ -850,15 +820,8 @@ namespace EplanDevice
                 iolConfProperties.Add(propertyName, value);
             }
         }
-        
-        /// <summary>
-        /// Список свойств устройства, для которых можно установить несколько значений
-        /// </summary>
-        /// <returns></returns>
-        public virtual List<string> MultipleProperties()
-        {
-            return new List<string>();
-        }
+
+        public virtual List<string> MultipleProperties => [];
 
         public bool AllowedType(params DeviceType[] allowed)
             => allowed.Contains(DeviceType);

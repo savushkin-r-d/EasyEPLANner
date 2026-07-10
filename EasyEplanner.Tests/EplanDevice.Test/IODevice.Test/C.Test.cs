@@ -1,9 +1,14 @@
-﻿using System;
+using EasyEPlanner.FileSavers.XML;
+using EplanDevice;
+using Moq;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using EplanDevice;
+using EasyEPlanner.FileSavers.XML;
 
 namespace Tests.EplanDevices
 {
@@ -59,7 +64,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewObj_ReturnsTagsArr(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -75,7 +80,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportTags = new Dictionary<string, int>()
+            var exportTags = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -232,24 +237,26 @@ namespace Tests.EplanDevices
         public void GenerateDeviceTags_NewDev_ReturnsTreeNodeForChannelBase()
         {
             var dev = GetNewCDevice();
-
-            TreeNode actualNode = new TreeNode("obj");
+            
+            IDriver actualNode = new Driver(Mock.Of<IDeviceManager>(dm => dm.Devices == new List<IODevice>()));
             dev.GenerateDeviceTags(actualNode);
-
-            TreeNode expectedNode = new TreeNode(dev.Name);
+            
+            ISubtype expectedSubType = new Subtype(dev.Name);
             var devProps = dev.GetDeviceProperties(dev.DeviceType,
                 dev.DeviceSubType).Keys.ToList();
-            devProps.AddRange(dev.Parameters.Select(par => (string)par.Key));
+            devProps.AddRange(dev.Parameters.Select(par => par.Key));
             foreach (var property in devProps)
             {
-                expectedNode.Nodes.Add($"{dev.Name}.{property}",
-                    $"{dev.Name}.{property}");
+                expectedSubType.AddChannel(new Channel($"{dev.Name}.{property}")
+                {
+                    Comment = property.Description
+                });
             }
-
-            for(int i = 0; i < expectedNode.Nodes.Count; i++)
+            
+            for(int i = 0; i < expectedSubType.Channels.Count; i++)
             {
-                string expectedText = expectedNode.Nodes[i].Text;
-                string actualText = actualNode.FirstNode.Nodes[i].Text;
+                string expectedText = expectedSubType.Channels[i].Description;
+                string actualText = actualNode.Subtypes[0].Channels[i].Description;
                 Assert.AreEqual(expectedText, actualText);
             }
         }
@@ -280,6 +287,13 @@ namespace Tests.EplanDevices
             string actualSaveString = dev.SaveParameters(prefix);
 
             Assert.AreEqual(expectedSaveString, actualSaveString);
+        }
+
+        [Test]
+        public void Check()
+        {
+            var device = GetNewCDevice();
+            Assert.AreEqual("", device.Check());
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using IO;
+using StaticHelper;
+using System.Collections.Generic;
 
 namespace EplanDevice
 {
@@ -37,5 +39,73 @@ namespace EplanDevice
         /// </summary>
         /// <param name="allowed"> Массив разрешенных подтипов </param>
         bool AllowedSubtype(params DeviceSubType[] allowed);
+
+        /// <summary>
+        /// Сброс канала ввода\вывода.
+        /// </summary>
+        /// <param name="addressSpace">Тип адресного пространства канала.
+        /// </param>   
+        /// <param name="comment">Комментарий к каналу.</param>
+        /// <param name="error">Строка с описанием ошибки при возникновении 
+        /// таковой.</param>
+        bool ClearChannel(IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
+            string comment, string channelName);
+
+        /// <summary>
+        /// Связанная функция на ФСА.        
+        /// </summary>
+        IEplanFunction Function { get; }
+
+        /// <summary>
+        /// Установить значение параметра
+        /// </summary>
+        /// <param name="name">Название параметра</param>
+        /// <param name="value">Значение</param>
+        /// <returns></returns>
+        string SetParameter(string name, double value);
+
+        /// <summary>
+        /// Обновить параметры на ФСА
+        /// </summary>
+        void UpdateParameters();
+
+        /// <summary>
+        /// Установить значение свойства
+        /// </summary>
+        /// <param name="name">Название свойства</param>
+        /// <param name="value">Значение</param>
+        /// <returns></returns>
+        string SetProperty(string name, object value);
+
+        /// <summary>
+        /// Обновить свойства на ФСА
+        /// </summary>
+        void UpdateProperties();
+
+        /// <summary>
+        /// Установить значение рабочего параметра
+        /// </summary>
+        /// <param name="name">Название рабочего параметра</param>
+        /// <param name="value">Значение</param>
+        /// <returns></returns>
+        string SetRuntimeParameter(string name, double value);
+
+        /// <summary>
+        /// Обновить рабочие параметры на ФСА
+        /// </summary>
+        void UpdateRuntimeParameters();
+
+        /// <summary>
+        /// Получение диапазона настройки
+        /// </summary>
+        /// <param name="p_min">Параметр минимального значения</param>
+        /// <param name="p_max">Параметр максимального значения</param>
+        string GetRange(IODevice.Parameter p_min, IODevice.Parameter p_max);
+
+        /// <summary>
+        /// Список свойств устройства,
+        /// для которых можно установить несколько значений
+        /// </summary>
+        List<string> MultipleProperties { get; }
     }
 }

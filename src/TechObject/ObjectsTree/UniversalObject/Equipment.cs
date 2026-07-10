@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Editor;
 using Eplan.EplApi.Base;
 using EplanDevice;
@@ -11,7 +12,7 @@ namespace TechObject
     /// <summary>
     /// Класс, содержащий оборудование технологического объекта
     /// </summary>
-    public class Equipment : TreeViewItem
+    public class Equipment : TreeViewItem, IAutocompletable
     {
         /// <summary>
         /// Конструктор
@@ -20,7 +21,6 @@ namespace TechObject
         public Equipment(TechObject owner)
         {
             this.owner = owner;
-            items = new List<ITreeViewItem>();
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace TechObject
         /// <param name="properties">Список оборудования</param>
         public void AddItems(List<BaseParameter> properties)
         {
-            foreach(BaseParameter property in properties)
+            foreach (BaseParameter property in properties)
             {
                 property.Owner = this;
                 property.ValueChanged += sender => OnValueChanged(sender);
@@ -56,10 +56,10 @@ namespace TechObject
         /// <param name="value">Значение</param>
         public void SetEquipmentValue(string name, string value)
         {
-            foreach (ITreeViewItem item in items)
+            foreach (ITreeViewItem item in GetDescendantsParameters())
             {
                 var property = item as BaseParameter;
-                if (property.LuaName == name)
+                if (property.LuaName.ToUpper() == name.ToUpper())
                 {
                     property.SetNewValue(value);
                 }
@@ -75,7 +75,7 @@ namespace TechObject
         {
             var equipment = new Equipment(clone);
 
-            foreach(ITreeViewItem item in items)
+            foreach (ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
                 var newProperty = property.Clone();
@@ -101,16 +101,10 @@ namespace TechObject
                 return res;
             }
 
-            string equipmentForSave = "";
-            foreach (ITreeViewItem item in items)
-            {
-                var property = item as EquipmentParameter;
-                if (!property.IsEmpty)
-                {
-                    equipmentForSave += prefix + $"\t{property.LuaName} = " +
-                        $"\'{property.Value}\',\n";
-                }
-            }
+            string equipmentForSave = GetDescendantsParameters()
+                .OfType<EquipmentParameter>()
+                .Select(p => $"{prefix}\t{p.LuaName} = \'{p.Value}\',\n")
+                .Aggregate("", (r, p) => r + p);
 
             bool needSaveQuipment = equipmentForSave != "";
             if (needSaveQuipment)
@@ -136,20 +130,10 @@ namespace TechObject
         /// <param name="techNumber">Тех.номер объекта</param>
         public void ModifyDevNames(string techObjName, int techNumber)
         {
-            items.OfType<BaseParameter>().ToList()
-                .ForEach(property =>
-                {
-                    var newValues = property.Value.Split(' ')
-                        .Select(deviceManager.GetDeviceByEplanName)
-                        .Where(dev => dev.ObjectName == techObjName)
-                        .Select(dev => $"{techObjName}{techNumber}{dev.DeviceDesignation}")
-                        .Where(name => deviceManager.GetDeviceByEplanName(name).Description != CommonConst.Cap);
-
-                    if (newValues.Any())
-                    {
-                        property.SetNewValue(string.Join(" ", newValues));
-                    }
-                });
+            foreach (var property in GetDescendantsParameters().OfType<EquipmentParameter>())
+            {
+                property.ModifyDevNames(techObjName, techNumber);
+            }
         }
 
         public void ModifyDevNames()
@@ -163,266 +147,74 @@ namespace TechObject
         #region Проверка и автоматическое заполнение оборудования
         public string Check()
         {
-            var errors = "";
+            var errors = new StringBuilder();
 
-            var equipment = Items.Select(x => x as BaseParameter).ToArray();
-            foreach (var equip in equipment)
+            foreach (var equip in GetDescendantsParameters().OfType<EquipmentParameter>())
             {
-                SetDeviceAutomatically(equip);
-                errors += CheckEquipmentValues(equip);
+                equip.SetDeviceByDefault(owner.NameEplan, owner.TechNumber);
             }
 
-            return errors;
-        }
-
-        /// <summary>
-        /// Установка устройств в оборудовании автоматически
-        /// </summary>
-        /// <param name="equipment">Оборудование</param>
-        private void SetDeviceAutomatically(BaseParameter equipment)
-        {
-            string currentValue = equipment.Value;
-            if (equipment.DefaultValue != "" && 
-                currentValue == equipment.DefaultValue)
+            foreach (var equip in items.OfType<EquipmentParameter>())
             {
-                string deviceName = owner.NameEplan + owner.TechNumber +
-                    equipment.DefaultValue;
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDevice(deviceName);
-                if (device.Description != StaticHelper.CommonConst.Cap)
-                {
-                    equipment.SetNewValue(deviceName);
-                }
-                else
-                {
-                    equipment.SetNewValue("");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Проверить параметры и устройства для ПИД
-        /// </summary>
-        /// <param name="equipment">Оборудование</param>
-        /// <returns></returns>
-        private string CheckEquipmentValues(BaseParameter equipment)
-        {
-            var errors = "";
-            string techObjectName = owner.DisplayText[0];
-            string currentValue = equipment.Value;
-            string[] devices = currentValue.Split(' ');
-            if (devices.Length > 1)
-            {
-                errors += CheckMultiValue(devices, equipment, techObjectName);
-            }
-            else
-            {
-                errors += CheckSingleValue(currentValue, equipment,
-                    techObjectName);
+                errors.Append(equip.Check(owner.DisplayText[0]));
             }
 
-            return errors;
-        }
-
-        /// <summary>
-        /// Проверка множественных значений в оборудовании
-        /// </summary>
-        /// <param name="devices">Устройства</param>
-        /// <param name="equipment">Оборудование</param>
-        /// <param name="techObjectName">Имя объекта</param>
-        /// <returns></returns>
-        private string CheckMultiValue(string[] devices,
-            BaseParameter equipment, string techObjectName)
-        {
-            string errors = "";
-            var unknownDevices = new List<string>();
-
-            foreach (var deviceStr in devices)
-            {
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDeviceByEplanName(deviceStr);
-                if (device.Description == StaticHelper.CommonConst.Cap)
-                {
-                    unknownDevices.Add(deviceStr);
-                }
-            }
-
-            if (unknownDevices.Count > 0)
-            {
-                errors = $"Проверьте оборудование: " +
-                    $"\"{equipment.Name}\" в объекте " +
-                    $"\"{techObjectName}\". " +
-                    $"Некорректные устройства: " +
-                    $"{string.Join(",", unknownDevices)}.\n";
-            }
-
-            return errors;
-        }
-
-        /// <summary>
-        /// Проверка одиночных значений в оборудовании
-        /// </summary>
-        /// <param name="currentValue">Текущее значение</param>
-        /// <param name="equipment">Оборудование</param>
-        /// <param name="techObjectName">Имя объекта</param>
-        /// <returns></returns>
-        private string CheckSingleValue(string currentValue,
-            BaseParameter equipment, string techObjectName)
-        {
-            string errors = "";
-
-            var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDeviceByEplanName(currentValue);
-            if (equipment.LuaName == "SET_VALUE")
-            {
-                bool isValid =
-                    (device.Description != StaticHelper.CommonConst.Cap ||
-                    owner.GetParamsManager().Float
-                    .GetParam(currentValue) != null);
-                if (!isValid)
-                {
-                    errors += $"Отсутствует задание для ПИД регулятора" +
-                        $" \"{owner.DisplayText[0]}\".\n";
-                }
-            }
-            else
-            {
-                bool isValid =
-                    device.Description != StaticHelper.CommonConst.Cap ||
-                    currentValue == "" ||
-                    currentValue == equipment.DefaultValue;
-                if (!isValid)
-                {
-                    errors += $"Проверьте оборудование: " +
-                        $"\"{equipment.Name}\" в объекте " +
-                        $"\"{techObjectName}\". " +
-                        $"Некорректное устройство: {currentValue}.\n";
-                }
-            }
-
-            return errors;
+            return errors.ToString();
         }
         #endregion
 
         #region Реализация ITreeViewItem
-        public override string[] DisplayText
-        {
-            get
-            {
-                if (items.Count() > 0)
-                {
-                    string res = string.Format("Оборудование ({0})",
-                        items.Count());
-                    return new string[] { res, "" };
-                }
-                else
-                {
-                    string res = string.Format("Оборудование");
-                    return new string[] { res, "" };
-                }
-            }
-        }
+        public override string[] DisplayText => [Name, ""];
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items.ToArray();
-            }
-        }
+        public string Name => items.Count > 0 ? $"Оборудование ({items.Count})" : "Оборудование";
 
-        public override bool IsReplaceable
-        {
-            get
-            {
-                return true;
-            }
-        }
 
-        public override ITreeViewItem Replace(object child, 
-            object copyObject)
-        {
-            var property = child as EquipmentParameter;
-            var copiedObject = copyObject as EquipmentParameter;
-            bool objectsNotNull = property != null && copiedObject != null;
-            if (objectsNotNull)
-            {
-                property.SetNewValue(copiedObject.Value);
-                ModifyDevNames();
+        public override ITreeViewItem[] Items => [.. items];
 
-                property.AddParent(this);
-                return property;
-            }
+        public override bool IsReplaceable => true;
+
+        public override ITreeViewItem Replace(object child, object copyObject)
+        {
+            if (child is EquipmentParameter equip)
+                return equip.InsertCopy(copyObject);
+            
             return null;
         }
 
-        override public bool IsCopyable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCopyable => true;
 
         public override bool Delete(object child)
         {
-            var treeItem = child as ITreeViewItem;
-            if(treeItem != null)
+            if (child is not ITreeViewItem treeItem)
+                return false;
+
+            if (treeItem.IsMainObject)
             {
-                if(treeItem.IsMainObject)
+                var objEquips = Items.Select(x => x as BaseParameter)
+                    .ToArray();
+                foreach (var equip in objEquips)
                 {
-                    var objEquips = Items.Select(x => x as BaseParameter)
-                        .ToArray();
-                    foreach (var equip in objEquips)
-                    {
-                        equip.SetNewValue("");
-                    }
-                    return true;
+                    equip.SetNewValue("");
                 }
-                else
-                {
-                    treeItem.SetNewValue("");
-                    return true;
-                }
+                return true;
             }
-
-            return false;
-        }
-
-        public override bool IsDeletable
-        {
-            get
+            else
             {
+                treeItem.SetNewValue("");
                 return true;
             }
         }
 
-        public override ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                return ImageIndexEnum.Equipment;
-            }
-        }
+        public override bool IsDeletable => true;
+
+        public override ImageIndexEnum ImageIndex => ImageIndexEnum.Equipment;
         #endregion
 
-        public TechObject Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public TechObject Owner => owner;
 
         public override string SystemIdentifier => "control_module";
 
-        public override bool ShowWarningBeforeDelete
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool ShowWarningBeforeDelete => true;
 
         #region Синхронизация устройств в объекте.
         /// <summary>
@@ -432,14 +224,10 @@ namespace TechObject
         /// индексов.</param>
         public void Synch(int[] array)
         {
-            foreach(var treeViewItem in items)
+            foreach(var equipmentParameter in GetDescendantsParameters()
+                .OfType<EquipmentParameter>())
             {
-                var equipmentParameter = treeViewItem as EquipmentParameter;
-                bool validParameter = equipmentParameter != null;
-                if(validParameter)
-                {
-                    equipmentParameter.Synch(array);
-                }
+                equipmentParameter.Synch(array);
             }
         }
         #endregion
@@ -449,7 +237,7 @@ namespace TechObject
         /// </summary>
         private void Sort()
         {
-            items.Sort(delegate (ITreeViewItem x, ITreeViewItem y)
+            items.Sort(delegate (BaseParameter x, BaseParameter y)
             {
                 return x.DisplayText[0].CompareTo(y.DisplayText[0]);
             });
@@ -469,7 +257,7 @@ namespace TechObject
         {
             foreach (var index in Enumerable.Range(0, items.Count))
             {
-                var equipmentItem = genericEquipment.items[index] as BaseParameter;
+                var equipmentItem = genericEquipment.items[index];
                 if (equipmentItem.IsFilled is false)
                     continue;
 
@@ -489,8 +277,8 @@ namespace TechObject
 
             foreach (var index in Enumerable.Range(0, refEquipment.items.Count))
             {
-                var refEquipmentItem = refEquipment.items[index] as BaseParameter;
-                if (equipmentList.TrueForAll(equipmentItem => (equipmentItem.items[index] as BaseParameter).Value == refEquipmentItem.Value))
+                var refEquipmentItem = refEquipment.items[index];
+                if (equipmentList.TrueForAll(equipmentItem => (equipmentItem.items[index]).Value == refEquipmentItem.Value))
                     items[index].SetNewValue(refEquipmentItem.Value);
                 else
                     items[index].SetNewValue("");
@@ -499,8 +287,32 @@ namespace TechObject
 
         public void Clear() => items.Clear();
 
-        private TechObject owner;
-        private List<ITreeViewItem> items;
+        bool IAutocompletable.CanExecute => true;
+
+        public void Autocomplete()
+        {
+            var techObj = owner.NameEplan;
+            var techN = owner.TechNumber;
+
+            foreach (var item in Items.OfType<BaseParameter>())
+            {
+                if (item.Value == item.DefaultValue && item.Value != string.Empty ||
+                    item.Value == string.Empty && item.DefaultValue != string.Empty)
+                {
+                    var dev = $"{techObj}{techN}{item.DefaultValue}";
+                    if (deviceManager.GetDevice(dev).Description is not CommonConst.Cap)
+                        item.SetNewValue($"{techObj}{techN}{item.DefaultValue}");
+                }
+            }
+        }
+
+        public List<BaseParameter> GetDescendantsParameters()
+        {
+            return [.. items.SelectMany(i => i.GetDescendants())];
+        }
+
+        private readonly TechObject owner;
+        private readonly List<BaseParameter> items = [];
 
         private static IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
     }

@@ -15,7 +15,7 @@ namespace EasyEplannerTests.ProjectImportICPTest
         [Test]
         public void CreateInstance()
         {
-            var par = new ImportDefaultDeviceParamter("V", IODevice.Parameter.P_DT);
+            var par = new ImportDefaultDeviceParameter("V", IODevice.Parameter.P_DT);
 
             Assert.Multiple(() =>
             {

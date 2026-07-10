@@ -259,16 +259,17 @@ namespace TechObject
                     .AggregateParameters;
 
                 var addingProperties = new List<BaseParameter>();
-                if (properties.Count != 0)
-                {
-                    addingProperties.AddRange(properties);
-                }
-
                 if (attachedBaseTechObject.MainAggregateParameter != null)
                 {
                     addingProperties.Add(attachedBaseTechObject
                         .MainAggregateParameter);
                 }
+
+                if (properties.Count != 0)
+                {
+                    addingProperties.AddRange(properties);
+                }
+
                 TechObject thisThechObject = owner;
                 List<Mode> modes = thisThechObject.ModesManager.Modes;
                 foreach (var mode in modes)
@@ -356,29 +357,38 @@ namespace TechObject
             return string.Join(", ", objectNames);
         }
 
+        /// <summary>
+        /// Получить список названий привязанных объектов
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetAttachedObjectsName()
+            => [.. GetTechObjects().Select(obj => obj.NameEplanForFile.ToLower() + obj.TechNumber)];
+
+
+        /// <summary>
+        /// Получить список привязанных объектов
+        /// </summary>
+        /// <returns></returns>
+        public List<TechObject> GetTechObjects()
         {
-            var objectNames = new List<string>();
             if (Value == string.Empty)
-            {
-                return objectNames;
-            }
+                return [];
 
-            string[] nums = Value.Split(' ');
-            foreach (var num in nums)
-            {
-                bool converted = int.TryParse(num, out int objNum);
-                if(converted)
-                {
-                    var obj = TechObjectManager.GetInstance()
-                        .GetTObject(objNum);
-                    string objName = obj.NameEplanForFile.ToLower() + 
-                        obj.TechNumber;
-                    objectNames.Add(objName);
-                }
-            }
+            return [.. Value.Split(' ')
+                .Where(n => int.TryParse(n, out _))
+                .Select(int.Parse)
+                .Select(techObjectManager.GetTObject)];
+        }
 
-            return objectNames;
+        /// <summary>
+        /// Получить базовый тех. объект привязанного объекта по его названию
+        /// </summary>
+        /// <param name="Luaname">Lua-название базового объекта</param>
+        /// <returns></returns>
+        public BaseTechObject GetBaseTechObjectByLuaName(string Luaname)
+        {
+            return GetTechObjects().Select(to => to.BaseTechObject)
+                .FirstOrDefault(bto => bto.EplanName == Luaname);
         }
 
         /// <summary>
@@ -594,7 +604,7 @@ namespace TechObject
 
         private readonly HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
         {
-            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm.editorTView, string.Empty),
+            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm?.editorTView, string.Empty),
             FillBrush = new SolidBrush(Color.YellowGreen),
             FramePen = new Pen(Color.White),
         };

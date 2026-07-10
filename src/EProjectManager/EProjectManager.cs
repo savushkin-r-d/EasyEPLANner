@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
+using IO.View;
 
 namespace EasyEPlanner
 {
@@ -57,15 +58,52 @@ namespace EasyEPlanner
         }
 
         [ExcludeFromCodeCoverage]
+        public bool IsEditBindingActive()
+        {
+            if (EnabledEditMode)
+                return true;
+
+            return Editor.Editor.GetInstance()?.Editable ?? false;
+        }
+
+        [ExcludeFromCodeCoverage]
+        public void RestartEditModes()
+        {
+            if (!IsEditBindingActive())
+                return;
+
+            EnabledEditMode = true;
+            isRestartingEditModes = true;
+            try
+            {
+                if (selectInteractionWhileEditModes != null)
+                {
+                    selectInteractionWhileEditModes.OnStop();
+                    selectInteractionWhileEditModes = null;
+                }
+
+                StartEditModes();
+            }
+            finally
+            {
+                isRestartingEditModes = false;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        public bool ShouldAutorestartInteraction =>
+            IsEditBindingActive() && !isRestartingEditModes;
+
+        [ExcludeFromCodeCoverage]
         public void StopEditModes()
         {
+            EnabledEditMode = false;
+
             if (selectInteractionWhileEditModes != null)
             {
                 selectInteractionWhileEditModes.OnStop();
                 selectInteractionWhileEditModes = null;
             }
-
-            EnabledEditMode = false;
         }
 
         public void SetEditInteraction(SelectInteractionWhileEditModes inter)
@@ -176,7 +214,7 @@ namespace EasyEPlanner
             string projectDirPath = currentProject.ProjectDirectoryPath;
             ExcelRepoter.AutomaticExportExcelForSCADA(projectDirPath,
                 projectName);
-            var xmlReporter = new XMLReporter();
+            var xmlReporter = new XmlReporter();
             xmlReporter.AutomaticExportNewChannelBaseCombineTags(
                 projectDirPath, projectName);
 
@@ -187,6 +225,8 @@ namespace EasyEPlanner
             DFrm.SaveCfg(DFrm.deviceIsShown);
             Editor.NewEditorControl.CheckShown();
             Editor.NewEditorControl.SaveCfg();
+            IOViewControl.SaveCfg();
+            EasyEPlanner.Devices.View.DevicesViewControl.SaveCfg();
 
             if (Editor.Editor.GetInstance().IsShown())
             {
@@ -210,6 +250,7 @@ namespace EasyEPlanner
         private Project currentProject = null;
         private SelectInteractionWhileEditModes
             selectInteractionWhileEditModes = null;
+        private bool isRestartingEditModes;
         private EplanEventListener eplanEventListener;
         private ActionManager actMnr;
         private Eplan.EplApi.ApplicationFramework.Action startInteractionAction;

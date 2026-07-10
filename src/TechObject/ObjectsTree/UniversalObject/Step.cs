@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -23,7 +24,7 @@ namespace TechObject
         /// <param name="isMainStep">Признак того, является ли шаг 
         /// шагом операции. </param>
         /// <param name="owner">Владелец шага (Состояние)</param>
-        public Step(string name, GetN getN, State owner,
+        public Step(string name, GetN getN, IState owner,
             bool isMainStep = false)
         {
             this.name = name ?? string.Empty;
@@ -54,7 +55,7 @@ namespace TechObject
             var checkedDevices = new Action("Проверяемые устройства",
                 this, "checked_devices", null, null);
             actions.Add(checkedDevices);
-            
+
             var openDevices = new Action(openDevicesActionName, this,
                 "opened_devices",
                 new EplanDevice.DeviceType[]
@@ -64,27 +65,29 @@ namespace TechObject
                     EplanDevice.DeviceType.M
                 });
             openDevices.ImageIndex = ImageIndexEnum.ActionON;
+            openDevices.ActionType = DrawInfo.ActionType.ON_DEVICE;
             actions.Add(openDevices);
 
 
             var openDevicesActionGroup = new ActionGroupCustom(
                 "Включать с задержкой", this, "delay_opened_devices",
-                () => 
+                () =>
                 {
                     var openedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    openedDeviceAction.CreateAction(new Action("Включать",
-                        this,"",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.M
-                        }));
+                    var opened = openedDeviceAction.CreateAction(new Action("Включать",
+                        this, "",
+                        [
+                            DeviceType.V,
+                            DeviceType.DO,
+                            DeviceType.M
+                        ]));
+                    opened.ActionType = DrawInfo.ActionType.DELAYED_ON_DEVICE;
                     openedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка включения"));
                     return openedDeviceAction;
                 });
+            openDevicesActionGroup.ActionType = DrawInfo.ActionType.DELAYED_ON_DEVICE;
             actions.Add(openDevicesActionGroup);
 
 
@@ -114,7 +117,8 @@ namespace TechObject
                     EplanDevice.DeviceType.DO,
                     EplanDevice.DeviceType.M
                 });
-            closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevices.DrawStyle = DrawInfo.Style.GRAY_BOX;
+            closeDevices.ActionType = DrawInfo.ActionType.OFF_DEVICE;
             closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
             actions.Add(closeDevices);
 
@@ -124,20 +128,21 @@ namespace TechObject
                 {
                     var closedDeviceAction = new ActionCustom("Группа",
                         this, "");
-                    closedDeviceAction.CreateAction(new Action("Выключать",
+                    var closed = closedDeviceAction.CreateAction(new Action("Выключать",
                         this, "",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.M
-                        }));
+                        [
+                            DeviceType.V,
+                            DeviceType.DO,
+                            DeviceType.M
+                        ]));
+                    closed.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
                     closedDeviceAction.CreateParameter(
                         new ActionParameter("", "Задержка выключения"));
                     return closedDeviceAction;
                 });
             actions.Add(closeDevicesActionGroup);
-            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevicesActionGroup.DrawStyle = DrawInfo.Style.GRAY_BOX;
+            closeDevicesActionGroup.ActionType = DrawInfo.ActionType.DELAYED_OFF_DEVICE;
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
@@ -217,22 +222,34 @@ namespace TechObject
                 EplanDevice.DeviceType.FS
             };
 
+
+            // Поля для действий Группа дискретных сигналов
+            ActionCustom subgroupDIDO()
+            {
+                var enableStepBySignalAction = new ActionCustom("Группа", this, "");
+                enableStepBySignalAction.CreateAction(
+                    new Action("Сигналы", this, "", pairsDiDoAllowedDevTypes,
+                    null, new ManyInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes)));
+                enableStepBySignalAction.CreateParameter(
+                    new ComboBoxParameter("logic_type", "Логика", new Dictionary<string, string>() {
+                        { "ИЛИ", "0" },
+                        { "И", "1" }
+                    }, "0"));
+                return enableStepBySignalAction;
+            }
+
             // Специальное действие - выдача дискретных сигналов 
-            // при наличии входного дискретного сигнала.
-            var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                "DI_DO", pairsDiDoAllowedDevTypes, null,
-                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+            // при наличии входных дискретных сигналов.
+            var groupDIDO = new ActionGroupCustom(groupDIDOActionName, this, "DI_DO", subgroupDIDO);
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
-
             // Специальное действие - выдача дискретных сигналов 
-            // при пропадании входного дискретного сигнала.
-            var groupInvertedDiDo = new ActionGroup(groupDIDOActionNameInverted,
-                this, "inverted_DI_DO", pairsDiDoAllowedDevTypes, null, 
-                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
-            groupInvertedDiDo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
-            actions.Add(groupInvertedDiDo);
+            // при пропадании входных дискретных сигналов.
+            var groupInvertedDIDO = new ActionGroupCustom(groupDIDOActionNameInverted, this, "inverted_DI_DO", subgroupDIDO);
+            groupInvertedDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
+            actions.Add(groupInvertedDIDO);
+
 
             var pairsAiAoAllowedInputTypes = new EplanDevice.DeviceType[]
             {
@@ -261,7 +278,7 @@ namespace TechObject
                     EplanDevice.DeviceType.VC
                 },
                 null,
-                new OneInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
+                new ManyInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
             groupAiAo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAiAo);
 
@@ -284,7 +301,10 @@ namespace TechObject
                             EplanDevice.DeviceType.PDS,
                         }));
                     return enableStepBySignalAction;
-                });
+                })
+            {
+                ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+            };
             enableStepBySignal.CreateParameter(new ActiveBoolParameter("",
                 "Выключать шаг по пропаданию сигнала", "true"));
 
@@ -309,7 +329,9 @@ namespace TechObject
                     toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
                        "Шаг"));
                     return toStepByCondition;
-                });
+                }){
+                    ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+                };
                 actions.Add(toStepByConditionAction);
                 items.Add(toStepByConditionAction);
 
@@ -346,49 +368,8 @@ namespace TechObject
 
         public void SetJumpToStateIf()
         {
-            var IDLE = (int)State.StateType.IDLE;
-            var RUN = (int)State.StateType.RUN;
-            var PAUSE = (int)State.StateType.PAUSE;
-            var STOP = (int)State.StateType.STOP;
-
-            var CBParameterValues = new Dictionary<string, string>();
-
-            if (Owner.Type == State.StateType.RUN)
-            {
-                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
-                CBParameterValues.Add(State.stateStr[PAUSE], PAUSE.ToString());
-                CBParameterValues.Add(State.stateStr[STOP], STOP.ToString());
-            }
-            else if (Owner.Type == State.StateType.IDLE)
-            {
-                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
-            }
-            else if (Owner.Type == State.StateType.STARTING)
-            {
-                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
-            }
-            else if (Owner.Type == State.StateType.PAUSING)
-            {
-                CBParameterValues.Add( State.stateStr[PAUSE], PAUSE.ToString());
-            }
-            else if (Owner.Type == State.StateType.PAUSE)
-            {
-                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
-                CBParameterValues.Add(State.stateStr[STOP], STOP.ToString());
-            }
-            else if (Owner.Type == State.StateType.UNPAUSING)
-            {
-                CBParameterValues.Add( State.stateStr[RUN], RUN.ToString());
-            }
-            else if (Owner.Type == State.StateType.STOPPING)
-            {
-                CBParameterValues.Add( State.stateStr[STOP], STOP.ToString());
-            }
-            else if (Owner.Type == State.StateType.STOP)
-            {
-                CBParameterValues.Add(State.stateStr[IDLE], IDLE.ToString());
-            }
-            else return;
+            var CBParameterValues = Owner.Type.StateTransition()
+                .ToDictionary(t => t.Name(), t => t.Index().ToString());
 
             var toStateByConditionAction = new ActionGroupCustom(
             "Переход к состоянию по условию", this, "jump_if",
@@ -408,7 +389,9 @@ namespace TechObject
                 CBParameterValues
                 ));
                 return toStateByCondition;
-            });
+            }) {
+                ToolTipText = ("Логика 'И'- внутри группы, 'ИЛИ' - между группами", null),
+            };
             actions.Add(toStateByConditionAction);
             items.Add(toStateByConditionAction);
         }
@@ -427,7 +410,9 @@ namespace TechObject
             clone.actions = new List<IAction>();
             foreach (IAction action in actions)
             {
-                clone.actions.Add(action.Clone());
+                var clonedAction = action.Clone();
+                AssignOwnerToAction(clonedAction, clone);
+                clone.actions.Add(clonedAction);
             }
 
             clone.items = new List<ITreeViewItem>();
@@ -445,13 +430,22 @@ namespace TechObject
             }
 
             clone.baseStep = baseStep.Clone();
-            clone.baseStep.Owner = this;
+            clone.baseStep.Owner = clone;
 
             clone.actions.ForEach(
                 action => (action as ITreeViewItem).ValueChanged +=
                 sender => clone.OnValueChanged(sender));
 
             return clone;
+        }
+
+        private static void AssignOwnerToAction(IAction action, Step owner)
+        {
+            action.Owner = owner;
+            if (action.HasSubActions)
+            {
+                action.SubActions?.ForEach(subAction => AssignOwnerToAction(subAction, owner));
+            }
         }
 
         public void ModifyDevNames(IDevModifyOptions options)
@@ -664,7 +658,9 @@ namespace TechObject
             return getN(this);
         }
 
-        public State Owner { get; set; }
+        public IState Owner { get; set; }
+
+        public TechObject TechObject => Owner.TechObject;
 
         /// <summary>
         /// Lua-имя базового шага
@@ -723,9 +719,9 @@ namespace TechObject
                 return true;
             }
 
-            State state = Owner;
+            State state = Owner as State;
             // уже есть такой базовый шаг
-            if (Owner.Steps.Any(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal))
+            if (state.Steps.Any(x => x.GetBaseStepLuaName() == newVal || x.GetBaseStepName() == newVal))
             {
                 return false;
             }
@@ -788,34 +784,32 @@ namespace TechObject
 
         public override ITreeViewItem Replace(object child, object copyObject)
         {
-            var copyAction = copyObject as IAction;
-            var childAction = child as IAction;
-            bool notNullObjects = copyAction != null && childAction != null;
-            if (notNullObjects)
-            {
-                bool canReplace = copyAction.LuaName == childAction.LuaName;
-                if (canReplace)
-                {
-                    var newAction = copyAction.Clone();
+            if (!(child is IAction targetAction && copyObject is IAction copyAction))
+                return null;
 
-                    int index = actions.IndexOf(childAction);
-                    actions.RemoveAt(index);
-                    actions.Insert(index, newAction);
+            if (copyAction.LuaName != targetAction.LuaName)
+                return null;
 
-                    newAction.Owner = this;
+            var newAction = copyAction.Clone();
 
-                    newAction.AddParent(this);
+            int index = actions.IndexOf(targetAction);
+            actions.RemoveAt(index);
+            actions.Insert(index, newAction);
 
-                    var childActionAsITreeViewItem = (ITreeViewItem)childAction;
-                    var newActionAsITreeViewItem = (ITreeViewItem)newAction;
-                    index = items.IndexOf(childActionAsITreeViewItem);
-                    items.RemoveAt(index);
-                    items.Insert(index, newActionAsITreeViewItem);
-                    return newAction as ITreeViewItem;
-                }
-            }
+            newAction.Owner = this;
+            newAction.AddParent(this);
 
-            return null;
+            var childActionAsITreeViewItem = (ITreeViewItem)targetAction;
+            var newActionAsITreeViewItem = (ITreeViewItem)newAction;
+            index = items.IndexOf(childActionAsITreeViewItem);
+            items.RemoveAt(index);
+            items.Insert(index, newActionAsITreeViewItem);
+
+            newAction.ModifyDevNames(new DevModifyOptions(Owner.TechObject,
+                copyAction.Owner.TechObject.NameEplan,
+                copyAction.Owner.TechObject.TechNumber));
+
+            return newAction as ITreeViewItem;
         }
 
         override public string[] EditText
@@ -849,15 +843,13 @@ namespace TechObject
 
         override public bool Delete(object child)
         {
-            var action = child as IAction;
-            if (action != null)
+            if (child is IAction action)
             {
                 action.Clear();
             }
 
-            if (child.GetType() == typeof(ObjectProperty))
+            if (child is ObjectProperty objectProperty)
             {
-                var objectProperty = child as ObjectProperty;
                 objectProperty.Delete(this);
             }
 
@@ -870,21 +862,13 @@ namespace TechObject
         }
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            List<DrawInfo> devToDraw = new List<DrawInfo>();
-            foreach (IAction action in actions)
-            {
-                devToDraw.AddRange(action.GetObjectToDrawOnEplanPage());
-            }
-
-            return devToDraw;
-        }
+            => DrawInfo.FilterByActions([.. actions.SelectMany(a => a.GetObjectToDrawOnEplanPage())]);
 
         public override IEnumerable<string> BaseObjectsList
         {
             get => Owner.Owner.BaseOperation
                 .GetStateStepsNames(Owner.Type)
-                .Except(from step in Owner.Steps
+                .Except(from step in (Owner as State).Steps
                         where step.GetBaseStepName() != string.Empty && step != this
                         select step.GetBaseStepName())
                 ;
@@ -916,15 +900,15 @@ namespace TechObject
         {
             var errors = string.Empty;
 
-            State state = Owner;
-            Mode mode = state.Owner;
+            State state = Owner as State;
+            Mode mode = state.Owner as Mode;
             ModesManager modesManager = mode.Owner;
             TechObject techObject = modesManager.Owner;
             string techObjName = techObject.DisplayText[0];
             string modeName = mode.Name;
 
             errors += CheckOpenAndCloseActions(techObjName, modeName);
-            errors += CheckInOutGroupActions(techObjName, modeName);
+            errors += CheckInOutGroupActions();
             return errors;
         }
 
@@ -962,48 +946,27 @@ namespace TechObject
             return errors;
         }
 
-        private string CheckInOutGroupActions(string techObjName,
-            string modeName)
+        private string CheckInOutGroupActions()
         {
-            var errors = string.Empty;
+            var errors = new List<string>();
 
             var checkingActionsGroups = actions
                 .Where(x => x.Name == groupAIAOActionName ||
                 x.Name == groupDIDOActionName ||
                 x.Name == groupDIDOActionNameInverted);
 
-            foreach(var group in checkingActionsGroups)
+            foreach (var action in checkingActionsGroups.SelectMany(g => g.SubActions).OfType<IAction>())
             {
-                bool hasError = false;
-                var groupActions = group.SubActions;
-                foreach(IAction groupAction in groupActions)
+                if (action.Empty)
                 {
-                    if(groupAction.Empty)
-                    {
-                        continue;
-                    }
-
-                    int devsCount = groupAction.DevicesIndex.Count;
-                    if (devsCount == 1)
-                    {
-                        hasError = true;
-                    }
+                    continue;
                 }
 
-                if (hasError)
-                {
-                    errors += $"Неправильно заполнены сигналы в " +
-                        $"действии \"{group.Name}\", " +
-                        $"шаге \"{GetStepName()}\", " +
-                        $"операции \"{modeName}\", " +
-                        $"технологического объекта " +
-                        $"\"{techObjName}\"\n";
-
-                    hasError = false;
-                }
+                errors.Add(action.GetDeviceProcessingStrategy()
+                    .Check(deviceManager));
             }
 
-            return errors;
+            return string.Join("", errors.Distinct());
         }
         #endregion
 

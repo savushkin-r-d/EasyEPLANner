@@ -20,7 +20,7 @@ namespace IO
         /// <param name="moduleInfo">Информация о модуле ввода-вывода</param>
         public IOLinkCalculator(List<EplanDevice.IIODevice>[] devices,
             List<EplanDevice.IODevice.IIOChannel>[] devicesChannels,
-            IOModuleInfo moduleInfo)
+            IIOModuleInfo moduleInfo)
         {
             this.devices = devices;
             this.devicesChannels = devicesChannels;
@@ -120,7 +120,7 @@ namespace IO
 
         List<EplanDevice.IIODevice>[] devices;
         List<EplanDevice.IODevice.IIOChannel>[] devicesChannels;
-        IOModuleInfo moduleInfo;
+        IIOModuleInfo moduleInfo;
 
         // Сервисные слова.
         int offsetIn = 3;

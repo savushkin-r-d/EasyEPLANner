@@ -53,6 +53,8 @@ namespace Tests.EplanDevices
                     GetRandomVCDevice() },
                 new object[] { DeviceSubType.VC_IOLINK, VC_IOLINK,
                     GetRandomVCDevice() },
+                new object[] { DeviceSubType.VC_EY, VC + "_EY",
+                    GetRandomVCDevice() },
                 new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomVCDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
@@ -88,6 +90,7 @@ namespace Tests.EplanDevices
             return new object[]
             {
                 new object[] { VC, VC, GetRandomVCDevice() },
+                new object[] { "VC_EY", "VC_EY", GetRandomVCDevice() },
                 new object[] { VC_IOLINK, VC_IOLINK, GetRandomVCDevice() },
                 new object[] { string.Empty, string.Empty,
                     GetRandomVCDevice() },
@@ -104,7 +107,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -120,14 +123,14 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForVC = new Dictionary<string, int>()
+            var exportForVC = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
             };
 
-            var exportForVCIOL = new Dictionary<string, int>()
+            var exportForVCIOL = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -293,6 +296,20 @@ namespace Tests.EplanDevices
                 }
             };
         }
+
+        [Test]
+        public void SetupTerminal()
+        {
+            var dev = (VC)GetRandomVCDevice();
+
+            dev.SetSubType("VC_EY");
+
+            dev.SetupTerminal("OBJ1EY1", "", 1);
+
+            Assert.AreEqual(1, dev.RuntimeParameters[IODevice.RuntimeParameter.R_EY_NUMBER]);
+            Assert.AreEqual("OBJ1EY1", dev.Properties[IODevice.Property.TERMINAL]);
+        }
+
 
         /// <summary>
         /// Генератор VC устройств

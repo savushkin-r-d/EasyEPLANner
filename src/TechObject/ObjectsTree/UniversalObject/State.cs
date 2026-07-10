@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Aga.Controls.Tree;
 using Editor;
 
 namespace TechObject
@@ -9,7 +10,50 @@ namespace TechObject
     /// Состояние операции. Содержит группу шагов, выполняемых последовательно
     /// (или в ином порядке).
     /// </summary>
-    public class State : TreeViewItem
+    public interface IState : ITreeViewItem
+    {
+        /// <summary>
+        /// Операция состояния
+        /// </summary>
+        IMode Owner { get; }
+
+        /// <summary>
+        /// Технологический объект, которому принадлежит состояние
+        /// </summary>
+        TechObject TechObject { get; }
+
+        /// <summary>
+        /// Тип состояния
+        /// </summary>
+        State.StateType Type { get; }
+
+        /// <summary>
+        /// Название
+        /// </summary>
+        string Name { get; }
+        
+        /// <summary>
+        /// Запускать состояние при старте программы
+        /// </summary>
+        bool IsRunPoint { get; }
+        
+        /// <summary>
+        /// Установить состояние как точка запуска 
+        /// (сбрасывает свойство у других состояний)
+        /// </summary>
+        void SetRunPoint();
+
+        /// <summary>
+        /// Сбросить состояние как точку запуска
+        /// </summary>
+        void ResetRunPoint();
+    }
+
+    /// <summary>
+    /// Состояние операции. Содержит группу шагов, выполняемых последовательно
+    /// (или в ином порядке).
+    /// </summary>
+    public class State : TreeViewItem, IState
     {
         /// <summary>
         /// Получение шага по номеру (нумерация с -1 - шаг операции, который 
@@ -51,9 +95,9 @@ namespace TechObject
         /// <param name="stateType">Тип состояния</param>
         /// <param name="needMainStep">Надо ли основной шаг.</param>
         /// <param name="owner">Владелец состояния (Операция)</param>
-        public State(StateType stateType, Mode owner, bool needMainStep = false)
+        public State(StateType stateType, IMode owner, bool needMainStep = false)
         {
-            name = stateStr[(int)stateType];
+            name = stateType.Name();
             Type = stateType;
             this.owner = owner;
             steps = new List<Step>();
@@ -108,14 +152,13 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            if (steps.Count == 0) return string.Empty;
+            if (steps.Count == 0 || modeStep is null) 
+                return string.Empty;
 
             string res = string.Empty;
 
-            if (modeStep != null)
-            {
-                res += modeStep.SaveAsLuaTable(prefix, true);
-            }
+            res += IsRunPoint ? prefix + "runPoint = true,\n" : "";
+            res += modeStep.SaveAsLuaTable(prefix, true);
 
             if (steps.Count > 1)
             {
@@ -223,13 +266,9 @@ namespace TechObject
             }
         }
 
-        public Mode Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public IMode Owner => owner;
+
+        public TechObject TechObject => Owner.TechObject;
 
         /// <summary>
         /// Проверка шагов состояния
@@ -278,19 +317,49 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = name;
-                if (steps.Count > 1)
-                {
-                    res += " (" + (steps.Count - 1) + ")";
-                }
+        override public string[] DisplayText => [
+            $"{name}{(steps.Count > 1 ? $"({steps.Count - 1})" : "")}",
+            IsRunPoint ? RUNPOINT : ""
+            ];
 
-                return new string[] { res, string.Empty };
-            }
+        public override bool IsEditable => true;
+
+        public override int[] EditablePart => [-1, 1];
+
+        public override bool SetNewValue(string newValue, bool isExtraValue)
+        {
+            if (newValue is RUNPOINT && !IsRunPoint)
+                SetRunPoint();
+
+            if (newValue is "" && ReferenceEquals(Owner.Owner.RunPointState, this))
+                ResetRunPoint();
+
+            return true;
         }
+
+        public bool IsRunPoint { get; private set; }
+
+        public void SetRunPoint()
+        {
+            IsRunPoint = true;
+            Owner.Owner.RunPointState?.ResetRunPoint();
+            Owner.Owner.RunPointState = this;
+        }
+
+        public void ResetRunPoint()
+        {
+            IsRunPoint = false;
+            Owner.Owner.RunPointState = null;
+        }
+
+        public override bool IsBoolParameter => true;
+
+        public const string RUNPOINT = "Запускать при старте программы";
+
+        public override IEnumerable<string> BaseObjectsList => [RUNPOINT, ""];
+
+        public override ImageIndexEnum DescriptionImageIndex 
+            => IsRunPoint ? ImageIndexEnum.Run : ImageIndexEnum.NONE;
 
         override public ITreeViewItem[] Items
         {
@@ -377,10 +446,7 @@ namespace TechObject
 
         override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var targetStep = child as Step;
-            var copiedStep = copyObject as Step;
-
-            if (targetStep is null || copiedStep is null)
+            if (!(child is Step targetStep && copyObject is Step copiedStep))
                 return null;
 
 
@@ -405,18 +471,16 @@ namespace TechObject
             }
 
             newStep.Owner = this;
-            
-            index = steps.IndexOf(newStep);
-
             newStep.AddParent(this);
+
+            newStep.ModifyDevNames(new DevModifyOptions(TechObject, copiedStep.TechObject.NameEplan, copiedStep.TechObject.TechNumber));
+
             return newStep;
         }
 
         public override ITreeViewItem InsertCopy(object copyObject)
         {
-            var copiedStep = copyObject as Step;
-
-            if (copiedStep is null)
+            if (!(copyObject is Step copiedStep))
                 return null;
 
             CheckMainStep();
@@ -434,7 +498,9 @@ namespace TechObject
             steps.Add(newStep);
             newStep.AddParent(this);
             newStep.Owner = this;
-            
+
+            newStep.ModifyDevNames(new DevModifyOptions(TechObject, copiedStep.TechObject.NameEplan, copiedStep.TechObject.TechNumber));
+
             return newStep;
         }
 
@@ -503,40 +569,7 @@ namespace TechObject
         }
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
-        {
-            var devToDraw = new List<DrawInfo>();
-            foreach (Step step in steps)
-            {
-                List<DrawInfo> devToDrawTmp = step
-                    .GetObjectToDrawOnEplanPage();
-                foreach (DrawInfo dinfo in devToDrawTmp)
-                {
-                    bool isSetFlag = false;
-                    for (int i = 0; i < devToDraw.Count; i++)
-                    {
-                        if (devToDraw[i].DrawingDevice.Name == 
-                            dinfo.DrawingDevice.Name)
-                        {
-                            isSetFlag = true;
-                            if (devToDraw[i].DrawingStyle != dinfo.DrawingStyle)
-                            {
-                                devToDraw.Add(new DrawInfo(
-                                    DrawInfo.Style.GREEN_RED_BOX,
-                                    devToDraw[i].DrawingDevice));
-                                devToDraw.RemoveAt(i);
-                            }
-                        }
-                    }
-
-                    if (isSetFlag == false)
-                    {
-                        devToDraw.Add(dinfo);
-                    }
-                }
-            }
-
-            return devToDraw;
-        }
+            => DrawInfo.Filter([.. steps.SelectMany(a => a.GetObjectToDrawOnEplanPage())]);
         #endregion
 
         public override string SystemIdentifier => "state";
@@ -643,9 +676,6 @@ namespace TechObject
         /// </summary>
         public bool NeedMainStep { get; private set; }
 
-        /// <summary>
-        /// Тип состояния
-        /// </summary>
         public StateType Type { get; private set; }
 
         public enum StateType : int
@@ -661,22 +691,45 @@ namespace TechObject
             STOPPING,   // Останавливается
         }
 
-        public static readonly ReadOnlyDictionary<int, string> stateStr = new ReadOnlyDictionary<int, string>
-            (new Dictionary<int, string>()
+        public static readonly ReadOnlyDictionary<StateType, string> StateNames = 
+            new(new Dictionary<StateType, string>()
             {
-                [0] = "Простой",
-                [1] = "Выполнение",
-                [2] = "Пауза",
-                [3] = "Остановка",
-                [10] = "Запускается",
-                [11] = "Становится в паузу",
-                [12] = "Выходит из паузы",
-                [13] = "Останавливается",
+                [StateType.IDLE] = "Простой",
+                [StateType.RUN] = "Выполнение",
+                [StateType.PAUSE] = "Пауза",
+                [StateType.STOP] = "Остановка",
+                [StateType.STARTING] = "Запускается",
+                [StateType.PAUSING] = "Становится в паузу",
+                [StateType.UNPAUSING] = "Выходит из паузы",
+                [StateType.STOPPING] = "Останавливается",
             });
 
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
-        private Mode owner;///< Владелец элемента
+        private IMode owner;///< Владелец элемента
+    }
+
+
+    public static class StateTransitionMapExtension
+    {
+        public static string Name(this State.StateType type) 
+            => State.StateNames[type];
+
+        public static int Index(this State.StateType type)
+            => (int)type;
+
+        public static List<State.StateType> StateTransition(this State.StateType type) => type switch
+        {
+            State.StateType.IDLE => [State.StateType.RUN],
+            State.StateType.RUN => [State.StateType.PAUSE, State.StateType.STOP],
+            State.StateType.PAUSE => [State.StateType.RUN, State.StateType.STOP],
+            State.StateType.STOP => [State.StateType.IDLE],
+            State.StateType.STARTING => [State.StateType.RUN],
+            State.StateType.PAUSING => [State.StateType.PAUSE],
+            State.StateType.UNPAUSING => [State.StateType.RUN],
+            State.StateType.STOPPING => [State.StateType.STOP],
+            _ => []
+        };
     }
 }

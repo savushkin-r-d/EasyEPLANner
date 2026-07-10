@@ -16,38 +16,25 @@ namespace TechObject
         {
             this.par = par;
 
-            items = new List<ITreeViewItem>()
-            {
+            items =
+            [
                 par.ValueItem,
                 par.MeterItem,
-                par.LuaNameProperty,
-            };
+            ];
         }
 
-        public Param Param
-        {
-            get
-            {
-                return par;
-            }
-        }
+        public Param Param => par;
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                return par.DisplayText;
-            }
-        }
+        override public string[] DisplayText => par.DisplayText;
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items.ToArray();
-            }
-        }
+        public override bool IsEditable => true;
+
+        public override string[] EditText => par.EditText;
+
+        public override int[] EditablePart => [0, 1];
+
+        override public ITreeViewItem[] Items => [.. items];
         #endregion
 
         private List<ITreeViewItem> items;

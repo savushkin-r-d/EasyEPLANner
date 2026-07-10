@@ -97,6 +97,7 @@ function init_objects_data(objects, initialized_objects)
             proc_params(value.par_uint, "par_uint", obj)
             proc_params(value.rt_par_float, "rt_par_float", obj)
             proc_params(value.rt_par_uint, "rt_par_uint", obj)
+            obj:GetParamsManager():CompleteInit()
 
             -- Системные параметры
             proc_system_params(value.system_parameters, obj)
@@ -155,6 +156,12 @@ function proc_operation_devices(value, mode, state_n)
     end
     local mainStep = mode[state_n][-1]
     proc_actions(mainStep, value)
+
+    local state = mode[state_n]
+    if value.runPoint == true then
+        state:SetRunPoint()
+    end
+
     if value.steps then
         for fields, value in ipairs(value.steps) do
             mode:AddStep(state_n, value.name or "Шаг ??", value.baseStep or "")
@@ -184,7 +191,7 @@ function proc_actions(step, value, is_runtime_step)
     proc_groups(step, value, "opened_upper_seat_v")
     proc_groups(step, value, "opened_lower_seat_v")
     proc(step, value, "required_FB")
-    proc_groups(step, value, "DI_DO")
+    proc_action_custom_groups(step, value, "DI_DO")
     proc_groups(step, value, "inverted_DI_DO")
     proc_groups(step, value, "AI_AO")
     proc_wash_data(step, value)
@@ -246,6 +253,7 @@ function proc_wash_data(step, value)
         if (wash_data.DI or
             wash_data.DO or
             wash_data.devices or
+            wash_data.deactivate_devices or
             wash_data.rev_devices or
             wash_data.pump_freq) then
 

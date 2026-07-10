@@ -1,12 +1,13 @@
-﻿using System;
+﻿using EasyEPlanner.FileSavers.XML;
+using EplanDevice;
+using IO;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using TechObject;
-using EplanDevice;
-using IO;
-using System.Globalization;
-using System.Drawing;
 
 namespace EasyEPlanner
 {
@@ -455,61 +456,12 @@ namespace EasyEPlanner
             return res;
         }
 
-        /// <summary>
-        /// Сохранение сводной информации об устройствах в виде таблицы.
-        /// </summary>
-        public static object[,] SaveDevicesSummaryAsArray()
-        {
-            const int MAX_ROW = 200;
-            const int MAX_COL = 20;
-            var res = new object[MAX_ROW, MAX_COL];
-
-            var devices = new Dictionary<string, int>();
-            foreach (IODevice dev in deviceManager.Devices)
-            {
-                
-                if (dev.DeviceType == DeviceType.V ||
-                    dev.DeviceType == DeviceType.M ||
-                    dev.DeviceType == DeviceType.LS)
-                {
-                    string deviceSubType = dev.GetDeviceSubTypeStr(
-                        dev.DeviceType, dev.DeviceSubType);
-                    if (devices.ContainsKey(deviceSubType) == false)
-                    {
-                        devices.Add(deviceSubType, 1);
-                    }
-                    else
-                    {
-                        devices[deviceSubType]++;
-                    }
-                }
-                else
-                {
-                    string deviceType = dev.DeviceType.ToString();
-                    if (devices.ContainsKey(dev.DeviceType.ToString()) == false)
-                    {
-                        devices.Add(deviceType, 1);
-                    }
-                    else
-                    {
-                        devices[deviceType]++;
-                    }
-                }
-            }
-
-            // Сводная таблица
-            int idx = 0;
-            foreach(var devType in devices)
-            {
-                res[idx, 0] = devType.Key;
-                res[idx, 1] = devType.Value;
-                idx++;
-            }
-            res[idx, 0] = "Всего";
-            res[idx, 1] = deviceManager.Devices.Count;
-
-            return res;
-        }
+        public static Dictionary<string, Dictionary<string, int>> GetTypesCount()
+            => deviceManager.Summary.NumberUsedTypes();
+        
+        public static int[] GetChannelsCount(string subtype)
+            => deviceManager.ConterChannelsCounter.GetChannelsCount(subtype);
+        
 
         /// <summary>
         /// Сохранение подключение устройств к устройствам ввода-вывода.
@@ -524,7 +476,7 @@ namespace EasyEPlanner
             Dictionary<string, Color> modulesColor, 
             Dictionary<string, object[,]> asInterfaceConnection)
         {
-            const int MAX_COL = 6;
+            const int MAX_COL = 7;
             int MAX_ROW = ioManager.IONodes.Count;
 
             int IndexPCMain = 0;
@@ -534,7 +486,10 @@ namespace EasyEPlanner
             foreach (var ioNode in ioManager.IONodes)
             {
                 MAX_ROW += ioNode.IOModules.Count;
-                if (ioNode.Type == IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
+                if (ioNode.Type is 
+                    IONode.TYPES.T_PHOENIX_CONTACT_1152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_2152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_3152)
                 {
                     IndexPCMain = ioNode.N - 1;
                 }
@@ -563,7 +518,10 @@ namespace EasyEPlanner
                     $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
 
                 string nodeName = "";
-                if (currentNode.Type != IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
+                if (currentNode.Type is not (
+                    IONode.TYPES.T_PHOENIX_CONTACT_1152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_2152 or 
+                    IONode.TYPES.T_PHOENIX_CONTACT_3152))
                 {
                     nodeName = $"Узел №{currentNode.N - offsetA1}. {currentNode.Location}-{currentNode.Name}." +
                         $" Адрес: {currentNode.IP}";
@@ -577,6 +535,7 @@ namespace EasyEPlanner
 
                 res[idx, 4] = "Вход, бит";
                 res[idx, 5] = "Выход, бит";
+                res[idx, 6] = "Изделие";
                 res[idx, 0] = nodeName;
                 idx++;
 

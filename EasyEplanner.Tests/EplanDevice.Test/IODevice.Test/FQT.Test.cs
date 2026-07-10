@@ -108,7 +108,7 @@ namespace Tests.EplanDevices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
-            Dictionary<string, int> expectedProperties, string subType,
+            Dictionary<ITag, int> expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
@@ -124,7 +124,7 @@ namespace Tests.EplanDevices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForFQT = new Dictionary<string, int>()
+            var exportForFQT = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -136,25 +136,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.PREV_DAY_T2, 1},
             };
 
-            var exportForFQTF = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.ST, 1},
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MIN_FLOW, 1},
-                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
-                {IODevice.Tag.P_MAX_FLOW, 1},
-                {IODevice.Tag.P_CZ, 1},
-                {IODevice.Tag.F, 1},
-                {IODevice.Parameter.P_DT, 1},
-                {IODevice.Tag.ABS_V, 1},
-                {IODevice.Tag.DAY_T1, 1},
-                {IODevice.Tag.PREV_DAY_T1, 1},
-                {IODevice.Tag.DAY_T2, 1},
-                {IODevice.Tag.PREV_DAY_T2, 1},
-            };
-
-            var exportForFQTVirt = new Dictionary<string, int>()
+            var exportForFQTF = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -172,7 +154,25 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.PREV_DAY_T2, 1},
             };
 
-            var exportForFQTIOLink = new Dictionary<string, int>()
+            var exportForFQTVirt = new Dictionary<ITag, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.DAY_T1, 1},
+                {IODevice.Tag.PREV_DAY_T1, 1},
+                {IODevice.Tag.DAY_T2, 1},
+                {IODevice.Tag.PREV_DAY_T2, 1},
+            };
+
+            var exportForFQTIOLink = new Dictionary<ITag, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},

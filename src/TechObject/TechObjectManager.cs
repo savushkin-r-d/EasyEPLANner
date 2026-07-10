@@ -8,6 +8,7 @@ using LuaInterface;
 using System.Windows.Forms;
 using System.Text;
 using System.Reflection;
+using EasyEPlanner.FileSavers.XML;
 
 namespace TechObject
 {
@@ -527,11 +528,9 @@ namespace TechObject
         /// <param name="combineTags">Сгруппировать тэги в один подтип</param>
         /// <param name="useNewNames">Использовать имена объектов вместо
         /// OBJECT</param>
-        public void GetObjectForXML(TreeNode rootNode, bool combineTags,
-            bool useNewNames)
+        public void GetObjectForXML(IDriver root, bool combineTags, bool useNewNames)
         {
-            techObjectXMLMaker.GetObjectForXML(rootNode, combineTags,
-                useNewNames);
+            techObjectXMLMaker.BuildObjectsForXML(root, combineTags, useNewNames);
         }
 
         private void SortTreeObjectsByCustomComparer()

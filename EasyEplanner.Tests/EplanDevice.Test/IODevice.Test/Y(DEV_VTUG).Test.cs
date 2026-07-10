@@ -438,6 +438,41 @@ namespace Tests.EplanDevices
         }
 
         /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
+        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
+            string expectedType, string subType, IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
+                device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDeviceSubTypeStrTestData()
+        {
+            return new object[]
+            {
+                new object[] { string.Empty, string.Empty, GetRandomYDevice() },
+                new object[] { "Y", "Y", GetRandomYDevice() },
+                new object[] { DEV_VTUG_8, DEV_VTUG_8, GetRandomYDevice() },
+                new object[] { DEV_VTUG_16, DEV_VTUG_16, GetRandomYDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomYDevice() },
+                new object[] { DEV_VTUG_24, DEV_VTUG_24, GetRandomYDevice() },
+            };
+        }
+
+
+        /// <summary>
         /// Генератор Y устройств
         /// </summary>
         /// <returns></returns>

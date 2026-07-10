@@ -110,9 +110,9 @@ namespace TechObject
         }
         #endregion
 
-        const string trueDisplayValue = "Да";
-        const string falseDisplayValue = "Нет";
-        const string trueLogicValue = "true";
-        const string falseLogicValue = "false";
+        protected const string trueDisplayValue = "Да";
+        protected const string falseDisplayValue = "Нет";
+        protected const string trueLogicValue = "true";
+        protected const string falseLogicValue = "false";
     }
 }

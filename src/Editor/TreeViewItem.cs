@@ -54,9 +54,14 @@ namespace Editor
             return false;
         }
 
-        virtual public bool SetNewValue(string newVal, bool isExtraValue)
+        virtual public bool SetNewValue(string newValue, bool isExtraValue)
         {
             return false;
+        }
+
+        virtual public bool SetNewValue(string newValue, int column)
+        {
+            return SetNewValue(newValue);
         }
 
         virtual public bool IsEditable
@@ -369,6 +374,9 @@ namespace Editor
         public virtual ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 
+        public virtual ImageIndexEnum DescriptionImageIndex { get; set; } =
+            ImageIndexEnum.NONE;
+
         public virtual bool ContainsBaseObject
         {
             get
@@ -463,6 +471,8 @@ namespace Editor
         }
 
         public virtual string SystemIdentifier => "";
+
+        public bool Visibility { get; set; } = true;
         #endregion
     }
 

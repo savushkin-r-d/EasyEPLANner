@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,6 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
 using TechObject;
+using IO.View;
 
 namespace Editor
 {
@@ -57,18 +58,23 @@ namespace Editor
             editorTView.CellToolTipGetter =
                 delegate (OLVColumn column, object displayingObject)
                 {
-                    if (displayingObject is ITreeViewItem obj)
+                    if (displayingObject is not ITreeViewItem obj)
                     {
-                        switch (column.Index)
-                        {
-                            case 0:
-                                return obj.DisplayText[0];
-                            case 1:
-                                return obj.DisplayText[1];
-                        }
+                        return null;
                     }
 
-                    return null;
+                    var toolTipText = (obj as IToolTip)?.ToolTipText;
+                    string BuildToolTip(string displayText, string additionalText) =>
+                        string.IsNullOrEmpty(additionalText)
+                            ? displayText
+                            : $"{displayText}\n\n{additionalText}";
+
+                    return column.Index switch
+                    {
+                        0 => BuildToolTip(obj.DisplayText[0], toolTipText?.Name),
+                        1 => BuildToolTip(obj.DisplayText[1], toolTipText?.Value),
+                        _ => null
+                    };
                 };
 
             // Делегат для Expand
@@ -101,32 +107,25 @@ namespace Editor
                 };
 
             // Делегат получения дочерних элементов
-            editorTView.ChildrenGetter = obj => (obj as ITreeViewItem).Items;
+            editorTView.ChildrenGetter = obj => (obj as ITreeViewItem)?.Items
+                ?.Where(i => i.Visibility);
 
             // Настройка и добавление колонок
-            var firstColumn = new OLVColumn("Название", "DisplayText[0]");
-            firstColumn.IsEditable = false;
-            firstColumn.AspectGetter = obj => (obj as ITreeViewItem).DisplayText[0];
-            firstColumn.Sortable = false;
-            firstColumn.ImageGetter =
-                delegate (object obj)
-                {
-                    var objTreeViewItem = obj as ITreeViewItem;
-                    int countOfImages = editorTView.SmallImageList.Images.Count;
-                    if ((int)objTreeViewItem.ImageIndex < countOfImages)
-                    {
-                        return (int)objTreeViewItem.ImageIndex;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                };
+            var firstColumn = new OLVColumn("Название", "DisplayText[0]")
+            {
+                IsEditable = false,
+                AspectGetter = obj => (obj as ITreeViewItem).DisplayText[0],
+                Sortable = false,
+                ImageGetter = obj => (int)((obj as ITreeViewItem)?.ImageIndex ?? ImageIndexEnum.NONE),
+            };
 
-            var secondColumn = new OLVColumn("Описание", "DisplayText[1]");
-            secondColumn.IsEditable = false;
-            secondColumn.AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1];
-            secondColumn.Sortable = false;
+            var secondColumn = new OLVColumn("Описание", "DisplayText[1]")
+            {
+                IsEditable = false,
+                AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1],
+                Sortable = false,
+                ImageGetter = obj => (int)((obj as ITreeViewItem)?.DescriptionImageIndex ?? ImageIndexEnum.NONE),
+            };
 
             editorTView.Columns.Add(firstColumn);
             editorTView.Columns.Add(secondColumn);
@@ -366,7 +365,8 @@ namespace Editor
                     // Если активен текстовый редактор
                     // - команды работы с текстом
                     case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && IsCellEditing:
-                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode].Command,
+                            KeyCommands[vkCode].wParam, KeyCommands[vkCode].lParam);
                         return (IntPtr)1;
 
                     // Перехватываем используемые
@@ -375,6 +375,16 @@ namespace Editor
                     case (int)Keys.X when Ctrl:     // Ctrl + X
                     case (int)Keys.V when Ctrl:     // Ctrl + V
                     case (int)Keys.B when Ctrl:     // Ctrl + B
+                    case (int)Keys.A when Ctrl:     // Ctrl + A
+                    case (int)Keys.F when Ctrl:     // Ctrl + F
+                    case (int)Keys.H when Ctrl:     // Ctrl + H
+                    case (int)Keys.E when Ctrl:     // Ctrl + E
+
+                    case (int)Keys.D1 when Ctrl:     // Ctrl + 1
+                    case (int)Keys.D2 when Ctrl:     // Ctrl + 2
+                    case (int)Keys.D3 when Ctrl:     // Ctrl + 3
+                    case (int)Keys.D4 when Ctrl:     // Ctrl + 4
+                    case (int)Keys.D5 when Ctrl:     // Ctrl + 5
 
                     case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
                     case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
@@ -386,6 +396,7 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_LEFT:    // Left
                     case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
                     case PI.VIRTUAL_KEY.VK_F1:      // F1
+                    case PI.VIRTUAL_KEY.VK_F5:      // F5
                         PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
                         return (IntPtr)1;
                 }
@@ -397,12 +408,13 @@ namespace Editor
         /// <summary>
         /// Комманды работы с текстом по соответствующим клавишам
         /// </summary>
-        private static readonly Dictionary<uint, uint> KeyCommands
-            = new Dictionary<uint, uint>
+        private static readonly Dictionary<uint, (uint Command, int wParam, int lParam)> KeyCommands
+            = new Dictionary<uint, (uint, int, int)>
             {
-                [(uint)Keys.X] = (int)PI.WM.CUT,    // Вырезать
-                [(uint)Keys.C] = (int)PI.WM.COPY,   // Копировать
-                [(uint)Keys.V] = (int)PI.WM.PASTE,  // Втсавить
+                [(uint)Keys.X] = ((int)PI.WM.CUT, 0, 0),    // Вырезать
+                [(uint)Keys.C] = ((int)PI.WM.COPY, 0, 0),   // Копировать
+                [(uint)Keys.V] = ((int)PI.WM.PASTE, 0, 0),  // Вставить
+                [(uint)Keys.A] = (0x00B1, 0, -1),           // Выбрать все
             };
 
         /// <summary>
@@ -595,6 +607,28 @@ namespace Editor
 
         private bool noOnChange = default;
 
+        private void TextBox_Commands_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.V | Keys.Control:
+                    (sender as TextBox).Paste();
+                    break;
+
+                case Keys.C | Keys.Control:
+                    (sender as TextBox).Copy();
+                    break;
+
+                case Keys.X | Keys.Control:
+                    (sender as TextBox).Cut();
+                    break;
+
+                case Keys.Escape:
+                    editorTView.Focus();
+                    break;
+            }
+        }
+
         /// <summary>
         /// Обработка нажатий клавиш клавиатуры.
         /// </summary>
@@ -694,6 +728,35 @@ namespace Editor
                     uniteToGenericToolStripMenuItem_Click(null, null);
                     break;
 
+                // Автозаполнение
+                case Keys.A when e.Control && Editable:
+                    autocompleteToolStripMenuItem_Click(null, null);
+                    break;
+
+                // Поиск
+                case Keys.F when e.Control:
+                    searchTSButton.PerformClick();
+                    break;
+
+                // Подсветка
+                case Keys.H when e.Control:
+                    drawDev_toolStripButton.PerformClick();
+                    break;
+
+                // Редактирование
+                case Keys.E when e.Control:
+                    edit_toolStripButton.PerformClick();
+                    break;
+
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                    if (e.Control)
+                        ExpandToLevel(e.KeyCode - Keys.D0);
+                    break;
+
                 // Создание новой группы с типовым объектом
                 case Keys.Insert when e.Control && Editable && singleSelection:
                     createGenericToolStripMenuItem_Click(null, null);
@@ -730,6 +793,10 @@ namespace Editor
                         }
                         Process.Start(link);
                     }
+                    break;
+
+                case Keys.F5:
+                    refresh_toolStripButton.PerformClick();
                     break;
 
                 default:
@@ -1021,13 +1088,19 @@ namespace Editor
         /// </summary>
         private void toolStripButton_Click(object sender, EventArgs e)
         {
+            ExpandToLevel(Convert.ToInt32((sender as ToolStripMenuItem).Tag));
+        }
+
+        public void ExpandToLevel(int level)
+        {
             editorTView.BeginUpdate();
-            int level = Convert.ToInt32((sender as ToolStripMenuItem).Tag);
             editorTView.SelectedIndex = 0;
             editorTView.CollapseAll();
             ExpandToLevel(level, editorTView.Objects);
             editorTView.EnsureModelVisible(editorTView.SelectedObject);
             editorTView.EndUpdate();
+
+            AutoResizeColumns(editorTView);
         }
 
         /// <summary>
@@ -1231,6 +1304,9 @@ namespace Editor
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
             DFrm.GetInstance().RefreshTree();
+            IOViewControl.Instance?.RebuildTree();
+            EasyEPlanner.Devices.View.DevicesViewControl.Instance?.RebuildTree();
+
             editorTView.RefreshObjects(treeViewItemsList);
         }
 
@@ -1264,25 +1340,19 @@ namespace Editor
         {
             foreach (ITreeViewItem item in items)
             {
-                if (item.Items != null)
+                if (item.Items is not null)
                 {
-                    int lev = level;
-                    ExpandToLevel(--lev, item.Items);
+                    ExpandToLevel(level - 1, item.Items);
                 }
 
-                if (level > 0)
+                if (level > 0 && !editorTView.IsExpanded(item))
                 {
-                    if (editorTView.IsExpanded(item) == false)
-                    {
-                        editorTView.Expand(item);
-                    }
+                    editorTView.Expand(item);
                 }
-                else
+
+                if (level == 0 && editorTView.IsExpanded(item))
                 {
-                    if (editorTView.IsExpanded(item) == true)
-                    {
-                        editorTView.Collapse(item);
-                    }
+                    editorTView.Collapse(item);
                 }
             }
         }
@@ -1308,7 +1378,12 @@ namespace Editor
             FormatItemsToBold(e, treeViewItemsList.ToArray());
             FormatActiveBoolParameters(e);
             FormatCuttedItems(e);
+        }
+
+        private void editorTView_FormatRow(object sender, FormatRowEventArgs e)
+        {
             FormatCopiedItems(e);
+            FormatFoundItems(e);
         }
 
         /// <summary>
@@ -1371,13 +1446,27 @@ namespace Editor
         /// Форматирование скопированного элемента
         /// </summary>
         /// <param name="e"></param>
-        private void FormatCopiedItems(FormatCellEventArgs e)
+        private void FormatCopiedItems(FormatRowEventArgs e)
         {
             var item = e.Model as ITreeViewItem;
-            if(copyItems?.Contains(item) is true && item?.MarkToCut is false)
+            if (copyItems?.Contains(item) is true && item?.MarkToCut is false)
             {
-                e.Item.BackColor = Color.FromArgb(50, Color.Orange); 
-                e.Item.SelectedForeColor = Color.FromArgb(50, Color.Orange);
+                e.Item.BackColor = Color.LightPink;
+                e.Item.SelectedForeColor = Color.DeepPink;
+            }
+        }
+
+        /// <summary>
+        /// Форматирование скопированного элемента
+        /// </summary>
+        /// <param name="e"></param>
+        private void FormatFoundItems(FormatRowEventArgs e)
+        {
+            var item = e.Model as ITreeViewItem;
+            if (textBox_search.Text != "" &&  item.Contains(textBox_search.Text))
+            {
+                e.Item.BackColor = Color.LightSkyBlue;
+                e.Item.SelectedForeColor = Color.Blue;
             }
         }
 
@@ -1514,7 +1603,7 @@ namespace Editor
             else
             {
                 editorTView.Controls.Remove(textBoxCellEditor);
-                isModified = item.SetNewValue(e.NewValue.ToString());
+                isModified = item.SetNewValue(e.NewValue.ToString(), e.Column.Index);
             }
 
             if (isModified)
@@ -1543,9 +1632,11 @@ namespace Editor
 
             var item = GetActiveItem();
 
-            // Активировать режим редактирования при выборе IAction: 
+            // Активировать режим редактирования на фСА для подсветки при выборе элемента: 
             // Раньше активировался только при изменении страницы в EPLAN
-            if (item is IAction && Editable)
+            if (drawDev_toolStripButton.Checked && 
+                item?.IsUseDevList is true &&
+                Editable)
                 EProjectManager.GetInstance().StartEditModes();
 
             DFrm.CheckShown();
@@ -1682,15 +1773,21 @@ namespace Editor
         private void editorTView_Expanded(object sender,
             TreeBranchExpandedEventArgs e)
         {
-            editorTView.Columns[0].AutoResize(
-                ColumnHeaderAutoResizeStyle.ColumnContent);
+            AutoResizeColumns(sender as TreeListView);
         }
 
         private void editorTView_Collapsed(object sender,
             TreeBranchCollapsedEventArgs e)
         {
-            editorTView.Columns[0].AutoResize(
-                ColumnHeaderAutoResizeStyle.ColumnContent);
+            AutoResizeColumns(sender as TreeListView);
+        }
+
+        private static void AutoResizeColumns(TreeListView treeListView)
+        {
+            if (treeListView is null)
+                return;
+
+            treeListView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void hideEmptyItemsBtn_CheckStateChanged(object sender,
@@ -1845,6 +1942,16 @@ namespace Editor
             }
         }
 
+        private void autocompleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = GetActiveItem();
+            if (item is IAutocompletable autofillable && Editable)
+            {
+                autofillable.Autocomplete();
+                RefreshTree();
+            }
+        }
+
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             var items = GetActiveItems();
@@ -1857,6 +1964,7 @@ namespace Editor
                 return;
 
             ContextMenuStrip_CreateGenericAndGrouping(item, items, singleSelection);
+            ContextMenuStrip_Autocomplete(item);
             ContextMenuStrip_InsertableAndDeletable(item, items, singleSelection);
             ContextMenuStrip_CopyableAndCuttable(item, items, singleSelection);
             ContextMenuStrip_PasteableAndReplaceable(item, items, singleSelection);
@@ -1873,6 +1981,15 @@ namespace Editor
             // Объеденение технологических объектов в группу с типовым объектом
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Visible = items.TrueForAll(o => o is TechObject.TechObject && o.Parent is BaseObject);
             contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Enabled = Editable;
+        }
+
+        private void ContextMenuStrip_Autocomplete(ITreeViewItem item)
+        {
+            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)]
+                .Visible = item is IAutocompletable;
+            contextMenuStrip.Items[nameof(autocompleteToolStripMenuItem)]
+                .Enabled = Editable &&
+                    ((item as IAutocompletable)?.CanExecute ?? false);
         }
 
         private void ContextMenuStrip_InsertableAndDeletable(ITreeViewItem item, List<ITreeViewItem> items, bool singleSelection)
@@ -2045,6 +2162,8 @@ namespace Editor
                 textBox_search.ForeColor = Color.Black;
                 textBox_search.Text = string.Empty;
             }
+
+            IsCellEditing = true;
         }
 
         private void textBox_search_Leave(object sender, EventArgs e)
@@ -2062,6 +2181,8 @@ namespace Editor
                 searchBoxTLP.Visible = false;
                 searchTSButton.Visible = true;
             }
+
+            IsCellEditing = false;
         }
 
         /// <summary>
@@ -2089,12 +2210,25 @@ namespace Editor
             FoundTreeViewItemsList.Clear();
             treeViewItemsList.ForEach(item => item.ResetFilter());
 
+            TextMatchFilter highlightingFilter = null;
+
             if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
             {
                 editorTView.UseFiltering = true;
                 searchIterator.Maximum = FoundTreeViewItemsList.Count;
+
+                highlightingFilter = TextMatchFilter.Contains(editorTView, searchText);
             }
 
+            editorTView.DefaultRenderer = (highlightingFilter == null) ? 
+                null : new HighlightTextRenderer(highlightingFilter)
+                {
+                    FillBrush = new SolidBrush(Color.LightGreen),
+                    FramePen = new Pen(Color.DarkGreen),
+                };
+            editorTView.TreeColumnRenderer.Filter = highlightingFilter;
+            editorTView.TreeColumnRenderer.FillBrush = new SolidBrush(Color.LightGreen);
+            editorTView.TreeColumnRenderer.FramePen = new Pen(Color.DarkGreen);
 
             if (searchBoxWasFocused)
                 textBox_search.Focus();

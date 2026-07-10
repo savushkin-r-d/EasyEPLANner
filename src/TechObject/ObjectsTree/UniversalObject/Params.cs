@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Windows.Forms;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Editor;
 
 namespace TechObject
@@ -136,7 +138,7 @@ namespace TechObject
 
                 foreach (var parId in equalParameters)
                 {
-                    parameters[parId - 1].LuaNameProperty.SetNewValue("");
+                    parameters[parId - 1].SetLuaName("");
                 }
 
                 errors.Add(errorStrBldr.ToString());
@@ -293,7 +295,7 @@ namespace TechObject
                 string newMeter = newParam.GetMeter();
                 string luaName = newParam.GetNameLua();
                 string newNameLua = HaveSameLuaName(luaName)? "P" : luaName;
-                bool useOperation = newParam.IsUseOperation();
+                bool useOperation = newParam.IsUseOperation;
 
                 var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
                     newValue, newMeter, newNameLua, useOperation);
@@ -370,7 +372,7 @@ namespace TechObject
                 double newValue = Convert.ToDouble(newValueStr);
                 string newMeter = (copyObject as Param).GetMeter();
                 string newNameLua = (copyObject as Param).GetNameLua();
-                bool useOperation = (copyObject as Param).IsUseOperation();
+                bool useOperation = (copyObject as Param).IsUseOperation;
 
                 var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
                     newValue, newMeter, newNameLua, useOperation);
@@ -468,7 +470,32 @@ namespace TechObject
                 .Any();
         }
 
+        /// <summary>
+        /// Дополнить параметры заглушками до количества кратного 10
+        /// (x2 в начале для системных параметров)
+        /// </summary>
+        public void FillWithStubs()
+        {
+            const int paramsPerGroup = 10;
+
+            var needStub = paramsPerGroup - parameters.Count % paramsPerGroup;
+
+            // Если это "системные параметры" (первые 20) и их < 10,
+            // добавляем к этому еще 10 заглушек
+            needStub += parameters.Count < paramsPerGroup ? paramsPerGroup : 0;
+
+            if (parameters.Count > paramsPerGroup && needStub == paramsPerGroup)
+                return;
+
+            foreach (var _ in Enumerable.Range(0, needStub))
+            {
+                Insert();
+            }
+        }
+
         public ParamsManager ParamsManager => Parent as ParamsManager;
+
+        public IEnumerable<Param> Parameters => parameters;
 
         private string name;
         private string nameLua;

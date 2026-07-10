@@ -49,17 +49,7 @@ namespace EplanDevice
         }
 
         public override string GetRange()
-        {
-            string range = string.Empty;
-            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
-                parameters.ContainsKey(Parameter.P_MAX_V))
-            {
-                range = "_" + parameters[Parameter.P_MIN_V].ToString() + 
-                    ".." + parameters[Parameter.P_MAX_V].ToString();
-            }
-
-            return range;
-        }
+            => GetRange(Parameter.P_MIN_V, Parameter.P_MAX_V);
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
             DeviceSubType dst)
@@ -80,7 +70,7 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        public override Dictionary<string, int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -89,7 +79,7 @@ namespace EplanDevice
                     switch (dst)
                     {
                         case DeviceSubType.AI:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.ST, 1},
@@ -99,7 +89,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.AI_VIRT:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.M, 1},
                                 {Tag.ST, 1},

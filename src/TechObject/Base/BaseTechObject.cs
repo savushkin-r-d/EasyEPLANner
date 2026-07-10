@@ -23,6 +23,8 @@ namespace TechObject
             ParamsManager = new ParamsManager();
             LuaModuleName = string.Empty;
             MonitorName = string.Empty;
+            TechType = 2;
+            DefaultNameEplan = string.Empty;
             BaseProperties = new BaseProperties();
             Deprecated = false;
             DenyBindingToUnit = false;
@@ -36,12 +38,16 @@ namespace TechObject
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
         /// <param name="defaultValue">Значение по-умолчанию</param>
-        public void AddEquipment(string luaName, string name,
+        public BaseParameter AddEquipment(string luaName, string name,
             string defaultValue)
         {
-            var equipment = new EquipmentParameter(luaName, name, defaultValue);
-            equipment.Owner = this;
+            var equipment = new EquipmentParameter(luaName, name, defaultValue)
+            {
+                Owner = this
+            };
             Equipment.Add(equipment);
+
+            return equipment;
         }
 
 
@@ -59,6 +65,24 @@ namespace TechObject
             par.Owner = this;
             AggregateParameters.Add(par);
             return par;
+        }
+
+        /// <summary>
+        /// Добавить активный параметр агрегата с привязкой 
+        /// </summary>
+        /// <param name="luaName">Lua-имя/param>
+        /// <param name="name">Имя</param>
+        /// <returns>Добавленный параметр</returns>
+        public ActiveAggregateParameter AddActiveAggregateParameter(string luaName, string name)
+        {
+            var parameter = new ActiveAggregateParameter(luaName, name, "",
+                new List<BaseParameter.DisplayObject>() { BaseParameter.DisplayObject.Parameters })
+            {
+                Owner = this
+            };
+
+            AggregateParameters.Add(parameter);
+            return parameter;
         }
 
         /// <summary>
@@ -81,12 +105,16 @@ namespace TechObject
         /// <param name="luaName"></param>
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
-        public void AddMainAggregateParameter(string luaName, string name,
+        public MainAggregateParameter AddMainAggregateParameter(string luaName, string name,
             string defaultValue)
         {
-            var par = new MainAggregateParameter(luaName, name, defaultValue);
-            par.Owner = this;
+            var par = new MainAggregateParameter(luaName, name, defaultValue)
+            {
+                Owner = this
+            };
             MainAggregateParameter = par;
+
+            return par;
         }
 
         /// <summary>
@@ -240,7 +268,7 @@ namespace TechObject
         public string Name { get; set; }
 
         /// <summary>
-        /// ОУ базового объекта
+        /// Lua-имя (ключ) базового объекта в файле описания.
         /// </summary>
         public string EplanName { get; set; }
 
@@ -351,6 +379,7 @@ namespace TechObject
 
             cloned.BasicName = BasicName;
             cloned.EplanName = EplanName;
+            cloned.DefaultNameEplan = DefaultNameEplan;
 
             var equipment = new List<BaseParameter>();
             foreach (var equip in Equipment)
@@ -382,6 +411,7 @@ namespace TechObject
             cloned.ParamsManager = ParamsManager.Clone();
             cloned.LuaModuleName = LuaModuleName;
             cloned.MonitorName = MonitorName;
+            cloned.TechType = TechType;
             cloned.BaseProperties = BaseProperties.Clone();
 
             cloned.DenyBindingToUnit = DenyBindingToUnit;
@@ -479,6 +509,16 @@ namespace TechObject
         /// Имя объекта Monitor (SCADA)
         /// </summary>
         public string MonitorName { get; set; }
+
+        /// <summary>
+        /// ОУ по умолчанию при добавлении технологического объекта.
+        /// </summary>
+        public string DefaultNameEplan { get; set; }
+
+        /// <summary>
+        /// Технологический тип объекта по умолчанию
+        /// </summary>
+        public int TechType { get; set; }
 
         /// <summary>
         /// Базовые свойства объекта

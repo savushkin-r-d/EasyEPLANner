@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StaticHelper;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace IO
@@ -9,6 +10,11 @@ namespace IO
         /// Модули ввода-вывода узла.
         /// </summary>
         List<IIOModule> IOModules { get; }
+
+        /// <summary>
+        /// Модули расширения узла.
+        /// </summary>
+        List<IIONode> ExtensionModules { get; }
 
         /// <summary>
         /// Тип узла.
@@ -71,10 +77,21 @@ namespace IO
         string Location { get; }
 
         /// <summary>
+        /// Описание расположения.
+        /// </summary>
+        string LocationDescription { get; }
+
+        /// <summary>
+        /// Функция узла на ФСА
+        /// </summary>
+        IEplanFunction Function { get; }
+
+        /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
         string SaveAsLuaTable(string prefix);
+
         void SaveAsConnectionArray(ref object[,] res, ref int idx, Dictionary<string, int> modulesCount,
             Dictionary<string, Color> modulesColor, int nodeIdx, Dictionary<string, object[,]> asInterfaceConnection);
 
@@ -84,6 +101,12 @@ namespace IO
         /// <param name="iOModule">Вставляемый модуль.</param>
         /// <param name="position">Позиция модуля, начиная с 1.</param>
         void SetModule(IIOModule iOModule, int position);
+
+        /// <summary>
+        /// Добавление модуля расширения.
+        /// </summary>
+        /// <param name="extensionModule">Модуль расширения.</param>
+        void AddExtensionModule(IIONode extensionModule);
 
         /// <summary>
         /// Получение модуля.

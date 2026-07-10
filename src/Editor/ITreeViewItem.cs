@@ -99,7 +99,7 @@ namespace Editor
         /// <summary>    
         /// Вставка ранее скопированного объекта. Ctrl + V
         /// </summary>
-        ITreeViewItem InsertCopy(object obj);
+        ITreeViewItem InsertCopy(object obj); 
 
         /// <summary>    
         /// Получение составляющих объектов.
@@ -131,6 +131,13 @@ namespace Editor
         /// <param name="isExtraValue">Является ли свойство расширенным</param>
         /// <returns></returns>
         bool SetNewValue(string newValue, bool isExtraValue);
+
+        /// <summary>
+        /// Установка нового значения после редактированию в указанную колонку
+        /// </summary>
+        /// <param name="newValue">Новое значение</param>
+        /// <param name="column">Индекс колонки</param>
+        bool SetNewValue(string newValue, int column);
 
         /// <summary>    
         /// Признак возможности добавления.
@@ -260,6 +267,11 @@ namespace Editor
         ImageIndexEnum ImageIndex { get; set; }
 
         /// <summary>
+        /// Индекс картинки из формы, для вставки в элемент (2я колонка).
+        /// </summary>
+        ImageIndexEnum DescriptionImageIndex { get; set; }
+
+        /// <summary>
         /// Содержит ли объект базовый объект/операцию/шаг
         /// </summary>
         bool ContainsBaseObject { get; }
@@ -289,6 +301,11 @@ namespace Editor
         /// Помечен на вырезание
         /// </summary>
         bool MarkToCut { get; set; }
+
+        /// <summary>
+        /// Элемент скрыт
+        /// </summary>
+        bool Visibility { get; set; }
 
         /// <summary>
         /// Визуализатор для ячеек

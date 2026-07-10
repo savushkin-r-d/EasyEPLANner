@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Editor;
+using NUnit.Framework;
 using TechObject;
 
 namespace Tests.TechObject
@@ -47,17 +48,15 @@ namespace Tests.TechObject
         {
             SystemParam defaultParam = GetDefault();
 
-            int countOfItems = 3;
+            int countOfItems = 2;
             string firstItemName = "Значение";
             string secondItemName = "Размерность";
-            string thirdItemName = "Lua имя";
 
             var items = defaultParam.Items;
 
             Assert.AreEqual(countOfItems, defaultParam.Items.Length);
             Assert.AreEqual(firstItemName, items[0].DisplayText[0]);
             Assert.AreEqual(secondItemName, items[1].DisplayText[0]);
-            Assert.AreEqual(thirdItemName, items[2].DisplayText[0]);
         }
 
         [TestCase("", "")]
@@ -105,6 +104,18 @@ namespace Tests.TechObject
         public void LuaName_DefaultParam_ReturnsEmptyValue()
         {
             Assert.IsEmpty(GetDefault().LuaName);
+        }
+
+        [Test]
+        public void PropertiesTest()
+        {
+            var param = GetDefault();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(param.IsEditable);
+                CollectionAssert.AreEqual(new int[] { 0, 1 }, param.EditablePart);
+            });
         }
 
         private SystemParam GetDefault()

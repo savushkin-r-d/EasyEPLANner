@@ -1,5 +1,6 @@
 ﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
 using Editor;
+using EplanDevice;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -52,10 +53,10 @@ namespace TechObjectTests
 
         [TestCase(DrawInfo.Style.GREEN_BOX)]
         [TestCase(DrawInfo.Style.GREEN_LOWER_BOX)]
-        [TestCase(DrawInfo.Style.GREEN_RED_BOX)]
+        [TestCase(DrawInfo.Style.GREEN_GRAY_BOX)]
         [TestCase(DrawInfo.Style.GREEN_UPPER_BOX)]
         [TestCase(DrawInfo.Style.NO_DRAW)]
-        [TestCase(DrawInfo.Style.RED_BOX)]
+        [TestCase(DrawInfo.Style.GRAY_BOX)]
         public void DrawStyle_NewAction_GetSetNewDrawStyle(DrawInfo.Style style)
         {
             var action = new Action(string.Empty, null, string.Empty);
@@ -263,7 +264,7 @@ namespace TechObjectTests
                 new object[]
                 {
                     3,
-                    DrawInfo.Style.GREEN_RED_BOX,
+                    DrawInfo.Style.GREEN_GRAY_BOX,
                     new List<int>() { 3, 6, 9 }
                 },
                 new object[]
@@ -281,7 +282,7 @@ namespace TechObjectTests
                 new object[]
                 {
                     0,
-                    DrawInfo.Style.RED_BOX,
+                    DrawInfo.Style.GRAY_BOX,
                     new List<int>()
                 },
             };
@@ -697,12 +698,21 @@ namespace TechObjectTests
         public void InsertCopy()
         {
             var deviceManager = DeviceManagerMock.DeviceManager;
+            Mock.Get(deviceManager)
+                .Setup(m => m.GetModifiedDevice(It.IsAny<IDevice>(), It.IsAny<IDevModifyOptions>()))
+                .Returns<IDevice, IDevModifyOptions>((dev, options) => dev);
+
             typeof(Action).GetField("deviceManager",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(null, deviceManager);
 
-            var action1 = new Action("Устройства", null, "devs", null, null, null);
-            var action2 = new Action("Устройства", null, "_devs_", null, null, null);
+            var step = new Step("", getN => 1,
+                Mock.Of<IState>(
+                    s => s.TechObject == new TechObject.TechObject(
+                        "", getN => 1, 1, 1, "", 1, "", "", new BaseTechObject(null))));
+
+            var action1 = new Action("Устройства", step, "devs", null, null, null);
+            var action2 = new Action("Устройства", step, "_devs_", null, null, null);
 
             Assert.Multiple(() =>
             {
@@ -728,8 +738,26 @@ namespace TechObjectTests
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(null, deviceManager);
 
-            var step1 = new Step("Шаг1", GetN => 1, null);
-            var step2 = new Step("Шаг2", GetN => 2, null);
+            var to = new TechObject.TechObject("", getN => 1, 1, 2, "TANK", -1, "", "", null);
+            var baseOperation = new BaseOperation(
+                    "операция", "operation",
+                    new List<BaseParameter>() { },
+                    new Dictionary<string, List<BaseStep>>()
+                    {
+                        { "RUN", new List<BaseStep>() { new BaseStep("", ""), new BaseStep("шаг_1", "step_1"), new BaseStep("шаг_2", "step_2") } },
+                    }
+                );
+
+            var operation = Mock.Of<IMode>(m =>
+                m.TechObject == to &&
+                m.BaseOperation == baseOperation);
+
+            var state = Mock.Of<IState>(s => 
+                s.TechObject == to);
+
+
+            var step1 = new Step("Шаг1", GetN => 1, state);
+            var step2 = new Step("Шаг2", GetN => 2, state);
 
             var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "", -1, "", "", null);
             techObject.GetParamsManager().Float.Insert();
@@ -862,26 +890,31 @@ namespace TechObjectTests
         }
     }
 
-    class OneInManyOutActionProcessingStrategyTest
+    class ManyInManyOutActionProcessingStrategyTest
     {
         [TestCaseSource(nameof(ProcessDevicesTestCaseSource))]
         public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList(
             string devicesStr, EplanDevice.DeviceType[] allowedDevTypes,
             EplanDevice.DeviceSubType[] allowedDevSubTypes,
             List<int> actionDevsDefaultIds, IList<int> expectedDevsIds,
-            EplanDevice.DeviceType[] allowedInputTypes)
+            EplanDevice.DeviceType[] allowedInputTypes, string expectedError)
         {
-            IAction action = ActionMock.GetAction(allowedDevTypes,
-                allowedDevSubTypes, actionDevsDefaultIds);
-            var strategy =
-                new OneInManyOutActionProcessingStrategy(allowedInputTypes);
-            strategy.Action = action;
+            IAction action = ActionMock.GetAction(allowedDevTypes, allowedDevSubTypes, actionDevsDefaultIds);
+            var strategy = new ManyInManyOutActionProcessingStrategy(allowedInputTypes)
+            {
+                Action = action
+            };
             var deviceManager = DeviceManagerMock.DeviceManager;
 
-            IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr,
-                deviceManager);
+            IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr, deviceManager);
+            var error = strategy.Check(deviceManager);
 
-            Assert.AreEqual(expectedDevsIds, actualDevsIds);
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(expectedDevsIds, actualDevsIds);
+                Assert.AreEqual(expectedError, error);
+            });
+            
         }
 
         private static object[] ProcessDevicesTestCaseSource()
@@ -911,7 +944,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.DI
-                }
+                },
+                "->->->->: Неверно заполнены сигналы\n",
             };
 
             var correctSequenceAIAO = new object[]
@@ -939,7 +973,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.AI
-                }
+                },
+                "",
             };
 
             var replacingAIAOCase = new object[]
@@ -964,6 +999,7 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2AI2,
                     (int)DeviceManagerMock.Devices.TANK1AI1,
                     (int)DeviceManagerMock.Devices.TANK1AO1
 
@@ -971,7 +1007,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.AI
-                }
+                },
+                "",
             };
 
             var replacingDIDOCase = new object[]
@@ -996,13 +1033,15 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
                     (int)DeviceManagerMock.Devices.TANK1DI1,
                     (int)DeviceManagerMock.Devices.TANK1DO1,
                 },
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.DI
-                }
+                },
+                "",
             };
 
 
@@ -1037,7 +1076,8 @@ namespace TechObjectTests
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.DI
-                }
+                },
+                "",
             };
 
             var useHLAndReplaceDIwithGS = new object[]
@@ -1065,6 +1105,7 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
                     (int)DeviceManagerMock.Devices.TANK1GS1,
                     (int)DeviceManagerMock.Devices.TANK1DO1,
                     (int)DeviceManagerMock.Devices.TANK1HL1
@@ -1073,7 +1114,8 @@ namespace TechObjectTests
                 {
                     EplanDevice.DeviceType.DI,
                     EplanDevice.DeviceType.GS
-                }
+                },
+                "",
             };
 
             var removeAllInputDevsIfDoubleInputDevs = new object[]
@@ -1100,6 +1142,8 @@ namespace TechObjectTests
                 },
                 new List<int>
                 {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1GS2,
                     (int)DeviceManagerMock.Devices.TANK1DO1,
                     (int)DeviceManagerMock.Devices.TANK1HL1
                 },
@@ -1107,7 +1151,8 @@ namespace TechObjectTests
                 {
                     EplanDevice.DeviceType.DI,
                     EplanDevice.DeviceType.GS
-                }
+                },
+                "->->->->: Неверно заполнены сигналы\n",
             };
 
             return new object[]
@@ -1259,15 +1304,22 @@ namespace TechObjectTests
                 .Returns(stubDev);
             devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<string>()))
                 .Returns(-1);
+            devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<IDevice>()))
+                .Returns(-1);
             devManagerMock
                 .Setup(x => x.GetDeviceByEplanName(It.IsAny<string>()))
                 .Returns(stubDev);
+            devManagerMock
+                .Setup(m => m.GetModifiedDevice(It.IsAny<IDevice>(), It.IsAny<IDevModifyOptions>()))
+                .Returns<IDevice, IDevModifyOptions>((dev, options) => dev);
             foreach (var devDescr in devicesDescription)
             {
                 devManagerMock.Setup(x => x.GetDeviceByIndex(devDescr.Id))
                     .Returns(devDescr.Dev);
                 devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Dev.Name))
                     .Returns(devDescr.Id);
+                devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Dev))
+                   .Returns(devDescr.Id);
                 devManagerMock.Setup(x => x.GetDeviceByEplanName(
                     devDescr.Dev.Name)).Returns(devDescr.Dev);
             }

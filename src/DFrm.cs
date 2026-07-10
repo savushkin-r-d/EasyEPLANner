@@ -1,19 +1,22 @@
+﻿using Aga.Controls.Tree;
+using Aga.Controls.Tree.NodeControls;
+using EplanDevice;
+using IO.View;
+using PInvoke;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Forms;
-using PInvoke;
-using Aga.Controls.Tree;
-using Aga.Controls.Tree.NodeControls;
-using StaticHelper;
-using EplanDevice;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using TechObject;
 
 namespace EasyEPlanner
-{
+{ 
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -588,10 +591,18 @@ namespace EasyEPlanner
         /// <param name="checkedObjects">Выбранные объекты.</param>
         /// <param name="techObjectIndex">Индекс технологического объекта
         /// </param>
+        [ExcludeFromCodeCoverage]
         private void Refresh(string checkedObjects, int techObjectIndex)
         {
             devicesTreeViewAdv.BeginUpdate();
 
+            var oldRoot = devicesTreeViewAdv.Root;
+            if (devicesTreeViewAdv.GetNodeAt(new Point(1,devicesTreeViewAdv.Height - 25)) is { } lastNodeVisible)
+            {
+                // Полчаем последний видимый элемент для последующего восстановления прокрутки окна
+                devicesTreeViewAdv.SelectedNode = lastNodeVisible;
+            }
+            
             devicesTreeViewAdv.Model = null;
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
@@ -617,12 +628,55 @@ namespace EasyEPlanner
             TreeNodeAdv treeNode = nodes[0];
             OnHideOperationTree.Execute(treeNode);
 
-            devicesTreeViewAdv.ExpandAll();
+            if (checkedObjects != string.Empty || !RestoreExpanding(devicesTreeViewAdv.Root, oldRoot))
+                devicesTreeViewAdv.ExpandAll();
+
             devicesTreeViewAdv.Refresh();
+            if (devicesTreeViewAdv.SelectedNode is { } selectedNode)
+            {
+                devicesTreeViewAdv.ScrollTo(selectedNode);
+                selectedNode.IsSelected = false;
+            }
             devicesTreeViewAdv.EndUpdate();
 
             SelectDisplayObjects(checkedObjects, functionAfterCheck);
         }
+
+        /// <summary>
+        /// Востановление развертки узлов устройств после обновления
+        /// </summary>
+        /// <param name="node">Новый узел</param>
+        /// <param name="referenceNode">Референсный узел</param>
+        [ExcludeFromCodeCoverage]
+        private bool RestoreExpanding(TreeNodeAdv node, TreeNodeAdv referenceNode)
+        {
+            if (node is null || referenceNode is null)
+                return false;
+
+            if(referenceNode.IsExpanded)
+                node.Expand();
+            node.IsSelected = referenceNode.IsSelected;
+            
+            var referenceChildNodes = referenceNode.Children
+                .ToDictionary(rcn => GetTextWithoutCount(rcn), rcn => rcn);
+
+            foreach (var childNode in node.Children)
+            {
+                if (referenceChildNodes.TryGetValue(GetTextWithoutCount(childNode), out var referenceChildNode))
+                {
+                    RestoreExpanding(childNode, referenceChildNode);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Получить текст узла без обозначения количества дочерних элементов в скобках
+        /// </summary>
+        private static string GetTextWithoutCount(TreeNodeAdv node)
+            => Regex.Replace((node.Tag as Node)?.Text, @"\(\s*\d*\s*\)$", "", 
+                RegexOptions.None, TimeSpan.FromMilliseconds(100)).Trim();
 
         /// <summary>
         /// Заполнить дерево устройствами/сигналами проекта
@@ -1004,57 +1058,53 @@ namespace EasyEPlanner
             return isDevVisible;
         }
 
-        public static bool AddDevParametersAndProperties(Node devNode, EplanDevice.IODevice dev)
+        public static bool AddDevParametersAndProperties(Node devNode, IODevice dev)
         {
-            if (dev.Parameters.Count == 0 && dev.Properties.Count == 0 && dev.RuntimeParameters.Count == 0)
-            {
-                return false;
-            }
+            AddDeviceGroupNodes(devNode, "Данные",
+            [
+                new DeviceSubTypeNode(dev.DeviceSubType.ToString()),
+                new DeviceDescriptionNode(dev.Description),
+                new DeviceArticleNode(dev.ArticleName),
+            ]);
 
-            if (dev.Parameters.Count > 0)
-            {
-                var parametersNode = new Node(ParametersNodeName);
-                devNode.Nodes.Add(parametersNode);
-                int padding = dev.Parameters.Select(x => x.Key.Name).Max(parNmae => parNmae.Length);
-                foreach (var parameter in dev.Parameters)
-                {
-                    var value = parameter.Value?.ToString() ?? string.Empty;
+            int padding = dev.Parameters.Select(x => x.Key.Name)
+                .DefaultIfEmpty("")
+                .Max(parNmae => parNmae.Length);
+            AddDeviceGroupNodes(devNode, "Параметры",
+                dev.Parameters.Select(p => new ParameterNode(
+                    $"{p.Key.Name.PadRight(padding)} {p.Key.Description}",
+                    p.Value?.ToString() ?? "") { Tag = p.Key }));
 
-                    var parameterNode = new ColumnNode($"{parameter.Key.Name.PadRight(padding)} {parameter.Key.Description}", value);
+            AddDeviceGroupNodes(devNode, "Свойства",
+                dev.Properties.Select(p => new PropertyNode(
+                    p.Key, p.Value?.ToString() ?? "")));
 
-                    parameterNode.Tag = parameter.Key;
-                    parametersNode.Nodes.Add(parameterNode);
-                }
-            }
-
-            if (dev.Properties.Count > 0)
-            {
-                var propertiesNode = new Node(PropertiesNodeName);
-                devNode.Nodes.Add(propertiesNode);
-                foreach (var property in dev.Properties)
-                {
-                    var value = property.Value != null? property.Value.ToString() : "";
-                    var propertyNode = new ColumnNode(property.Key, value);
-
-                    propertyNode.Tag = property;
-                    propertiesNode.Nodes.Add(propertyNode);
-                }
-            }
-
-            if (dev.RuntimeParameters.Count > 0)
-            {
-                var rtParametersNode = new Node(RuntimeParametersNodeName);
-                devNode.Nodes.Add(rtParametersNode);
-                foreach(var rtParameter in dev.RuntimeParameters)
-                {
-                    var value = rtParameter.Value?.ToString() ?? string.Empty;
-
-                    var rtParameterNode = new ColumnNode(rtParameter.Key, value);
-                    rtParametersNode.Nodes.Add(rtParameterNode);
-                }
-            }
+            AddDeviceGroupNodes(devNode, "Рабочие параметры", 
+                dev.RuntimeParameters.Select(p => new RuntimeParameterNode(
+                    p.Key, p.Value?.ToString() ?? "")));
 
             return true;
+        }
+
+        
+        /// <summary>
+        /// Добавить группу с узлами
+        /// </summary>
+        /// <param name="parent">Родительский узел</param>
+        /// <param name="nodeName">Имя группы</param>
+        /// <param name="nodes">Узлы</param>
+        private static void AddDeviceGroupNodes(Node parent, string nodeName, IEnumerable<Node> nodes)
+        {
+            if (!nodes.Any())
+                return;
+
+            var parametersNode = new Node(nodeName);
+            parent.Nodes.Add(parametersNode);
+
+            foreach(var node in nodes)
+            {
+                parametersNode.Nodes.Add(node);
+            }
         }
 
         /// <summary>
@@ -1491,57 +1541,10 @@ namespace EasyEPlanner
         private void devicesTreeViewAdv_EditNodeColumn2(object sender,
             LabelEventArgs e)
         {
-            var device = (e.Subject as Node).Parent.Parent.Tag
-                as EplanDevice.IODevice;
+            var device = (e.Subject as Node).Parent.Parent.Tag as IODevice;
+            var node = (e.Subject as ColumnNode);
 
-            switch ((e.Subject as Node).Parent.Text)
-            {
-                case ParametersNodeName:
-                    {
-                        if (double.TryParse(e.NewLabel, out double parValue))
-                        {
-                            var parameter = (IODevice.Parameter)(e.Subject as ColumnNode).Tag;
-                            device.SetParameter(parameter.Name, parValue);
-                            device.UpdateParameters();
-                        }
-                        else
-                        {
-                            (e.Subject as ColumnNode).Value = e.OldLabel;
-                        }
-                    }
-                    break;
-
-                case PropertiesNodeName:
-                    {
-                        var property = (e.Subject as ColumnNode).Text;
-                        var value = e.NewLabel;
-
-                        if (!device.MultipleProperties().Contains(property) &&
-                            value.Contains(","))
-                        {
-                            (e.Subject as ColumnNode).Value = e.OldLabel;
-                            break;
-                        }
-
-                        device.SetProperty(property, value);
-                        device.UpdateProperties();
-                    }
-                    break;
-
-                case RuntimeParametersNodeName:
-                    {
-                        if (int.TryParse(e.NewLabel, out int value))
-                        {
-                            device.SetRuntimeParameter((e.Subject as ColumnNode).Text, value);
-                            device.UpdateRuntimeParameters();
-                        } 
-                        else
-                        {
-                            (e.Subject as ColumnNode).Value = e.OldLabel;
-                        }
-                    }
-                    break;
-            }
+            node.Update(device, e.NewLabel, e.OldLabel);
         }
 
         private void noAssigmentBtn_Click(object sender, EventArgs e)
@@ -1591,6 +1594,8 @@ namespace EasyEPlanner
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
             Editor.Editor.GetInstance().EditorForm.RefreshTree();
+            IOViewControl.Instance?.RebuildTree();
+            EasyEPlanner.Devices.View.DevicesViewControl.Instance?.RebuildTree();
 
             RefreshTree();
         }
@@ -1609,7 +1614,7 @@ namespace EasyEPlanner
         /// </summary>
         public void RefreshTreeAfterBinding()
         {
-            if (noAssigmentBtn.Checked)
+            if (noAssigmentBtn.Checked && deviceIsShown)
             {
                 devicesTreeViewAdv.BeginUpdate();
                 List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes
@@ -1645,11 +1650,5 @@ namespace EasyEPlanner
                 devicesTreeViewAdv.AutoSizeColumn(column);
             }
         }
-
-        public const string ParametersNodeName = "Параметры";
-
-        public const string RuntimeParametersNodeName = "Рабочие параметры";
-
-        public const string PropertiesNodeName = "Свойства";
     }
 }

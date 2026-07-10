@@ -48,7 +48,7 @@ namespace EasyEPlanner
 
             var properties = new FunctionPropertyList();
             properties.FUNC_MAINFUNCTION = true;
-            
+
             var plcFilter = new FunctionsFilter();
             plcFilter.SetFilteredPropertyList(properties);
             plcFilter.Category = Function.Enums.Category.PLCBox;
@@ -78,6 +78,54 @@ namespace EasyEPlanner
                     foreach (var function in module.Function.SubFunctions)
                     {
                         ReadModuleClampBinding(node, module, function);
+
+                        // Добавляем функцию клеммы в модуль
+                        if (module.Info.ChannelClamps.Contains(function.ClampNumber) && function.PlacedOnCircuit)
+                        {
+                            module.AddClampFunction(function);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Чтение привязки.
+        /// </summary>
+        /// <param name="clampFunction">Функция клеммы</param>
+        [ExcludeFromCodeCoverage]
+        public void ReadModuleClampBinding(IEplanFunction clampFunction)
+        {
+            if (Regex.Match(clampFunction.Name, @"=*-E?Y(?<n>\d+)", RegexOptions.None, TimeSpan.FromMilliseconds(100))
+                .Success)
+            {
+                // чтение привязки к пневмоострову 
+                var valveTerminal = DeviceManager.GetInstance()
+                    .GetDevice(clampFunction.Name.Split(':')[0]);
+
+                if (valveTerminal.DeviceType is not DeviceType.Y)
+                    return;
+
+                var channel = valveTerminal.Channels[0];
+
+                var node = IOManager.IONodes[channel.Node];
+                var module = IOManager.GetModuleByPhysicalNumber(channel.FullModule);
+                var clamp = module.ClampFunctions[channel.PhysicalClamp];
+
+                PrepareForReading();
+                ReadModuleClampBinding(node, module, clamp);
+                return;
+            }
+
+            foreach (var node in IOManager.IONodes)
+            {
+                foreach (var module in node.IOModules)
+                {
+                    if (module.ClampFunctions.ContainsValue(clampFunction))
+                    {
+                        module.ClearBind(clampFunction.ClampNumber);
+                        ReadModuleClampBinding(node, module, clampFunction);
+                        return;
                     }
                 }
             }
@@ -89,10 +137,11 @@ namespace EasyEPlanner
         /// <param name="node">Узел</param>
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
-        private void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
-            Function clampFunction)
+        [ExcludeFromCodeCoverage]
+        public void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
+            IEplanFunction clampFunction)
         {
-            string description = apiHelper.GetFunctionalText(clampFunction);
+            string description = clampFunction.FunctionalText;
             var descriptionMatches = Regex.Matches(description,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN,
                 RegexOptions.None,
@@ -107,12 +156,16 @@ namespace EasyEPlanner
             List<string> comments = null;
             List<string> actions = null;
 
-            const string ValveTerminalNamePattern = @"=*-Y(?<n>\d+)";
+            const string ValveTerminalNamePattern = @"=*-E?Y(?<n>\d+)";
             var valveTerminalRegex = new Regex(ValveTerminalNamePattern);
             var valveTerminalMatch = valveTerminalRegex.Match(description);
             if (valveTerminalMatch.Success && descriptionMatches.Count == 1)
             {
-                description = ReadValveTerminalBinding(description);
+                var terminal = description.Split(["\n", "\r\n"], StringSplitOptions.None)[0];
+                var subFunctions = functionsForSearching.FirstOrDefault(f => f.Name.Contains(terminal))?.SubFunctions ?? [];
+
+                description = terminal + ReadValveTerminalClampsBinding(subFunctions, terminal);
+
                 CorrectDataMultipleBindingToValveTerminal(ref description,
                     out actions, out comments);
             }
@@ -133,7 +186,7 @@ namespace EasyEPlanner
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
         [ExcludeFromCodeCoverage]
-        private bool NeedToSkip(IO.IIOModule module, Function clampFunction, string description , MatchCollection descriptionMatches)
+        private bool NeedToSkip(IO.IIOModule module, IEplanFunction clampFunction, string description , MatchCollection descriptionMatches)
         {
             var skip = false;
 
@@ -142,17 +195,14 @@ namespace EasyEPlanner
 
             if (description != string.Empty && descriptionMatches.Count > 0)
             {
-                    device = DeviceManager.GetInstance()
-                        .GetDevice(descriptionMatches[0].ToString());
-                    error = $"К не сигнальной клемме \"{clampFunction.Name}\"" +
-                        $" привязано устройство \"{device?.EplanName}\".";  
+                device = DeviceManager.GetInstance()
+                    .GetDevice(descriptionMatches[0].ToString());
+                error = $"К не сигнальной клемме \"{clampFunction.Name}\"" +
+                    $" привязано устройство \"{device?.EplanName}\".";
             }
 
-            string clampString = clampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            int clamp;
-            bool isDigit = int.TryParse(clampString, out clamp);
-            if (isDigit == false)
+            var clamp = clampFunction.ClampNumber;
+            if (clamp == -1)
             {
                 if (device != null)
                     Logs.AddMessage(error);
@@ -160,7 +210,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            IO.IOModuleInfo moduleInfo = module.Info;
+            IO.IIOModuleInfo moduleInfo = module.Info;
             if (Array.IndexOf(moduleInfo.ChannelClamps, clamp) < 0)
             {
                 if (device != null)
@@ -169,9 +219,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            DocumentTypeManager.DocumentType documentType = clampFunction.Page
-                .PageType;
-            if (documentType != DocumentTypeManager.DocumentType.Circuit)
+            if (!clampFunction.PlacedOnCircuit)
             {
                 skip = true;
                 return skip;
@@ -218,160 +266,58 @@ namespace EasyEPlanner
         private readonly Dictionary<int, string> CurrentReadingModuleClampsDescription = new Dictionary<int, string>();
 
         /// <summary>
-        /// Чтение привязки пневмоострова.
-        /// </summary>
-        private string ReadValveTerminalBinding(string description) 
-        {
-            description = GetValveTerminalNameFromDescription(description);
-            Function[] subFunctions = GetClampsByValveTerminalName(
-                description);
-            description += ReadValveTerminalClampsBinding(subFunctions);
-
-            return description;
-        }
-
-        /// <summary>
-        /// Получить ОУ пневмоострова из его описания.
-        /// </summary>
-        /// <param name="description">Описание</param>
-        /// <returns></returns>
-        private string GetValveTerminalNameFromDescription(string description)
-        {
-            int eplanNameLength;
-
-            if (description.Contains(CommonConst.NewLineWithCarriageReturn) == 
-                true)
-            {
-                eplanNameLength = description.IndexOf(CommonConst
-                    .NewLineWithCarriageReturn);
-                if (eplanNameLength > 0)
-                {
-                    description = description.Substring(0, eplanNameLength);
-                }
-            }
-            else
-            {
-                eplanNameLength = description.IndexOf(CommonConst.NewLine);
-                if (eplanNameLength > 0)
-                {
-                    description = description.Substring(0, eplanNameLength);
-                }
-            }
-
-            return description;
-        }
-
-        /// <summary>
-        /// Получить функции клемм пневмоострова по его ОУ.
-        /// </summary>
-        /// <param name="name">ОУ пневмоострова</param>
-        /// <returns></returns>
-        private Function[] GetClampsByValveTerminalName(string description)
-        {
-            var subFunctions = new Function[0];
-            foreach (var valveTerminalFunction in functionsForSearching)
-            {
-                if (valveTerminalFunction.Name.Contains(description))
-                {
-                    subFunctions = valveTerminalFunction.SubFunctions;
-                    break;
-                }
-            }
-
-            return subFunctions;
-        }
-
-        /// <summary>
         /// Чтение привязки клемм пневмоострова.
         /// </summary>
         /// <param name="subFunctions">Функции клемм пневмоострова</param>
         /// <returns></returns>
-        private string ReadValveTerminalClampsBinding(Function[] subFunctions)
+        [ExcludeFromCodeCoverage]
+        private string ReadValveTerminalClampsBinding(Function[] subFunctions, string terminal)
         {
             var descriptionBuilder = new StringBuilder();
-            foreach (var function in subFunctions)
+            foreach (var function in subFunctions.Where(f => f.Category is Function.Enums.Category.PLCTerminal))
             {
-                if (function.Category != Function.Enums.Category.PLCTerminal)
-                {
-                    continue;
-                }
-
                 string clampNumber = function.Properties.
                 FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
                 string clampBindedDevice = apiHelper.GetFunctionalText(
                     function);
-                
+
                 bool isInt = int.TryParse(clampNumber, out _);
-                if (isInt == true && 
-                    clampBindedDevice.Length != 0 && 
-                    clampBindedDevice != CommonConst.Reserve)
+                if (isInt != true ||
+                    clampBindedDevice.Length == 0 ||
+                    clampBindedDevice == CommonConst.Reserve)
                 {
-                    var deviceMatch = Regex.Match(clampBindedDevice, 
-                        DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
-                    while (deviceMatch.Success)
+                    continue;
+                }
+
+                var deviceMatch = Regex.Match(clampBindedDevice,
+                    DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                while (deviceMatch.Success)
+                {
+                    string deviceName = deviceMatch.Groups["name"].Value;
+                    var actionMatch = DeviceBindingHelper.FindCorrectClampCommentMatch(clampBindedDevice);
+                    var action = actionMatch.Value;
+
+                    descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
+                        .Append(deviceName);
+                    if (action != string.Empty)
                     {
-                        string deviceName = deviceMatch.Groups["name"].Value;
-                        var actionMatch = DeviceBindingHelper.FindCorrectClampCommentMatch(clampBindedDevice);
-                        var action = actionMatch.Value;
-                        
                         descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
-                            .Append(deviceName);
-                        if (action != string.Empty)
-                        {
-                            descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
-                                .Append(action);
-                        }
-                        descriptionBuilder.Append("\t");
-
-
-                        int vtugNumber = Convert.ToInt32(clampNumber);
-                        var device = DeviceManager.GetInstance().GetDevice(deviceName);
-                        
-                        SetValveRTParameters(device, action, vtugNumber);
-
-                        deviceMatch = deviceMatch.NextMatch();
+                            .Append(action);
                     }
+                    descriptionBuilder.Append("\t");
+
+
+                    int vtugNumber = Convert.ToInt32(clampNumber);
+                    terminal = DeviceManager.GetInstance().GetDevice(terminal)?.Name;
+
+                    var device = DeviceManager.GetInstance().GetDevice(deviceName);
+                    (device as ISetupTerminal)?.SetupTerminal(terminal, action, vtugNumber);
+
+                    deviceMatch = deviceMatch.NextMatch();
                 }
             }
 
             return descriptionBuilder.ToString().TrimEnd('\t');
-        }
-
-        /// <summary>
-        /// Установка номера клемы пневмоострова в рабочие параметры для клапана  
-        /// </summary>
-        /// <param name="device">Клапан</param>
-        /// <param name="action">Действие клеммы</param>
-        /// <param name="vtugNumber">Номер клеммы пневмоострова</param>
-        private void SetValveRTParameters(IODevice device, string action, int vtugNumber)
-        {
-            if (!(device != null && device.DeviceType == DeviceType.V))
-                return;
-
-            if (device.DeviceSubType == DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
-            {
-                string rtParName = string.Empty;
-
-
-                switch (action)
-                {
-                    case "Открыть":
-                        rtParName = "R_ID_ON";
-                        break;
-                    case "Открыть ВС":
-                        rtParName = "R_ID_UPPER_SEAT";
-                        break;
-                    case "Открыть НС":
-                        rtParName = "R_ID_LOWER_SEAT";
-                        break;
-                }
-
-                device.SetRuntimeParameter(rtParName, vtugNumber);
-            }
-            else
-            {
-                device.SetRuntimeParameter("R_VTUG_NUMBER", vtugNumber);
-            }
         }
 
         /// <summary>
@@ -438,12 +384,12 @@ namespace EasyEPlanner
         /// <param name="description">Описание устройства</param>
         /// <param name="actionMatch">Действие канала</param>
         /// <param name="comment">Комментарий к устройству</param>
-        private void CorrectDataIfMultipleBinding(ref string description, 
+        private void CorrectDataIfMultipleBinding(ref string description,
             out List<string> actions, out List<string> comments)
         {
             actions = new List<string>();
             comments = new List<string>();
-            
+
             var comment = string.Empty;
 
             bool isMultipleBinding = DeviceManager.GetInstance()
@@ -465,7 +411,7 @@ namespace EasyEPlanner
 
                 description = DeviceBindingHelper.ReplaceRusBigLettersByEngBig(description);
 
-                var action = DeviceBindingHelper.FindCorrectClampCommentMatch(comment).Value;            
+                var action = DeviceBindingHelper.FindCorrectClampCommentMatch(comment).Value;
                 comment = ReplaceClampCommentInComment(comment, action);
 
                 actions.Add(action);
@@ -511,24 +457,19 @@ namespace EasyEPlanner
         /// <param name="node">Узел ввода-вывода</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <param name="comment">Комментарий к устройству</param>
-        private void SetBind(string description, List<string> actions, 
-            IO.IIOModule module, IO.IIONode node, Function clampFunction, 
+        private void SetBind(string description, List<string> actions,
+            IO.IIOModule module, IO.IIONode node, IEplanFunction clampFunction,
             List<string> comments, bool bindToValveTerminal)
         {
-            // Конвертируем в IOModule, потому что не тестируется IIOModule
-            // из-за Function (еплановская библиотека).
-            var ioModule = module as IO.IOModule;
-            string clampStr = clampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            int.TryParse(clampStr, out int clamp);
-            
+            var clamp = clampFunction.ClampNumber;
+
             var descriptionMatches = Regex.Matches(description,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             int devicesCount = descriptionMatches.Count;
             if (devicesCount < 1 && !description.Equals(CommonConst.Reserve))
             {
                 Logs.AddMessage(
-                    $"\"{ioModule.Function.VisibleName}:{clampStr}\"" +
+                    $"\"{module.Function.VisibleName}:{clamp:00}\"" +
                     $" - неверное имя привязанного устройства - " +
                     $"\"{description}\".");
             }
@@ -562,9 +503,9 @@ namespace EasyEPlanner
 
                 if (error != "")
                 {
-                    error = string.Format("\"{0}:{1}\" : {2}",
-                        ioModule.Function.VisibleName, clampStr, error);
-                    Logs.AddMessage(error); 
+                    error = string.Format("\"{0}:{1:00}\" : {2}",
+                        module.Function.VisibleName, clamp, error);
+                    Logs.AddMessage(error);
                 }
 
                 var bindingError = CheckValveBinding(device, module, bindToValveTerminal, devices.FirstOrDefault(), clampComment);
@@ -580,7 +521,7 @@ namespace EasyEPlanner
                 .GroupBy(dev =>
                     {
                         dev.RuntimeParameters.TryGetValue(IODevice.RuntimeParameter.R_AS_NUMBER,
-                            out var r_as_number_str);        
+                            out var r_as_number_str);
                         if (r_as_number_str != null && int.TryParse(r_as_number_str.ToString(), out var r_as_number))
                             return r_as_number;
                         return -1;
@@ -619,10 +560,10 @@ namespace EasyEPlanner
         /// <param name="valveTerminal">Пневмоостров</param>
         [ExcludeFromCodeCoverage]
         public string CheckValveBinding(IODevice device, IIOModule module, bool bindToValveTerminal, IODevice valveTerminal, string clampComment)
-        {  
+        {
             if (bindToValveTerminal)
                 return CheckBindAllowedSubTypesToValveTerminal(device, valveTerminal.EplanName);
-            
+
             return CheckBindAllowedSubTypesToDOModule(device, module, clampComment);
         }
 

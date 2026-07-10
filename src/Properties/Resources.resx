@@ -121,63 +121,6 @@
   <data name="deviceList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sysIoModulesLuaFilePattern" xml:space="preserve">
-    <value>-- В Phoenix Contact особенность, адресное пространство
--- кратно 32, в связи с этим, увеличивается цифра DO/DI count
--- в два раза в отличие от WAGO.
--- При добавлении модуля учитывать, что первый [0] индекс
--- массива только для Phoenix, а в WAGO его необходимо
--- ставить -1.
-
--- constructor description:
--- n - номер модуля ввода-вывода IO (например: 860).
--- name - имя модуля ввода-вывода IO (серия-номер, например: 750-860).
--- description - описание модуля ввода-вывода IO.
--- adressSpacetype - тип адресного пространства модуля ввода-вывода IO.
--- typeName - имя типа (дискретный выход, аналоговый выход, ...).
--- groupName - имя серии модуля ввода-вывода IO (например 750-800).
--- channelClamps - клеммы каналов ввода-вывода.
--- channelAddressesIn - адреса каналов ввода.
--- channelAddressesOut - адреса каналов вывода.
--- DO_count - количество дискретных выходов.
--- DI_count - количество дискретных входов.
--- AO_count - количество аналоговых выходов.
--- AI_count - количество аналоговых входов.
--- Color - физический цвет модуля.
-
--- adressSpacetype enumeration:
--- NONE - 0
--- DO - 1
--- DI - 2
--- AO - 3
--- AI - 4
--- AOAI - 5
--- DODI - 6
--- AOAIDODI - 7
-
-local io_modules =
-{
-    [ 1 ] = {
-            n = 1,
-            name = '',
-            description = '',
-            addressSpaceType = 0,
-            typeName = '',
-            groupName = '',
-            channelClamps = {0, 1, 2, 3},
-            channelAddressesIn = { -1, 0, 1, -1 },
-            channelAddressesOut = { 0, -1, -1, 1 },
-            DO_count = 1,
-            DI_count = 1,
-            AO_count = 1,
-            AI_count = 1,
-            Color = '',
-            },
-}
-
-return io_modules</value>
-    <comment>Шаблон для файла sys_io_modules.lua, в котором находится информация по модулям ввода-вывода.</comment>
-  </data>
   <data name="equipment" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\equipment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -185,9 +128,10 @@ return io_modules</value>
     <value>-- Шаблон файла, описывающего базовую функциональность.
 -- В этом файле описан один пустой базовый объект, для примера.
 
--- Базовый объект (название таблицы - eplanName т.е LUA-имя объекта, пишется в любых регистрах):
+-- Базовый объект (ключ таблицы — eplanName, Lua-имя объекта):
 -- 1. s88Level - уровень объекта по ISA-88 (1 - для юнитов, аппаратов. 2 - для агрегатов).
 -- 2. name - русскоязычное название объекта.
+-- 3. defaultNameEplan - ОУ по умолчанию при добавлении объекта. Если не задано — TANK.
 -- 3. baseOperations - описание базовых операций объекта.
 -- 4. basicName - англоязычное имя объекта, которое фигурирует в функциональности (add_functionality).
 -- Это имя должно содержать имя без приписки "basic_"
@@ -210,7 +154,8 @@ return io_modules</value>
 -- Пустое или отсутствующее значение - модуль не будет подключен.
 -- 13. monitorName - имя объекта Monitor, которое будет задаваться при автоматической настройке объекта
 -- при его добавлении в дерево. Если не задано - будет задаваться стандартное значение - TankObj.
--- 14. baseProperties - базовые (дополнительные) свойства объекта. Добавляются также, как и параметры
+-- 14. defaultTechType - технологический тип объекта по умолчанию. Если не задан — 2.
+-- 15. baseProperties - базовые (дополнительные) свойства объекта. Добавляются также, как и параметры
 -- базовой операции. За исключением того, что доступны только bool и active параметры.
 -- 15. deprecated - устарел объект или нет. Если устарел - не будет показан в списке базовых объектов,
 -- но его можно использовать в уже существующих проектах, где такие объекты используются. Для этого
@@ -289,8 +234,9 @@ return
     {
     local object_float_parameters = get_objects_float_parameters()
     local object_float_runtime_parameters = get_runtime_float_parameters()
-        uniqueEplanName = { -- Уникальное Lua-имя объекта
+        uniqueEplanName = { -- Ключ таблицы = eplanName (Lua-имя объекта)
             name = "",
+            defaultNameEplan = "",
             s88Level = 0,
             baseOperations =
             {
@@ -349,6 +295,7 @@ return
             },
             luaModuleName = "name",
             monitorName = "TankObj",
+            defaultTechType = 2,
             baseProperties =
             {
                 active = -- Активные параметры
@@ -404,23 +351,23 @@ end</value>
   <data name="changeObj" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\changeObj.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="params" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\params.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="plus2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plus2.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="expand5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\expand5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="wholeword" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wholeword.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="To Do's" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\To Do's.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="highlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\highlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -430,6 +377,9 @@ end</value>
   </data>
   <data name="copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="regex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\regex.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IOLinkDevicesFilePattern" xml:space="preserve">
     <value>local iolink_devices =
@@ -479,11 +429,18 @@ end</value>
   <data name="plus5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plus5.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="plant" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plant.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="edit1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\edit1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="svgPattern" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;svg width="100" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+        &lt;rect rx="4" x="0" width="{0}" height="20" fill="dimgrey"/&gt;
+        &lt;rect rx="4" x="0" width="{1}" height="20" fill="green"/&gt;
+
+            &lt;g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"&gt;
+                &lt;text x="50.0" y="14"&gt;{2}&lt;/text&gt;
+            &lt;/g&gt;
+   &lt;/svg&gt;</value>
+    <comment>Шаблон для генерации SVG файла картинки (progress bar) модулем генерации SVG картинок. Генерация статистики по проекту. {0} - Максимальное значение параметра, {1} - заданное значение параметра, {2} - текст внутри картинки.</comment>
   </data>
   <data name="expand" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\expand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -494,8 +451,8 @@ end</value>
   <data name="expand4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\expand4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="off" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\off.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="highlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\highlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -515,11 +472,14 @@ end</value>
   <data name="import" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\import.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="expand2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\expand2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\off.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="hideEmptyItems" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hideEmptyItems.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\on.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="replace" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\replace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -527,14 +487,74 @@ end</value>
   <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="generic" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\generic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="search" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="wash" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wash.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="expand2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="lowerSeats" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lowerSeats.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sysIoModulesLuaFilePattern" xml:space="preserve">
+    <value>-- В Phoenix Contact особенность, адресное пространство
+-- кратно 32, в связи с этим, увеличивается цифра DO/DI count
+-- в два раза в отличие от WAGO.
+-- При добавлении модуля учитывать, что первый [0] индекс
+-- массива только для Phoenix, а в WAGO его необходимо
+-- ставить -1.
+
+-- constructor description:
+-- n - номер модуля ввода-вывода IO (например: 860).
+-- name - имя модуля ввода-вывода IO (серия-номер, например: 750-860).
+-- description - описание модуля ввода-вывода IO.
+-- adressSpacetype - тип адресного пространства модуля ввода-вывода IO.
+-- typeName - имя типа (дискретный выход, аналоговый выход, ...).
+-- groupName - имя серии модуля ввода-вывода IO (например 750-800).
+-- channelClamps - клеммы каналов ввода-вывода.
+-- channelAddressesIn - адреса каналов ввода.
+-- channelAddressesOut - адреса каналов вывода.
+-- DO_count - количество дискретных выходов.
+-- DI_count - количество дискретных входов.
+-- AO_count - количество аналоговых выходов.
+-- AI_count - количество аналоговых входов.
+-- Color - физический цвет модуля.
+
+-- adressSpacetype enumeration:
+-- NONE - 0
+-- DO - 1
+-- DI - 2
+-- AO - 3
+-- AI - 4
+-- AOAI - 5
+-- DODI - 6
+-- AOAIDODI - 7
+
+local io_modules =
+{
+    [ 1 ] = {
+            n = 1,
+            name = '',
+            description = '',
+            addressSpaceType = 0,
+            typeName = '',
+            groupName = '',
+            channelClamps = {0, 1, 2, 3},
+            channelAddressesIn = { -1, 0, 1, -1 },
+            channelAddressesOut = { 0, -1, -1, 1 },
+            DO_count = 1,
+            DI_count = 1,
+            AO_count = 1,
+            AI_count = 1,
+            Color = '',
+            },
+}
+
+return io_modules</value>
+    <comment>Шаблон для файла sys_io_modules.lua, в котором находится информация по модулям ввода-вывода.</comment>
+  </data>
+  <data name="expand1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sharedFilePattern" xml:space="preserve">
     <value>remote_gateways =
@@ -544,30 +564,20 @@ shared_devices =
 {
 }</value>
   </data>
-  <data name="expand3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\expand3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="plus3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plus3.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="svgPattern" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;svg width="100" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
-
-        &lt;rect rx="4" x="0" width="{0}" height="20" fill="dimgrey"/&gt;
-        &lt;rect rx="4" x="0" width="{1}" height="20" fill="green"/&gt;
-
-            &lt;g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"&gt;
-                &lt;text x="50.0" y="14"&gt;{2}&lt;/text&gt;
-            &lt;/g&gt;
-   &lt;/svg&gt;</value>
-    <comment>Шаблон для генерации SVG файла картинки (progress bar) модулем генерации SVG картинок. Генерация статистики по проекту. {0} - Максимальное значение параметра, {1} - заданное значение параметра, {2} - текст внутри картинки.</comment>
+  <data name="plant" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plant.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="search" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="generic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\generic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="mode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mode.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="reorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="toolSettings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\toolSettings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -575,17 +585,17 @@ shared_devices =
   <data name="step" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\step.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="expand1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\expand1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="params" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\params.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="wash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wash.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\on.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="expand3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="To Do's" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\To Do's.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="mode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mode.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tank" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tank.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -604,7 +614,10 @@ shared_devices =
 -- 2 - Модули в контроллере PFC200.
 -- 100 - Удаленный Ethernet узел.
 -- 200 - Модули в контроллере Phoenix Contact.
--- 201 - Контроллер Phoenix Contact
+-- 201 - Контроллер Phoenix Contact AXC F 1152
+-- 202 - Контроллер Phoenix Contact AXC F 2152
+-- 203 - Контроллер Phoenix Contact AXC F 3152
+-- 300 - Модуль расширения Phoenix Contact
 
 local io_nodes =
 {
@@ -619,16 +632,70 @@ local io_nodes =
 return io_nodes</value>
     <comment>Шаблон файла sys_io_nodes.lua, с информацией об узлах ввода-вывода.</comment>
   </data>
+  <data name="edit1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\edit1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="movedown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\movedown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="regex" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\regex.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="shift_modules" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\shift_modules.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="wholeword" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wholeword.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="autocomplete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\autocomplete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="reorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\reorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="mpkDefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mpkDefaultIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeRoot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeRoot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeDevice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeDevice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeData" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeData.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeRuntimeParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeRuntimeParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeChannels" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeChannels.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeParameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeParameter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesTreeChannel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesTreeChannel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="io_plc_cable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\io_plc_cable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="io_plc_clamp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\io_plc_clamp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesGroupingTypeObject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesGroupingTypeObject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="devicesGroupingObjectType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\devicesGroupingObjectType.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="go_to_fas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\go_to_fas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

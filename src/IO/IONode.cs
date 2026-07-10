@@ -1,7 +1,9 @@
-﻿using System;
+﻿using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -19,7 +21,7 @@ namespace IO
         /// <param name="ip">IP-адрес.</param>
         /// <param name="name">Имя на схеме (А100 и др.).</param>
         public IONode(string typeStr, int n, int nodeNumber , string ip,
-            string name, string location)
+            string name, string location, string locationDescription)
         {
             this.typeStr = typeStr;
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
@@ -33,8 +35,10 @@ namespace IO
             this.nodeNumber = nodeNumber;
             this.name = name;
             this.location = location;
+            LocationDescription = locationDescription;
 
             iOModules = new List<IIOModule>();
+            extensionModules = new List<IIONode>();
 
             DI_count = 0;
             DO_count = 0;
@@ -66,15 +70,23 @@ namespace IO
             public AddressAreaOutOfRangeException(string message) : base(message) { }
         }
 
+        /// <summary>
+        /// Исключение переполнения адресного пространства в узле
+        /// </summary>
+        public class IndefiniteModulesException : Exception
+        {
+            public IndefiniteModulesException(string message) : base(message) { }
+        }
+
         public void SetModule(IIOModule iOModule, int position)
         {
             if (AddressArea is null)
             {
-                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону ip-адресов:" +
+                throw new AddressAreaNullReferenceException($"Ошибка доступа к диапазону адресного пространства узла:" +
                     $" {nameof(AddressArea)} is null;\n");
             }
 
-            if (position > AddressArea.ModulesPerNodeMax)
+            if (position > AddressArea.ModulesPerNodeMax + IOModules.Count(m => m.Info.IsSupportive))
             {
                 throw new ModulesPerNodeOutOfRageException($"Модуль \"{iOModule.Name}\" " +
                     $"выходит за диапазон максимального количества модулей для узла \"{name}\". ");
@@ -86,21 +98,36 @@ namespace IO
                     $"выходит за диапазон адресного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
             }
 
-            if (iOModules.Count < position)
+            var initialCountModules = iOModules.Count;
+            for (int i = initialCountModules; i < position; i++)
             {
-                for (int i = iOModules.Count; i < position; i++)
-                {
-                    iOModules.Add(StubIOModule);
-                }
+                iOModules.Add(StubIOModule);
             }
 
             currentAddressArea += iOModule.AddressArea;
 
             iOModules[position - 1] = iOModule;
+
+            if (position - initialCountModules is { } indefiniteCount and > 1)
+            {
+                throw new AddressAreaOutOfRangeException(
+                    $"До модуля \"{iOModule.Name}\" {iOModule.ArticleName} не определено {indefiniteCount} модулей;\n");
+            }
+        }
+
+        public void AddExtensionModule(IIONode extensionModule)
+        {
+            if (extensionModules.Any(module => module.Name == extensionModule.Name))
+            {
+                throw new InvalidOperationException($"Модуль расширения \"{extensionModule.Name}\" " +
+                    $"для узла \"{name}\" определяется дважды.");
+            }
+
+            extensionModules.Add(extensionModule);
         }
 
         [ExcludeFromCodeCoverage]
-        public virtual IIOModule StubIOModule => new IOModule(0, 0, null);
+        public virtual IIOModule StubIOModule => new IOModule(0, 0, IOModuleInfo.Stub);
 
         public IIOModule this[int idx]
         {
@@ -172,7 +199,10 @@ namespace IO
             T_INTERNAL_750_820x = 2, /// Модули в контроллере PFC200.
             T_ETHERNET = 100, /// Удаленный Ethernet узел.             
             T_PHOENIX_CONTACT = 200, /// Модули в контроллере Phoenix Contact.
-            T_PHOENIX_CONTACT_MAIN = 201, /// Контроллер Phoenix Contact
+            T_PHOENIX_CONTACT_1152 = 201, /// Контроллер Phoenix Contact AXC F 1152
+            T_PHOENIX_CONTACT_2152 = 202, /// Контроллер Phoenix Contact AXC F 2152
+            T_PHOENIX_CONTACT_3152 = 203, /// Контроллер Phoenix Contact AXC F 3152
+            T_PXC_EXTENSION = 300, /// Модуль расширения
         };
 
         /// <summary>
@@ -201,7 +231,9 @@ namespace IO
                     case TYPES.T_ETHERNET:
                         return WAGO;
                     case TYPES.T_PHOENIX_CONTACT:
-                    case TYPES.T_PHOENIX_CONTACT_MAIN:
+                    case TYPES.T_PHOENIX_CONTACT_1152:
+                    case TYPES.T_PHOENIX_CONTACT_2152:
+                    case TYPES.T_PHOENIX_CONTACT_3152:
                         return PHOENIX_CONTACT;
                     default: return null;
                 }
@@ -224,6 +256,14 @@ namespace IO
             get
             {
                 return iOModules;
+            }
+        }
+
+        public List<IIONode> ExtensionModules
+        {
+            get
+            {
+                return extensionModules;
             }
         }
 
@@ -287,14 +327,32 @@ namespace IO
                 return location;
             }
         }
+        
+        public string LocationDescription { get; private set; }
 
         public bool IsCoupler { get; private set; } = false;
+
+        /// <summary>
+        /// Установить функцию для узла
+        /// </summary>
+        /// <param name="function"></param>
+        public void SetEplanFunction(IEplanFunction functin)
+        {
+            Function = functin;
+        }
+
+        public IEplanFunction Function { get; private set; }
 
         #region Закрытые поля.
         /// <summary>
         /// Модули узла.
         /// </summary>
         private List<IIOModule> iOModules;
+
+        /// <summary>
+        /// Модули расширения узла.
+        /// </summary>
+        private readonly List<IIONode> extensionModules;
 
         /// <summary>
         /// Тип узла (строка).

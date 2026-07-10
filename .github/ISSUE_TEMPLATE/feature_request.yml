@@ -1,0 +1,24 @@
+name: "[💡]: Feature request"
+description: "Предложить новую функцию или улучшение."
+title: "[💡]: "
+labels: [ "Status: To Do", "Priority: Long-term plans" ]
+projects: [ "savushkin-r-d/8" ]
+type: "Feature"
+assignees: KirillGutyrchik
+
+body:
+  - type: textarea
+    id: feature_description
+    validations: 
+      required: true
+    attributes:
+      label: "Что бы вы хотели, чтобы было добавлено/изменено?"
+      
+  - type: textarea
+    id: additional_info
+    validations: 
+      required: false
+    attributes:
+      label: "Дополнительная информация"
+      description: "Добавьте дополнительную информацию или скриншоты о запросе здесь."
+

@@ -70,18 +70,8 @@ namespace EplanDevice
             return errStr;
         }
 
-        public override string GetRange()
-        {
-            string range = string.Empty;
-            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
-                parameters.ContainsKey(Parameter.P_MAX_V))
-            {
-                range = "_" + parameters[Parameter.P_MIN_V].ToString() + 
-                    ".." + parameters[Parameter.P_MAX_V].ToString();
-            }
-
-            return range;
-        }
+        public override string GetRange() 
+            => GetRange(Parameter.P_MIN_V, Parameter.P_MAX_V);
 
         /// <summary>
         /// Проверка устройства на корректную инициализацию.
@@ -134,7 +124,7 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        public override Dictionary<string, int> GetDeviceProperties(
+        public override Dictionary<ITag, int> GetDeviceProperties(
             DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
@@ -143,7 +133,7 @@ namespace EplanDevice
                     switch (dst)
                     {
                         case DeviceSubType.QT:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -154,7 +144,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.QT_OK:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -166,7 +156,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.QT_IOLINK:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
@@ -177,7 +167,7 @@ namespace EplanDevice
                             };
 
                         case DeviceSubType.QT_VIRT:
-                            return new Dictionary<string, int>()
+                            return new Dictionary<ITag, int>()
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},

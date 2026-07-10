@@ -18,6 +18,9 @@
     <SccProvider>SubversionScc</SccProvider>
     <TargetFrameworkProfile />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(DesignTimeBuild)' == 'true'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -31,6 +34,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner_debug</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +47,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -63,6 +68,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=0c6c09a5ec550785, processorArchitecture=MSIL">
@@ -111,9 +117,19 @@
   <ItemGroup>
     <Compile Include="AppConfiguarationManager.cs" />
     <Compile Include="AssemblyVersion.cs" />
-    <Compile Include="ColumnNode.cs" />
+    <Compile Include="ColumnNodes.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
+    <Compile Include="Device\DeviceManagerExt\ControlChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\IControlChannelsCounter.cs" />
+    <Compile Include="Device\DeviceManagerExt\ISubtypeControlChannels.cs" />
+    <Compile Include="Device\DeviceManagerExt\ISummaryDevices.cs" />
+    <Compile Include="Device\DeviceManagerExt\SubtypeControlChannels.cs" />
+    <Compile Include="Device\DeviceManagerExt\SummaryDevices.cs" />
+    <Compile Include="Device\IODevices\EY.cs" />
+    <Compile Include="Device\IODevices\WATCHDOG.cs" />
+    <Compile Include="Device\ISetupTerminal.cs" />
+    <Compile Include="Device\ITag.cs" />
     <Compile Include="EProjectManager\IEProjectManager.cs" />
     <Compile Include="FileSavers\ModbusXML\TagReference.cs" />
     <Compile Include="FileSavers\ModbusXML\ModbusChbaseModelView.cs" />
@@ -128,10 +144,158 @@
     <Compile Include="InterprojectExchange\IInterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\Models\ICurrentProjectModel.cs" />
     <Compile Include="Main\GenerateXmlFromCsv.cs" />
+    <Compile Include="FileSavers\XML\Chbase\Channel.cs" />
+    <Compile Include="FileSavers\XML\Chbase\Driver.cs" />
+    <Compile Include="FileSavers\XML\Chbase\IChannel.cs" />
+    <Compile Include="FileSavers\XML\Chbase\IDriver.cs" />
+    <Compile Include="FileSavers\XML\Chbase\ISubtype.cs" />
+    <Compile Include="FileSavers\XML\Chbase\Subtype.cs" />
+    <Compile Include="FileSavers\XML\XmlExtensions.cs" />
+    <Compile Include="IO\ViewModel\AppendModuleTarget.cs" />
+    <Compile Include="IO\ClampFunctionalTextBinder.cs" />
+    <Compile Include="IO\ViewModel\BindingErrorClampCollector.cs" />
+    <Compile Include="IO\ViewModel\Clamp.cs" />
+    <Compile Include="IO\ViewModel\ClampBindingText.cs" />
+    <Compile Include="IO\ViewModel\DeletedModule.cs" />
+    <Compile Include="IO\ViewModel\DeletedModuleRestorePlanner.cs" />
+    <Compile Include="IO\ViewModel\DeletedModulesGroup.cs" />
+    <Compile Include="IO\ViewModel\IProperty.cs" />
+    <Compile Include="IO\ViewModel\IOViewModel.cs" />
+    <Compile Include="IO\ViewModel\IClamp.cs" />
+    <Compile Include="IO\ViewModel\IIOViewModel.cs" />
+    <Compile Include="IO\ViewModel\ILocation.cs" />
+    <Compile Include="IO\ViewModel\IModule.cs" />
+    <Compile Include="IO\ViewModel\INode.cs" />
+    <Compile Include="IO\ViewModel\ModuleViewItem.cs" />
+    <Compile Include="IO\ViewModel\Property.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasBindingError.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IHasIcon.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IToolTip.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IViewItem.cs" />
+    <Compile Include="IO\ViewModel\IRoot.cs" />
+    <Compile Include="IO\ViewModel\Location.cs" />
+    <Compile Include="IO\ViewModel\Module.cs" />
+    <Compile Include="IO\ViewModel\Node.cs" />
+    <Compile Include="IO\ViewModel\Root.cs" />
+    <Compile Include="IO\View\IOViewControl.EplanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\View\IOViewControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\View\IOViewControl.Designer.cs">
+      <DependentUpon>IOViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Device\ViewModel\DevicesGroupingMode.cs" />
+    <Compile Include="Device\ViewModel\DevicesRoot.cs" />
+    <Compile Include="Device\ViewModel\DevicesSearch.cs" />
+    <Compile Include="Device\ViewModel\DevicesSearchContext.cs" />
+    <Compile Include="Device\ViewModel\DevicesTreeItems.cs" />
+    <Compile Include="Device\ViewModel\DevicesViewModel.cs" />
+    <Compile Include="Device\ViewModel\IDevicesRoot.cs" />
+    <Compile Include="Device\ViewModel\IDevicesViewModel.cs" />
+    <Compile Include="Device\ViewModel\IFilterableViewItem.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IBoldName.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IComboBoxEditable.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IGoToFas.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesIcon.cs" />
+    <Compile Include="Device\ViewModel\ViewInterface\IHasDevicesDescriptionIcon.cs" />
+    <Compile Include="Device\DeviceBindingSource.cs" />
+    <Compile Include="Device\IDeviceBindingSource.cs" />
+    <Compile Include="Device\View\DevicesIconFactory.cs" />
+    <Compile Include="Device\View\DevicesTreeViewKeys.cs" />
+    <Compile Include="Device\View\DevicesViewControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.Designer.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.EplanForm.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Device\View\DevicesViewControl.TreeState.cs">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\ShowDevicesNewAction.cs" />
+    <None Include="Lua\sys_subtype_channels_count.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_modbus_exchange.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Main\ImportIcpCreateDeviceNameMathchingFile.cs" />
     <Compile Include="Main\ImportIcpCreateRenamingMap.cs" />
     <Compile Include="Main\ImportIcpWagoProject.cs" />
+    <Compile Include="Main\ModbusExchangeAction.cs" />
     <Compile Include="Main\ModifyIcpChbase.cs" />
+    <Compile Include="Main\SaveAsMpkx.cs" />
+    <Compile Include="Main\ShowPlcAction.cs" />
+    <Compile Include="ModbusExchange\CsvImporter.cs" />
+    <Compile Include="ModbusExchange\ModbusExchangeLoader.cs" />
+    <Compile Include="ModbusExchange\ModbusExchangeSaver.cs" />
+    <Compile Include="ModbusExchange\Model\Exchange.cs" />
+    <Compile Include="ModbusExchange\Model\Gateway.cs" />
+    <Compile Include="ModbusExchange\Model\Group.cs" />
+    <Compile Include="ModbusExchange\Model\IExchange.cs" />
+    <Compile Include="ModbusExchange\Model\IGateway.cs" />
+    <Compile Include="ModbusExchange\Model\IGatewayViewItem.cs" />
+    <Compile Include="ModbusExchange\Model\IGroup.cs" />
+    <Compile Include="ModbusExchange\Model\ISignal.cs" />
+    <Compile Include="ModbusExchange\Model\Signal.cs" />
+    <Compile Include="ModbusExchange\Model\SignalBinder.cs" />
+    <Compile Include="ModbusExchange\Model\SignalsListBuilder.cs" />
+    <Compile Include="ModbusExchange\Model\SignalsSizeCalculator.cs" />
+    <Compile Include="ModbusExchange\View\InputGatewayName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModbusExchange\View\InputGatewayName.Designer.cs">
+      <DependentUpon>InputGatewayName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModbusExchange\View\ModbusExchangeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModbusExchange\View\ModbusExchangeView.Designer.cs">
+      <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mpk\ModelBuilder\TechObjectMpkBuilder.cs" />
+    <Compile Include="mpk\Model\Attributes.cs" />
+    <Compile Include="mpk\Model\Component.cs" />
+    <Compile Include="mpk\Model\Container.cs" />
+    <Compile Include="mpk\Model\IAttributes.cs" />
+    <Compile Include="mpk\Model\IComponent.cs" />
+    <Compile Include="mpk\Model\IContainer.cs" />
+    <Compile Include="mpk\Model\IMessage.cs" />
+    <Compile Include="mpk\Model\IProperty.cs" />
+    <Compile Include="mpk\Model\Message.cs" />
+    <Compile Include="mpk\Model\Property.cs" />
+    <Compile Include="mpk\Saver\ComponentSerializer.cs" />
+    <Compile Include="mpk\Saver\ContainerSerializer.cs" />
+    <Compile Include="mpk\Saver\IXmlSerializer.cs" />
+    <Compile Include="mpk\Saver\MpkxSaver.cs" />
+    <Compile Include="mpk\ViewModel\IMpkSaverContext.cs" />
+    <Compile Include="mpk\ViewModel\MpkSaverContext.cs" />
+    <Compile Include="mpk\View\MpkSaverForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mpk\View\MpkSaverForm.Designer.cs">
+      <DependentUpon>MpkSaverForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaticHelper\EplanFunction.cs" />
+    <Compile Include="StaticHelper\EplanMultilineText.cs" />
+    <Compile Include="StaticHelper\EplanNavigateHelper.cs" />
+    <Compile Include="StaticHelper\FasNavigationTexts.cs" />
+    <Compile Include="StaticHelper\IDeviceEplanFunction.cs" />
+    <Compile Include="StaticHelper\SaveAndCloseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StaticHelper\SaveAndCloseDialog.Designer.cs">
+      <DependentUpon>SaveAndCloseDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectImportICP\BindingImporter.cs" />
     <Compile Include="ProjectImportICP\DeviceNameMatchingSaver.cs" />
     <Compile Include="ProjectImportICP\DevicesImporter.cs" />
@@ -197,7 +361,7 @@
     <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
     <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="Extensions\ApiExtensions.cs" />
-    <Compile Include="ProjectImportICP\ImportDefaultDeviceParamter.cs" />
+    <Compile Include="ProjectImportICP\ImportDefaultDeviceParameter.cs" />
     <Compile Include="ProjectImportICP\ImportDevice.cs" />
     <Compile Include="ProjectImportICP\ImportModule.cs" />
     <Compile Include="ProjectImportICP\ModifyChannelsDBDialog.cs">
@@ -223,6 +387,9 @@
     <Compile Include="InterprojectExchange\InterprojectExchangeSaver.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
+    <Compile Include="InterprojectExchange\MainIoProjectNameReader.cs" />
+    <Compile Include="InterprojectExchange\InterprojectProjectCatalog.cs" />
+    <Compile Include="InterprojectExchange\ProjectFolderHelper.cs" />
     <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -284,14 +451,15 @@
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="EProjectManager\EProjectManager.cs" />
-    <Compile Include="FileSavers\XMLReporterDialog.cs">
+    <Compile Include="FileSavers\XML\Chbase\XMLReporterDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileSavers\XMLReporterDialog.Designer.cs">
+    <Compile Include="FileSavers\XML\Chbase\XMLReporterDialog.Designer.cs">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
     <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
+    <Compile Include="ClampBindingUpdater.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
     <Compile Include="Configuration\IOReader.cs" />
@@ -367,12 +535,16 @@
     <Compile Include="StaticHelper\DeviceHelper.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
+    <Compile Include="StaticHelper\IEplanFunction.cs" />
     <Compile Include="StaticHelper\IOHelper.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
+    <Compile Include="StaticHelper\RegexDefaults.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />
-    <Compile Include="FileSavers\XMLReporter.cs" />
+    <Compile Include="FileSavers\XML\Chbase\XmlReporter.cs" />
     <Compile Include="StaticHelper\ProjectHelper.cs" />
+    <Compile Include="StaticHelper\SupplementaryFields.cs" />
+    <Compile Include="TechObject\Base\BaseFloatParameter.cs" />
     <Compile Include="TechObject\Base\BaseProperties.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectSaver.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectLoader.cs" />
@@ -383,8 +555,10 @@
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveAggregateParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ComboBoxParameter.cs" />
     <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\GroupableParameters.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
     <Compile Include="TechObject\DevModifyOptions.cs" />
     <Compile Include="TechObject\ITechObjectManager.cs" />
@@ -400,10 +574,13 @@
     <Compile Include="TechObject\Base\Properties\ActionParameter.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionWash.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionGroup.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\BaseActionCustom.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\AttachedObjects.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\GroupableAction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\GenericTechObject.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Interfaces\IAutocompletable.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Interfaces\IToolTip.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />
@@ -423,6 +600,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\TechObject.cs" />
     <Compile Include="TechObject\ObjectsTree\UserObject.cs" />
     <Compile Include="TechObject\TechObjectCheckStrategy.cs" />
+    <Compile Include="TechObject\TechObjectIdentifyData.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
     <Compile Include="TechObject\TechObjectChecker.cs" />
     <Compile Include="TechObject\TechObjectXMLMaker.cs" />
@@ -450,7 +628,7 @@
     <EmbeddedResource Include="FileSavers\ModbusXML\ModbusXMLDialog.resx">
       <DependentUpon>ModbusXMLDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
+    <EmbeddedResource Include="FileSavers\XML\Chbase\XMLReporterDialog.resx">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">
@@ -465,9 +643,27 @@
     <EmbeddedResource Include="InterprojectExchange\Forms\UnknownDevTypeForm.resx">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="IO\View\IOViewControl.resx">
+      <DependentUpon>IOViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Device\View\DevicesViewControl.resx">
+      <DependentUpon>DevicesViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModbusExchange\View\InputGatewayName.resx">
+      <DependentUpon>InputGatewayName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModbusExchange\View\ModbusExchangeView.resx">
+      <DependentUpon>ModbusExchangeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mpk\View\MpkSaverForm.resx">
+      <DependentUpon>MpkSaverForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaticHelper\SaveAndCloseDialog.resx">
+      <DependentUpon>SaveAndCloseDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModeFrm.resx">
       <DependentUpon>ModeFrm.cs</DependentUpon>
@@ -488,6 +684,9 @@
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
     <None Include="Lua\mainPattern.plua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\modbus_exchange_pattern.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys.lua">
@@ -545,8 +744,27 @@
     <None Include="Resources\wholeword.png" />
     <None Include="Resources\regex.png" />
     <None Include="Resources\search.png" />
+    <None Include="Resources\devicesTreeRoot.png" />
+    <None Include="Resources\devicesTreeType.png" />
+    <None Include="Resources\devicesTreeObject.png" />
+    <None Include="Resources\devicesTreeDevice.png" />
+    <None Include="Resources\devicesTreeData.png" />
+    <None Include="Resources\devicesTreeParameters.png" />
+    <None Include="Resources\devicesTreeRuntimeParameters.png" />
+    <None Include="Resources\devicesTreeProperties.png" />
+    <None Include="Resources\devicesTreeChannels.png" />
+    <None Include="Resources\devicesTreeParameter.png" />
+    <None Include="Resources\devicesTreeProperty.png" />
+    <None Include="Resources\devicesTreeChannel.png" />
+    <None Include="Resources\io_plc_cable.png" />
+    <None Include="Resources\io_plc_clamp.png" />
+    <None Include="Resources\devicesGroupingTypeObject.png" />
+    <None Include="Resources\devicesGroupingObjectType.png" />
+    <None Include="Resources\go_to_fas.png" />
     <None Include="Resources\moveup.png" />
     <None Include="Resources\movedown.png" />
+    <None Include="Resources\shift_modules.png" />
+    <None Include="Resources\go_to_fas.png" />
     <None Include="Resources\toolSettings.png" />
     <None Include="Resources\import.png" />
     <None Include="Resources\refresh1.png" />
@@ -582,6 +800,7 @@
     <None Include="Resources\delete.png" />
     <None Include="Resources\changeObj.png" />
     <None Include="Resources\cut.png" />
+    <None Include="Resources\autocomplete.png" />
     <Content Include="Resources\edit.ico" />
     <None Include="Resources\edit1.png" />
     <None Include="Resources\export.png" />

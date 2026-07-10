@@ -1,7 +1,9 @@
-﻿using StaticHelper;
+using EplanDevice;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -10,6 +12,17 @@ namespace IO
     /// </summary>
     public class IOModule : IIOModule
     {
+        public class EplanData
+        {
+            public IEplanFunction Function { get; set; }
+
+            public string NamePrefix { get; set; } = "A";
+
+            public string Location { get; set; } = "";
+
+            public string LocationDescription { get; set; } = "";
+        }
+
         /// <summary>
         /// Конструктор.
         /// </summary>
@@ -21,25 +34,39 @@ namespace IO
         /// <param name="physicalNumber">Физический номер (из ОУ) устройства.
         /// </param>
         /// <param name="articleName">Имя изделия модуля ввода-вывода</param>
-        /// <param name="function">Eplan функция модуля.</param>
+        /// <param name="eplanData">Данные модуля из Eplan.</param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info, int physicalNumber, string articleName,
-            Eplan.EplApi.DataModel.Function function)
+            EplanData eplanData)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
             this.info = info;
             this.physicalNumber = physicalNumber;
-            this.function = function;
+            this.function = eplanData?.Function;
             this.articleName = articleName;
+            this.namePrefix = eplanData?.NamePrefix ?? "A";
+            this.location = eplanData?.Location ?? "";
+            this.locationDescription = eplanData?.LocationDescription ?? "";
 
             devicesChannels = new List<EplanDevice.IODevice.IIOChannel>[80];
             devices = new List<EplanDevice.IIODevice>[80];
         }
 
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
+            IOModuleInfo info, int physicalNumber, string articleName,
+            IEplanFunction function)
+            : this(inAddressSpaceOffset, outAddressSpaceOffset, info,
+                  physicalNumber, articleName,
+                  new EplanData { Function = function })
+        {
+            // Делегировано в конструктор с параметрами Eplan.
+        }
+
+        public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info) : this(inAddressSpaceOffset,
-                outAddressSpaceOffset, info, 0, string.Empty, null)
+                outAddressSpaceOffset, info, 0, string.Empty,
+                (IEplanFunction)null)
         {
             // Делегировано в конструктор с 5 параметрами.
         }
@@ -91,7 +118,7 @@ namespace IO
             Dictionary<string, int> modulesCount, 
             Dictionary<string, Color> modulesColor)
         {
-            string moduleName = Info.Number.ToString();
+            string moduleName = $"{Info.Name}\n{Info.Number})";
             if (modulesCount.ContainsKey(moduleName))
             {
                 modulesCount[moduleName]++;
@@ -108,7 +135,7 @@ namespace IO
 
             if (Info.ChannelClamps.GetLength(0) != 0)
             {
-                foreach(int clamp in Info.ChannelClamps)
+                foreach(int clamp in Info.ChannelClamps.OrderBy(x => x))
                 {
                     bool isIOLinkDevice = false;
                     res[idx, 0] = p;
@@ -133,6 +160,7 @@ namespace IO
 
                         res[idx, 4] = sizeInBits;
                         res[idx, 5] = sizeOutBits;
+                        res[idx, 6] = dev.ArticleName;
                     }
 
                     idx++;
@@ -237,7 +265,7 @@ namespace IO
                 {
                     object[,] asConnection = new object[Info.ChannelClamps.GetLength(0) * 128, 2];
                     int devIdx = 0;
-                    foreach (int clamp in Info.ChannelClamps)
+                    foreach (int clamp in Info.ChannelClamps.OrderBy(x => x))
                     {
                         if (devices[clamp] != null && devices[clamp].Count > 1)
                         {
@@ -358,7 +386,7 @@ namespace IO
             return size;
         }
 
-        public IOModuleInfo Info
+        public IIOModuleInfo Info
         {
             get
             {
@@ -390,19 +418,13 @@ namespace IO
             }
         }
 
-        public Eplan.EplApi.DataModel.Function Function
-        {
-            get
-            {
-                return function;
-            }
-        }
+        public IEplanFunction Function => function;
 
         public string Name
         {
             get
             {
-                return $"A{physicalNumber}";
+                return $"{namePrefix}{physicalNumber}";
             }
         }
 
@@ -413,6 +435,10 @@ namespace IO
                 return articleName;
             }
         }
+
+        public string Location => location;
+
+        public string LocationDescription => locationDescription;
 
         public bool IsIOLink(bool collectOnlyPhoenixContact = false)
         {
@@ -437,6 +463,23 @@ namespace IO
             }
 
             return isIOLink;
+        }
+
+        public void AddClampFunction(IEplanFunction clampFunction)
+        {
+            ClampFunctions[clampFunction.ClampNumber] = clampFunction;
+        }
+
+        public void ClearBind(int clamp)
+        {
+            Devices[clamp] = null;
+            DevicesChannels[clamp] = null;
+        }
+
+        public IEnumerable<(IIODevice, IODevice.IIOChannel)> GetClampBinding(int clamp)
+        {
+            return Devices[clamp]?
+                .Zip(DevicesChannels[clamp], (dev, channel) => (dev, channel)) ?? null;
         }
 
         /// <summary>
@@ -488,6 +531,8 @@ namespace IO
             }
         }
 
+        public Dictionary<int, IEplanFunction> ClampFunctions { get; private set; } = [];
+
         #region Закрытые поля.
         private List<EplanDevice.IIODevice>[] devices;
         private List<EplanDevice.IODevice.IIOChannel>[] devicesChannels;
@@ -495,8 +540,11 @@ namespace IO
         private int outAddressSpaceOffset;
         private IOModuleInfo info;
         private int physicalNumber;
-        Eplan.EplApi.DataModel.Function function;
+        private readonly IEplanFunction function;
         private string articleName;
+        private readonly string namePrefix;
+        private readonly string location;
+        private readonly string locationDescription;
         #endregion
     }
 }

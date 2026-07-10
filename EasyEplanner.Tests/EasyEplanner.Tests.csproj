@@ -34,10 +34,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="InterprojectExchange.Test\TestData\project\shared.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="InterprojectExchange.Test\TestData\project\main.io.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 	<None Update="InterprojectExchange.Test\TestData\mock_script.lua">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="ModbusExchange.Test\TestData\gate_test.lua">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
     <None Update="ProjectImportICP.Test\TestData\Compare.dst.xml">

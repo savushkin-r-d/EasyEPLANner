@@ -1,3 +1,4 @@
+using EasyEPlanner.Main;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Starter;
 using System;
@@ -40,6 +41,12 @@ namespace EasyEPlanner
                 false, true);
 
             menuID = oMenu.AddMenuItem(
+                 "Экспорт компонентов *.mpkx",
+                 nameof(SaveAsMpkx),
+                 "Экспорт компонентов *.mpkx", menuID, 1,
+                 false, false);
+
+            menuID = oMenu.AddMenuItem(
                 "Экспорт технологических устройств в Excel",
                 "ExportTechDevsToExcel",
                 "Экспорт технологических устройств в Excel", menuID, 1, 
@@ -50,9 +57,17 @@ namespace EasyEPlanner
                 "Редактирование технологических объектов", menuID, 1, 
                 false, false);
 
+            menuID = oMenu.AddMenuItem("Структура ПЛК",
+               nameof(ShowPlcAction), "Структура ПЛК", menuID,
+               1, false, false);
+
             menuID = oMenu.AddMenuItem("Устройства, параметры объектов", 
                 "ShowDevicesAction", "Отображение устройств", menuID,
                 int.MaxValue, false, false);
+
+            menuID = oMenu.AddMenuItem("Устройства (new)",
+                nameof(ShowDevicesNewAction), "Устройства (new)", menuID,
+                1, false, false);
 
             menuID = oMenu.AddMenuItem(
                 "Операции, ограничения и привязка объектов",
@@ -62,6 +77,11 @@ namespace EasyEPlanner
             menuID = oMenu.AddMenuItem("Обмен сигналами между проектами",
                 "InterprojectExchangeAction",
                 "Настройка межпроектного обмена сигналами", menuID, 1, false, 
+                false);
+
+            menuID = oMenu.AddMenuItem("Обмен сигналами Modbus",
+                nameof(ModbusExchangeAction),
+                "Обмен сигналами Modbus", menuID, 1, false,
                 false);
 
             menuID = oMenu.AddMenuItem(

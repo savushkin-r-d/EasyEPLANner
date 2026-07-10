@@ -14,6 +14,9 @@ namespace Editor
         public ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 
+        public ImageIndexEnum DescriptionImageIndex { get; set; } =
+            ImageIndexEnum.NONE;
+        
         /// <param name="name">Имя свойства.</param>
         /// <param name="value">Значение свойства.</param>
         /// <param name="defaultValue">стандартное значение</param>
@@ -222,13 +225,7 @@ namespace Editor
             return null;
         }
 
-        public ITreeViewItem[] Items
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public virtual ITreeViewItem[] Items => null;
 
         public virtual int[] EditablePart
         {
@@ -294,6 +291,11 @@ namespace Editor
         {
             bool res = false;
             return res;
+        }
+
+        virtual public bool SetNewValue(string newValue, int column)
+        {
+            return SetNewValue(newValue);
         }
 
         public bool IsInsertable
@@ -530,6 +532,8 @@ namespace Editor
         }
 
         public virtual string SystemIdentifier => "";
+
+        public virtual bool Visibility { get; set; } = true;
         #endregion
 
         public virtual void UpdateOnGenericTechObject(ObjectProperty genericProperty)

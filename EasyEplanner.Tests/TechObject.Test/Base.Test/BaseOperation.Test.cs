@@ -567,6 +567,18 @@ namespace EasyEplanner.Tests
         [Test]
         public void Clone_StateUnderTestSource_ReturnsCopy()
         {
+            var bto = new BaseTechObject();
+            var tomanager = Mock.Of<ITechObjectManager>(tom => 
+                tom.GetTObject(1) == new TechObject.TechObject("", getN => 1, 1, 2, "", 1, "", "", bto));
+
+            var techObject = new TechObject.TechObject("", getN => 1, 1, 2, "", 1, "", "", new BaseTechObject());
+            
+            techObject.AttachedObjects.SetValue("1");
+
+            typeof(AttachedObjects).GetField("techObjectManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, tomanager);
+
             string name = "Операция 1";
             string luaName = "LuaName 1";
             int defaultPosition = 1;
@@ -615,7 +627,7 @@ namespace EasyEplanner.Tests
                 };
             operation.AddProperties(objParams, baseTechObj);
 
-            var mode = new Mode("", getN => 1, new ModesManager(null));
+            var mode = new Mode("", getN => 1, new ModesManager(techObject));
 
             BaseOperation cloned = operation.Clone(mode);
 
@@ -704,6 +716,56 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(SetExtraPropertiesExpected, baseOperation.Properties[0].Value);
         }
 
+        [Test]
+        public void SaveAsLuaTable_StubExtraProperty_SavesStubValue()
+        {
+            var baseOperation = new BaseOperation(
+                string.Empty, string.Empty,
+                new List<BaseParameter>()
+                {
+                    new ActiveParameter("extra_property", "Доп. свойство")
+                },
+                null);
+
+            baseOperation.Properties[0].SetNewValue("Нет");
+
+            var expected = new StringBuilder()
+                .Append("props =\n")
+                .Append("\t{\n")
+                .Append("\textra_property = 'Нет',\n")
+                .Append("\t},\n")
+                .ToString();
+
+            Assert.AreEqual(expected, baseOperation.SaveAsLuaTable(string.Empty));
+        }
+
+        [Test]
+        public void SetExtraProperties_SignalStubProperty_LoadsStubValue()
+        {
+            var baseOperation = new BaseOperation(
+                string.Empty, string.Empty,
+                new List<BaseParameter>()
+                {
+                    new ActiveParameter(
+                        "signal_property",
+                        "Сигнальное свойство",
+                        string.Empty,
+                        new List<BaseParameter.DisplayObject>
+                        {
+                            BaseParameter.DisplayObject.Signals
+                        })
+                },
+                null);
+
+            baseOperation.SetExtraProperties(new Editor.ObjectProperty[]
+            {
+                new Editor.ObjectProperty("signal_property", "Нет")
+            });
+            baseOperation.Check();
+
+            Assert.AreEqual("Нет", baseOperation.Properties[0].Value);
+        }
+
         /// <summary>
         /// Тестирование копирования параметров между базовыми операциями
         /// </summary>
@@ -723,6 +785,21 @@ namespace EasyEplanner.Tests
                 Assert.IsTrue(baseOperation_1.IsInsertableCopy);
                 Assert.IsTrue(copy is BaseOperation);
                 Assert.AreEqual("value", baseOperation_2.Properties.ElementAt(0).Value);
+            });
+        }
+
+        [Test]
+        public void Autocomplete()
+        {
+            var baseOperation = new BaseOperation(string.Empty, "base_operation",
+                new List<BaseParameter>() 
+                { 
+                    new MainAggregateParameter(string.Empty, "parameter", "value") 
+                }, null);
+
+            Assert.Multiple(() => 
+            {
+                Assert.IsTrue((baseOperation as IAutocompletable).CanExecute);
             });
         }
     }
