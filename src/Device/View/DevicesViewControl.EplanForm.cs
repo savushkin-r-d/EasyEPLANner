@@ -168,6 +168,8 @@ namespace EasyEPlanner.Devices.View
         {
             const short shifted = 0x80;
             bool ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & shifted) > 0;
+            bool shift = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_SHIFT) & shifted) > 0;
+            bool alt = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_MENU) & shifted) > 0;
             uint vkCode = lParam.vkCode;
 
             if (TryBlockCtrlPageNavigation(wParam, ctrl, vkCode, out var handled))
@@ -175,6 +177,9 @@ namespace EasyEPlanner.Devices.View
 
             if (code < 0 || devicesTree is null || !ShouldKeepKeyboardHook())
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+
+            if (TryBlockPlainTab(wParam, vkCode, ctrl, shift, alt, out handled))
+                return handled;
 
             if (TryBlockClipboardKeys(wParam, vkCode, ctrl, out handled))
                 return handled;
@@ -193,6 +198,20 @@ namespace EasyEPlanner.Devices.View
         {
             if (wParam == PI.WM.KEYDOWN && ctrl &&
                 (vkCode is PI.VIRTUAL_KEY.VK_PRIOR or PI.VIRTUAL_KEY.VK_NEXT))
+            {
+                result = (IntPtr)1;
+                return true;
+            }
+
+            result = IntPtr.Zero;
+            return false;
+        }
+
+        private static bool TryBlockPlainTab(PI.WM wParam, uint vkCode,
+            bool ctrl, bool shift, bool alt, out IntPtr result)
+        {
+            if (vkCode == PI.VIRTUAL_KEY.VK_TAB && !ctrl && !shift && !alt &&
+                wParam is PI.WM.KEYDOWN or PI.WM.KEYUP or PI.WM.CHAR)
             {
                 result = (IntPtr)1;
                 return true;

@@ -153,7 +153,11 @@ namespace IO.View
         {
             const short SHIFTED = 0x80;
             bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
+            bool Shift = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_SHIFT) & SHIFTED) > 0;
+            bool Alt = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_MENU) & SHIFTED) > 0;
             uint vkCode = lParam.vkCode;
+            bool plainTab = vkCode == PI.VIRTUAL_KEY.VK_TAB &&
+                !Ctrl && !Shift && !Alt;
 
             // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
             // так как они ломают отрисовку
@@ -166,11 +170,11 @@ namespace IO.View
 
 
             if (code < 0 || StructPLC is null || !ShouldKeepKeyboardHook())
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam); 
 
             //Отпускание клавиш - если активно окно редактора, то не пускаем дальше.
             if (wParam is PI.WM.KEYUP or PI.WM.CHAR &&
-                vkCode is PI.VIRTUAL_KEY.VK_DELETE &&
+                (vkCode is PI.VIRTUAL_KEY.VK_DELETE || plainTab) &&
                 ShouldKeepKeyboardHook())
             {
                 return (IntPtr)1;
@@ -192,6 +196,9 @@ namespace IO.View
             // Перехватываем используемые комбинации клавиш:
             switch (vkCode)
             {
+                case PI.VIRTUAL_KEY.VK_TAB when plainTab:     // Tab
+                    return (IntPtr)1;
+
                 case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
                 case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
                 case PI.VIRTUAL_KEY.VK_DELETE:  // Delete

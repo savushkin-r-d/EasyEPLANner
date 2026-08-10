@@ -322,7 +322,11 @@ namespace Editor
         {
             const short SHIFTED = 0x80;
             bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
+            bool Shift = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_SHIFT) & SHIFTED) > 0;
+            bool Alt = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_MENU) & SHIFTED) > 0;
             uint vkCode = lParam.vkCode;
+            bool plainTab = vkCode == PI.VIRTUAL_KEY.VK_TAB &&
+                !Ctrl && !Shift && !Alt;
 
             // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
             // так как они ломают отрисовку
@@ -342,6 +346,9 @@ namespace Editor
             //дальше.
             if (wParam == PI.WM.KEYUP || wParam == PI.WM.CHAR)
             {
+                if (plainTab)
+                    return (IntPtr)1;
+
                 switch ((Keys)vkCode)
                 {
                     case Keys.Delete:
@@ -367,6 +374,9 @@ namespace Editor
                     case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && IsCellEditing:
                         PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode].Command,
                             KeyCommands[vkCode].wParam, KeyCommands[vkCode].lParam);
+                        return (IntPtr)1;
+
+                    case PI.VIRTUAL_KEY.VK_TAB when plainTab:     // Tab
                         return (IntPtr)1;
 
                     // Перехватываем используемые
