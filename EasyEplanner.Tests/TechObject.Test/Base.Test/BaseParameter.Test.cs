@@ -135,6 +135,83 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(string.Empty, obj.SaveToPrgLua(string.Empty));
         }
 
+        [TestCaseSource(nameof(SaveToPrgLuaCanSaveCaseSource))]
+        public void SaveToPrgLua_RespectsDisplayObjects(
+            List<BaseParameter.DisplayObject> displayObjects, string value,
+            string expected)
+        {
+            var obj = new BaseParameterImplementation("property", "Property",
+                "", displayObjects);
+            SetUpParameterBaseOperationOwner(obj);
+            obj.SetNewValue(value);
+
+            Assert.AreEqual(expected, obj.SaveToPrgLua(string.Empty));
+        }
+
+        private static object[] SaveToPrgLuaCanSaveCaseSource()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                    },
+                    "parameter1",
+                    "property = prg.techobject1.PAR_FLOAT.parameter1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.AI,
+                    },
+                    "NORM1DEV1",
+                    "property = prg.control_modules.NORM1DEV1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.AI,
+                    },
+                    "NORM1DEV2",
+                    string.Empty,
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                        BaseParameter.DisplayObject.Signals,
+                    },
+                    "parameter1",
+                    "property = prg.techobject1.PAR_FLOAT.parameter1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                        BaseParameter.DisplayObject.Signals,
+                    },
+                    "NORM1DEV1",
+                    "property = prg.control_modules.NORM1DEV1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                        BaseParameter.DisplayObject.Signals,
+                    },
+                    "UNKNOWN",
+                    string.Empty,
+                },
+            };
+        }
+
         [TestCaseSource(nameof(AddDisplayObjectCaseSource))]
         public void AddDisplayObject_EmptyParameter_AddArgumentOrReplac(
             List<string> actualEnumNames,
