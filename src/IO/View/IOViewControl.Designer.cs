@@ -78,7 +78,6 @@ namespace IO.View
             this.StructPLC.LargeImageList = this.ViewItemImageList;
             this.StructPLC.Location = new System.Drawing.Point(0, 30);
             this.StructPLC.Margin = new System.Windows.Forms.Padding(0);
-            this.StructPLC.MultiSelect = true;
             this.StructPLC.Name = "StructPLC";
             this.StructPLC.OwnerDrawnHeader = true;
             this.StructPLC.PersistentCheckBoxes = false;
@@ -171,6 +170,7 @@ namespace IO.View
             this.Expand.Name = "Expand";
             this.Expand.Size = new System.Drawing.Size(29, 27);
             this.Expand.Text = "toolStripDropDownButton1";
+            this.Expand.ToolTipText = "Выбрать уровень развертки";
             // 
             // Expand_1
             // 
@@ -179,6 +179,7 @@ namespace IO.View
             this.Expand_1.Size = new System.Drawing.Size(183, 22);
             this.Expand_1.Tag = "1";
             this.Expand_1.Text = "Шкафы управления";
+            this.Expand_1.ToolTipText = "Уровнь 1: шкафы управления";
             this.Expand_1.Click += new System.EventHandler(this.Expand_Click);
             // 
             // Expand_2
@@ -188,6 +189,7 @@ namespace IO.View
             this.Expand_2.Size = new System.Drawing.Size(183, 22);
             this.Expand_2.Tag = "2";
             this.Expand_2.Text = "Узлы";
+            this.Expand_2.ToolTipText = "Уровень 2: узлы";
             this.Expand_2.Click += new System.EventHandler(this.Expand_Click);
             // 
             // Expand_3
@@ -197,6 +199,7 @@ namespace IO.View
             this.Expand_3.Size = new System.Drawing.Size(183, 22);
             this.Expand_3.Tag = "3";
             this.Expand_3.Text = "Модули";
+            this.Expand_3.ToolTipText = "Уровень 3: модули";
             this.Expand_3.Click += new System.EventHandler(this.Expand_Click);
             // 
             // Expand_4
@@ -206,6 +209,7 @@ namespace IO.View
             this.Expand_4.Size = new System.Drawing.Size(183, 22);
             this.Expand_4.Tag = "4";
             this.Expand_4.Text = "Клеммы";
+            this.Expand_4.ToolTipText = "Уровень 4: клеммы";
             this.Expand_4.Click += new System.EventHandler(this.Expand_Click);
             // 
             // toolStripButton1
@@ -216,6 +220,7 @@ namespace IO.View
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 27);
             this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.ToolTipText = "Синхронизация и сохранение";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // IOViewControl
