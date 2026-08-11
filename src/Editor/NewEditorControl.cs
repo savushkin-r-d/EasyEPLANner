@@ -13,6 +13,7 @@ using System.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
+using StaticHelper;
 using TechObject;
 using IO.View;
 
@@ -320,13 +321,8 @@ namespace Editor
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
-            const short SHIFTED = 0x80;
-            bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
-            bool Shift = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_SHIFT) & SHIFTED) > 0;
-            bool Alt = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_MENU) & SHIFTED) > 0;
+            bool Ctrl = KeyboardHookHelper.IsCtrlPressed();
             uint vkCode = lParam.vkCode;
-            bool plainTab = vkCode == PI.VIRTUAL_KEY.VK_TAB &&
-                !Ctrl && !Shift && !Alt;
 
             // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
             // так как они ломают отрисовку
@@ -342,13 +338,13 @@ namespace Editor
             if (code < 0 || editorTView == null || (editorTView.Focused is false && IsCellEditing is false))
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
+            if (KeyboardHookHelper.ShouldBlockPlainTab(wParam, vkCode))
+                return (IntPtr)1;
+
             //Отпускание клавиш - если активно окно редактора, то не пускаем
             //дальше.
             if (wParam == PI.WM.KEYUP || wParam == PI.WM.CHAR)
             {
-                if (plainTab)
-                    return (IntPtr)1;
-
                 switch ((Keys)vkCode)
                 {
                     case Keys.Delete:
@@ -374,9 +370,6 @@ namespace Editor
                     case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && IsCellEditing:
                         PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode].Command,
                             KeyCommands[vkCode].wParam, KeyCommands[vkCode].lParam);
-                        return (IntPtr)1;
-
-                    case PI.VIRTUAL_KEY.VK_TAB when plainTab:     // Tab
                         return (IntPtr)1;
 
                     // Перехватываем используемые
