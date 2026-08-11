@@ -14,6 +14,27 @@ namespace TechObject.Tests
             Assert.IsFalse(parameter.NeedDisable);
         }
 
+        [Test]
+        public void Filter_ParentMatches_ShowsChildParameter()
+        {
+            var parent = new MainAggregateParameter("MAIN",
+                "Использовать агрегат", "true");
+            var child = new ActiveParameter("PARAMETER", "Дочерний параметр");
+            child.Parent = parent;
+            parent.Parameters.Add(child);
+
+            var result = parent.Filter("агрегат", hideEmptyItems: false);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(result);
+                Assert.IsTrue(parent.Filtred);
+                Assert.IsTrue(parent.ThisOrParentsContains);
+                Assert.IsTrue(child.Filtred);
+                Assert.IsTrue(child.ThisOrParentsContains);
+            });
+        }
+
 
         [Test]
         public void Autocomplete()
