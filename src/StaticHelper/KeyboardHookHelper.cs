@@ -1,10 +1,14 @@
+using System;
 using PInvoke;
 
 namespace StaticHelper
 {
     public static class KeyboardHookHelper
     {
-        private const short Shifted = 0x80;
+        private const int KeyPressed = 0x8000;
+
+        private static Func<uint, short> getKeyState =
+            key => PI.GetKeyState((int)key);
 
         public static bool IsCtrlPressed() =>
             IsPressed(PI.VIRTUAL_KEY.VK_CONTROL);
@@ -35,6 +39,6 @@ namespace StaticHelper
             message is PI.WM.KEYDOWN or PI.WM.KEYUP or PI.WM.CHAR;
 
         private static bool IsPressed(uint key) =>
-            (PI.GetKeyState((int)key) & Shifted) > 0;
+            (getKeyState(key) & KeyPressed) != 0;
     }
 }
