@@ -732,7 +732,7 @@ namespace InterprojectExchange
 
         private static bool IsUnpairedBindItem(ListViewItem item)
         {
-            if (item?.SubItems.Count < 2)
+            if (item is null || item.SubItems.Count < 2)
             {
                 return false;
             }
