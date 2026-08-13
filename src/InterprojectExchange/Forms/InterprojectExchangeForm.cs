@@ -804,14 +804,13 @@ namespace InterprojectExchange
         /// <summary>
         /// Клик мышью на списке связанных сигналов
         /// </summary>
-        private void bindedSignalsList_MouseClick(object sender, 
+        private void bindedSignalsList_MouseClick(object sender,
             MouseEventArgs e)
         {
             ListViewItem item = bindedSignalsList.GetItemAt(e.X, e.Y);
-            if (item != null)
+            if (item != null && item.ListView != null)
             {
-                ListViewItem selectedItem = bindedSignalsList.SelectedItems[0];
-                HighlightObjectsInListViews(selectedItem);
+                HighlightObjectsInListViews(item);
             }
         }
 

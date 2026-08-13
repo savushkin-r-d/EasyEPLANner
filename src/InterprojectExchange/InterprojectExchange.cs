@@ -227,11 +227,19 @@ namespace InterprojectExchange
                 return unpaired;
             }
 
-            return (from cps in currentProjectSignals
-                    join aps in advancedProjectSignals
-                    on currentProjectSignals.IndexOf(cps) equals
-                        advancedProjectSignals.IndexOf(aps)
-                    select new[] { cps, aps }).ToList();
+            // Индексное сопоставление: IndexOf нельзя использовать при
+            // повторяющихся именах (в т.ч. плейсхолдерах "-")
+            var pairs = new List<string[]>(currentProjectSignals.Count);
+            for (int i = 0; i < currentProjectSignals.Count; i++)
+            {
+                pairs.Add(new[]
+                {
+                    currentProjectSignals[i],
+                    advancedProjectSignals[i]
+                });
+            }
+
+            return pairs;
         }
 
         public bool BindSignals(string signalType, string currentProjectDevice,

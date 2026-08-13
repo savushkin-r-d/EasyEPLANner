@@ -184,6 +184,18 @@ namespace EasyEplannerTests.InterprojectExchangeTest
                 new List<string[]>{
                     new []{"S1", DeviceSignalsInfo.UnpairedSignal},
                 },
+            },
+            // Повторяющиеся "-" не должны схлопываться в одно имя
+            new object[]
+            {
+                new List<string>{ "DI1", "DI2", "-", "-" },
+                new List<string>{ "-", "-", "DO1", "DO2" },
+                new List<string[]>{
+                    new []{"DI1", DeviceSignalsInfo.UnpairedSignal},
+                    new []{"DI2", DeviceSignalsInfo.UnpairedSignal},
+                    new []{DeviceSignalsInfo.UnpairedSignal, "DO1"},
+                    new []{DeviceSignalsInfo.UnpairedSignal, "DO2"},
+                },
             }
         };
 
