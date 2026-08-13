@@ -85,7 +85,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Имена проектов с ошибкой привязки сигналов
         /// </summary>
-        string[] ModelsWithBindingErrors { get; }
+        string[] GetModelsWithBindingErrors();
 
         /// <summary>
         /// Связать два несвязанных сигнала из ошибочных строк

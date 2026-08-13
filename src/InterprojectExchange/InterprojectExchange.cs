@@ -171,18 +171,15 @@ namespace InterprojectExchange
         /// <summary>
         /// Имена проектов с ошибкой привязки сигналов
         /// </summary>
-        public string[] ModelsWithBindingErrors
+        public string[] GetModelsWithBindingErrors()
         {
-            get
-            {
-                return Models
-                    .Where(m => m != MainModel &&
-                        m.Loaded &&
-                        m.HasBindingError &&
-                        !m.MarkedForDelete)
-                    .Select(m => m.ProjectName)
-                    .ToArray();
-            }
+            return Models
+                .Where(m => m != MainModel &&
+                    m.Loaded &&
+                    m.HasBindingError &&
+                    !m.MarkedForDelete)
+                .Select(m => m.ProjectName)
+                .ToArray();
         }
 
         /// <summary>
@@ -431,51 +428,18 @@ namespace InterprojectExchange
             List<string> advancedProjSignals = GetAdvancedProjectSignals(
                 signalType);
 
-            int rowIndex;
-            if (fillAdvancedSide)
-            {
-                rowIndex = FindSignalPairIndex(currentProjSignals,
-                    advancedProjSignals, knownSignal,
-                    DeviceSignalsInfo.UnpairedSignal);
-            }
-            else
-            {
-                rowIndex = FindSignalPairIndex(currentProjSignals,
-                    advancedProjSignals, DeviceSignalsInfo.UnpairedSignal,
-                    knownSignal);
-            }
-
+            int rowIndex = FindUnpairedRowForFill(currentProjSignals,
+                advancedProjSignals, knownSignal, fillAdvancedSide);
             if (rowIndex < 0)
             {
                 return false;
             }
 
-            int duplicateUnpairedRow = -1;
-            for (int i = 0; i < currentProjSignals.Count; i++)
-            {
-                if (fillAdvancedSide)
-                {
-                    if (advancedProjSignals[i] == newDevice &&
-                        DeviceSignalsInfo.IsUnpaired(currentProjSignals[i]))
-                    {
-                        duplicateUnpairedRow = i;
-                        break;
-                    }
-                }
-                else if (currentProjSignals[i] == newDevice &&
-                    DeviceSignalsInfo.IsUnpaired(advancedProjSignals[i]))
-                {
-                    duplicateUnpairedRow = i;
-                    break;
-                }
-            }
-
-            bool alreadyBound = fillAdvancedSide
-                ? advancedProjSignals.Contains(newDevice) &&
-                    duplicateUnpairedRow < 0
-                : currentProjSignals.Contains(newDevice) &&
-                    duplicateUnpairedRow < 0;
-            if (alreadyBound)
+            int duplicateUnpairedRow = FindDuplicateUnpairedRow(
+                currentProjSignals, advancedProjSignals, newDevice,
+                fillAdvancedSide);
+            if (IsDeviceAlreadyBound(currentProjSignals, advancedProjSignals,
+                newDevice, fillAdvancedSide, duplicateUnpairedRow))
             {
                 return false;
             }
@@ -489,23 +453,72 @@ namespace InterprojectExchange
                 currentProjSignals[rowIndex] = newDevice;
             }
 
-            if (duplicateUnpairedRow >= 0 && duplicateUnpairedRow != rowIndex)
+            RemoveDuplicateUnpairedRow(currentProjSignals, advancedProjSignals,
+                duplicateUnpairedRow, rowIndex);
+            RefreshSelectedModelBindingError();
+            return true;
+        }
+
+        private static int FindUnpairedRowForFill(List<string> currentSignals,
+            List<string> advancedSignals, string knownSignal,
+            bool fillAdvancedSide)
+        {
+            if (fillAdvancedSide)
             {
-                int removeIndex = duplicateUnpairedRow;
-                if (removeIndex > rowIndex)
+                return FindSignalPairIndex(currentSignals, advancedSignals,
+                    knownSignal, DeviceSignalsInfo.UnpairedSignal);
+            }
+
+            return FindSignalPairIndex(currentSignals, advancedSignals,
+                DeviceSignalsInfo.UnpairedSignal, knownSignal);
+        }
+
+        private static int FindDuplicateUnpairedRow(List<string> currentSignals,
+            List<string> advancedSignals, string newDevice,
+            bool fillAdvancedSide)
+        {
+            for (int i = 0; i < currentSignals.Count; i++)
+            {
+                bool isDuplicate = fillAdvancedSide
+                    ? advancedSignals[i] == newDevice &&
+                        DeviceSignalsInfo.IsUnpaired(currentSignals[i])
+                    : currentSignals[i] == newDevice &&
+                        DeviceSignalsInfo.IsUnpaired(advancedSignals[i]);
+                if (isDuplicate)
                 {
-                    currentProjSignals.RemoveAt(removeIndex);
-                    advancedProjSignals.RemoveAt(removeIndex);
-                }
-                else
-                {
-                    currentProjSignals.RemoveAt(removeIndex);
-                    advancedProjSignals.RemoveAt(removeIndex);
+                    return i;
                 }
             }
 
-            RefreshSelectedModelBindingError();
-            return true;
+            return -1;
+        }
+
+        private static bool IsDeviceAlreadyBound(List<string> currentSignals,
+            List<string> advancedSignals, string newDevice,
+            bool fillAdvancedSide, int duplicateUnpairedRow)
+        {
+            if (duplicateUnpairedRow >= 0)
+            {
+                return false;
+            }
+
+            return fillAdvancedSide
+                ? advancedSignals.Contains(newDevice)
+                : currentSignals.Contains(newDevice);
+        }
+
+        private static void RemoveDuplicateUnpairedRow(
+            List<string> currentSignals, List<string> advancedSignals,
+            int duplicateUnpairedRow, int filledRowIndex)
+        {
+            if (duplicateUnpairedRow < 0 ||
+                duplicateUnpairedRow == filledRowIndex)
+            {
+                return;
+            }
+
+            currentSignals.RemoveAt(duplicateUnpairedRow);
+            advancedSignals.RemoveAt(duplicateUnpairedRow);
         }
 
         private static int FindSignalPairIndex(List<string> currentSignals,

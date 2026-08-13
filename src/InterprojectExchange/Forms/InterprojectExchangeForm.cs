@@ -842,13 +842,10 @@ namespace InterprojectExchange
             if (IsUnpairedBindItem(e.Item))
             {
                 if (pendingUnpairedBindItem != null &&
-                    pendingUnpairedBindItem != e.Item)
+                    pendingUnpairedBindItem != e.Item &&
+                    TryPairUnpairedBindItems(pendingUnpairedBindItem, e.Item))
                 {
-                    if (TryPairUnpairedBindItems(pendingUnpairedBindItem,
-                        e.Item))
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 pendingUnpairedBindItem = e.Item;
@@ -1337,7 +1334,7 @@ namespace InterprojectExchange
         private void saveButton_Click(object sender, EventArgs e)
         {
             string[] errorProjects = interprojectExchange
-                .ModelsWithBindingErrors;
+                .GetModelsWithBindingErrors();
             if (errorProjects.Length > 0)
             {
                 string projects = string.Join(", ", errorProjects);

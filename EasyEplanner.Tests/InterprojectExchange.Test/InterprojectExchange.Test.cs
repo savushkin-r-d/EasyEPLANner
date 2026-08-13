@@ -115,7 +115,7 @@ namespace EasyEplannerTests.InterprojectExchangeTest
         }
 
         [Test]
-        public void ModelsWithBindingErrors_ReturnsOnlyLoadedErrorProjects()
+        public void GetModelsWithBindingErrors_ReturnsOnlyLoadedErrorProjects()
         {
             var exchange = CreateExchangeWithModels(
                 out var mainModel, out var errorModel, out var okModel);
@@ -134,7 +134,7 @@ namespace EasyEplannerTests.InterprojectExchangeTest
 
             CollectionAssert.AreEqual(
                 new[] { errorModel.ProjectName },
-                exchange.ModelsWithBindingErrors);
+                exchange.GetModelsWithBindingErrors());
         }
 
         [Test]
