@@ -146,7 +146,16 @@ namespace EasyEplannerTests.InterprojectExchangeTest
                 .GetMethod("GetSignalsPairs", BindingFlags.Static | BindingFlags.NonPublic)
                 .Invoke(null, new object[] { currSignals, advSignals }) as List<string[]>;
 
-            CollectionAssert.AreEqual(expected, result);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expected.Count, result.Count,
+                    "Количество пар сигналов");
+                for (int i = 0; i < expected.Count; i++)
+                {
+                    CollectionAssert.AreEqual(expected[i], result[i],
+                        $"Пара сигналов [{i}]");
+                }
+            });
         }
 
         public static object[] GetSignalsPairs_Test_CaseSrc = new object[]
