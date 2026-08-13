@@ -1337,12 +1337,12 @@ namespace InterprojectExchange
                 .GetModelsWithBindingErrors();
             if (errorProjects.Length > 0)
             {
-                string projects = string.Join(", ", errorProjects);
+                string projects = string.Join(";\n", errorProjects);
                 string message =
                     "Следующие проекты содержат ошибки привязки сигналов " +
                     "и не будут сохранены:\n" +
                     projects +
-                    "\n\nСохранить остальные проекты?";
+                    ";\n\nПродолжить сохранение остальных проектов?";
                 DialogResult result = ShowWarningMessage(message,
                     MessageBoxButtons.YesNo);
                 if (result != DialogResult.Yes)
