@@ -78,6 +78,28 @@ namespace InterprojectExchange
         string CheckBindingSignals();
 
         /// <summary>
+        /// Обновить флаг ошибки привязки у выбранной модели
+        /// </summary>
+        void RefreshSelectedModelBindingError();
+
+        /// <summary>
+        /// Имена проектов с ошибкой привязки сигналов
+        /// </summary>
+        string[] ModelsWithBindingErrors { get; }
+
+        /// <summary>
+        /// Связать два несвязанных сигнала из ошибочных строк
+        /// </summary>
+        bool PairUnpairedSignals(string signalType,
+            string currentProjectSignal, string advancedProjectSignal);
+
+        /// <summary>
+        /// Заполнить сторону "-" в ошибочной строке устройством из списка
+        /// </summary>
+        bool FillUnpairedSignal(string signalType, string knownSignal,
+            string newDevice, bool fillAdvancedSide);
+
+        /// <summary>
         /// Проверка корректности пути к файлам проекта
         /// </summary>
         /// <param name="path">Путь к файлам проекта</param>

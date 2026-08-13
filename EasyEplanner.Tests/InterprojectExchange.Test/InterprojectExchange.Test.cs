@@ -18,27 +18,28 @@ namespace EasyEplannerTests.InterprojectExchangeTest
         {
             string expected = "remote_gateways: adv_prj - AI\nshared_devices: adv_prj - AI\n";
 
-            var signals_1 = new DeviceSignalsInfo();
-            signals_1.AI.Add("AI1");
+            var mainReceiver = new DeviceSignalsInfo();
+            mainReceiver.AI.Add("AI1");
 
-            var signals_2 = new DeviceSignalsInfo();
-            signals_2.AI.Add("AI2");
+            var mainSource = new DeviceSignalsInfo();
+            var advancedSource = new DeviceSignalsInfo();
 
-            var signals_error = new DeviceSignalsInfo();
-
+            var advancedReceiver = new DeviceSignalsInfo();
+            advancedReceiver.AI.Add("AI2");
 
             var mainModel = new Mock<CurrentProjectModel>();
 
-            mainModel.Setup(obj => obj.ReceiverSignals).Returns(signals_1);
-            mainModel.Setup(obj => obj.SourceSignals).Returns(signals_error);
+            mainModel.Setup(obj => obj.ReceiverSignals).Returns(mainReceiver);
+            mainModel.Setup(obj => obj.SourceSignals).Returns(mainSource);
             mainModel.Setup(obj => obj.ProjectName).Returns("main_prj");
 
             var advancedModel = new Mock<IProjectModel>();
 
-            advancedModel.Setup(obj => obj.ReceiverSignals).Returns(signals_2);
-            advancedModel.Setup(obj => obj.SourceSignals).Returns(signals_error);
+            advancedModel.Setup(obj => obj.ReceiverSignals).Returns(advancedReceiver);
+            advancedModel.Setup(obj => obj.SourceSignals).Returns(advancedSource);
             advancedModel.Setup(obj => obj.ProjectName).Returns("adv_prj");
             advancedModel.Setup(obj => obj.Loaded).Returns(true);
+            advancedModel.SetupProperty(obj => obj.HasBindingError);
 
             var interprojectExchangeMock = new Mock<InterprojectExchange.InterprojectExchange>();
 
@@ -49,7 +50,91 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             interprojectExchange.AddModel(mainModel.Object);
             interprojectExchange.AddModel(advancedModel.Object);
 
-            Assert.AreEqual(expected, interprojectExchange.CheckBindingSignals());
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expected, interprojectExchange.CheckBindingSignals());
+                Assert.IsTrue(advancedModel.Object.HasBindingError);
+                Assert.IsTrue(advancedModel.Object.Loaded);
+                CollectionAssert.AreEqual(
+                    new[] { "AI1" }, mainReceiver.AI);
+                CollectionAssert.AreEqual(
+                    new[] { DeviceSignalsInfo.UnpairedSignal },
+                    advancedSource.AI);
+                CollectionAssert.AreEqual(
+                    new[] { DeviceSignalsInfo.UnpairedSignal },
+                    mainSource.AI);
+                CollectionAssert.AreEqual(
+                    new[] { "AI2" }, advancedReceiver.AI);
+            });
+        }
+
+        [Test]
+        public void PairUnpairedSignals_RestoresPairAndClearsError()
+        {
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("eProjectManager", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, Mock.Of<IEProjectManager>(
+                    m => m.GetModifyingCurrentProjectName() == "main"));
+
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("interprojectExchange", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, null);
+
+            var interprojectExchange = InterprojectExchange.InterprojectExchange
+                .GetInstance();
+
+            var mainModel = new CurrentProjectModel
+            {
+                ProjectName = "main",
+                SelectedAdvancedProject = "adv",
+                Loaded = true
+            };
+            mainModel.SourceSignals.DO.AddRange(new[] { "DO1", "-", "-" });
+
+            var advancedModel = new AdvancedProjectModel
+            {
+                ProjectName = "adv",
+                Loaded = true,
+                HasBindingError = true,
+                Selected = true
+            };
+            advancedModel.ReceiverSignals.DO.AddRange(new[] { "-", "DI1", "DI2" });
+
+            interprojectExchange.AddModel(mainModel);
+            interprojectExchange.AddModel(advancedModel);
+            interprojectExchange.ChangeEditMode(0);
+
+            bool paired = interprojectExchange.PairUnpairedSignals(
+                "DO", "DO1", "DI1");
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(paired);
+                CollectionAssert.AreEqual(
+                    new[] { "DO1", "-" }, mainModel.SourceSignals.DO);
+                CollectionAssert.AreEqual(
+                    new[] { "DI1", "DI2" },
+                    advancedModel.ReceiverSignals.DO);
+                Assert.IsTrue(advancedModel.HasBindingError);
+            });
+
+            bool filled = interprojectExchange.FillUnpairedSignal(
+                "DO", "DI2", "DO2", fillAdvancedSide: false);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(filled);
+                CollectionAssert.AreEqual(
+                    new[] { "DO1", "DO2" }, mainModel.SourceSignals.DO);
+                CollectionAssert.AreEqual(
+                    new[] { "DI1", "DI2" },
+                    advancedModel.ReceiverSignals.DO);
+                Assert.IsFalse(advancedModel.HasBindingError);
+            });
+
+            typeof(InterprojectExchange.InterprojectExchange)
+                .GetField("interprojectExchange", BindingFlags.Static | BindingFlags.NonPublic)
+                .SetValue(null, null);
         }
 
 
@@ -76,20 +161,29 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             {
                 new List<string>{ "S1", "S2" },
                 new List<string>{ "S1" },
-                new List<string[]>{ new []{"S1", "S1"}, },
+                new List<string[]>{
+                    new []{"S1", DeviceSignalsInfo.UnpairedSignal},
+                    new []{"S2", DeviceSignalsInfo.UnpairedSignal},
+                    new []{DeviceSignalsInfo.UnpairedSignal, "S1"},
+                },
             },
             new object[]
             {
                 new List<string>{ "S1", },
                 new List<string>{ "S1", "S2" },
-                new List<string[]>{ new []{"S1", "S1"}, },
-            }
-            ,
+                new List<string[]>{
+                    new []{"S1", DeviceSignalsInfo.UnpairedSignal},
+                    new []{DeviceSignalsInfo.UnpairedSignal, "S1"},
+                    new []{DeviceSignalsInfo.UnpairedSignal, "S2"},
+                },
+            },
             new object[]
             {
                 new List<string>{ "S1", },
                 new List<string>{ },
-                new List<string[]>{ },
+                new List<string[]>{
+                    new []{"S1", DeviceSignalsInfo.UnpairedSignal},
+                },
             }
         };
 

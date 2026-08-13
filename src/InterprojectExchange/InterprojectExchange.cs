@@ -115,23 +115,74 @@ namespace InterprojectExchange
             foreach (var model in Models.Where(m => m.Loaded && m != MainModel))
             {
                 mainModel.SelectedAdvancedProject = model.ProjectName;
+                model.HasBindingError = false;
 
-                string receiverErr = mainModel.ReceiverSignals.CountCompare(model.SourceSignals);
+                mainModel.ReceiverSignals.StripUnpairedSignals();
+                model.SourceSignals.StripUnpairedSignals();
+                mainModel.SourceSignals.StripUnpairedSignals();
+                model.ReceiverSignals.StripUnpairedSignals();
+
+                string receiverErr = mainModel.ReceiverSignals
+                    .CountCompare(model.SourceSignals);
                 if (!string.IsNullOrEmpty(receiverErr))
                 {
-                    err.Append($"remote_gateways: {model.ProjectName} - {receiverErr}\n");
-                    model.Loaded = false;
+                    err.Append(
+                        $"remote_gateways: {model.ProjectName} - {receiverErr}\n");
+                    DeviceSignalsInfo.ExpandMismatchedChannels(
+                        mainModel.ReceiverSignals, model.SourceSignals);
+                    model.HasBindingError = true;
                 }
 
-                string sourceErr = mainModel.SourceSignals.CountCompare(model.ReceiverSignals);
+                string sourceErr = mainModel.SourceSignals
+                    .CountCompare(model.ReceiverSignals);
                 if (!string.IsNullOrEmpty(sourceErr))
                 {
-                    err.Append($"shared_devices: {model.ProjectName} - {sourceErr}\n");
-                    model.Loaded = false;
+                    err.Append(
+                        $"shared_devices: {model.ProjectName} - {sourceErr}\n");
+                    DeviceSignalsInfo.ExpandMismatchedChannels(
+                        mainModel.SourceSignals, model.ReceiverSignals);
+                    model.HasBindingError = true;
                 }
             }
 
             return err.ToString();
+        }
+
+        /// <summary>
+        /// Обновить флаг ошибки привязки у выбранной модели
+        /// </summary>
+        public void RefreshSelectedModelBindingError()
+        {
+            IProjectModel model = SelectedModel;
+            if (model == null || ReferenceEquals(model, MainModel))
+            {
+                return;
+            }
+
+            bool hasError =
+                MainModel.ReceiverSignals.ContainsUnpairedSignals() ||
+                MainModel.SourceSignals.ContainsUnpairedSignals() ||
+                model.SourceSignals.ContainsUnpairedSignals() ||
+                model.ReceiverSignals.ContainsUnpairedSignals();
+
+            model.HasBindingError = hasError;
+        }
+
+        /// <summary>
+        /// Имена проектов с ошибкой привязки сигналов
+        /// </summary>
+        public string[] ModelsWithBindingErrors
+        {
+            get
+            {
+                return Models
+                    .Where(m => m != MainModel &&
+                        m.Loaded &&
+                        m.HasBindingError &&
+                        !m.MarkedForDelete)
+                    .Select(m => m.ProjectName)
+                    .ToArray();
+            }
         }
 
         /// <summary>
@@ -146,23 +197,52 @@ namespace InterprojectExchange
             List<string> currentProjectSignals,
             List<string> advancedProjectSignals)
         {
-            if (currentProjectSignals.Count > 0 &&
-                advancedProjectSignals.Count > 0)
-            {
-                return (from cps in currentProjectSignals
-                        join aps in advancedProjectSignals
-                        on currentProjectSignals.IndexOf(cps) equals advancedProjectSignals.IndexOf(aps)
-                        select new[] { cps, aps }).ToList();
-            }
-            else
+            if (currentProjectSignals.Count == 0 &&
+                advancedProjectSignals.Count == 0)
             {
                 return new List<string[]>();
             }
+
+            if (currentProjectSignals.Count != advancedProjectSignals.Count)
+            {
+                var unpaired = new List<string[]>();
+                foreach (var signal in currentProjectSignals)
+                {
+                    unpaired.Add(new[]
+                    {
+                        signal,
+                        DeviceSignalsInfo.UnpairedSignal
+                    });
+                }
+
+                foreach (var signal in advancedProjectSignals)
+                {
+                    unpaired.Add(new[]
+                    {
+                        DeviceSignalsInfo.UnpairedSignal,
+                        signal
+                    });
+                }
+
+                return unpaired;
+            }
+
+            return (from cps in currentProjectSignals
+                    join aps in advancedProjectSignals
+                    on currentProjectSignals.IndexOf(cps) equals
+                        advancedProjectSignals.IndexOf(aps)
+                    select new[] { cps, aps }).ToList();
         }
 
         public bool BindSignals(string signalType, string currentProjectDevice,
             string advancedProjectDevice)
         {
+            if (DeviceSignalsInfo.IsUnpaired(currentProjectDevice) ||
+                DeviceSignalsInfo.IsUnpaired(advancedProjectDevice))
+            {
+                return false;
+            }
+
             List<string> currentProjSignals = GetCurrentProjectSignals(
                 signalType);
             List<string> advancedProjSignals = GetAdvancedProjectSignals(
@@ -176,6 +256,7 @@ namespace InterprojectExchange
 
             currentProjSignals.Add(currentProjectDevice);
             advancedProjSignals.Add(advancedProjectDevice);
+            RefreshSelectedModelBindingError();
 
             return true;
         }
@@ -188,8 +269,17 @@ namespace InterprojectExchange
             List<string> advancedProjSignals = GetAdvancedProjectSignals(
                 signalType);
 
-            currentProjSignals.Remove(currentProjectDevice);
-            advancedProjSignals.Remove(advancedProjectDevice);
+            int index = FindSignalPairIndex(currentProjSignals,
+                advancedProjSignals, currentProjectDevice,
+                advancedProjectDevice);
+            if (index < 0)
+            {
+                return false;
+            }
+
+            currentProjSignals.RemoveAt(index);
+            advancedProjSignals.RemoveAt(index);
+            RefreshSelectedModelBindingError();
 
             return true;
         }
@@ -202,26 +292,27 @@ namespace InterprojectExchange
             List<string> advancedProjSignals = GetAdvancedProjectSignals(
                 signalType);
 
-            int currSignalIndex = currentProjSignals.IndexOf(currProjSignal);
-            int advSignalindex = advancedProjSignals.IndexOf(advProjSignal);
+            int pairIndex = FindSignalPairIndex(currentProjSignals,
+                advancedProjSignals, currProjSignal, advProjSignal);
+            if (pairIndex < 0)
+            {
+                return false;
+            }
 
-            bool blockMoveUp =
-                (currSignalIndex == 0 || advSignalindex == 0) &&
-                move == -1;
+            bool blockMoveUp = pairIndex == 0 && move == -1;
             bool blockMoveDown =
-                (currSignalIndex == currentProjSignals.Count - 1 ||
-                advSignalindex == advancedProjSignals.Count - 1) &&
-                move == 1;
+                pairIndex == currentProjSignals.Count - 1 && move == 1;
             if (blockMoveDown || blockMoveUp)
             {
                 return false;
             }
 
-            currentProjSignals.Remove(currProjSignal);
-            currentProjSignals.Insert(currSignalIndex + move, currProjSignal);
-
-            advancedProjSignals.Remove(advProjSignal);
-            advancedProjSignals.Insert(advSignalindex + move, advProjSignal);
+            string curr = currentProjSignals[pairIndex];
+            string adv = advancedProjSignals[pairIndex];
+            currentProjSignals.RemoveAt(pairIndex);
+            advancedProjSignals.RemoveAt(pairIndex);
+            currentProjSignals.Insert(pairIndex + move, curr);
+            advancedProjSignals.Insert(pairIndex + move, adv);
 
             return true;
         }
@@ -232,7 +323,9 @@ namespace InterprojectExchange
         {
             needSwap = false;
 
-            if (oldValue == newValue)
+            if (oldValue == newValue ||
+                DeviceSignalsInfo.IsUnpaired(oldValue) ||
+                DeviceSignalsInfo.IsUnpaired(newValue))
             {
                 return false;
             }
@@ -248,6 +341,11 @@ namespace InterprojectExchange
             }
 
             int oldValueIndex = signals.IndexOf(oldValue);
+            if (oldValueIndex < 0)
+            {
+                return false;
+            }
+
             int newValueIndex = signals.IndexOf(newValue);
             if (newValueIndex >= 0)
             {
@@ -261,7 +359,162 @@ namespace InterprojectExchange
                 RemoveAndInsert(signals, oldValueIndex, newValue);
             }
 
+            RefreshSelectedModelBindingError();
             return true;
+        }
+
+        /// <summary>
+        /// Связать два несвязанных сигнала из ошибочных строк
+        /// </summary>
+        public bool PairUnpairedSignals(string signalType,
+            string currentProjectSignal, string advancedProjectSignal)
+        {
+            if (DeviceSignalsInfo.IsUnpaired(currentProjectSignal) ||
+                DeviceSignalsInfo.IsUnpaired(advancedProjectSignal))
+            {
+                return false;
+            }
+
+            List<string> currentProjSignals = GetCurrentProjectSignals(
+                signalType);
+            List<string> advancedProjSignals = GetAdvancedProjectSignals(
+                signalType);
+
+            int currentRow = FindSignalPairIndex(currentProjSignals,
+                advancedProjSignals, currentProjectSignal,
+                DeviceSignalsInfo.UnpairedSignal);
+            int advancedRow = FindSignalPairIndex(currentProjSignals,
+                advancedProjSignals, DeviceSignalsInfo.UnpairedSignal,
+                advancedProjectSignal);
+
+            if (currentRow < 0 || advancedRow < 0 || currentRow == advancedRow)
+            {
+                return false;
+            }
+
+            int first = Math.Max(currentRow, advancedRow);
+            int second = Math.Min(currentRow, advancedRow);
+            currentProjSignals.RemoveAt(first);
+            advancedProjSignals.RemoveAt(first);
+            currentProjSignals.RemoveAt(second);
+            advancedProjSignals.RemoveAt(second);
+
+            currentProjSignals.Insert(0, currentProjectSignal);
+            advancedProjSignals.Insert(0, advancedProjectSignal);
+            RefreshSelectedModelBindingError();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Заполнить сторону "-" в ошибочной строке устройством из списка
+        /// </summary>
+        public bool FillUnpairedSignal(string signalType,
+            string knownSignal, string newDevice, bool fillAdvancedSide)
+        {
+            if (DeviceSignalsInfo.IsUnpaired(knownSignal) ||
+                DeviceSignalsInfo.IsUnpaired(newDevice))
+            {
+                return false;
+            }
+
+            List<string> currentProjSignals = GetCurrentProjectSignals(
+                signalType);
+            List<string> advancedProjSignals = GetAdvancedProjectSignals(
+                signalType);
+
+            int rowIndex;
+            if (fillAdvancedSide)
+            {
+                rowIndex = FindSignalPairIndex(currentProjSignals,
+                    advancedProjSignals, knownSignal,
+                    DeviceSignalsInfo.UnpairedSignal);
+            }
+            else
+            {
+                rowIndex = FindSignalPairIndex(currentProjSignals,
+                    advancedProjSignals, DeviceSignalsInfo.UnpairedSignal,
+                    knownSignal);
+            }
+
+            if (rowIndex < 0)
+            {
+                return false;
+            }
+
+            int duplicateUnpairedRow = -1;
+            for (int i = 0; i < currentProjSignals.Count; i++)
+            {
+                if (fillAdvancedSide)
+                {
+                    if (advancedProjSignals[i] == newDevice &&
+                        DeviceSignalsInfo.IsUnpaired(currentProjSignals[i]))
+                    {
+                        duplicateUnpairedRow = i;
+                        break;
+                    }
+                }
+                else if (currentProjSignals[i] == newDevice &&
+                    DeviceSignalsInfo.IsUnpaired(advancedProjSignals[i]))
+                {
+                    duplicateUnpairedRow = i;
+                    break;
+                }
+            }
+
+            bool alreadyBound = fillAdvancedSide
+                ? advancedProjSignals.Contains(newDevice) &&
+                    duplicateUnpairedRow < 0
+                : currentProjSignals.Contains(newDevice) &&
+                    duplicateUnpairedRow < 0;
+            if (alreadyBound)
+            {
+                return false;
+            }
+
+            if (fillAdvancedSide)
+            {
+                advancedProjSignals[rowIndex] = newDevice;
+            }
+            else
+            {
+                currentProjSignals[rowIndex] = newDevice;
+            }
+
+            if (duplicateUnpairedRow >= 0 && duplicateUnpairedRow != rowIndex)
+            {
+                int removeIndex = duplicateUnpairedRow;
+                if (removeIndex > rowIndex)
+                {
+                    currentProjSignals.RemoveAt(removeIndex);
+                    advancedProjSignals.RemoveAt(removeIndex);
+                }
+                else
+                {
+                    currentProjSignals.RemoveAt(removeIndex);
+                    advancedProjSignals.RemoveAt(removeIndex);
+                }
+            }
+
+            RefreshSelectedModelBindingError();
+            return true;
+        }
+
+        private static int FindSignalPairIndex(List<string> currentSignals,
+            List<string> advancedSignals, string currentSignal,
+            string advancedSignal)
+        {
+            int count = Math.Min(currentSignals.Count, advancedSignals.Count);
+            for (int i = 0; i < count; i++)
+            {
+                if (currentSignals[i] == currentSignal &&
+                    advancedSignals[i] == advancedSignal)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         /// <summary>

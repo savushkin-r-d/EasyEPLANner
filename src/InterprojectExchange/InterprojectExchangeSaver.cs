@@ -47,7 +47,8 @@ namespace InterprojectExchange
 
             IProjectModel mainModel = interprojectExchange.MainModel;
             bool invertSignals = false;
-            foreach (var altModel in alternativeModels.Where(m => m.Loaded))
+            foreach (var altModel in alternativeModels
+                .Where(m => m.Loaded && !m.HasBindingError))
             {
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel
@@ -68,7 +69,9 @@ namespace InterprojectExchange
         private async Task WriteAdvancedProjectsAsync()
         {
             foreach (var model in interprojectExchange.Models
-                .Where(m => m.Loaded && m != interprojectExchange.MainModel))
+                .Where(m => m.Loaded &&
+                    !m.HasBindingError &&
+                    m != interprojectExchange.MainModel))
             {
                 await Task.Run(() => WriteAlternativeModel(model));
             }
@@ -330,11 +333,16 @@ namespace InterprojectExchange
         {
             var res = string.Empty;
             var signalsList = new Dictionary<string, string>();
+            var filteredSignals = FilterOutUnpairedSignals(signals);
 
-            SaveDISignals(ref signalsList, signals.DI, prefix, invertSignals);
-            SaveDOSignals(ref signalsList, signals.DO, prefix, invertSignals);
-            SaveAISignals(ref signalsList, signals.AI, prefix, invertSignals);
-            SaveAOSignals(ref signalsList, signals.AO, prefix, invertSignals);
+            SaveDISignals(ref signalsList, filteredSignals.DI, prefix,
+                invertSignals);
+            SaveDOSignals(ref signalsList, filteredSignals.DO, prefix,
+                invertSignals);
+            SaveAISignals(ref signalsList, filteredSignals.AI, prefix,
+                invertSignals);
+            SaveAOSignals(ref signalsList, filteredSignals.AO, prefix,
+                invertSignals);
 
             var signalsKeys = signalsList.Keys.ToList();
             signalsKeys.Sort();
@@ -343,6 +351,21 @@ namespace InterprojectExchange
                 res += signalsList[key];
             }
             return res;
+        }
+
+        private static DeviceSignalsInfo FilterOutUnpairedSignals(
+            DeviceSignalsInfo signals)
+        {
+            var filtered = new DeviceSignalsInfo();
+            filtered.DI.AddRange(signals.DI
+                .Where(s => !DeviceSignalsInfo.IsUnpaired(s)));
+            filtered.DO.AddRange(signals.DO
+                .Where(s => !DeviceSignalsInfo.IsUnpaired(s)));
+            filtered.AI.AddRange(signals.AI
+                .Where(s => !DeviceSignalsInfo.IsUnpaired(s)));
+            filtered.AO.AddRange(signals.AO
+                .Where(s => !DeviceSignalsInfo.IsUnpaired(s)));
+            return filtered;
         }
 
         /// <summary>

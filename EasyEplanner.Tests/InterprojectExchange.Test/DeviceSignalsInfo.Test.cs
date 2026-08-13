@@ -61,5 +61,40 @@ namespace EasyEplannerTests.InterprojectExchangeTest
                 },
             };
         }
+
+        [Test]
+        public void ExpandMismatchedChannels_CreatesUnpairedRows()
+        {
+            var left = new DeviceSignalsInfo();
+            left.DO.Add("DO1");
+
+            var right = new DeviceSignalsInfo();
+            right.DO.Add("DI1");
+            right.DO.Add("DI2");
+
+            DeviceSignalsInfo.ExpandMismatchedChannels(left, right);
+
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(
+                    new[] { "DO1", "-", "-" }, left.DO);
+                CollectionAssert.AreEqual(
+                    new[] { "-", "DI1", "DI2" }, right.DO);
+                Assert.IsTrue(left.ContainsUnpairedSignals());
+                Assert.IsTrue(right.ContainsUnpairedSignals());
+            });
+        }
+
+        [Test]
+        public void StripUnpairedSignals_RemovesPlaceholders()
+        {
+            var signals = new DeviceSignalsInfo();
+            signals.DO.AddRange(new[] { "DO1", "-", "DO2" });
+
+            signals.StripUnpairedSignals();
+
+            CollectionAssert.AreEqual(new[] { "DO1", "DO2" }, signals.DO);
+            Assert.IsFalse(signals.ContainsUnpairedSignals());
+        }
     }
 }
