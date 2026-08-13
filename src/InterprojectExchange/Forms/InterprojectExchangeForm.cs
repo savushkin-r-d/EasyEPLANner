@@ -240,6 +240,11 @@ namespace InterprojectExchange
                 return;
             }
 
+            if (BlockNewBindingsIfProjectHasErrors())
+            {
+                return;
+            }
+
             var editBind = !filterConfiguration.HideBindedSignals;
 
             if (editBind && selectedBind is not null &&
@@ -299,6 +304,11 @@ namespace InterprojectExchange
                 return;
             }
 
+            if (BlockNewBindingsIfProjectHasErrors())
+            {
+                return;
+            }
+
             var editBind = !filterConfiguration.HideBindedSignals;
 
             if (editBind && selectedBind is not null &&
@@ -325,6 +335,25 @@ namespace InterprojectExchange
             string advProjDevType = advProjDevs[0].Tag.ToString();
             AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
                 advProjDev);
+        }
+
+        /// <summary>
+        /// Пока есть ошибки привязки, нельзя создавать или менять обычные связи.
+        /// Исправление ошибочных строк при этом остаётся доступным.
+        /// </summary>
+        private bool BlockNewBindingsIfProjectHasErrors()
+        {
+            if (interprojectExchange.SelectedModel?.HasBindingError is not true)
+            {
+                return false;
+            }
+
+            ShowWarningMessage(
+                "Нельзя связать сигналы, пока в проекте есть ошибки.",
+                MessageBoxButtons.OK);
+
+            ClearAllListViewsSelection();
+            return true;
         }
 
         /// <summary>

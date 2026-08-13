@@ -242,7 +242,8 @@ namespace InterprojectExchange
         public bool BindSignals(string signalType, string currentProjectDevice,
             string advancedProjectDevice)
         {
-            if (DeviceSignalsInfo.IsUnpaired(currentProjectDevice) ||
+            if (SelectedModel?.HasBindingError is true ||
+                DeviceSignalsInfo.IsUnpaired(currentProjectDevice) ||
                 DeviceSignalsInfo.IsUnpaired(advancedProjectDevice))
             {
                 return false;
@@ -328,7 +329,8 @@ namespace InterprojectExchange
         {
             needSwap = false;
 
-            if (oldValue == newValue ||
+            if (SelectedModel?.HasBindingError is true ||
+                oldValue == newValue ||
                 DeviceSignalsInfo.IsUnpaired(oldValue) ||
                 DeviceSignalsInfo.IsUnpaired(newValue))
             {

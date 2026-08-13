@@ -247,6 +247,21 @@ namespace EasyEplannerTests.InterprojectExchangeTest
         }
 
         [Test]
+        public void BindSignals_WhenHasBindingError_ReturnsFalse()
+        {
+            var exchange = CreateExchangeWithModels(
+                out var mainModel, out var advancedModel, out _);
+            advancedModel.HasBindingError = true;
+
+            Assert.IsFalse(exchange.BindSignals("DO", "DO1", "DI1"));
+            Assert.Multiple(() =>
+            {
+                Assert.IsEmpty(mainModel.SourceSignals.DO);
+                Assert.IsEmpty(advancedModel.ReceiverSignals.DO);
+            });
+        }
+
+        [Test]
         public void BindSignals_RejectsUnpairedAndAlreadyBound()
         {
             var exchange = CreateExchangeWithModels(
@@ -317,6 +332,22 @@ namespace EasyEplannerTests.InterprojectExchangeTest
                 Assert.IsFalse(exchange.MoveSignalsBind(
                     "DO", "-", "DI2", -1));
             });
+        }
+
+        [Test]
+        public void UpdateProjectBinding_WhenHasBindingError_ReturnsFalse()
+        {
+            var exchange = CreateExchangeWithModels(
+                out var mainModel, out var advancedModel, out _);
+
+            mainModel.SourceSignals.DO.Add("DO1");
+            advancedModel.ReceiverSignals.DO.Add("DI1");
+            advancedModel.HasBindingError = true;
+
+            Assert.IsFalse(exchange.UpdateProjectBinding(
+                "DO", "DO1", "DO2", true, out _));
+            CollectionAssert.AreEqual(
+                new[] { "DO1" }, mainModel.SourceSignals.DO);
         }
 
         [Test]
