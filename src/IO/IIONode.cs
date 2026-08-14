@@ -1,4 +1,4 @@
-﻿using StaticHelper;
+using StaticHelper;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -85,6 +85,18 @@ namespace IO
         /// Функция узла на ФСА
         /// </summary>
         IEplanFunction Function { get; }
+
+        /// <summary>
+        /// Можно ли выключить сохранение типа узла (ntype = -1).
+        /// Контроллер выключать нельзя.
+        /// </summary>
+        bool CanDisableNtype { get; }
+
+        /// <summary>
+        /// Сохранять в main.io.lua настоящий ntype (true) или -1 (false).
+        /// Не влияет на работу узла в EPLAN.
+        /// </summary>
+        bool NtypeEnabled { get; set; }
 
         /// <summary>
         /// Сохранение в виде таблицы Lua.

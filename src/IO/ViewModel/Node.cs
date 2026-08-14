@@ -20,6 +20,14 @@ namespace IO.ViewModel
             if (node.Type is IO.IONode.TYPES.T_EMPTY)
                 return;
 
+            if (node.CanDisableNtype)
+            {
+                items.Add(new ComboBoxProperty("Состояние",
+                    () => GetEnabledText(IONode.NtypeEnabled),
+                    value => IONode.NtypeEnabled = value == EnabledNtypeText,
+                    EnabledValues));
+            }
+
             var ip = new Property("IP-адрес",
                 () => IONode.Function.IP,
                 ip => IONode.Function.IP = ip);
@@ -79,5 +87,24 @@ namespace IO.ViewModel
 
         Icon IHasDescriptionIcon.Icon =>
             HasBindingError ? Icon.Error : Icon.None;
+
+        /// <summary>
+        /// Узел выключен в main.io.lua (ntype = -1).
+        /// </summary>
+        public bool IsNtypeDisabled =>
+            IONode.CanDisableNtype && !IONode.NtypeEnabled;
+
+        private static string GetEnabledText(bool enabled) =>
+            enabled ? EnabledNtypeText : DisabledNtypeText;
+
+        private const string EnabledNtypeText = "Включен";
+
+        private const string DisabledNtypeText = "Выключен";
+
+        private static readonly string[] EnabledValues =
+        {
+            EnabledNtypeText,
+            DisabledNtypeText
+        };
     }
 }
