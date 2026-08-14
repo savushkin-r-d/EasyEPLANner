@@ -31,6 +31,9 @@
             this.projectsListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.dataGroupBox = new System.Windows.Forms.GroupBox();
+            this.directoryBttn = new System.Windows.Forms.Button();
+            this.derictoryTextBox = new System.Windows.Forms.TextBox();
+            this.directoryLabel = new System.Windows.Forms.Label();
             this.disableGateBtn = new System.Windows.Forms.RadioButton();
             this.enableGateBtn = new System.Windows.Forms.RadioButton();
             this.disableEmulationBtn = new System.Windows.Forms.RadioButton();
@@ -54,9 +57,6 @@
             this.cancelBtn = new System.Windows.Forms.Button();
             this.acceptBtn = new System.Windows.Forms.Button();
             this.projLabel = new System.Windows.Forms.Label();
-            this.directoryLabel = new System.Windows.Forms.Label();
-            this.derictoryTextBox = new System.Windows.Forms.TextBox();
-            this.directoryBttn = new System.Windows.Forms.Button();
             this.dataGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -113,6 +113,33 @@
             this.dataGroupBox.TabIndex = 1;
             this.dataGroupBox.TabStop = false;
             this.dataGroupBox.Text = "Параметры";
+            // 
+            // directoryBttn
+            // 
+            this.directoryBttn.Location = new System.Drawing.Point(276, 48);
+            this.directoryBttn.Name = "directoryBttn";
+            this.directoryBttn.Size = new System.Drawing.Size(65, 23);
+            this.directoryBttn.TabIndex = 24;
+            this.directoryBttn.Text = "Показать";
+            this.directoryBttn.UseVisualStyleBackColor = true;
+            this.directoryBttn.Click += new System.EventHandler(this.directoryBttn_Click);
+            // 
+            // derictoryTextBox
+            // 
+            this.derictoryTextBox.Location = new System.Drawing.Point(116, 50);
+            this.derictoryTextBox.Name = "derictoryTextBox";
+            this.derictoryTextBox.ReadOnly = true;
+            this.derictoryTextBox.Size = new System.Drawing.Size(153, 20);
+            this.derictoryTextBox.TabIndex = 23;
+            // 
+            // directoryLabel
+            // 
+            this.directoryLabel.AutoSize = true;
+            this.directoryLabel.Location = new System.Drawing.Point(6, 53);
+            this.directoryLabel.Name = "directoryLabel";
+            this.directoryLabel.Size = new System.Drawing.Size(86, 13);
+            this.directoryLabel.TabIndex = 22;
+            this.directoryLabel.Text = "Папка проекта:";
             // 
             // disableGateBtn
             // 
@@ -337,33 +364,6 @@
             this.projLabel.TabIndex = 6;
             this.projLabel.Text = "Проекты:";
             // 
-            // directoryLabel
-            // 
-            this.directoryLabel.AutoSize = true;
-            this.directoryLabel.Location = new System.Drawing.Point(6, 53);
-            this.directoryLabel.Name = "directoryLabel";
-            this.directoryLabel.Size = new System.Drawing.Size(86, 13);
-            this.directoryLabel.TabIndex = 22;
-            this.directoryLabel.Text = "Папка проекта:";
-            // 
-            // derictoryTextBox
-            // 
-            this.derictoryTextBox.Location = new System.Drawing.Point(116, 50);
-            this.derictoryTextBox.Name = "derictoryTextBox";
-            this.derictoryTextBox.ReadOnly = true;
-            this.derictoryTextBox.Size = new System.Drawing.Size(153, 20);
-            this.derictoryTextBox.TabIndex = 23;
-            // 
-            // directoryBttn
-            // 
-            this.directoryBttn.Location = new System.Drawing.Point(276, 48);
-            this.directoryBttn.Name = "directoryBttn";
-            this.directoryBttn.Size = new System.Drawing.Size(65, 23);
-            this.directoryBttn.TabIndex = 24;
-            this.directoryBttn.Text = "Показать";
-            this.directoryBttn.UseVisualStyleBackColor = true;
-            this.directoryBttn.Click += new System.EventHandler(this.directoryBttn_Click);
-            // 
             // PACSettingsForm
             // 
             this.AcceptButton = this.acceptBtn;
@@ -381,7 +381,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(519, 380);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(519, 344);
+            this.MinimumSize = new System.Drawing.Size(519, 380);
             this.Name = "PACSettingsForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

@@ -101,10 +101,19 @@ namespace InterprojectExchange
                 List<string[]> channelSignals = GetSignalsPairs(
                     GetCurrentProjectSignals(channelName),
                     GetAdvancedProjectSignals(channelName));
-                signals.Add(channelName, channelSignals);
+                signals.Add(channelName, SortBindedSignalPairs(channelSignals));
             }
 
             return signals;
+        }
+
+        /// <summary>
+        /// Ошибочные строки (с "-") — в начале, связанные пары — в конце.
+        /// </summary>
+        private static List<string[]> SortBindedSignalPairs(List<string[]> pairs)
+        {
+            return [.. pairs.OrderBy(pair =>
+                pair.Any(DeviceSignalsInfo.IsUnpaired) ? 0 : 1)];
         }
 
         public string CheckBindingSignals()

@@ -401,6 +401,28 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             });
         }
 
+        [Test]
+        public void GetBindedSignals_PutsUnpairedPairsBeforePairedOnes()
+        {
+            var exchange = CreateExchangeWithModels(
+                out var mainModel, out var advancedModel, out _);
+
+            mainModel.SourceSignals.DO.AddRange(new[] { "DO1", "DO2", "DO3" });
+            advancedModel.ReceiverSignals.DO.AddRange(
+                new[] { "DI1", DeviceSignalsInfo.UnpairedSignal, "DI3" });
+
+            var pairs = exchange.GetBindedSignals()["DO"];
+
+            Assert.Multiple(() =>
+            {
+                CollectionAssert.AreEqual(
+                    new[] { "DO2", DeviceSignalsInfo.UnpairedSignal },
+                    pairs[0]);
+                CollectionAssert.AreEqual(new[] { "DO1", "DI1" }, pairs[1]);
+                CollectionAssert.AreEqual(new[] { "DO3", "DI3" }, pairs[2]);
+            });
+        }
+
         [TestCaseSource(nameof(GetSignalsPairs_Test_CaseSrc))]
         public void GetSignalsPairs_Test(List<string> currSignals,
             List<string> advSignals, List<string[]> expected)
