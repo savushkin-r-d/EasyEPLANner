@@ -90,7 +90,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Прочитать ntype из main.io.lua и выключить узлы с ntype = -1.
         /// </summary>
-        public void LoadNtypesFromLua()
+        public static void LoadNtypesFromLua()
         {
             ApplyNtypesFromMainIoLua();
         }
@@ -118,6 +118,8 @@ namespace EasyEPlanner
             }
             catch (Exception)
             {
+                // Файл main.io.lua может отсутствовать или проект недоступен —
+                // оставляем состояние ntype по умолчанию.
             }
         }
 

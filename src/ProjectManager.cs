@@ -95,7 +95,7 @@ namespace EasyEPlanner
                     IOManager.GetInstance().ResetStoredNtypes();
                 projectConfiguration.ReadIO();
                 if (loadFromLua)
-                    projectConfiguration.LoadNtypesFromLua();
+                    ProjectConfiguration.LoadNtypesFromLua();
                 oProgress.EndPart();
 
                 oProgress.BeginPart(15, "Считывание устройств");

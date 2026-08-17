@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -143,7 +144,7 @@ namespace IO
             return node;
         }
 
-        /// <summary>
+         /// <summary>
         /// Добавление модуля расширения в узел.
         /// </summary>
         /// <param name="nodeIdx">Индекс родительского узла.</param>
@@ -374,14 +375,14 @@ namespace IO
         /// </summary>
         private string CheckDisabledNtypes()
         {
-            var str = "";
+            var messages = new StringBuilder();
             foreach (var node in GetNodesWithExtensions())
             {
                 if (node.CanDisableNtype && !node.NtypeEnabled)
-                    str += $"Узел \"{node.Name}\" отключен;\n";
+                    messages.Append($"Узел \"{node.Name}\" отключен;\n");
             }
 
-            return str;
+            return messages.ToString();
         }
 
         /// <summary>
