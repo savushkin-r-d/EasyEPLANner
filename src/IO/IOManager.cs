@@ -355,6 +355,8 @@ namespace IO
                 }
             }
 
+            str += CheckDisabledNtypes();
+
             long startingIP = ProjectConfiguration
                 .GetInstance().StartingIPInterval;
             long endingIP = ProjectConfiguration.GetInstance()
@@ -362,6 +364,21 @@ namespace IO
             if (startingIP != 0 && endingIP != 0)
             {
                 str += CheckIONodesIPRange(startingIP, endingIP);
+            }
+
+            return str;
+        }
+
+        /// <summary>
+        /// Сообщения об узлах с выключенным ntype.
+        /// </summary>
+        private string CheckDisabledNtypes()
+        {
+            var str = "";
+            foreach (var node in GetNodesWithExtensions())
+            {
+                if (node.CanDisableNtype && !node.NtypeEnabled)
+                    str += $"Узел \"{node.Name}\" отключен;\n";
             }
 
             return str;

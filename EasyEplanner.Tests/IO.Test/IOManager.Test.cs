@@ -142,6 +142,27 @@ namespace IOTests
             Assert.IsTrue(restored.NtypeEnabled);
         }
 
+        [Test]
+        public void Check_DisabledNode_ReportsNodeName()
+        {
+            var ioManager = IOManager.GetInstance();
+            ioManager.ResetStoredNtypes();
+            var controller = new IONode("AXC F 2152", 1, 100, StrStub, "A100", StrStub, StrStub);
+            var coupler = new IONode("750-352", 2, 200, StrStub, "A200", StrStub, StrStub);
+            coupler.NtypeEnabled = false;
+            SetNodes(ioManager, new List<IIONode> { controller, coupler });
+
+            var method = typeof(IOManager).GetMethod("CheckDisabledNtypes",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            string errors = (string)method.Invoke(ioManager, null);
+
+            Assert.Multiple(() =>
+            {
+                StringAssert.Contains("Узел \"A200\" отключен;", errors);
+                StringAssert.DoesNotContain("Узел \"A100\" отключен;", errors);
+            });
+        }
+
         private static IEnumerable<IIONode> GetNodesWithExtensions(IOManager ioManager)
         {
             var method = typeof(IOManager).GetMethod("GetNodesWithExtensions",
