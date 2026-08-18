@@ -527,6 +527,7 @@
     <Compile Include="StaticHelper\IEplanFunction.cs" />
     <Compile Include="StaticHelper\IOHelper.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
+    <Compile Include="StaticHelper\KeyboardHookHelper.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
     <Compile Include="StaticHelper\RegexDefaults.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />

@@ -166,8 +166,7 @@ namespace EasyEPlanner.Devices.View
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
-            const short shifted = 0x80;
-            bool ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & shifted) > 0;
+            bool ctrl = KeyboardHookHelper.IsCtrlPressed();
             uint vkCode = lParam.vkCode;
 
             if (TryBlockCtrlPageNavigation(wParam, ctrl, vkCode, out var handled))
@@ -175,6 +174,9 @@ namespace EasyEPlanner.Devices.View
 
             if (code < 0 || devicesTree is null || !ShouldKeepKeyboardHook())
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+
+            if (KeyboardHookHelper.ShouldBlockPlainTab(wParam, vkCode))
+                return (IntPtr)1;
 
             if (TryBlockClipboardKeys(wParam, vkCode, ctrl, out handled))
                 return handled;
