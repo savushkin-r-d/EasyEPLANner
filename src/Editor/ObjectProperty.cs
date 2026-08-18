@@ -431,6 +431,14 @@ namespace Editor
         public void ResetFilter()
         {
             Filtred = null;
+            ThisOrParentsContains = false;
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    item.ResetFilter();
+                }
+            }
         }
 
         public bool Filter(string searchString, bool hideEmptyItems)
@@ -444,25 +452,43 @@ namespace Editor
                 return Filtred.Value;
             }
 
+            bool isVisibleByFill = IsFilled || !hideEmptyItems;
             if (Contains(searchString) && (IsFilled || !hideEmptyItems))
             {
                 if (!NewEditorControl.FoundTreeViewItemsList.Contains(this))
                     NewEditorControl.FoundTreeViewItemsList.Add(this);
+                ThisOrParentsContains = true;
                 Filtred = true;
             }
-            else
+
+            ThisOrParentsContains |= ParentContainsSearch();
+
+            var childsPassedFilter = false;
+            if (Items != null)
             {
-                Filtred = ((Parent as TreeViewItem)?.ThisOrParentsContains ?? false) && (IsFilled || !hideEmptyItems);
+                foreach (var item in Items)
+                {
+                    childsPassedFilter |= item.Filter(searchString, hideEmptyItems);
+                }
             }
 
+            Filtred = (childsPassedFilter || ThisOrParentsContains) &&
+                isVisibleByFill;
             return Filtred.Value;
         }
+
+        private bool ParentContainsSearch() =>
+            (Parent as TreeViewItem)?.ThisOrParentsContains ??
+            (Parent as ObjectProperty)?.ThisOrParentsContains ??
+            false;
 
         public virtual bool Contains(string value)
         {
             var valueForSearch = $"{DisplayText[0]} {EditText[0]} {DisplayText[1]} {EditText[1]}";
             return Search.Contains(valueForSearch, value);
         }
+
+        public bool ThisOrParentsContains { get; set; } = false;
 
         public virtual bool ContainsBaseObject
         {

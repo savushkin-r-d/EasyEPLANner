@@ -1,5 +1,7 @@
-﻿using Eplan.EplApi.DataModel;
+using Eplan.EplApi.DataModel;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using StaticHelper;
 using EplanDevice;
 using System.Linq;
@@ -82,6 +84,43 @@ namespace EasyEPlanner
         public void ReadIO() 
         {
             IOReader.Read();
+            IO.IOManager.GetInstance().ApplyStoredNtypes();
+        }
+
+        /// <summary>
+        /// Прочитать ntype из main.io.lua и выключить узлы с ntype = -1.
+        /// </summary>
+        public static void LoadNtypesFromLua()
+        {
+            ApplyNtypesFromMainIoLua();
+        }
+
+        /// <summary>
+        /// Прочитать ntype из main.io.lua и выключить узлы с ntype = -1.
+        /// </summary>
+        private static void ApplyNtypesFromMainIoLua()
+        {
+            try
+            {
+                string projectName = EProjectManager.GetInstance()
+                    .GetCurrentProjectName();
+                if (string.IsNullOrEmpty(projectName))
+                    return;
+
+                string path = ProjectManager.GetInstance()
+                    .GetPtusaProjectsPath(projectName) + projectName +
+                    @"\main.io.lua";
+                if (!File.Exists(path))
+                    return;
+
+                IO.IOManager.GetInstance()
+                    .ApplyNtypesFromLua(File.ReadAllText(path));
+            }
+            catch (Exception)
+            {
+                // Файл main.io.lua может отсутствовать или проект недоступен —
+                // оставляем состояние ntype по умолчанию.
+            }
         }
 
         /// <summary>

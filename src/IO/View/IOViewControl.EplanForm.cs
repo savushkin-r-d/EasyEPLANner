@@ -1,5 +1,6 @@
 ﻿using EasyEPlanner;
 using PInvoke;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -151,8 +152,7 @@ namespace IO.View
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
-            const short SHIFTED = 0x80;
-            bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
+            bool Ctrl = KeyboardHookHelper.IsCtrlPressed();
             uint vkCode = lParam.vkCode;
 
             // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
@@ -166,7 +166,10 @@ namespace IO.View
 
 
             if (code < 0 || StructPLC is null || !ShouldKeepKeyboardHook())
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam); 
+
+            if (KeyboardHookHelper.ShouldBlockPlainTab(wParam, vkCode))
+                return (IntPtr)1;
 
             //Отпускание клавиш - если активно окно редактора, то не пускаем дальше.
             if (wParam is PI.WM.KEYUP or PI.WM.CHAR &&

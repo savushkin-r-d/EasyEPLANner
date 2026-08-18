@@ -1,9 +1,10 @@
-﻿using BrightIdeasSoftware;
+using BrightIdeasSoftware;
 using EasyEPlanner;
 using Editor;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.Scripting;
 using IO.ViewModel;
+using IO.ViewModel.ViewInterface;
 using PInvoke;
 using StaticHelper;
 using System;
@@ -28,6 +29,8 @@ namespace IO.View
         private bool isCellEditing = false;
 
         private bool cellEditUsesMultiline = false;
+
+        private bool cellEditUsesComboBox = false;
 
         private readonly PlcCellEditKeyEngine cellEditKeyEngine = new();
 
@@ -1353,15 +1356,44 @@ namespace IO.View
 
         private TextBox textBoxCellEditor;
 
+        private ComboBox comboBoxCellEditor;
+
         private void CellEditStarting(object sender, CellEditEventArgs e)
         {
-            if (StructPLC.SelectedObject is not IEditable item || e.Column.Index != 1)
+            if (e.Column.Index != 1)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (StructPLC.SelectedObject is IComboBoxEditable comboItem)
+            {
+                isCellEditing = true;
+                cellEditUsesComboBox = true;
+                cellEditUsesMultiline = false;
+                cellEditItem = comboItem;
+                InitComboBoxCellEditor(comboItem.ComboBoxItems);
+                string value = e.Value?.ToString() ?? comboItem.Value;
+                int index = comboBoxCellEditor.FindStringExact(value);
+                if (index >= 0)
+                    comboBoxCellEditor.SelectedIndex = index;
+                comboBoxCellEditor.Bounds = GetCellEditorBounds(StructPLC, e.CellBounds);
+                e.Control = comboBoxCellEditor;
+                comboBoxCellEditor.Focus();
+                cellEditKeyEngine.MultilineEditActive = false;
+                InstallKeyboardHook();
+                StructPLC.Freeze();
+                return;
+            }
+
+            if (StructPLC.SelectedObject is not IEditable item)
             {
                 e.Cancel = true;
                 return;
             }
 
             isCellEditing = true;
+            cellEditUsesComboBox = false;
             cellEditItem = item;
             cellEditUsesMultiline = item is IClamp;
 
@@ -1392,8 +1424,10 @@ namespace IO.View
 
                 if (cancelChanges || editable is null)
                 {
+                    RemoveCellEditorControls();
                     e.Cancel = true;
                     cancelChanges = false;
+                    cellEditUsesComboBox = false;
                     cellEditUsesMultiline = false;
 
                     StructPLC.Unfreeze();
@@ -1401,18 +1435,29 @@ namespace IO.View
                     return;
                 }
 
-                StructPLC.Controls.Remove(textBoxCellEditor);
+                bool modified;
+                if (cellEditUsesComboBox)
+                {
+                    var combo = comboBoxCellEditor ?? e.Control as ComboBox;
+                    e.NewValue = combo?.Text ?? string.Empty;
+                    modified = editable.SetValue(e.NewValue?.ToString() ?? string.Empty);
+                }
+                else
+                {
+                    string text = textBoxCellEditor?.Text
+                        ?? e.NewValue?.ToString()
+                        ?? string.Empty;
+                    if (cellEditUsesMultiline)
+                        text = EplanMultilineText.ParseFromEditor(text,
+                            CommonConst.NewLineWithCarriageReturn);
 
-                string text = textBoxCellEditor?.Text
-                    ?? e.NewValue?.ToString()
-                    ?? string.Empty;
-                if (cellEditUsesMultiline)
-                    text = EplanMultilineText.ParseFromEditor(text,
-                        CommonConst.NewLineWithCarriageReturn);
+                    modified = editable is IClamp clamp
+                        ? ClampFunctionalTextBinder.TryApply(clamp, text)
+                        : editable.SetValue(text);
+                }
 
-                bool modified = editable is IClamp clamp
-                    ? ClampFunctionalTextBinder.TryApply(clamp, text)
-                    : editable.SetValue(text);
+                RemoveCellEditorControls();
+                cellEditUsesComboBox = false;
                 cellEditUsesMultiline = false;
 
                 if (modified)
@@ -1427,6 +1472,27 @@ namespace IO.View
             finally
             {
                 MaybeReleaseKeyboardHook();
+            }
+        }
+
+        private void RemoveCellEditorControls()
+        {
+            if (comboBoxCellEditor is not null)
+            {
+                comboBoxCellEditor.LostFocus -= ComboBoxCellEditor_LostFocus;
+                comboBoxCellEditor.KeyDown -= CellEditor_KeyDown;
+                if (StructPLC.Controls.Contains(comboBoxCellEditor))
+                    StructPLC.Controls.Remove(comboBoxCellEditor);
+                comboBoxCellEditor = null;
+            }
+
+            if (textBoxCellEditor is not null)
+            {
+                textBoxCellEditor.LostFocus -= CellEditor_LostFocus;
+                textBoxCellEditor.KeyDown -= CellEditor_KeyDown;
+                if (StructPLC.Controls.Contains(textBoxCellEditor))
+                    StructPLC.Controls.Remove(textBoxCellEditor);
+                textBoxCellEditor = null;
             }
         }
 
@@ -1469,6 +1535,28 @@ namespace IO.View
             StructPLC.Controls.Add(textBoxCellEditor);
         }
 
+        private void InitComboBoxCellEditor(IEnumerable<string> items)
+        {
+            comboBoxCellEditor = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = StructPLC.Font,
+                IntegralHeight = false,
+                FlatStyle = FlatStyle.Flat,
+            };
+            comboBoxCellEditor.Items.AddRange(items.Cast<object>().ToArray());
+            comboBoxCellEditor.LostFocus += ComboBoxCellEditor_LostFocus;
+            comboBoxCellEditor.KeyDown += CellEditor_KeyDown;
+            StructPLC.Controls.Add(comboBoxCellEditor);
+        }
+
+        private void ComboBoxCellEditor_LostFocus(object sender, EventArgs e)
+        {
+            if (!isCellEditing || sender is not ComboBox combo || combo.DroppedDown)
+                return;
+
+            StructPLC.FinishCellEdit();
+        }
 
         private void CellEditor_LostFocus(object sender, EventArgs e)
         {
@@ -1642,6 +1730,13 @@ namespace IO.View
             if (e.Model is IClamp clamp && !clamp.Bound)
             {
                 e.Item.SubItems[1].ForeColor = Color.LightSlateGray;
+            }
+
+            if (e.Model is Node node && node.IsNtypeDisabled)
+            {
+                e.Item.ForeColor = Color.Gray;
+                foreach (ListViewItem.ListViewSubItem subItem in e.Item.SubItems)
+                    subItem.ForeColor = Color.Gray;
             }
         }
 
