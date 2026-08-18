@@ -23,6 +23,11 @@ namespace InterprojectExchange
         bool Loaded { get; set; }
 
         /// <summary>
+        /// Есть ли ошибка привязки сигналов (несовпадение количества каналов)
+        /// </summary>
+        bool HasBindingError { get; set; }
+
+        /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
         DeviceSignalsInfo SourceSignals { get; }

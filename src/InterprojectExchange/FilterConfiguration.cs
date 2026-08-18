@@ -160,6 +160,13 @@ namespace InterprojectExchange
             {
                 foreach (var signalPair in allSignals[signalGroup])
                 {
+                    // Сигналы из ошибочных (непарных) строк оставляем
+                    // в списках устройств для возможности исправления
+                    if (signalPair.Any(DeviceSignalsInfo.IsUnpaired))
+                    {
+                        continue;
+                    }
+
                     var signal = signalPair[(int)filterList];
                     projectSignals.Add(signal);
                 }

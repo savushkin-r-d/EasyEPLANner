@@ -23,6 +23,19 @@ namespace EasyEplannerEasyEplannerTests.InterprojectExchangeTest
         }
 
         [Test]
+        public void HasBindingErrorGetSetTest()
+        {
+            var model = new AdvancedProjectModel
+            {
+                HasBindingError = true
+            };
+
+            Assert.IsTrue(model.HasBindingError);
+            model.HasBindingError = false;
+            Assert.IsFalse(model.HasBindingError);
+        }
+
+        [Test]
         public void AddPlcData()
         {
             var model = new AdvancedProjectModel

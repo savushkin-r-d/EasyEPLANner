@@ -54,6 +54,16 @@ namespace InterprojectExchange
         private int advProjPrevSelectedIndex = 0;
 
         /// <summary>
+        /// Выбранная ошибочная строка для восстановления связи двух сигналов
+        /// </summary>
+        private ListViewItem pendingUnpairedBindItem;
+
+        /// <summary>
+        /// Цвет ошибочных (несвязанных) сигналов
+        /// </summary>
+        private static readonly Color ErrorSignalColor = Color.OrangeRed;
+
+        /// <summary>
         /// Шрифт для <see cref="advProjNameComboBox"/>
         /// </summary>
         private static readonly Font advCmbBxFont = new Font("Arial", 8, FontStyle.Regular);
@@ -129,10 +139,6 @@ namespace InterprojectExchange
         /// <summary>
         /// Проверка соответсвия количества связанных сигналов
         /// </summary>
-        /// <returns>
-        /// true - есть ошибка
-        /// false - ошибки нет
-        /// </returns>
         private void CheckBindingSignals()
         {
             string err = interprojectExchange.CheckBindingSignals();
@@ -140,7 +146,12 @@ namespace InterprojectExchange
             if (string.IsNullOrEmpty(err)) 
                 return;
 
-            ShowErrorMessage($"Несоответствие количества каналов:\n{err}");
+            ShowWarningMessage(
+                "Несоответствие количества каналов.\n" +
+                "Проекты с ошибками доступны для выбора и исправления,\n" +
+                "но не будут сохранены, пока ошибки не исправлены:\n\n" +
+                err,
+                MessageBoxButtons.OK);
         }
 
         /// <summary>
@@ -161,7 +172,10 @@ namespace InterprojectExchange
                 currProjSearchBox_TextChanged(this, new EventArgs());
 
                 bool useGroupsFilter = filterConfiguration.UseDeviceGroups;
-                bindedSignalsList.ShowGroups = useGroupsFilter;
+                if (bindedSignalsList.ShowGroups != useGroupsFilter)
+                {
+                    bindedSignalsList.ShowGroups = useGroupsFilter;
+                }
             }
 
             if (hardRefilter)
@@ -207,21 +221,37 @@ namespace InterprojectExchange
             ListViewItemSelectionChangedEventArgs e)
         {
             string advProjDev = e.Item.SubItems[0].Text;
-            SelectedListViewItemCollection currProjDevs =
-                currentProjSignalsList.SelectedItems;
-
-            bool needChange = (advProjDev != null &&
-                currProjDevs.Count != 0 && e.IsSelected);
-            if (!needChange)
+            if (!e.IsSelected || advProjDev == null)
             {
                 return;
             }
 
             var selectedBind = bindedSignalsList.SelectedItems
                 .OfType<ListViewItem>().FirstOrDefault();
+            if (TryFillUnpairedFromDeviceList(selectedBind, advProjDev,
+                fillAdvancedSide: true))
+            {
+                return;
+            }
+
+            SelectedListViewItemCollection currProjDevs =
+                currentProjSignalsList.SelectedItems;
+
+            bool needChange = currProjDevs.Count != 0;
+            if (!needChange)
+            {
+                return;
+            }
+
+            if (BlockNewBindingsIfProjectHasErrors())
+            {
+                return;
+            }
+
             var editBind = !filterConfiguration.HideBindedSignals;
 
-            if (editBind && selectedBind is not null)
+            if (editBind && selectedBind is not null &&
+                !IsUnpairedBindItem(selectedBind))
             {
                 bool mainProject = false;
                 string groupName = selectedBind.Group.Name;
@@ -255,22 +285,37 @@ namespace InterprojectExchange
             ListViewItemSelectionChangedEventArgs e)
         {
             string currProjDev = e.Item.SubItems[1].Text;
+            if (!e.IsSelected || currProjDev == null)
+            {
+                return;
+            }
+
+            var selectedBind = bindedSignalsList.SelectedItems
+                 .OfType<ListViewItem>().FirstOrDefault();
+            if (TryFillUnpairedFromDeviceList(selectedBind, currProjDev,
+                fillAdvancedSide: false))
+            {
+                return;
+            }
+
             SelectedListViewItemCollection advProjDevs =
                 advancedProjSignalsList.SelectedItems;
 
-            bool needChange = (currProjDev != null &&
-                advProjDevs.Count != 0 && e.IsSelected);
+            bool needChange = advProjDevs.Count != 0;
             if (!needChange)
             {
                 return;
             }
 
+            if (BlockNewBindingsIfProjectHasErrors())
+            {
+                return;
+            }
 
-            var selectedBind = bindedSignalsList.SelectedItems
-                 .OfType<ListViewItem>().FirstOrDefault();
             var editBind = !filterConfiguration.HideBindedSignals;
 
-            if (editBind && selectedBind is not null)
+            if (editBind && selectedBind is not null &&
+                !IsUnpairedBindItem(selectedBind))
             {
                 bool mainProject = true;
                 string groupName = selectedBind.Group.Name;
@@ -293,6 +338,88 @@ namespace InterprojectExchange
             string advProjDevType = advProjDevs[0].Tag.ToString();
             AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
                 advProjDev);
+        }
+
+        /// <summary>
+        /// Пока есть ошибки привязки, нельзя создавать или менять обычные связи.
+        /// Исправление ошибочных строк при этом остаётся доступным.
+        /// </summary>
+        private bool BlockNewBindingsIfProjectHasErrors()
+        {
+            if (interprojectExchange.SelectedModel?.HasBindingError is not true)
+            {
+                return false;
+            }
+
+            ShowWarningMessage(
+                "Нельзя связать сигналы, пока в проекте есть ошибки.",
+                MessageBoxButtons.OK);
+
+            ClearAllListViewsSelection();
+            return true;
+        }
+
+        /// <summary>
+        /// Заполнить "-" в ошибочной строке сигналом из списка устройств
+        /// </summary>
+        private bool TryFillUnpairedFromDeviceList(ListViewItem selectedBind,
+            string deviceName, bool fillAdvancedSide)
+        {
+            if (selectedBind == null || !IsUnpairedBindItem(selectedBind))
+            {
+                return false;
+            }
+
+            string knownSignal = fillAdvancedSide
+                ? selectedBind.SubItems[0].Text
+                : selectedBind.SubItems[1].Text;
+            string emptySide = fillAdvancedSide
+                ? selectedBind.SubItems[1].Text
+                : selectedBind.SubItems[0].Text;
+
+            if (!DeviceSignalsInfo.IsUnpaired(emptySide) ||
+                DeviceSignalsInfo.IsUnpaired(knownSignal))
+            {
+                return false;
+            }
+
+            string groupName = selectedBind.Group.Name;
+            bool success = interprojectExchange.FillUnpairedSignal(groupName,
+                knownSignal, deviceName, fillAdvancedSide);
+            if (success)
+            {
+                pendingUnpairedBindItem = null;
+                string currentSignal = fillAdvancedSide
+                    ? knownSignal
+                    : deviceName;
+                string advancedSignal = fillAdvancedSide
+                    ? deviceName
+                    : knownSignal;
+
+                bindedSignalsList.BeginUpdate();
+                try
+                {
+                    RemoveMatchingUnpairedBindItem(selectedBind.Group,
+                        deviceName, fillAdvancedSide, selectedBind);
+                    selectedBind.Remove();
+                    InsertPairedBindItem(groupName, currentSignal,
+                        advancedSignal);
+                }
+                finally
+                {
+                    bindedSignalsList.EndUpdate();
+                }
+
+                RemoveDeviceFromListIfHidden(deviceName, fillAdvancedSide);
+                ClearAllListViewsSelection();
+                RefreshAdvProjectComboBoxDraw();
+            }
+            else
+            {
+                ShowErrorMessage("Ошибка восстановления связи сигнала");
+            }
+
+            return true;
         }
             
         /// <summary>
@@ -361,25 +488,25 @@ namespace InterprojectExchange
                     currentProjectDeviceType, advancedProjectDeviceType);
                 if (itemGroupName != null)
                 {
-                    var info = new string[]
-                    {
-                        currentProjectDevice,
-                        advancedProjectDevice
-                    };
-                    ListViewGroup itemGroup = bindedSignalsList
-                        .Groups[itemGroupName];
-                    var item = new ListViewItem(info, itemGroup);
-
                     bool success = interprojectExchange.BindSignals(
-                        itemGroup.Name, currentProjectDevice, 
+                        itemGroupName, currentProjectDevice,
                         advancedProjectDevice);
                     if (success)
                     {
-                        bindedSignalsList.Items.Add(item);
+                        bindedSignalsList.BeginUpdate();
+                        try
+                        {
+                            InsertPairedBindItem(itemGroupName,
+                                currentProjectDevice, advancedProjectDevice);
+                        }
+                        finally
+                        {
+                            bindedSignalsList.EndUpdate();
+                        }
 
-                        bool hardRefilter = false;
-                        RefilterListViews(hardRefilter, currentProjectDevice,
+                        RefilterListViews(false, currentProjectDevice,
                             advancedProjectDevice);
+                        RefreshAdvProjectComboBoxDraw();
                     }
                     else
                     {
@@ -616,6 +743,7 @@ namespace InterprojectExchange
             if (success)
             {
                 bindedSignalsList.Items.Remove(selectedItem);
+                RefreshAdvProjectComboBoxDraw();
 
                 if (selectedItemIndex >= 0 && bindedSignalsList.Items.Count > 0)
                 {
@@ -647,22 +775,105 @@ namespace InterprojectExchange
         /// </summary>
         private void ClearAllListViewsSelection()
         {
+            pendingUnpairedBindItem = null;
             bindedSignalsList.SelectedIndices.Clear();
             currentProjSignalsList.SelectedIndices.Clear();
             advancedProjSignalsList.SelectedIndices.Clear();
         }
 
+        private static bool IsUnpairedBindItem(ListViewItem item)
+        {
+            if (item is null || item.SubItems.Count < 2)
+            {
+                return false;
+            }
+
+            return DeviceSignalsInfo.IsUnpaired(item.SubItems[0].Text) ||
+                DeviceSignalsInfo.IsUnpaired(item.SubItems[1].Text);
+        }
+
+        /// <summary>
+        /// Попытка связать две ошибочные строки в списке связанных сигналов
+        /// </summary>
+        private bool TryPairUnpairedBindItems(ListViewItem first,
+            ListViewItem second)
+        {
+            if (first == null || second == null ||
+                first == second ||
+                first.Group?.Name != second.Group?.Name)
+            {
+                return false;
+            }
+
+            string firstCurr = first.SubItems[0].Text;
+            string firstAdv = first.SubItems[1].Text;
+            string secondCurr = second.SubItems[0].Text;
+            string secondAdv = second.SubItems[1].Text;
+
+            string currentSignal = null;
+            string advancedSignal = null;
+
+            if (!DeviceSignalsInfo.IsUnpaired(firstCurr) &&
+                DeviceSignalsInfo.IsUnpaired(firstAdv) &&
+                DeviceSignalsInfo.IsUnpaired(secondCurr) &&
+                !DeviceSignalsInfo.IsUnpaired(secondAdv))
+            {
+                currentSignal = firstCurr;
+                advancedSignal = secondAdv;
+            }
+            else if (DeviceSignalsInfo.IsUnpaired(firstCurr) &&
+                !DeviceSignalsInfo.IsUnpaired(firstAdv) &&
+                !DeviceSignalsInfo.IsUnpaired(secondCurr) &&
+                DeviceSignalsInfo.IsUnpaired(secondAdv))
+            {
+                currentSignal = secondCurr;
+                advancedSignal = firstAdv;
+            }
+            else
+            {
+                return false;
+            }
+
+            bool success = interprojectExchange.PairUnpairedSignals(
+                first.Group.Name, currentSignal, advancedSignal);
+            if (success)
+            {
+                pendingUnpairedBindItem = null;
+                string groupName = first.Group.Name;
+                bindedSignalsList.BeginUpdate();
+                try
+                {
+                    first.Remove();
+                    second.Remove();
+                    InsertPairedBindItem(groupName, currentSignal,
+                        advancedSignal);
+                }
+                finally
+                {
+                    bindedSignalsList.EndUpdate();
+                }
+
+                ClearAllListViewsSelection();
+                RefreshAdvProjectComboBoxDraw();
+            }
+            else
+            {
+                ShowErrorMessage("Ошибка восстановления связи сигналов");
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Клик мышью на списке связанных сигналов
         /// </summary>
-        private void bindedSignalsList_MouseClick(object sender, 
+        private void bindedSignalsList_MouseClick(object sender,
             MouseEventArgs e)
         {
             ListViewItem item = bindedSignalsList.GetItemAt(e.X, e.Y);
-            if (item != null)
+            if (item != null && item.ListView != null)
             {
-                ListViewItem selectedItem = bindedSignalsList.SelectedItems[0];
-                HighlightObjectsInListViews(selectedItem);
+                HighlightObjectsInListViews(item);
             }
         }
 
@@ -686,10 +897,28 @@ namespace InterprojectExchange
         private void bindedSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            if (e.IsSelected)
+            if (!e.IsSelected)
             {
-                HighlightObjectsInListViews(e.Item);
+                return;
             }
+
+            if (IsUnpairedBindItem(e.Item))
+            {
+                if (pendingUnpairedBindItem != null &&
+                    pendingUnpairedBindItem != e.Item &&
+                    TryPairUnpairedBindItems(pendingUnpairedBindItem, e.Item))
+                {
+                    return;
+                }
+
+                pendingUnpairedBindItem = e.Item;
+            }
+            else
+            {
+                pendingUnpairedBindItem = null;
+            }
+
+            HighlightObjectsInListViews(e.Item);
         }
 
         /// <summary>
@@ -709,20 +938,32 @@ namespace InterprojectExchange
                 string currProjDevText = selectedItem.SubItems[0].Text;
                 string advProjDevText = selectedItem.SubItems[1].Text;
 
-                ListViewItem currProjItem = currentProjSignalsList
-                    .FindItemWithText(currProjDevText);
-                ListViewItem advProjItem = advancedProjSignalsList
-                    .FindItemWithText(advProjDevText);
-                if (currProjItem != null && advProjItem != null)
+                ListViewItem currProjItem = DeviceSignalsInfo
+                    .IsUnpaired(currProjDevText)
+                    ? null
+                    : currentProjSignalsList.FindItemWithText(currProjDevText);
+                ListViewItem advProjItem = DeviceSignalsInfo
+                    .IsUnpaired(advProjDevText)
+                    ? null
+                    : advancedProjSignalsList.FindItemWithText(advProjDevText);
+
+                if (currProjItem != null)
                 {
                     currProjItem.Selected = true;
                     currProjItem.EnsureVisible();
+                }
+                else
+                {
+                    currentProjSignalsList.SelectedIndices.Clear();
+                }
+
+                if (advProjItem != null)
+                {
                     advProjItem.Selected = true;
                     advProjItem.EnsureVisible();
                 }
                 else
                 {
-                    currentProjSignalsList.SelectedIndices.Clear();
                     advancedProjSignalsList.SelectedIndices.Clear();
                 }
 
@@ -831,6 +1072,25 @@ namespace InterprojectExchange
 
             advancedProjSignalsList.ItemSelectionChanged +=
                 advancedProjSignalsList_ItemSelectionChanged;
+        }
+
+        /// <summary>
+        /// Если включено скрытие связанных сигналов — убрать устройство
+        /// из соответствующего списка без полной пересборки.
+        /// </summary>
+        private void RemoveDeviceFromListIfHidden(string deviceName,
+            bool fromAdvancedProject)
+        {
+            if (!filterConfiguration.HideBindedSignals ||
+                string.IsNullOrEmpty(deviceName))
+            {
+                return;
+            }
+
+            ListView list = fromAdvancedProject
+                ? advancedProjSignalsList
+                : currentProjSignalsList;
+            list.FindItemWithText(deviceName)?.Remove();
         }
 
         /// <summary>
@@ -999,15 +1259,17 @@ namespace InterprojectExchange
             }
 
             if (selectedIndex >= 0 &&
-                selectedIndex != advProjPrevSelectedIndex &&
-                model?.Loaded is true)
+                selectedIndex != advProjPrevSelectedIndex)
             {
-                LoadAdvProjData(advProjNameComboBox.Text);
-                advProjPrevSelectedIndex = selectedIndex;
-            }
-            else
-            {
-                advProjNameComboBox.SelectedIndex = advProjPrevSelectedIndex;
+                if (model?.Loaded is false)
+                {
+                    advProjNameComboBox.SelectedIndex = advProjPrevSelectedIndex;
+                }
+                else
+                {
+                    LoadAdvProjData(advProjNameComboBox.Text);
+                    advProjPrevSelectedIndex = selectedIndex;
+                }
             }
         }
 
@@ -1043,6 +1305,69 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Удалить дубликат ошибочной строки с тем же устройством.
+        /// </summary>
+        private void RemoveMatchingUnpairedBindItem(ListViewGroup group,
+            string deviceName, bool fillAdvancedSide, ListViewItem except)
+        {
+            int filledSide = fillAdvancedSide ? 1 : 0;
+            int emptySide = fillAdvancedSide ? 0 : 1;
+
+            foreach (ListViewItem item in bindedSignalsList.Items)
+            {
+                if (item == except || item.Group != group)
+                {
+                    continue;
+                }
+
+                if (item.SubItems[filledSide].Text == deviceName &&
+                    DeviceSignalsInfo.IsUnpaired(item.SubItems[emptySide].Text))
+                {
+                    item.Remove();
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Добавить связанную пару в конец группы (под ошибочными строками).
+        /// </summary>
+        private void InsertPairedBindItem(string groupName,
+            string currentSignal, string advancedSignal)
+        {
+            ListViewGroup group = bindedSignalsList.Groups[groupName];
+            var item = new ListViewItem(
+                new[] { currentSignal, advancedSignal }, group);
+            bindedSignalsList.Items.Insert(GetGroupEndInsertIndex(group), item);
+            item.Group = group;
+        }
+
+        private int GetGroupEndInsertIndex(ListViewGroup group)
+        {
+            for (int i = bindedSignalsList.Items.Count - 1; i >= 0; i--)
+            {
+                if (bindedSignalsList.Items[i].Group == group)
+                {
+                    return i + 1;
+                }
+            }
+
+            string[] order = interprojectExchange.DeviceChannelsNames;
+            int groupOrder = Array.IndexOf(order, group.Name);
+            for (int i = 0; i < bindedSignalsList.Items.Count; i++)
+            {
+                int otherOrder = Array.IndexOf(order,
+                    bindedSignalsList.Items[i].Group?.Name);
+                if (otherOrder > groupOrder)
+                {
+                    return i;
+                }
+            }
+
+            return bindedSignalsList.Items.Count;
+        }
+
+        /// <summary>
         /// Перезагрузка сигналов в ListView
         /// </summary>
         private void ReloadListViewWithSignals()
@@ -1050,20 +1375,38 @@ namespace InterprojectExchange
             if(string.IsNullOrEmpty(advProjNameComboBox.SelectedItem?.ToString()))
                 return;
 
-            bindedSignalsList.Items.Clear();
-
-            var signals = interprojectExchange.GetBindedSignals();
-
-            foreach (var signalType in signals.Keys)
+            bindedSignalsList.BeginUpdate();
+            try
             {
-                ListViewGroup signalGroup = bindedSignalsList
-                    .Groups[signalType];
-                foreach(var signalPairs in signals[signalType])
+                bindedSignalsList.Items.Clear();
+                pendingUnpairedBindItem = null;
+
+                var signals = interprojectExchange.GetBindedSignals();
+
+                foreach (var signalType in signals.Keys)
                 {
-                    var item = new ListViewItem(signalPairs, signalGroup);
-                    bindedSignalsList.Items.Add(item);
+                    ListViewGroup signalGroup = bindedSignalsList
+                        .Groups[signalType];
+                    foreach (var signalPairs in signals[signalType])
+                    {
+                        var item = new ListViewItem(signalPairs, signalGroup);
+                        if (signalPairs.Any(DeviceSignalsInfo.IsUnpaired))
+                        {
+                            item.ForeColor = ErrorSignalColor;
+                        }
+                        bindedSignalsList.Items.Add(item);
+                    }
                 }
             }
+            finally
+            {
+                bindedSignalsList.EndUpdate();
+            }
+        }
+
+        private void RefreshAdvProjectComboBoxDraw()
+        {
+            advProjNameComboBox.Refresh();
         }
 
         /// <summary>
@@ -1143,6 +1486,24 @@ namespace InterprojectExchange
         /// <param name="e"></param>
         private void saveButton_Click(object sender, EventArgs e)
         {
+            string[] errorProjects = interprojectExchange
+                .GetModelsWithBindingErrors();
+            if (errorProjects.Length > 0)
+            {
+                string projects = string.Join(";\n", errorProjects);
+                string message =
+                    "Следующие проекты содержат ошибки привязки сигналов " +
+                    "и не будут сохранены:\n" +
+                    projects +
+                    ";\n\nПродолжить сохранение остальных проектов?";
+                DialogResult result = ShowWarningMessage(message,
+                    MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+
             interprojectExchange.Save();
             Close();
         }
@@ -1150,6 +1511,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Стиль элементов в <see cref="advProjNameComboBox"/>: <br/>
         /// Проект загружен    - обычный шрифт <br/>
+        /// Проект с ошибкой   - красный текст <br/>
         /// Проект не загружен - серый текст
         /// </summary>
         private void advProjNameComboBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -1158,15 +1520,27 @@ namespace InterprojectExchange
                 return;
 
             var model = interprojectExchange.GetModel(advProjNameComboBox.Items[e.Index].ToString());
+            string text = advProjNameComboBox.Items[e.Index].ToString();
 
-            if (model?.Loaded is false) //We are disabling item based on Index, you can have your logic here
+            if (model?.Loaded is false)
             {
-                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), advCmbBxFont, Brushes.LightGray, e.Bounds);
+                e.Graphics.DrawString(text, advCmbBxFont, Brushes.LightGray,
+                    e.Bounds);
+            }
+            else if (model?.HasBindingError is true)
+            {
+                e.DrawBackground();
+                using (var brush = new SolidBrush(ErrorSignalColor))
+                {
+                    e.Graphics.DrawString(text, advCmbBxFont, brush, e.Bounds);
+                }
+                e.DrawFocusRectangle();
             }
             else
             {
                 e.DrawBackground();
-                e.Graphics.DrawString(advProjNameComboBox.Items[e.Index].ToString(), advCmbBxFont, Brushes.Black, e.Bounds);
+                e.Graphics.DrawString(text, advCmbBxFont, Brushes.Black,
+                    e.Bounds);
                 e.DrawFocusRectangle();
             }
         }
