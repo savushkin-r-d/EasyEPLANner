@@ -349,7 +349,7 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             Directory.CreateDirectory(invalidProjectDir);
 
             var mainModel = Mock.Of<ICurrentProjectModel>(m =>
-                m.PathToProject == projectsDir &&
+                m.PathToProject == mainProjectDir &&
                 m.ProjectName == "MAIN" &&
                 m.Loaded == true &&
                 m.HasBindingError == false &&
@@ -367,7 +367,7 @@ namespace EasyEplannerTests.InterprojectExchangeTest
                 });
 
             var invalidModel = Mock.Of<IProjectModel>(m =>
-                m.PathToProject == projectsDir &&
+                m.PathToProject == invalidProjectDir &&
                 m.ProjectName == "INVALID" &&
                 m.Loaded == true &&
                 m.HasBindingError == true &&
