@@ -627,8 +627,7 @@ namespace InterprojectExchange
             List<string> sharedFileData)
         {
             var model = interprojectExchange.GetModel(projectName);
-            string path = Path.Combine(model.PathToProject, 
-                projectName, SharedFile);
+            string path = Path.Combine(model.PathToProject, SharedFile);
 
             if(!File.Exists(path))
             {

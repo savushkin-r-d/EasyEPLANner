@@ -1,4 +1,5 @@
-﻿using IO.ViewModel;
+using IO.ViewModel;
+using IO.ViewModel.ViewInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +22,36 @@ namespace IO.ViewModel
 
         public string Value => Description;
 
-        public bool SetValue(string value)
+        public virtual bool SetValue(string value)
         {
             if (setter is null)
                 return false;
 
             setter.Invoke(value);
             return true;
+        }
+    }
+
+    /// <summary>
+    /// Свойство с выбором значения из списка.
+    /// </summary>
+    public class ComboBoxProperty : Property, IComboBoxEditable
+    {
+        public ComboBoxProperty(string name, Func<string> getter,
+            Action<string> setter, IEnumerable<string> items)
+            : base(name, getter, setter)
+        {
+            ComboBoxItems = items;
+        }
+
+        public IEnumerable<string> ComboBoxItems { get; }
+
+        public override bool SetValue(string value)
+        {
+            if (!ComboBoxItems.Contains(value))
+                return false;
+
+            return base.SetValue(value);
         }
     }
 }

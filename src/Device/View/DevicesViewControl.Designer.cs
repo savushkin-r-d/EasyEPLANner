@@ -42,9 +42,9 @@ namespace EasyEPlanner.Devices.View
             this.MainTableLayoutPanel.SuspendLayout();
             this.toolbarPanel.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.searchButtonToolStrip.SuspendLayout();
             this.searchBoxTLP.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.searchPictureBox)).BeginInit();
+            this.searchButtonToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.devicesTree)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,7 +90,7 @@ namespace EasyEPlanner.Devices.View
             this.groupingToggleButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(543, 30);
+            this.toolStrip1.Size = new System.Drawing.Size(548, 30);
             this.toolStrip1.TabIndex = 0;
             // 
             // Expand
@@ -114,7 +114,7 @@ namespace EasyEPlanner.Devices.View
             // 
             this.Expand_1.Image = global::EasyEPlanner.Properties.Resources.expand1;
             this.Expand_1.Name = "Expand_1";
-            this.Expand_1.Size = new System.Drawing.Size(146, 22);
+            this.Expand_1.Size = new System.Drawing.Size(180, 22);
             this.Expand_1.Tag = "1";
             this.Expand_1.Text = "Уровень 1";
             this.Expand_1.Click += new System.EventHandler(this.Expand_Click);
@@ -123,7 +123,7 @@ namespace EasyEPlanner.Devices.View
             // 
             this.Expand_2.Image = global::EasyEPlanner.Properties.Resources.expand2;
             this.Expand_2.Name = "Expand_2";
-            this.Expand_2.Size = new System.Drawing.Size(146, 22);
+            this.Expand_2.Size = new System.Drawing.Size(180, 22);
             this.Expand_2.Tag = "2";
             this.Expand_2.Text = "Уровень 2";
             this.Expand_2.Click += new System.EventHandler(this.Expand_Click);
@@ -132,7 +132,7 @@ namespace EasyEPlanner.Devices.View
             // 
             this.Expand_3.Image = global::EasyEPlanner.Properties.Resources.expand3;
             this.Expand_3.Name = "Expand_3";
-            this.Expand_3.Size = new System.Drawing.Size(146, 22);
+            this.Expand_3.Size = new System.Drawing.Size(180, 22);
             this.Expand_3.Tag = "3";
             this.Expand_3.Text = "Уровень 3";
             this.Expand_3.Click += new System.EventHandler(this.Expand_Click);
@@ -141,7 +141,7 @@ namespace EasyEPlanner.Devices.View
             // 
             this.Expand_4.Image = global::EasyEPlanner.Properties.Resources.expand4;
             this.Expand_4.Name = "Expand_4";
-            this.Expand_4.Size = new System.Drawing.Size(146, 22);
+            this.Expand_4.Size = new System.Drawing.Size(180, 22);
             this.Expand_4.Tag = "4";
             this.Expand_4.Text = "Уровень 4";
             this.Expand_4.Click += new System.EventHandler(this.Expand_Click);
@@ -150,7 +150,7 @@ namespace EasyEPlanner.Devices.View
             // 
             this.Expand_5.Image = global::EasyEPlanner.Properties.Resources.expand5;
             this.Expand_5.Name = "Expand_5";
-            this.Expand_5.Size = new System.Drawing.Size(146, 22);
+            this.Expand_5.Size = new System.Drawing.Size(180, 22);
             this.Expand_5.Tag = "5";
             this.Expand_5.Text = "Уровень 5";
             this.Expand_5.Click += new System.EventHandler(this.Expand_Click);
@@ -158,7 +158,7 @@ namespace EasyEPlanner.Devices.View
             // Expand_6
             // 
             this.Expand_6.Name = "Expand_6";
-            this.Expand_6.Size = new System.Drawing.Size(146, 22);
+            this.Expand_6.Size = new System.Drawing.Size(180, 22);
             this.Expand_6.Tag = "0";
             this.Expand_6.Text = "Свернуть всё";
             this.Expand_6.Click += new System.EventHandler(this.Expand_Click);
@@ -171,7 +171,7 @@ namespace EasyEPlanner.Devices.View
             this.syncButton.Name = "syncButton";
             this.syncButton.Size = new System.Drawing.Size(23, 27);
             this.syncButton.Text = "Обновить";
-            this.syncButton.ToolTipText = "Обновить";
+            this.syncButton.ToolTipText = "Синхронизация и сохранение";
             this.syncButton.Click += new System.EventHandler(this.SyncButton_Click);
             // 
             // groupingToggleButton
@@ -198,12 +198,12 @@ namespace EasyEPlanner.Devices.View
             this.searchBoxTLP.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.searchBoxTLP.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchBoxTLP.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.searchBoxTLP.Location = new System.Drawing.Point(543, 2);
+            this.searchBoxTLP.Location = new System.Drawing.Point(550, 2);
             this.searchBoxTLP.Margin = new System.Windows.Forms.Padding(2);
             this.searchBoxTLP.Name = "searchBoxTLP";
             this.searchBoxTLP.RowCount = 1;
             this.searchBoxTLP.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.searchBoxTLP.Size = new System.Drawing.Size(216, 25);
+            this.searchBoxTLP.Size = new System.Drawing.Size(216, 26);
             this.searchBoxTLP.TabIndex = 1;
             this.searchBoxTLP.Visible = false;
             this.searchBoxTLP.Paint += new System.Windows.Forms.PaintEventHandler(this.SearchBoxTLP_Paint);
@@ -254,7 +254,7 @@ namespace EasyEPlanner.Devices.View
             this.searchIterator.Margin = new System.Windows.Forms.Padding(0, 2, 1, 1);
             this.searchIterator.Maximum = 0;
             this.searchIterator.Name = "searchIterator";
-            this.searchIterator.Size = new System.Drawing.Size(84, 22);
+            this.searchIterator.Size = new System.Drawing.Size(84, 23);
             this.searchIterator.TabIndex = 2;
             // 
             // searchButtonToolStrip
@@ -265,9 +265,9 @@ namespace EasyEPlanner.Devices.View
             this.searchTSButton,
             this.toolStripSeparatorSearch});
             this.searchButtonToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.searchButtonToolStrip.Location = new System.Drawing.Point(761, 0);
+            this.searchButtonToolStrip.Location = new System.Drawing.Point(768, 0);
             this.searchButtonToolStrip.Name = "searchButtonToolStrip";
-            this.searchButtonToolStrip.Size = new System.Drawing.Size(39, 30);
+            this.searchButtonToolStrip.Size = new System.Drawing.Size(32, 30);
             this.searchButtonToolStrip.TabIndex = 2;
             // 
             // searchTSButton
@@ -314,8 +314,8 @@ namespace EasyEPlanner.Devices.View
             this.devicesTree.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.CellEditStarting);
             this.devicesTree.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.DevicesTree_FormatCell);
             this.devicesTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DevicesTree_KeyDown);
-            this.devicesTree.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DevicesTree_MouseDown);
             this.devicesTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.DevicesTree_MouseDoubleClick);
+            this.devicesTree.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DevicesTree_MouseDown);
             // 
             // ViewItemImageList
             // 
@@ -336,11 +336,11 @@ namespace EasyEPlanner.Devices.View
             this.toolbarPanel.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.searchButtonToolStrip.ResumeLayout(false);
-            this.searchButtonToolStrip.PerformLayout();
             this.searchBoxTLP.ResumeLayout(false);
             this.searchBoxTLP.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.searchPictureBox)).EndInit();
+            this.searchButtonToolStrip.ResumeLayout(false);
+            this.searchButtonToolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.devicesTree)).EndInit();
             this.ResumeLayout(false);
 
