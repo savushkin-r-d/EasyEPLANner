@@ -34,5 +34,24 @@ namespace IOTests
                 Assert.IsFalse(propertyNullSetter.SetValue("newValue"));
             });
         }
+
+        [Test]
+        public void ComboBoxProperty_SetValue_AcceptsOnlyListedItems()
+        {
+            var value = "Включен";
+            var property = new ComboBoxProperty("Состояние",
+                () => value, v => value = v, new[] { "Включен", "Выключен" });
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Включен", property.Value);
+                CollectionAssert.AreEqual(new[] { "Включен", "Выключен" },
+                    property.ComboBoxItems);
+                Assert.IsTrue(property.SetValue("Выключен"));
+                Assert.AreEqual("Выключен", value);
+                Assert.IsFalse(property.SetValue("другое"));
+                Assert.AreEqual("Выключен", value);
+            });
+        }
     }
 }

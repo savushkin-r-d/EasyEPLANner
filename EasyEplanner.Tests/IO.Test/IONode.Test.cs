@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using EasyEPlanner;
@@ -91,6 +91,79 @@ namespace IOTests
             var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
 
             Assert.AreEqual(expectedValue, testNode.IsCoupler);
+        }
+
+        [TestCase("750-863", false)]
+        [TestCase("750-341", true)]
+        [TestCase("750-352", true)]
+        [TestCase("750-841", false)]
+        [TestCase("750-8202", false)]
+        [TestCase("AXL F BK ETH", true)]
+        [TestCase("AXC F 1152", false)]
+        [TestCase("AXC F 2152", false)]
+        [TestCase("AXC F 3152", false)]
+        [TestCase("AXC F XT ETH 1TX", true)]
+        [TestCase("", false)]
+        [TestCase("Wrong type", false)]
+        public void CanDisableNtype_ReturnsTrueForCouplerAndExtension(
+            string typeStr, bool expectedValue)
+        {
+            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
+
+            Assert.AreEqual(expectedValue, testNode.CanDisableNtype);
+        }
+
+        [Test]
+        public void NtypeEnabled_Controller_CannotBeDisabled()
+        {
+            var testNode = new IONode("AXC F 2152", IntStub, IntStub, StrStub, StrStub, StrStub, StrStub);
+
+            testNode.NtypeEnabled = false;
+
+            Assert.IsTrue(testNode.NtypeEnabled);
+        }
+
+        [Test]
+        public void SaveAsLuaTable_WhenCouplerOff_SavesEmptyNtype()
+        {
+            var testNode = new IONode("750-352", 1, 200, "1.1.1.1", "A200", StrStub, StrStub);
+            testNode.NtypeEnabled = false;
+
+            string lua = testNode.SaveAsLuaTable("");
+
+            StringAssert.Contains("ntype   = -1, --выключен", lua);
+        }
+
+        [Test]
+        public void SaveAsLuaTable_WhenCouplerOn_SavesRealNtype()
+        {
+            var testNode = new IONode("750-352", 1, 200, "1.1.1.1", "A200", StrStub, StrStub);
+
+            string lua = testNode.SaveAsLuaTable("");
+
+            StringAssert.Contains("ntype   = 100, --750-352", lua);
+        }
+
+        [Test]
+        public void SaveAsLuaTable_WhenControllerOff_KeepsRealNtype()
+        {
+            var testNode = new IONode("AXC F 2152", 1, 100, "1.1.1.1", "A100", StrStub, StrStub);
+            testNode.NtypeEnabled = false;
+
+            string lua = testNode.SaveAsLuaTable("");
+
+            StringAssert.Contains("ntype   = 202, --AXC F 2152", lua);
+        }
+
+        [Test]
+        public void SaveAsLuaTable_WhenExtensionOff_SavesEmptyNtype()
+        {
+            var testNode = new IONode("AXC F XT ETH 1TX", 1, 100, "1.1.1.1", "A100.1", StrStub, StrStub);
+            testNode.NtypeEnabled = false;
+
+            string lua = testNode.SaveAsLuaTable("");
+
+            StringAssert.Contains("ntype   = -1, --выключен", lua);
         }
 
         [TestCase("NodeName", "NodeName")]

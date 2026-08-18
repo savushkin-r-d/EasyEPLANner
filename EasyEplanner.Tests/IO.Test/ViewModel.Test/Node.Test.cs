@@ -235,5 +235,99 @@ namespace IOTests
                 Assert.AreEqual(Icon.None, (node as IHasDescriptionIcon).Icon);
             });
         }
+
+        [Test]
+        public void Items_CouplerNode_AddsEnabledProperty()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 2 &&
+                n.Name == "A200" &&
+                n.TypeStr == "750-352" &&
+                n.CanDisableNtype == true &&
+                n.NtypeEnabled == true &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>() &&
+                n.Function.IP == "ip" &&
+                n.Function.SubnetMask == "mask" &&
+                n.Function.Gateway == "gateway");
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+            var enabledProperty = node.Items.OfType<ComboBoxProperty>().First();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Состояние", enabledProperty.Name);
+                Assert.AreEqual("Включен", enabledProperty.Value);
+                CollectionAssert.AreEqual(new[] { "Включен", "Выключен" },
+                    enabledProperty.ComboBoxItems);
+            });
+        }
+
+        [Test]
+        public void Items_ControllerNode_DoesNotAddEnabledProperty()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 1 &&
+                n.Name == "A100" &&
+                n.TypeStr == "AXC F 2152" &&
+                n.CanDisableNtype == false &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>() &&
+                n.Function.IP == "ip" &&
+                n.Function.SubnetMask == "mask" &&
+                n.Function.Gateway == "gateway");
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.IsFalse(node.Items.OfType<ComboBoxProperty>().Any());
+        }
+
+        [Test]
+        public void IsNtypeDisabled_WhenCouplerOff_ReturnsTrue()
+        {
+            var ioNode = Mock.Of<IIONode>(n =>
+                n.N == 2 &&
+                n.Name == "A200" &&
+                n.TypeStr == "750-352" &&
+                n.CanDisableNtype == true &&
+                n.NtypeEnabled == false &&
+                n.IOModules == new List<IIOModule>() &&
+                n.ExtensionModules == new List<IIONode>() &&
+                n.Function.IP == "ip" &&
+                n.Function.SubnetMask == "mask" &&
+                n.Function.Gateway == "gateway");
+
+            var node = new Node(ioNode, Mock.Of<ILocation>());
+
+            Assert.IsTrue(node.IsNtypeDisabled);
+        }
+
+        [Test]
+        public void EnabledProperty_SetValue_UpdatesNtypeEnabled()
+        {
+            var mock = new Mock<IIONode>();
+            mock.SetupGet(n => n.N).Returns(2);
+            mock.SetupGet(n => n.Name).Returns("A200");
+            mock.SetupGet(n => n.TypeStr).Returns("750-352");
+            mock.SetupGet(n => n.CanDisableNtype).Returns(true);
+            mock.SetupProperty(n => n.NtypeEnabled, true);
+            mock.SetupGet(n => n.IOModules).Returns(new List<IIOModule>());
+            mock.SetupGet(n => n.ExtensionModules).Returns(new List<IIONode>());
+            mock.SetupGet(n => n.Function.IP).Returns("ip");
+            mock.SetupGet(n => n.Function.SubnetMask).Returns("mask");
+            mock.SetupGet(n => n.Function.Gateway).Returns("gateway");
+
+            var node = new Node(mock.Object, Mock.Of<ILocation>());
+            var enabledProperty = node.Items.OfType<ComboBoxProperty>().First();
+
+            enabledProperty.SetValue("Выключен");
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsFalse(mock.Object.NtypeEnabled);
+                Assert.IsTrue(node.IsNtypeDisabled);
+                Assert.AreEqual("Выключен", enabledProperty.Value);
+            });
+        }
     }
 }
