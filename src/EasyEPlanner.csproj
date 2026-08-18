@@ -167,6 +167,7 @@
     <Compile Include="IO\ViewModel\INode.cs" />
     <Compile Include="IO\ViewModel\ModuleViewItem.cs" />
     <Compile Include="IO\ViewModel\Property.cs" />
+    <Compile Include="IO\ViewModel\ViewInterface\IComboBoxEditable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IDeletable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IEditable.cs" />
     <Compile Include="IO\ViewModel\ViewInterface\IExpandable.cs" />
@@ -537,6 +538,7 @@
     <Compile Include="StaticHelper\IEplanFunction.cs" />
     <Compile Include="StaticHelper\IOHelper.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
+    <Compile Include="StaticHelper\KeyboardHookHelper.cs" />
     <Compile Include="StaticHelper\LuaHelper.cs" />
     <Compile Include="StaticHelper\RegexDefaults.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />

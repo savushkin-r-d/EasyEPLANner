@@ -1,4 +1,4 @@
-﻿using StaticHelper;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -146,9 +146,13 @@ namespace IO
 
         public string SaveAsLuaTable(string prefix)
         {
+            bool saveDisabled = CanDisableNtype && !ntypeEnabled;
+            int savedNtype = saveDisabled ? (int)TYPES.T_EMPTY : (int)type;
+            string ntypeComment = saveDisabled ? "выключен" : typeStr;
+
             string str = prefix + "{\n";
             str += prefix + "name    = \'" + name + "\',\n";
-            str += prefix + "ntype   = " + (int)type + ", " + "--" + typeStr + "\n";
+            str += prefix + "ntype   = " + savedNtype + ", " + "--" + ntypeComment + "\n";
             str += prefix + "n       = " + n + ",\n";
             str += prefix + "IP      = \'" + ip + "\',\n";
             str += prefix + "modules =\n";
@@ -332,6 +336,23 @@ namespace IO
 
         public bool IsCoupler { get; private set; } = false;
 
+        public bool CanDisableNtype =>
+            type != TYPES.T_EMPTY &&
+            (IsCoupler || type == TYPES.T_PXC_EXTENSION);
+
+        public bool NtypeEnabled
+        {
+            get => ntypeEnabled;
+            set
+            {
+                if (!CanDisableNtype)
+                    return;
+
+                ntypeEnabled = value;
+                IOManager.GetInstance().StoreNtypeEnabled(name, value);
+            }
+        }
+
         /// <summary>
         /// Установить функцию для узла
         /// </summary>
@@ -393,6 +414,11 @@ namespace IO
         /// Текущее занимаемое модулями адресное пространство
         /// </summary>
         private int currentAddressArea = 0;
+
+        /// <summary>
+        /// Сохранять настоящий ntype в main.io.lua.
+        /// </summary>
+        private bool ntypeEnabled = true;
         #endregion
     }
 }

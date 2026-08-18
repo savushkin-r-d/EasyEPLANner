@@ -13,6 +13,7 @@ using System.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
+using StaticHelper;
 using TechObject;
 using IO.View;
 
@@ -322,8 +323,7 @@ namespace Editor
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
-            const short SHIFTED = 0x80;
-            bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
+            bool Ctrl = KeyboardHookHelper.IsCtrlPressed();
             uint vkCode = lParam.vkCode;
 
             // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
@@ -339,6 +339,9 @@ namespace Editor
 
             if (code < 0 || editorTView == null || (editorTView.Focused is false && IsCellEditing is false))
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+
+            if (KeyboardHookHelper.ShouldBlockPlainTab(wParam, vkCode))
+                return (IntPtr)1;
 
             //Отпускание клавиш - если активно окно редактора, то не пускаем
             //дальше.

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace IO
@@ -19,6 +21,7 @@ namespace IO
         {
             iONodes = new List<IIONode>();
             deletedModules = new List<IIOModule>();
+            disabledNtypeNodeNames = new HashSet<string>();
             InitIoModulesInfo();
             InitIoNodesInfo();
         }
@@ -135,12 +138,13 @@ namespace IO
             CheckNodeIP(name, IP);
 
             var node = new IONode(type, n, nodeNumber, IP, name, location, locationDescription);
+            ApplyStoredNtype(node);
             iONodes[n - 1] = node;
 
             return node;
         }
 
-        /// <summary>
+         /// <summary>
         /// Добавление модуля расширения в узел.
         /// </summary>
         /// <param name="nodeIdx">Индекс родительского узла.</param>
@@ -164,6 +168,7 @@ namespace IO
                 extensionNodeInfo.Name,
                 extensionNodeInfo.Location,
                 extensionNodeInfo.LocationDescription);
+            ApplyStoredNtype(extensionNode);
             parentNode.AddExtensionModule(extensionNode);
 
             return extensionNode;
@@ -261,6 +266,75 @@ namespace IO
         }
 
         /// <summary>
+        /// Применить ntype из main.io.lua: -1 выключает сохранение типа узла.
+        /// </summary>
+        public void ApplyNtypesFromLua(string lua)
+        {
+            if (string.IsNullOrEmpty(lua))
+                return;
+
+            var ntypesByName = new Dictionary<string, int>();
+            foreach (Match match in NtypeFromLuaRegex.Matches(lua))
+            {
+                ntypesByName[match.Groups[1].Value] =
+                    int.Parse(match.Groups[2].Value);
+            }
+
+            foreach (var node in GetNodesWithExtensions())
+            {
+                if (!node.CanDisableNtype)
+                    continue;
+
+                if (!ntypesByName.TryGetValue(node.Name, out int ntype))
+                    continue;
+
+                bool enabled = ntype != (int)IONode.TYPES.T_EMPTY;
+                StoreNtypeEnabled(node.Name, enabled);
+                node.NtypeEnabled = enabled;
+            }
+        }
+
+        /// <summary>
+        /// Запомнить, выключен ли ntype узла. Значение сохраняется при
+        /// перечитывании IO из EPLAN.
+        /// </summary>
+        public void StoreNtypeEnabled(string name, bool enabled)
+        {
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            if (enabled)
+                disabledNtypeNodeNames.Remove(name);
+            else
+                disabledNtypeNodeNames.Add(name);
+        }
+
+        /// <summary>
+        /// Сбросить запомненные выключения ntype (полная загрузка проекта).
+        /// </summary>
+        public void ResetStoredNtypes()
+        {
+            disabledNtypeNodeNames.Clear();
+        }
+
+        /// <summary>
+        /// Восстановить выключение ntype на текущих узлах после ReadIO.
+        /// </summary>
+        public void ApplyStoredNtypes()
+        {
+            foreach (var node in GetNodesWithExtensions())
+                ApplyStoredNtype(node);
+        }
+
+        private void ApplyStoredNtype(IIONode node)
+        {
+            if (node is null || !node.CanDisableNtype)
+                return;
+
+            node.NtypeEnabled = !disabledNtypeNodeNames.Contains(node.Name);
+        }
+
+        /// <summary>
         /// Проверка корректного заполнения узлами.
         /// </summary>
         public string Check()
@@ -282,6 +356,8 @@ namespace IO
                 }
             }
 
+            str += CheckDisabledNtypes();
+
             long startingIP = ProjectConfiguration
                 .GetInstance().StartingIPInterval;
             long endingIP = ProjectConfiguration.GetInstance()
@@ -292,6 +368,21 @@ namespace IO
             }
 
             return str;
+        }
+
+        /// <summary>
+        /// Сообщения об узлах с выключенным ntype.
+        /// </summary>
+        private string CheckDisabledNtypes()
+        {
+            var messages = new StringBuilder();
+            foreach (var node in GetNodesWithExtensions())
+            {
+                if (node.CanDisableNtype && !node.NtypeEnabled)
+                    messages.Append($"Узел \"{node.Name}\" отключен;\n");
+            }
+
+            return messages.ToString();
         }
 
         /// <summary>
@@ -550,9 +641,14 @@ namespace IO
         /// </summary>
         public const string IONamePattern = @"=*-A(?<n>\d+)(\.(?<ext>\d+))?$";
 
+        private static readonly Regex NtypeFromLuaRegex = new Regex(
+            @"name\s*=\s*'([^']+)'\s*,\s*ntype\s*=\s*(-?\d+)",
+            RegexOptions.None, RegexDefaults.Timeout);
+
         #region Закрытые поля.
         private readonly List<IIONode> iONodes;     ///Узлы проекта.
         private readonly List<IIOModule> deletedModules; ///Исключенные модули проекта.
+        private readonly HashSet<string> disabledNtypeNodeNames;
         private static IOManager instance;  ///Экземпляр класса.
         #endregion
     }
