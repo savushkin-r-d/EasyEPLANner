@@ -364,6 +364,11 @@ namespace TechObject
         #region сохранение prg.lua
         public string SaveToPrgLua(string prefix)
         {
+            if (!CanSaveToPrgLua())
+            {
+                return string.Empty;
+            }
+
             TechObject obj = GetCurrentTechObject();
             var objName = string.Empty;
             if (obj != null)
@@ -381,6 +386,49 @@ namespace TechObject
                 ValueType.Parameter => $"{prefix}{LuaName} = {objName}.PAR_FLOAT.{Value}",
                 _ => string.Empty
             };
+        }
+
+        private bool CanSaveToPrgLua()
+        {
+            SetParameterValueType(Value);
+
+            if (CurrentValueType is ValueType.Stub)
+            {
+                return false;
+            }
+
+            var hasSignal = HasSignalDisplayObject();
+            var hasParameter = DisplayObjects.Contains(DisplayObject.Parameters);
+            var hasOperation = DisplayObjects.Contains(DisplayObject.Operation);
+
+            if (hasOperation)
+            {
+                return CurrentValueType is ValueType.Number &&
+                    TryGetOperationByNumber(Value, out _);
+            }
+
+            if (hasSignal)
+            {
+                if (hasParameter && CurrentValueType is ValueType.Parameter)
+                {
+                    return true;
+                }
+
+                if (CurrentValueType is not (ValueType.Device or ValueType.ManyDevices))
+                {
+                    return false;
+                }
+
+                var devices = GetDevicesFromValue();
+                return devices.Count == GetCorrectSignalNames(devices).Count;
+            }
+
+            if (hasParameter)
+            {
+                return CurrentValueType is ValueType.Parameter;
+            }
+
+            return CurrentValueType is not ValueType.Other;
         }
 
         /// <summary>
@@ -562,6 +610,14 @@ namespace TechObject
             {
                 operation = baseOperation.Owner;
                 techObject = operation?.Owner?.Owner;
+                return true;
+            }
+
+            if (BaseOperation != null)
+            {
+                operation = BaseOperation.Owner;
+                techObject = (Owner as BaseTechObject)?.Owner ??
+                    operation?.Owner?.Owner;
                 return true;
             }
 
