@@ -338,6 +338,74 @@ namespace EasyEplannerTests.InterprojectExchangeTest
         }
 
         [Test]
+        public void SaveAsync_SkipsModelsWithBindingError()
+        {
+            string projectsDir = Path.Combine(
+                TestContext.CurrentContext.TestDirectory,
+                "InterprojectExchange.Test", Guid.NewGuid().ToString());
+            string mainProjectDir = Path.Combine(projectsDir, "MAIN");
+            string invalidProjectDir = Path.Combine(projectsDir, "INVALID");
+            Directory.CreateDirectory(mainProjectDir);
+            Directory.CreateDirectory(invalidProjectDir);
+
+            var mainModel = Mock.Of<ICurrentProjectModel>(m =>
+                m.PathToProject == mainProjectDir &&
+                m.ProjectName == "MAIN" &&
+                m.Loaded == true &&
+                m.HasBindingError == false &&
+                m.ReceiverSignals == new DeviceSignalsInfo() &&
+                m.SourceSignals == new DeviceSignalsInfo() &&
+                m.PacInfo == new PacInfo() { Station = 1 } &&
+                m.SharedFileAsStringList == new List<string>
+                {
+                    "remote_gateways =\n",
+                    "{\n",
+                    "}\n",
+                    "shared_devices =\n",
+                    "{\n",
+                    "}\n"
+                });
+
+            var invalidModel = Mock.Of<IProjectModel>(m =>
+                m.PathToProject == invalidProjectDir &&
+                m.ProjectName == "INVALID" &&
+                m.Loaded == true &&
+                m.HasBindingError == true &&
+                m.PacInfo == new PacInfo() { Station = 2 } &&
+                m.ReceiverSignals == new DeviceSignalsInfo() &&
+                m.SourceSignals == new DeviceSignalsInfo() &&
+                m.SharedFileAsStringList == new List<string>
+                {
+                    "remote_gateways =\n",
+                    "{\n",
+                    "}\n",
+                    "shared_devices =\n",
+                    "{\n",
+                    "}\n"
+                });
+
+            var interprojectExchange = Mock.Of<IInterprojectExchange>(m =>
+                m.Models == new List<IProjectModel> { mainModel, invalidModel } &&
+                m.MainModel == mainModel &&
+                m.GetModel("MAIN") == mainModel &&
+                m.GetModel("INVALID") == invalidModel);
+
+            var saver = new InterprojectExchangeSaver(interprojectExchange,
+                "shared.lua");
+            saver.SaveAsync().Wait();
+
+            Assert.Multiple(() =>
+            {
+                Mock.Get(interprojectExchange).Verify(
+                    m => m.SelectModel(invalidModel), Times.Never);
+                Assert.IsTrue(File.Exists(
+                    Path.Combine(mainProjectDir, "shared.lua")));
+                Assert.IsFalse(File.Exists(
+                    Path.Combine(invalidProjectDir, "shared.lua")));
+            });
+        }
+
+        [Test]
         public void WriteSharedFile_OnlyVersionChanged_DoesNotRewriteFile()
         {
             string projectName = "NO_CHANGE_PROJECT";

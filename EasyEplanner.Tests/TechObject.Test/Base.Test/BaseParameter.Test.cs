@@ -113,6 +113,105 @@ namespace EasyEplanner.Tests
             });
         }
 
+        [Test]
+        public void SaveToPrgLua_ParameterDisplayObjectAndUnknownValue_ReturnsEmpty()
+        {
+            var obj = new BaseParameterImplementation("property", "Property",
+                "", new List<BaseParameter.DisplayObject>
+                {
+                    BaseParameter.DisplayObject.Parameters,
+                });
+            obj.SetNewValue("UNKNOWN_PARAMETER");
+
+            Assert.AreEqual(string.Empty, obj.SaveToPrgLua(string.Empty));
+        }
+
+        [Test]
+        public void SaveToPrgLua_WithoutDisplayObjectRestrictions_SkipsRawValue()
+        {
+            var obj = new BaseParameterImplementation("property", "Property");
+            obj.SetNewValue("raw_value");
+
+            Assert.AreEqual(string.Empty, obj.SaveToPrgLua(string.Empty));
+        }
+
+        [TestCaseSource(nameof(SaveToPrgLuaCanSaveCaseSource))]
+        public void SaveToPrgLua_RespectsDisplayObjects(
+            List<BaseParameter.DisplayObject> displayObjects, string value,
+            string expected)
+        {
+            var obj = new BaseParameterImplementation("property", "Property",
+                "", displayObjects);
+            SetUpParameterBaseOperationOwner(obj);
+            obj.SetNewValue(value);
+
+            Assert.AreEqual(expected, obj.SaveToPrgLua(string.Empty));
+        }
+
+        private static object[] SaveToPrgLuaCanSaveCaseSource()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                    },
+                    "parameter1",
+                    "property = prg.techobject1.PAR_FLOAT.parameter1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.AI,
+                    },
+                    "NORM1DEV1",
+                    "property = prg.control_modules.NORM1DEV1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.AI,
+                    },
+                    "NORM1DEV2",
+                    string.Empty,
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                        BaseParameter.DisplayObject.Signals,
+                    },
+                    "parameter1",
+                    "property = prg.techobject1.PAR_FLOAT.parameter1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                        BaseParameter.DisplayObject.Signals,
+                    },
+                    "NORM1DEV1",
+                    "property = prg.control_modules.NORM1DEV1",
+                },
+                new object[]
+                {
+                    new List<BaseParameter.DisplayObject>
+                    {
+                        BaseParameter.DisplayObject.Parameters,
+                        BaseParameter.DisplayObject.Signals,
+                    },
+                    "UNKNOWN",
+                    string.Empty,
+                },
+            };
+        }
+
         [TestCaseSource(nameof(AddDisplayObjectCaseSource))]
         public void AddDisplayObject_EmptyParameter_AddArgumentOrReplac(
             List<string> actualEnumNames,
@@ -496,7 +595,7 @@ namespace EasyEplanner.Tests
         [TestCase("NORM1DEV1 NORM1DEV2", "\t\t", "\t\tLuaName = { prg.control_modules.NORM1DEV1, prg.control_modules.NORM1DEV2 }")]
         [TestCase("1", "\t", "\tLuaName = prg.0.operations.BASEOPERATIONLUANAME1")]
         [TestCase("2", "\t", "\tLuaName = prg.0.operations.BASEOPERATIONLUANAME2")]
-        [TestCase("other", "", "LuaName = other")]
+        [TestCase("other", "", "")]
         public void SaveToPrgLua_CheckBaseTechObjectOwner(string value, string prefix, string expected)
         {
             var parameter = new BaseParameterImplementation("LuaName", "Name", stub, null);
@@ -572,7 +671,7 @@ namespace EasyEplanner.Tests
 
         [TestCase("parameter1", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter1")]
         [TestCase("parameter2", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter2")]
-        [TestCase("other", "", "LuaName = other")]
+        [TestCase("other", "", "")]
         public void SaveToPrgLua_CheckBaseOperationOwner(string value, string prefix,
             string expected)
         {

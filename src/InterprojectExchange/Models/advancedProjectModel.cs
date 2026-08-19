@@ -177,6 +177,8 @@ namespace InterprojectExchange
 
         public bool Loaded { get; set; }
 
+        public bool HasBindingError { get; set; }
+
         private DeviceSignalsInfo sourceSignals;
         private DeviceSignalsInfo receiverSignals;
         private PacInfo pacDTO;
